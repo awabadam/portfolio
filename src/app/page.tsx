@@ -53,7 +53,7 @@ export default function Home() {
         </div>
         <Image
           className="absolute right-36 bottom-0 z-0 pointer-events-none"
-          src={"/img/awab_hero.png"}
+          src={"/img/awab_hero.webp"}
           alt={""}
           width={600}
           height={200}
