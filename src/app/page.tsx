@@ -1,63 +1,48 @@
 import Image from "next/image";
+import Navbar from "./components/Navbar";
+import { motion } from "framer-motion";
+import hero from "";
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center w-full">
-      <div className="w-full h-screen relative justify-between p-24 border-b border-neutral-900">
-        <nav className="w-full">
-          <ul className="flex w-full justify-between z-50 relative">
-            <li>
-              <a className="font-bold" href="/me">
-                Awab Elkhalil
-              </a>
-            </li>
-            <li>
-              <a className="p-4 border" href="/">
-                Let's work together
-              </a>
-            </li>
-          </ul>
-        </nav>
-        <div className="h-full flex w-full select-none">
-          <div className="py-auto flex items-end justify-between w-full m-auto ">
-            <h1 className=" text-[420px] font-black text-left leading-[350px] -translate-x-4">
-              DESIG
-              <br />
-              NER
-            </h1>
-            <p className="text-7xl uppercase font-bold z-10 -translate-y-10 -translate-x-20">
-              Designing <br /> Bold <br /> websites
+    <main className="flex min-h-screen w-screen flex-col items-center">
+      <div className="relative h-screen w-full justify-between border-b border-neutral-900 p-8 md:p-24">
+        <Navbar />
+        <div className="flex flex-col items-center justify-between md:flex-row">
+          <div>
+            <p className="my-8 text-center text-7xl font-black uppercase md:my-0 lg:text-[150px]">
+              Visual & Graphic Designer
             </p>
           </div>
+          <Image
+            src="/img/awab_hero.webp"
+            alt="hero-img"
+            width={500}
+            height={30}
+          />
         </div>
 
-        <div className="w-full flex justify-between gap-4 items-baseline relative z-50">
-          <div className="flex gap-8 ">
-            <p>Istanbul - Turkey</p>
+        <div className="relative z-50 flex flex-col items-baseline justify-between gap-4 md:flex-row">
+          <div className="flex gap-8">
+            <p className="w-full">Istanbul</p>
             <p>GMT+3</p>
           </div>
-          <hr className="border w-2/3 " />
-          <div>
+          <hr className="w-full border" />
+          <div className="">
             <ul className="flex gap-8">
               <li>
-                <a href="https://www.linkedin.com/in/awab-adam/">linkedin</a>
+                <a href="https://www.linkedin.com/in/awab-adam/">Linkedin</a>
               </li>
               <li>
-                <a href="https://www.behance.net/awab-elkhalil">behance</a>
+                <a href="https://www.behance.net/awab-elkhalil">Behance</a>
               </li>
+
               <li>
-                <a href="https://www.instagram.com/awabeladam/">instagram</a>
+                <a href="https://www.instagram.com/awabeladam/">Instagram</a>
               </li>
             </ul>
           </div>
         </div>
-        <Image
-          className="absolute right-36 bottom-0 z-0 pointer-events-none"
-          src={"/img/awab_hero.webp"}
-          alt={""}
-          width={600}
-          height={200}
-        />
       </div>
     </main>
   );
