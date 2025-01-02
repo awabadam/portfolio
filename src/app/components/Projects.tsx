@@ -20,10 +20,7 @@ const Projects = () => {
             height="316"
             width="404"
             allowFullScreen
-            lazyload
-            frameborder="0"
             allow="clipboard-write"
-            refererPolicy="strict-origin-when-cross-origin"
           ></iframe>
         ))}
       </div>
