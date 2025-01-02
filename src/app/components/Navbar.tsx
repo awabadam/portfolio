@@ -1,14 +1,13 @@
 "use client";
-import { motion } from "framer-motion";
 
 const Navbar = () => {
   return (
-    <nav className="relative z-50 flex w-full items-center justify-between">
+    <nav className="fixed top-0 z-50 flex w-full items-center justify-between px-[10vw] py-8 md:px-24">
       <a className="font-bold" href="">
         Awab Elkhalil
       </a>
 
-      <a className="border p-4" href="">
+      <a className="border border-neutral-800 p-4 dark:border-white" href="">
         Let's work together
       </a>
     </nav>
