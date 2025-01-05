@@ -1,7 +1,11 @@
 import React from "react";
 
 const loading = () => {
-  return <div>loading...</div>;
+  return (
+    <main className="flex h-screen items-center justify-center">
+      loading...
+    </main>
+  );
 };
 
 export default loading;
