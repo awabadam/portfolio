@@ -1,3 +1,4 @@
+import Link from "next/link";
 import React from "react";
 
 const projects = [
@@ -9,22 +10,41 @@ const projects = [
   "https://www.behance.net/embed/project/104690015?ilo0=1",
 ];
 
-const Projects = () => {
+const Projects = (props: any) => {
   return (
     <main className="flex h-fit w-full flex-col items-center justify-center gap-4 p-8 md:px-24">
-      <h1 className="my-20 text-4xl uppercase">Projects</h1>
+      <div className="my-20 text-center">
+        <h1 className="text-4xl uppercase">Projects</h1>{" "}
+        <div className="mt-6 hover:underline">
+          {props.number > 0 ? <Link href="/projects">see more →</Link> : <></>}
+        </div>
+      </div>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-        {projects.map((index, key) => (
-          <iframe
-            key={key}
-            className="w-full md:w-[28vw]"
-            src={index}
-            height="316"
-            width="404"
-            allowFullScreen
-            allow="clipboard-write"
-          ></iframe>
-        ))}
+        {props.number > 0
+          ? projects
+              .slice(0, props.number)
+              .map((project, key) => (
+                <iframe
+                  key={key}
+                  className="w-full md:w-[28vw]"
+                  src={project}
+                  height="316"
+                  width="404"
+                  allowFullScreen
+                  allow="clipboard-write"
+                ></iframe>
+              ))
+          : projects.map((project, key) => (
+              <iframe
+                key={key}
+                className="w-full md:w-[28vw]"
+                src={project}
+                height="316"
+                width="404"
+                allowFullScreen
+                allow="clipboard-write"
+              ></iframe>
+            ))}
       </div>
     </main>
   );

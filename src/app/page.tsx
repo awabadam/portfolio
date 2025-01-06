@@ -4,7 +4,7 @@ export default function Home() {
   return (
     <main className="flex min-h-screen w-screen flex-col items-center">
       <Header />
-      <Projects />
+      <Projects number={3} />
     </main>
   );
 }

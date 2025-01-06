@@ -9,12 +9,12 @@ const Navbar = () => {
         Awab Elkhalil
       </Link>
 
-      <a
+      <Link
         className="border border-neutral-800 p-4 dark:border-white"
-        href="/about"
+        href="https://wa.me/905541759945"
       >
         Let's work together
-      </a>
+      </Link>
     </nav>
   );
 };
