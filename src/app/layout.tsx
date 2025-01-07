@@ -17,7 +17,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.className} w-[100vw] overflow-x-clip`}>
+      <body className={`${inter.className} flex items-center justify-center`}>
         <Navbar />
         {children}
       </body>

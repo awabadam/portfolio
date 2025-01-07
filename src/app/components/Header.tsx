@@ -21,11 +21,11 @@ const sections = [
 
 const Header = () => {
   return (
-    <main className="flex min-h-screen w-screen flex-col items-center justify-center gap-4 p-8 px-24 pt-32">
-      <div className="flex flex-col items-center justify-center md:flex-row">
+    <main className="flex min-h-screen flex-col items-center justify-center gap-4">
+      <div className="flex flex-col items-center justify-center p-8 pt-32 md:flex-row">
         <div className="flex flex-col justify-end p-8 md:h-[40vh] md:w-1/2 md:p-12">
           <h1 className="text-4xl md:text-8xl">👋 Hi, I'm Awab!</h1>
-          <p className="mt-8 text-2xl">
+          <p className="mt-8 md:text-2xl">
             I'm a Graphic and Web Designer who creates visually captivating and
             innovative designs. My goal is to turn ideas into impactful digital
             experiences.
@@ -40,7 +40,7 @@ const Header = () => {
         />
       </div>
 
-      <div className="z-50 flex flex-row items-baseline justify-center gap-4 text-xs font-semibold tracking-wider text-neutral-600 md:text-base">
+      <div className="z-50 flex flex-row items-baseline justify-center gap-4 p-8 text-xs font-semibold tracking-wider text-neutral-600 md:text-base">
         <div className="flex gap-2 hover:text-neutral-800 dark:hover:text-white">
           <p className="">Istanbul</p>
           <p>GMT+3</p>
@@ -77,7 +77,7 @@ const Header = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+      <div className="grid grid-cols-1 gap-8 p-8 md:grid-cols-3 md:p-24 md:pt-0">
         {sections.map((section, key) => (
           <div className="rounded-xl border border-neutral-800 p-12" key={key}>
             <h2 className="text-2xl font-bold">{section.heading}</h2>

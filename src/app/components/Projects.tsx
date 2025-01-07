@@ -12,10 +12,10 @@ const projects = [
 
 const Projects = (props: any) => {
   return (
-    <main className="flex h-fit w-full flex-col items-center justify-center gap-4 p-8 md:px-24">
-      <div className="my-20 text-center">
+    <main className="flex h-fit w-fit flex-col items-center justify-center gap-4">
+      <div className="mt-32 text-center md:my-20">
         <h1 className="text-4xl uppercase">Projects</h1>{" "}
-        <div className="mt-6 hover:underline">
+        <div className="mt-3 hover:underline md:mt-6">
           {props.number > 0 ? <Link href="/projects">see more →</Link> : <></>}
         </div>
       </div>
