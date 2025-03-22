@@ -21,7 +21,7 @@ const Header = () => {
   };
 
   return (
-    <section className="container mx-auto min-h-[calc(100vh-4rem)] px-4 py-12">
+    <section className="container mx-auto flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center px-4 py-12">
       <div className="grid h-full w-full gap-8 md:grid-cols-2 md:gap-12">
         {/* Left Column - Content */}
         <div className="flex flex-col justify-center space-y-6">

@@ -38,8 +38,8 @@ const About = () => {
                 src="/img/awab_hero.webp"
                 alt="Awab Elkhalil"
                 fill
-                sizes="(max-width: 768px) 100vw, 40vw"
-                className="object-cover"
+                sizes="(max-width: 768px) 100vh, 100vw"
+                className="object-contain"
                 priority
               />
             </div>
