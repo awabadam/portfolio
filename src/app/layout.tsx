@@ -1,14 +1,38 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter as FontSans } from "next/font/google";
 import "./globals.css";
-import Navbar from "./components/ui/Navbar";
-import Footer from "./components/ui/Footer";
+import { Navbar, Footer, ThemeProvider } from "../components";
+import { cn } from "@/lib/utils";
 
-const inter = Inter({ subsets: ["latin"] });
+const fontSans = FontSans({
+  subsets: ["latin"],
+  variable: "--font-sans",
+});
 
 export const metadata: Metadata = {
-  title: "Awab Elkhalil",
-  description: "Design Portfolio",
+  title: "Awab Elkhalil | Graphic & Web Designer",
+  description:
+    "Portfolio of Awab Elkhalil, a graphic and web designer specializing in modern web design with Next.js and Tailwind CSS.",
+  keywords: [
+    "graphic design",
+    "web design",
+    "portfolio",
+    "Next.js",
+    "Tailwind CSS",
+    "UI/UX",
+    "Istanbul",
+  ],
+  authors: [{ name: "Awab Elkhalil" }],
+  creator: "Awab Elkhalil",
+  openGraph: {
+    title: "Awab Elkhalil | Graphic & Web Designer",
+    description:
+      "Portfolio of Awab Elkhalil, a graphic and web designer specializing in modern web design with Next.js and Tailwind CSS.",
+    url: "https://awabekhalil.com",
+    siteName: "Awab Elkhalil Portfolio",
+    locale: "en_US",
+    type: "website",
+  },
 };
 
 export default function RootLayout({
@@ -17,13 +41,23 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
-        className={`${inter.className} flex flex-col items-center justify-center`}
+        className={cn(
+          "flex min-h-screen flex-col items-center justify-center bg-background font-sans antialiased",
+          fontSans.variable,
+        )}
       >
-        <Navbar />
-        {children}
-        <Footer />
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <Navbar />
+          {children}
+          <Footer />
+        </ThemeProvider>
       </body>
     </html>
   );
