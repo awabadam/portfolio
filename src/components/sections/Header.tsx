@@ -96,10 +96,27 @@ const Header = () => {
       <div className="mt-12 flex flex-wrap items-center justify-center gap-8 border-t border-border/40 pt-8 opacity-80">
         <p className="text-sm font-medium">Trusted by innovative brands:</p>
         <div className="flex flex-wrap items-center justify-center gap-8">
-          <p className="text-xl font-semibold text-muted-foreground">Brand 1</p>
-          <p className="text-xl font-semibold text-muted-foreground">Brand 2</p>
-          <p className="text-xl font-semibold text-muted-foreground">Brand 3</p>
-          <p className="text-xl font-semibold text-muted-foreground">Brand 4</p>
+          <p className="text-xl font-semibold text-muted-foreground">
+            Saphiredent
+          </p>
+          <p className="text-xl font-semibold text-muted-foreground">
+            Estetikworld
+          </p>
+          <p className="text-xl font-semibold text-muted-foreground">
+            Sari Dental
+          </p>
+          <p className="text-xl font-semibold text-muted-foreground">
+            Boost Sudan
+          </p>
+          <p className="text-xl font-semibold text-muted-foreground">
+            Tenchologya
+          </p>
+          <p className="text-xl font-semibold text-muted-foreground">
+            Italy Pizza
+          </p>
+          <p className="text-xl font-semibold text-muted-foreground">
+            Burger Chef
+          </p>
         </div>
       </div>
     </section>

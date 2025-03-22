@@ -13,7 +13,7 @@ const ProjectsPage = () => {
   const allProjects = getAllProjects();
 
   return (
-    <div className="container mx-auto pt-20">
+    <div className="container mx-auto min-h-[calc(90vh-4rem)] pt-20">
       <Projects projects={allProjects} />
     </div>
   );
