@@ -6,18 +6,60 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { useState } from "react";
+import { Check } from "lucide-react";
 
 const Header = () => {
   const [email, setEmail] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // In a real implementation, this would send the email to your CRM or email service
-    console.log("Lead captured:", email);
-    // Reset form
-    setEmail("");
-    // Show success message or redirect
-    alert("Thanks for your interest! I'll be in touch soon.");
+    setIsSubmitting(true);
+    setError(null);
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          formType: "header", // Identify this as a header form submission
+          name: "Website Audit Request", // Default name for header form
+          projectType: "audit", // Default project type for header form
+          message:
+            "This user has requested a free website audit & consultation.",
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to send message");
+      }
+
+      setIsSubmitted(true);
+      // Reset form after 5 seconds
+      setTimeout(() => {
+        setIsSubmitted(false);
+        setEmail("");
+      }, 5000);
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else if (typeof err === "object" && err !== null && "error" in err) {
+        // Handle API error response
+        setError((err as any).error || "Failed to send message");
+      } else {
+        setError("Something went wrong. Please try again later.");
+      }
+      console.error("Error submitting form:", err);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -42,27 +84,49 @@ const Header = () => {
           {/* Lead Capture Form */}
           <Card className="border-primary/20 bg-background/50 backdrop-blur">
             <CardContent className="p-4">
-              <form onSubmit={handleSubmit} className="space-y-3">
-                <h3 className="text-lg font-medium">
-                  Get a free website audit & consultation
-                </h3>
-                <div className="flex flex-col gap-3 sm:flex-row">
-                  <Input
-                    type="email"
-                    placeholder="Your email address"
-                    className="flex-grow"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                  />
-                  <Button type="submit" className="whitespace-nowrap">
-                    Get Started
-                  </Button>
+              {isSubmitted ? (
+                <div className="flex flex-col items-center justify-center py-4 text-center">
+                  <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-primary/20">
+                    <Check className="h-6 w-6 text-primary" />
+                  </div>
+                  <h3 className="text-lg font-medium">Request Sent!</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Thank you for your interest. I'll get back to you with your
+                    website audit soon.
+                  </p>
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  I respect your privacy. No spam, ever.
-                </p>
-              </form>
+              ) : (
+                <form onSubmit={handleSubmit} className="space-y-3">
+                  <h3 className="text-lg font-medium">
+                    Get a free website audit & consultation
+                  </h3>
+                  <div className="flex flex-col gap-3 sm:flex-row">
+                    <Input
+                      type="email"
+                      placeholder="Your email address"
+                      className="flex-grow"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                    />
+                    <Button
+                      type="submit"
+                      className="whitespace-nowrap"
+                      disabled={isSubmitting}
+                    >
+                      {isSubmitting ? "Sending..." : "Get Started"}
+                    </Button>
+                  </div>
+                  {error && (
+                    <div className="text-center text-sm text-red-500">
+                      {error}
+                    </div>
+                  )}
+                  <p className="text-xs text-muted-foreground">
+                    I respect your privacy. No spam, ever.
+                  </p>
+                </form>
+              )}
             </CardContent>
           </Card>
 

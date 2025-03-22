@@ -17,6 +17,8 @@ const Contact = () => {
   });
 
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -27,22 +29,51 @@ const Contact = () => {
     setFormState((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form submitted:", formState);
-    // In a real implementation, this would send the data to your backend
-    setIsSubmitted(true);
-    // Reset form after 5 seconds
-    setTimeout(() => {
-      setIsSubmitted(false);
-      setFormState({
-        name: "",
-        email: "",
-        phone: "",
-        message: "",
-        projectType: "website",
+    setIsSubmitting(true);
+    setError(null);
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formState),
       });
-    }, 5000);
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to send message");
+      }
+
+      setIsSubmitted(true);
+      // Reset form after 5 seconds
+      setTimeout(() => {
+        setIsSubmitted(false);
+        setFormState({
+          name: "",
+          email: "",
+          phone: "",
+          message: "",
+          projectType: "website",
+        });
+      }, 5000);
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else if (typeof err === "object" && err !== null && "error" in err) {
+        // Handle API error response
+        setError((err as any).error || "Failed to send message");
+      } else {
+        setError("Something went wrong. Please try again later.");
+      }
+      console.error("Error submitting form:", err);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -137,7 +168,12 @@ const Contact = () => {
                     </p>
                   </div>
                 ) : (
-                  <form onSubmit={handleSubmit} className="space-y-6">
+                  <form
+                    onSubmit={handleSubmit}
+                    className="space-y-6"
+                    method="POST"
+                    action="/api/contact"
+                  >
                     <div className="grid gap-6 md:grid-cols-2">
                       <div className="space-y-2">
                         <label htmlFor="name" className="text-sm font-medium">
@@ -221,9 +257,19 @@ const Contact = () => {
                       />
                     </div>
 
-                    <Button type="submit" className="w-full">
-                      Send Message
+                    <Button
+                      type="submit"
+                      className="w-full"
+                      disabled={isSubmitting}
+                    >
+                      {isSubmitting ? "Sending..." : "Send Message"}
                     </Button>
+
+                    {error && (
+                      <div className="mt-2 text-center text-sm text-red-500">
+                        {error}
+                      </div>
+                    )}
 
                     <p className="text-center text-xs text-muted-foreground">
                       By submitting this form, you agree to be contacted about

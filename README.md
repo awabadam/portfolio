@@ -29,8 +29,33 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
 
+## Email Configuration
+
+This project includes a contact form that sends emails. To set up the email functionality:
+
+1. Configure your `.env` file with the following variables:
+
+```
+# Email Configuration
+EMAIL_USER=your-email@example.com
+EMAIL_PASS=your-app-password-or-smtp-password
+EMAIL_HOST=smtp.example.com
+EMAIL_PORT=587
+RECIPIENT_EMAIL=where-to-receive@example.com
+```
+
+2. Email service provider options:
+
+   - **Gmail**: Use `smtp.gmail.com` as the host. If you have 2FA enabled, you'll need to create an App Password.
+   - **Outlook/Office 365**: Use `smtp.office365.com` as the host.
+   - **SendGrid**: Use `smtp.sendgrid.net` as the host with your SendGrid credentials.
+
+3. When deploying, make sure to set these environment variables in your hosting platform.
+
 ## Deploy on Vercel
 
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
+When deploying to Vercel, add the email environment variables in the Vercel project settings.
