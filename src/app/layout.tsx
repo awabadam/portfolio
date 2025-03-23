@@ -54,7 +54,10 @@ export default function RootLayout({
         name="twitter:description"
         content="Professional web design and development services that help businesses stand out online and convert visitors into customers."
       />
-      <meta name="twitter:image" content="/awab-design-thumpnail.png" />
+      <meta
+        name="twitter:image"
+        content="https://opengraph.b-cdn.net/production/images/40e0381d-2e18-492d-9d62-b28f91325c80.png?token=YppRUxFo_RY90wjKvO1wzFnn6GYaRN0a92OA3vCfZZU&height=630&width=1200&expires=33278720984"
+      />
       {/* og meta tags*/}
       <meta property="og:url" content="https://awab.design" />
       <meta property="og:type" content="website" />
@@ -66,7 +69,10 @@ export default function RootLayout({
         property="og:description"
         content="Professional web design and development services that help businesses stand out online and convert visitors into customers."
       />
-      <meta property="og:image" content="/awab-design-thumpnail.png" />
+      <meta
+        property="og:image"
+        content="https://opengraph.b-cdn.net/production/images/40e0381d-2e18-492d-9d62-b28f91325c80.png?token=YppRUxFo_RY90wjKvO1wzFnn6GYaRN0a92OA3vCfZZU&height=630&width=1200&expires=33278720984"
+      />
       {/* body*/}
       <body
         className={cn(
