@@ -7,7 +7,7 @@ export const projects: Project[] = [
     category: "Web Design",
     description: "Website design for a dental implant company",
     behanceUrl: "https://www.behance.net/embed/project/168141271?ilo0=1",
-    thumbnailUrl: "/img/projects/omega-implants.jpg",
+    thumbnailUrl: "/img/projects/omega-implants.png",
     featured: true
   },
   {
@@ -16,7 +16,7 @@ export const projects: Project[] = [
     category: "Advertising",
     description: "Marketing campaign for January promotions",
     behanceUrl: "https://www.behance.net/embed/project/104684137?ilo0=1",
-    thumbnailUrl: "/img/projects/january-campaign.jpg",
+    thumbnailUrl: "/img/projects/january-campaign.png",
     featured: true
   },
   {
@@ -34,7 +34,7 @@ export const projects: Project[] = [
     category: "UI/UX",
     description: "User interface design for a mobile application",
     behanceUrl: "https://www.behance.net/embed/project/124152191?ilo0=1",
-    thumbnailUrl: "/img/projects/mobile-app.jpg",
+    thumbnailUrl: "/img/projects/mobile-app.png",
     featured: false
   },
   {
@@ -43,7 +43,7 @@ export const projects: Project[] = [
     category: "Packaging",
     description: "Creative packaging design for consumer products",
     behanceUrl: "https://www.behance.net/embed/project/124161365?ilo0=1",
-    thumbnailUrl: "/img/projects/packaging.jpg",
+    thumbnailUrl: "/img/projects/packaging.png",
     featured: false
   },
   {
@@ -52,7 +52,7 @@ export const projects: Project[] = [
     category: "Social Media",
     description: "Comprehensive social media marketing campaign",
     behanceUrl: "https://www.behance.net/embed/project/104690015?ilo0=1",
-    thumbnailUrl: "/img/projects/social-campaign.jpg",
+    thumbnailUrl: "/img/projects/social-campaign.png",
     featured: false
   }
 ];

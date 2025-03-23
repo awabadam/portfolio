@@ -5,7 +5,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import {
+  SectionContainer,
+  ContentCard,
+  BackgroundHero,
+  VisualElement,
+} from "@/components/ui";
 
 interface ProjectPageProps {
   params: {
@@ -21,46 +26,64 @@ const ProjectPage = ({ params }: ProjectPageProps) => {
   }
 
   return (
-    <main className="flex h-fit w-full flex-col items-center justify-center gap-8 pt-24">
-      <div className="relative flex h-[70vh] w-full items-center justify-center overflow-hidden bg-muted/30">
-        <div className="absolute bottom-6 left-12 z-10 max-w-md rounded-lg bg-background/80 p-6 backdrop-blur-md">
-          <h1 className="text-2xl font-bold md:text-3xl">{project.title}</h1>
-          <p className="mt-2 text-muted-foreground">{project.description}</p>
-        </div>
+    <main className="flex min-h-screen w-full flex-col items-center">
+      {/* Project Hero */}
+      <BackgroundHero
+        title={project.title}
+        subtitle={project.category}
+        description={project.description}
+        backgroundSrc="https://images.unsplash.com/photo-1561070791-2526d30994b5?q=80&w=2000&auto=format&fit=crop"
+        overlayOpacity={0.7}
+        className="min-h-[70vh]"
+      />
 
-        {/* Placeholder image - in a real app, you'd use the project's actual image */}
-        <div className="flex h-full w-full items-center justify-center bg-muted/50">
-          <p className="text-xl text-muted-foreground">Project Preview</p>
-        </div>
-      </div>
+      {/* Project Details */}
+      <SectionContainer
+        title={project.title}
+        subtitle={`Category: ${project.category}`}
+        className="relative overflow-hidden"
+      >
+        <VisualElement
+          type="blob"
+          position="bottom-right"
+          size="medium"
+          opacity={0.05}
+        />
 
-      <Card className="w-full max-w-4xl border-none shadow-none">
-        <CardContent className="px-6 py-12">
-          <div className="mb-8 flex items-center justify-between">
-            <h1 className="text-3xl font-bold md:text-4xl">{project.title}</h1>
-            <Badge variant="outline">{project.category}</Badge>
+        <ContentCard className="mb-8">
+          <div className="space-y-6">
+            <p className="text-lg text-muted-foreground">
+              {project.description}
+            </p>
+
+            <h3 className="text-xl font-semibold">Project Overview</h3>
+            <p>
+              This project showcases my expertise in{" "}
+              {project.category.toLowerCase()}
+              and demonstrates my approach to creating effective digital
+              solutions. Each project is carefully crafted to meet specific
+              objectives and deliver exceptional results.
+            </p>
+
+            <div className="flex flex-wrap gap-4">
+              <Button asChild>
+                <Link
+                  href={project.behanceUrl.replace("?ilo0=1", "")}
+                  target="_blank"
+                >
+                  View on Behance
+                </Link>
+              </Button>
+
+              <Button asChild variant="outline">
+                <Link href="/projects">← Back to Projects</Link>
+              </Button>
+            </div>
           </div>
+        </ContentCard>
 
-          <p className="mb-8 text-lg text-muted-foreground">
-            {project.description}
-          </p>
-
-          <Button asChild>
-            <Link
-              href={project.behanceUrl.replace("?ilo0=1", "")}
-              target="_blank"
-            >
-              View on Behance
-            </Link>
-          </Button>
-
-          <div className="mt-12 flex justify-between">
-            <Button asChild variant="ghost">
-              <Link href="/projects">← Back to Projects</Link>
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+        {/* Related Projects Section could be added here */}
+      </SectionContainer>
     </main>
   );
 };

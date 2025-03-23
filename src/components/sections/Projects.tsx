@@ -1,5 +1,11 @@
 import { Project } from "@/types";
-import ProjectCard from "@/components/ui/ProjectCard";
+import {
+  SectionContainer,
+  GridLayout,
+  ProjectCard,
+  VisualElement,
+} from "@/components/ui";
+import Link from "next/link";
 
 interface ProjectsProps {
   projects: Project[];
@@ -13,18 +19,40 @@ const Projects: React.FC<ProjectsProps> = ({ projects, featured = false }) => {
     : projects;
 
   return (
-    <section className="w-full py-12">
-      <div className="container mx-auto px-4">
-        <h2 className="mb-8 text-3xl font-bold tracking-tight">
-          {featured ? "Featured Projects" : "All Projects"}
-        </h2>
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {displayProjects.map((project) => (
-            <ProjectCard key={project.id} project={project} />
-          ))}
+    <SectionContainer
+      title={featured ? "Featured Projects" : "All Projects"}
+      subtitle={
+        featured
+          ? "A selection of my best work"
+          : "Browse through my complete portfolio"
+      }
+      decorative
+      className="relative overflow-hidden"
+    >
+      <VisualElement
+        type="blob"
+        position="bottom-right"
+        size="medium"
+        opacity={0.05}
+      />
+
+      <GridLayout columns={3} gap="gap-6">
+        {displayProjects.map((project) => (
+          <ProjectCard key={project.id} project={project} />
+        ))}
+      </GridLayout>
+
+      {featured && (
+        <div className="mt-12 text-center">
+          <Link
+            href="/projects"
+            className="inline-flex items-center text-primary hover:underline"
+          >
+            View All Projects →
+          </Link>
         </div>
-      </div>
-    </section>
+      )}
+    </SectionContainer>
   );
 };
 

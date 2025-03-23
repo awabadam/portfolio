@@ -1,35 +1,57 @@
 import Link from "next/link";
 import React from "react";
-import ProjectCard from "./ui/ProjectCard";
-import { getAllProjects, getFeaturedProjects } from "../data/projects";
 import { Project } from "../types";
+import { SectionContainer, GridLayout, ProjectCard } from "@/components/ui";
 
 interface ProjectsProps {
   number?: number;
+  projects: Project[];
+  featured?: boolean;
 }
 
-const Projects: React.FC<ProjectsProps> = ({ number }) => {
-  // Get projects based on whether we need featured ones or all
-  const projectsToDisplay: Project[] = number
-    ? getFeaturedProjects(number)
-    : getAllProjects();
+const Projects: React.FC<ProjectsProps> = ({
+  projects,
+  number,
+  featured = false,
+}) => {
+  // Filter projects if needed
+  const projectsToDisplay = featured
+    ? projects
+        .filter((project) => project.featured)
+        .slice(0, number || projects.length)
+    : projects.slice(0, number || projects.length);
 
   return (
-    <main className="flex h-fit w-full flex-col items-center justify-center gap-8 py-32">
-      <div className="p-4 text-center">
-        <h1 className="text-4xl uppercase">Projects</h1>
-        <div className="mt-3 hover:underline md:mt-6">
-          {number ? <Link href="/projects">see more →</Link> : <></>}
-        </div>
-      </div>
-
+    <SectionContainer
+      title={featured ? "Featured Projects" : "All Projects"}
+      subtitle={
+        featured
+          ? "A selection of my best work"
+          : "Browse through my complete portfolio"
+      }
+      centered
+      decorative
+      className="relative overflow-hidden"
+    >
       {/* Project Cards */}
-      <div className="grid w-full grid-cols-1 gap-6 px-4 md:grid-cols-3 md:px-8">
+      <GridLayout columns={3} gap="gap-6">
         {projectsToDisplay.map((project) => (
           <ProjectCard key={project.id} project={project} />
         ))}
-      </div>
-    </main>
+      </GridLayout>
+
+      {/* See More Link */}
+      {featured && (
+        <div className="mt-12 text-center">
+          <Link
+            href="/projects"
+            className="inline-flex items-center text-primary hover:underline"
+          >
+            View All Projects →
+          </Link>
+        </div>
+      )}
+    </SectionContainer>
   );
 };
 
