@@ -179,7 +179,7 @@ const Header = () => {
             Italy Pizza
           </p>
           <p className="text-xl font-semibold text-muted-foreground">
-            Burger Chef
+            Chef's Burger
           </p>
         </div>
       </div>

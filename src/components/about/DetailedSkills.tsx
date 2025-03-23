@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { SkillCategory } from "@/data/skills";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Code, Layout, Palette, Settings } from "lucide-react";
+import { Code, Layout, Palette, Settings, Brain } from "lucide-react";
 
 // Map category names to icons
 const categoryIcons: Record<string, React.ReactNode> = {
@@ -12,6 +12,7 @@ const categoryIcons: Record<string, React.ReactNode> = {
   Development: <Code className="h-5 w-5" />,
   Marketing: <Layout className="h-5 w-5" />,
   Tools: <Settings className="h-5 w-5" />,
+  "AI & Machine Learning": <Brain className="h-5 w-5" />,
 };
 
 interface DetailedSkillsProps {
@@ -51,7 +52,7 @@ const DetailedSkills = ({ skillCategories }: DetailedSkillsProps) => {
         </div>
 
         {/* Skills Grid */}
-        <div className="grid gap-8 md:grid-cols-2">
+        <div className="grid gap-6 md:grid-cols-2">
           {skillCategories
             .filter((category) => category.name === activeCategory)
             .map((category) => (
@@ -59,21 +60,20 @@ const DetailedSkills = ({ skillCategories }: DetailedSkillsProps) => {
                 {category.skills.map((skill) => (
                   <Card
                     key={skill.name}
-                    className="border-border/40 bg-card/50 backdrop-blur transition-all duration-300 hover:border-primary/30 hover:shadow-md"
+                    className="border-border/30 bg-card/30 backdrop-blur transition-all duration-300 hover:border-primary/20 hover:bg-card/40"
                   >
-                    <CardContent className="p-4">
-                      <div className="flex items-center justify-between">
-                        <span className="font-medium">{skill.name}</span>
-                        <span className="text-sm font-semibold text-primary">
-                          {skill.proficiency || 0}%
-                        </span>
+                    <CardContent className="p-5">
+                      <div className="mb-3 flex items-center justify-between">
+                        <h4 className="text-base font-medium">{skill.name}</h4>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-medium text-muted-foreground">
+                            {skill.proficiency || 0}%
+                          </span>
+                        </div>
                       </div>
-                      <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-muted">
-                        <div
-                          className="h-full bg-primary transition-all duration-1000"
-                          style={{ width: `${skill.proficiency || 0}%` }}
-                        ></div>
-                      </div>
+                      <p className="text-sm leading-relaxed text-muted-foreground">
+                        {skill.description}
+                      </p>
                     </CardContent>
                   </Card>
                 ))}
@@ -83,7 +83,7 @@ const DetailedSkills = ({ skillCategories }: DetailedSkillsProps) => {
 
         {/* Skill Descriptions */}
         <div className="mt-16">
-          <Card className="border-primary/20">
+          <Card className="border-primary/10 bg-card/50">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 {categoryIcons[activeCategory]}
@@ -161,6 +161,25 @@ const DetailedSkills = ({ skillCategories }: DetailedSkillsProps) => {
                     transitions from design to implementation. I continuously
                     explore new tools and technologies to enhance my workflow
                     and deliver better results.
+                  </p>
+                </div>
+              )}
+
+              {activeCategory === "AI & Machine Learning" && (
+                <div className="space-y-4">
+                  <p>
+                    My AI and machine learning skills enable me to leverage
+                    cutting-edge technologies in creative and practical ways.
+                    I'm skilled at prompt engineering and integrating language
+                    models into applications to enhance functionality and user
+                    experience.
+                  </p>
+                  <p>
+                    I stay informed about AI developments and ethical
+                    considerations, allowing me to implement AI tools
+                    responsibly. My experience spans content creation, image
+                    generation, and workflow automation using various AI
+                    platforms and technologies.
                   </p>
                 </div>
               )}

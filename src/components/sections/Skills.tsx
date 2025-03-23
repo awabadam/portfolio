@@ -54,22 +54,21 @@ const Skills = () => {
               <CardTitle>Design</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
+              <div className="mt-4 space-y-4">
                 {getTopSkills("Design").map((skill) => (
-                  <div key={skill.name}>
-                    <div className="flex items-center justify-between">
-                      <span className="font-medium">{skill.name}</span>
-                      <span className="text-sm text-muted-foreground">
-                        {skill.proficiency || 0}%
-                      </span>
-                    </div>
-                    <div className="mt-1 h-2 w-full overflow-hidden rounded-full bg-muted">
-                      <div
-                        className="h-full bg-primary transition-all duration-1000"
-                        style={{ width: `${skill.proficiency || 0}%` }}
-                      ></div>
-                    </div>
-                  </div>
+                  <Card
+                    key={skill.name}
+                    className="border-border/30 bg-card/30 backdrop-blur transition-all duration-300 hover:border-primary/20 hover:bg-card/40"
+                  >
+                    <CardContent className="p-5">
+                      <div className="mb-3 flex items-center justify-between">
+                        <h4 className="text-base font-medium">{skill.name}</h4>
+                      </div>
+                      <p className="text-sm leading-relaxed text-muted-foreground">
+                        {skill.description}
+                      </p>
+                    </CardContent>
+                  </Card>
                 ))}
               </div>
             </CardContent>
@@ -84,22 +83,21 @@ const Skills = () => {
               <CardTitle>Development</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
+              <div className="mt-4 space-y-4">
                 {getTopSkills("Development").map((skill) => (
-                  <div key={skill.name}>
-                    <div className="flex items-center justify-between">
-                      <span className="font-medium">{skill.name}</span>
-                      <span className="text-sm text-muted-foreground">
-                        {skill.proficiency || 0}%
-                      </span>
-                    </div>
-                    <div className="mt-1 h-2 w-full overflow-hidden rounded-full bg-muted">
-                      <div
-                        className="h-full bg-primary transition-all duration-1000"
-                        style={{ width: `${skill.proficiency || 0}%` }}
-                      ></div>
-                    </div>
-                  </div>
+                  <Card
+                    key={skill.name}
+                    className="border-border/30 bg-card/30 backdrop-blur transition-all duration-300 hover:border-primary/20 hover:bg-card/40"
+                  >
+                    <CardContent className="p-5">
+                      <div className="mb-3 flex items-center justify-between">
+                        <h4 className="text-base font-medium">{skill.name}</h4>
+                      </div>
+                      <p className="text-sm leading-relaxed text-muted-foreground">
+                        {skill.description}
+                      </p>
+                    </CardContent>
+                  </Card>
                 ))}
               </div>
             </CardContent>
