@@ -10,7 +10,7 @@ const fontSans = FontSans({
 });
 
 export const metadata: Metadata = {
-  title: "Awab Elkhalil | Graphic & Web Designer",
+  title: "Awab . Design | Graphic & Web Designer",
   description:
     "Portfolio of Awab Elkhalil, a graphic and web designer specializing in modern web design with Next.js and Tailwind CSS.",
   keywords: [
@@ -25,10 +25,10 @@ export const metadata: Metadata = {
   authors: [{ name: "Awab Elkhalil" }],
   creator: "Awab Elkhalil",
   openGraph: {
-    title: "Awab Elkhalil | Graphic & Web Designer",
+    title: "Awab . Design | Graphic & Web Designer",
     description:
       "Portfolio of Awab Elkhalil, a graphic and web designer specializing in modern web design with Next.js and Tailwind CSS.",
-    url: "https://awabekhalil.com",
+    url: "https://awab.design",
     siteName: "Awab Elkhalil Portfolio",
     locale: "en_US",
     type: "website",
@@ -42,6 +42,32 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      {/* Twitter meta tags*/}
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta property="twitter:domain" content="awab.design" />
+      <meta property="twitter:url" content="https://awab.design" />
+      <meta
+        name="twitter:title"
+        content="Awab Elkhalil | Web Designer & Developer | Istanbul"
+      />
+      <meta
+        name="twitter:description"
+        content="Professional web design and development services that help businesses stand out online and convert visitors into customers."
+      />
+      <meta name="twitter:image" content="/awab-design-thumpnail.png" />
+      {/* og meta tags*/}
+      <meta property="og:url" content="https://awab.design" />
+      <meta property="og:type" content="website" />
+      <meta
+        property="og:title"
+        content="Awab Elkhalil | Web Designer & Developer | Istanbul"
+      />
+      <meta
+        property="og:description"
+        content="Professional web design and development services that help businesses stand out online and convert visitors into customers."
+      />
+      <meta property="og:image" content="/awab-design-thumpnail.png" />
+      {/* body*/}
       <body
         className={cn(
           "flex min-h-screen flex-col items-center justify-center bg-background font-sans antialiased",
