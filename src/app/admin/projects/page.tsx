@@ -47,8 +47,8 @@ export default function AdminProjectsPage() {
           title: item.title,
           category: item.category,
           description: item.description,
-          behanceUrl: item.behance_url,
-          thumbnailUrl: item.thumbnail_url,
+          behance_url: item.behance_url,
+          thumbnail_url: item.thumbnail_url,
           featured: item.featured,
         }));
 
