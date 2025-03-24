@@ -10,8 +10,8 @@ export const metadata: Metadata = {
     "Portfolio of design and web development projects by Awab Elkhalil",
 };
 
-const ProjectsPage = () => {
-  const allProjects = getAllProjects();
+const ProjectsPage = async () => {
+  const allProjects = await getAllProjects();
 
   return (
     <main className="flex min-h-screen w-full flex-col items-center">

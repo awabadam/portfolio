@@ -1,4 +1,6 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Portfolio Website
+
+This is a [Next.js](https://nextjs.org/) portfolio website with Supabase integration for data storage, authentication, and content management.
 
 ## Getting Started
 
@@ -29,11 +31,36 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
 
+## Supabase Integration
+
+This project uses [Supabase](https://supabase.com/) for:
+
+- **Database**: Store projects, skills, testimonials, and other content
+- **Authentication**: User login and registration
+- **Storage**: Upload and manage images and files
+- **API**: Serverless functions for data operations
+
+### Setup Supabase
+
+1. Create a Supabase project at [supabase.com](https://supabase.com/)
+2. Add your Supabase URL and anon key to `.env.local`:
+
+```
+NEXT_PUBLIC_SUPABASE_URL=your-supabase-project-url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
+```
+
+3. Set up the database schema:
+   - Navigate to the SQL Editor in your Supabase dashboard
+   - Run the SQL script from `supabase/schema.sql`
+
+For detailed instructions, see [supabase/README.md](./supabase/README.md).
+
 ## Email Configuration
 
 This project includes a contact form that sends emails. To set up the email functionality:
 
-1. Configure your `.env` file with the following variables:
+1. Configure your `.env.local` file with the following variables:
 
 ```
 # Email Configuration
@@ -52,10 +79,23 @@ RECIPIENT_EMAIL=where-to-receive@example.com
 
 3. When deploying, make sure to set these environment variables in your hosting platform.
 
+## Project Structure
+
+- `src/app`: Next.js app router pages and API routes
+- `src/components`: React components
+- `src/lib/supabase`: Supabase client configuration
+- `src/lib/hooks`: Custom React hooks
+- `src/data`: Data fetching functions
+- `supabase`: Supabase configuration and schema
+
 ## Deploy on Vercel
 
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
 
-When deploying to Vercel, add the email environment variables in the Vercel project settings.
+When deploying to Vercel:
+
+1. Add the email environment variables in the Vercel project settings
+2. Add the Supabase environment variables in the Vercel project settings
+3. Set up the integration between Vercel and Supabase for improved performance

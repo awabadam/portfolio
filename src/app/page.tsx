@@ -38,8 +38,8 @@ export const metadata: Metadata = {
   },
 };
 
-export default function Home() {
-  const featuredProjects = getFeaturedProjects(3);
+export default async function Home() {
+  const featuredProjects = await getFeaturedProjects(3);
 
   return (
     <main className="flex min-h-screen w-full flex-col items-center">

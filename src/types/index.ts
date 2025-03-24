@@ -3,8 +3,16 @@ export interface Project {
   title: string;
   category: string;
   description: string;
-  behanceUrl: string;
-  thumbnailUrl?: string;
+  behance_url: string;
+  thumbnail_url?: string;
   images?: string[];
   featured?: boolean;
+  
+  // Case study fields
+  role?: string;               // e.g., "Graphic Designer"
+  overview?: string;           // Detailed project overview
+  objectives?: string[];       // Bullet points of project goals
+  approach?: string[];         // Bullet points of approach taken
+  designConcept?: string;      // Design concept description
+  finalThoughts?: string;      // Concluding remarks
 }

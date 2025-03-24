@@ -20,10 +20,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
         className="h-full overflow-hidden border-border/40"
       >
         {/* Project Thumbnail */}
-        {project.thumbnailUrl && (
+        {project.thumbnail_url && (
           <div className="relative -mx-4 -mt-4 mb-4 h-48 overflow-hidden">
             <Image
-              src={project.thumbnailUrl}
+              src={project.thumbnail_url}
               alt={project.title}
               fill
               className="object-cover"
