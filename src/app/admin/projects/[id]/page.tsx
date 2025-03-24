@@ -43,8 +43,8 @@ export default function EditProjectPage() {
           title: data.title,
           category: data.category,
           description: data.description,
-          behanceUrl: data.behance_url,
-          thumbnailUrl: data.thumbnail_url,
+          behance_url: data.behance_url,
+          thumbnail_url: data.thumbnail_url,
           featured: data.featured,
         });
       } catch (err) {
