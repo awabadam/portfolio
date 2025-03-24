@@ -33,8 +33,8 @@ export default function ProjectForm({
       title: "",
       category: "",
       description: "",
-      behanceUrl: "",
-      thumbnailUrl: "",
+      behance_url: "",
+      thumbnail_url: "",
       featured: false,
       role: "",
       overview: "",
@@ -126,7 +126,7 @@ export default function ProjectForm({
       // Update form data with new thumbnail URL
       setFormData((prev) => ({
         ...prev,
-        thumbnailUrl: urlData.publicUrl,
+        thumbnail_url: urlData.publicUrl,
       }));
     } catch (error) {
       console.error("Error uploading thumbnail:", error);
@@ -177,7 +177,12 @@ export default function ProjectForm({
 
     try {
       // Validate required fields
-      const requiredFields = ["title", "category", "description", "behanceUrl"];
+      const requiredFields = [
+        "title",
+        "category",
+        "description",
+        "behance_url",
+      ];
       for (const field of requiredFields) {
         if (!formData[field as keyof Project]) {
           throw new Error(
@@ -193,8 +198,8 @@ export default function ProjectForm({
         title: formData.title,
         category: formData.category,
         description: formData.description,
-        behance_url: formData.behanceUrl,
-        thumbnail_url: formData.thumbnailUrl || null,
+        behance_url: formData.behance_url,
+        thumbnail_url: formData.thumbnail_url || null,
         featured: formData.featured || false,
         // Case study fields
         role: formData.role || null,
@@ -316,11 +321,11 @@ export default function ProjectForm({
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="behanceUrl">Behance URL</Label>
+          <Label htmlFor="behance_url">Behance URL</Label>
           <Input
-            id="behanceUrl"
-            name="behanceUrl"
-            value={formData.behanceUrl || ""}
+            id="behance_url"
+            name="behance_url"
+            value={formData.behance_url || ""}
             onChange={handleChange}
             placeholder="https://www.behance.net/embed/project/123456"
             required
@@ -356,11 +361,11 @@ export default function ProjectForm({
           </div>
 
           {/* Thumbnail Preview */}
-          {formData.thumbnailUrl && (
+          {formData.thumbnail_url && (
             <div className="mt-4">
               <div className="relative aspect-video w-full max-w-xs overflow-hidden rounded-md">
                 <Image
-                  src={formData.thumbnailUrl}
+                  src={formData.thumbnail_url}
                   alt="Thumbnail"
                   fill
                   className="object-cover"
@@ -368,7 +373,7 @@ export default function ProjectForm({
                 <button
                   type="button"
                   onClick={() => {
-                    setFormData((prev) => ({ ...prev, thumbnailUrl: "" }));
+                    setFormData((prev) => ({ ...prev, thumbnail_url: "" }));
                   }}
                   className="absolute right-1 top-1 rounded-full bg-background/80 p-1"
                 >
@@ -380,13 +385,13 @@ export default function ProjectForm({
 
           {/* Manual URL input as fallback */}
           <div className="mt-2">
-            <Label htmlFor="thumbnailUrl" className="text-sm">
+            <Label htmlFor="thumbnail_url" className="text-sm">
               Or enter thumbnail URL manually:
             </Label>
             <Input
-              id="thumbnailUrl"
-              name="thumbnailUrl"
-              value={formData.thumbnailUrl || ""}
+              id="thumbnail_url"
+              name="thumbnail_url"
+              value={formData.thumbnail_url || ""}
               onChange={handleChange}
               placeholder="/img/projects/thumbnail.jpg"
               className="mt-1"
