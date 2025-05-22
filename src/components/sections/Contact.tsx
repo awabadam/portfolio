@@ -108,10 +108,10 @@ const Contact = () => {
                 <div>
                   <h4 className="font-medium">Email</h4>
                   <a
-                    href="mailto:contact@awabekhalil.com"
+                    href="mailto:awabe.adam@gmail.com"
                     className="text-sm text-muted-foreground hover:text-primary"
                   >
-                    contact@awabekhalil.com
+                    awabe.adam@gmail.com
                   </a>
                 </div>
               </CardContent>
@@ -163,8 +163,8 @@ const Contact = () => {
                     </div>
                     <h3 className="text-xl font-bold">Message Sent!</h3>
                     <p className="mt-2 text-muted-foreground">
-                      Thank you for reaching out. I'll get back to you within 24
-                      hours.
+                      Thank you for reaching out. I'll get back to you as soon
+                      as possible.
                     </p>
                   </div>
                 ) : (
