@@ -28,7 +28,10 @@ const Skills = () => {
   };
 
   return (
-    <section id="skills" className="relative w-full bg-muted/30 py-20">
+    <section
+      id="skills"
+      className="relative w-full overflow-clip bg-muted/30 py-20"
+    >
       {/* Background decorative elements */}
       <div className="absolute -right-20 top-40 h-80 w-80 rounded-full bg-primary/5 blur-3xl"></div>
 

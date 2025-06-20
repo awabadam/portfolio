@@ -76,7 +76,7 @@ export default function RootLayout({
       {/* body*/}
       <body
         className={cn(
-          "flex min-h-screen flex-col items-center justify-center bg-background font-sans antialiased",
+          "h-full w-screen overflow-x-clip bg-background font-sans antialiased",
           fontSans.variable,
         )}
       >
