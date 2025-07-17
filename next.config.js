@@ -20,9 +20,9 @@ const nextConfig = {
   compress: true,
   poweredByHeader: false,
   generateEtags: false,
-  // Add structured data support
+  // Disable experimental features that cause build issues
   experimental: {
-    optimizeCss: true,
+    // optimizeCss: true, // Removed due to critters dependency issues
   },
 };
 

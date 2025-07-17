@@ -4,9 +4,6 @@ import { getAllProjects } from '@/data/projects'
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://awab.design'
   
-  // Get all projects for dynamic sitemap
-  const projects = await getAllProjects()
-  
   // Static pages
   const staticPages = [
     {
@@ -29,13 +26,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ]
 
-  // Dynamic project pages
-  const projectPages = projects.map((project) => ({
-    url: `${baseUrl}/projects/${project.id}`,
-    lastModified: new Date(),
-    changeFrequency: 'monthly' as const,
-    priority: 0.7,
-  }))
+  try {
+    // Get all projects for dynamic sitemap
+    const projects = await getAllProjects()
+    
+    // Dynamic project pages
+    const projectPages = projects.map((project) => ({
+      url: `${baseUrl}/projects/${project.id}`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.7,
+    }))
 
-  return [...staticPages, ...projectPages]
+    return [...staticPages, ...projectPages]
+  } catch (error) {
+    console.error('Error generating sitemap:', error)
+    // Return only static pages if projects fail to load
+    return staticPages
+  }
 } 

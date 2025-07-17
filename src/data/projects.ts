@@ -1,5 +1,6 @@
 import { Project } from "../types";
 import { createAppServerClient } from "@/lib/supabase/server-app";
+import { createStaticSupabaseClient } from "@/lib/supabase/server-static";
 
 // Fallback projects data if Supabase is not available
 export const fallbackProjects: Project[] = [
@@ -84,7 +85,8 @@ export const fallbackProjects: Project[] = [
 
 export const getProjectById = async (id: string): Promise<Project | undefined> => {
   try {
-    const supabase = createAppServerClient();
+    // Try static client first for build time
+    const supabase = createStaticSupabaseClient();
     const { data, error } = await supabase
       .from('projects')
       .select('*')
@@ -107,7 +109,8 @@ export const getProjectById = async (id: string): Promise<Project | undefined> =
 
 export const getFeaturedProjects = async (count?: number): Promise<Project[]> => {
   try {
-    const supabase = createAppServerClient();
+    // Try static client first for build time
+    const supabase = createStaticSupabaseClient();
     const query = supabase
       .from('projects')
       .select('*')
@@ -138,7 +141,8 @@ export const getFeaturedProjects = async (count?: number): Promise<Project[]> =>
 
 export const getAllProjects = async (): Promise<Project[]> => {
   try {
-    const supabase = createAppServerClient();
+    // Try static client first for build time
+    const supabase = createStaticSupabaseClient();
     const { data, error } = await supabase
       .from('projects')
       .select('*')
