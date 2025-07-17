@@ -41,6 +41,13 @@ export default function EditProjectPage() {
         setProject({
           id: data.id,
           title: data.title,
+          role: data.role,
+          overview: data.overview,
+          objectives: data.objectives,
+          approach: data.approach,
+          designConcept: data.design_concept,
+          finalThoughts: data.final_thoughts,
+          images: data.images,
           category: data.category,
           description: data.description,
           behance_url: data.behance_url,

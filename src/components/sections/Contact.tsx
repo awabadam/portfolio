@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { Check, Mail, MessageSquare, Phone } from "lucide-react";
+import Link from "next/link";
 
 const Contact = () => {
   const [formState, setFormState] = useState({
@@ -77,7 +78,10 @@ const Contact = () => {
   };
 
   return (
-    <section id="contact" className="relative w-full bg-muted/30 py-20">
+    <section
+      id="contact"
+      className="relative w-full overflow-clip bg-muted/30 py-20"
+    >
       {/* Background decorative elements */}
       <div className="absolute left-0 top-0 h-40 w-40 rounded-full bg-primary/5 blur-3xl"></div>
       <div className="absolute bottom-0 right-0 h-60 w-60 rounded-full bg-primary/10 blur-3xl"></div>
@@ -163,8 +167,8 @@ const Contact = () => {
                     </div>
                     <h3 className="text-xl font-bold">Message Sent!</h3>
                     <p className="mt-2 text-muted-foreground">
-                      Thank you for reaching out. I'll get back to you within 24
-                      hours.
+                      Thank you for reaching out. I'll get back to you as soon
+                      as possible.
                     </p>
                   </div>
                 ) : (
