@@ -108,10 +108,10 @@ const Contact = () => {
                 <div>
                   <h4 className="font-medium">Email</h4>
                   <a
-                    href="mailto:contact@awabekhalil.com"
+                    href="mailto:awabe.adam@gmail.com"
                     className="text-sm text-muted-foreground hover:text-primary"
                   >
-                    contact@awabekhalil.com
+                    awabe.adam@gmail.com
                   </a>
                 </div>
               </CardContent>

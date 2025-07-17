@@ -3,6 +3,7 @@ import { Inter as FontSans } from "next/font/google";
 import "./globals.css";
 import { Navbar, Footer, ThemeProvider } from "../components";
 import { cn } from "@/lib/utils";
+import StructuredData from "@/components/StructuredData";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -10,28 +11,78 @@ const fontSans = FontSans({
 });
 
 export const metadata: Metadata = {
-  title: "Awab . Design | Graphic & Web Designer",
+  title: {
+    default: "Awab Elkhalil | Web Designer & Developer | Istanbul",
+    template: "%s | Awab Elkhalil",
+  },
   description:
-    "Portfolio of Awab Elkhalil, a graphic and web designer specializing in modern web design with Next.js and Tailwind CSS.",
+    "Professional web designer and developer in Istanbul. Specializing in modern, conversion-focused websites using Next.js, React, and Tailwind CSS. View portfolio and get in touch.",
   keywords: [
-    "graphic design",
-    "web design",
-    "portfolio",
-    "Next.js",
+    "web designer",
+    "web developer",
+    "UI/UX designer",
+    "Istanbul web designer",
+    "Next.js developer",
+    "React developer",
     "Tailwind CSS",
-    "UI/UX",
-    "Istanbul",
+    "responsive web design",
+    "conversion optimization",
+    "brand identity design",
+    "portfolio",
+    "freelance web designer",
   ],
   authors: [{ name: "Awab Elkhalil" }],
   creator: "Awab Elkhalil",
+  publisher: "Awab Elkhalil",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  metadataBase: new URL("https://awab.design"),
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
-    title: "Awab . Design | Graphic & Web Designer",
+    title: "Awab Elkhalil | Web Designer & Developer | Istanbul",
     description:
-      "Portfolio of Awab Elkhalil, a graphic and web designer specializing in modern web design with Next.js and Tailwind CSS.",
+      "Professional web design and development services that help businesses stand out online and convert visitors into customers.",
     url: "https://awab.design",
     siteName: "Awab Elkhalil Portfolio",
     locale: "en_US",
     type: "website",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Awab Elkhalil - Web Designer & Developer",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Awab Elkhalil | Web Designer & Developer | Istanbul",
+    description:
+      "Professional web design and development services that help businesses stand out online and convert visitors into customers.",
+    images: ["/og-image.png"],
+    creator: "@awabelkhalil",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  verification: {
+    google: "your-google-verification-code",
+    yandex: "your-yandex-verification-code",
+    yahoo: "your-yahoo-verification-code",
   },
 };
 
@@ -42,37 +93,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      {/* Twitter meta tags*/}
-      <meta name="twitter:card" content="summary_large_image" />
-      <meta property="twitter:domain" content="awab.design" />
-      <meta property="twitter:url" content="https://awab.design" />
-      <meta
-        name="twitter:title"
-        content="Awab Elkhalil | Web Designer & Developer | Istanbul"
-      />
-      <meta
-        name="twitter:description"
-        content="Professional web design and development services that help businesses stand out online and convert visitors into customers."
-      />
-      <meta
-        name="twitter:image"
-        content="https://opengraph.b-cdn.net/production/images/40e0381d-2e18-492d-9d62-b28f91325c80.png?token=YppRUxFo_RY90wjKvO1wzFnn6GYaRN0a92OA3vCfZZU&height=630&width=1200&expires=33278720984"
-      />
-      {/* og meta tags*/}
-      <meta property="og:url" content="https://awab.design" />
-      <meta property="og:type" content="website" />
-      <meta
-        property="og:title"
-        content="Awab Elkhalil | Web Designer & Developer | Istanbul"
-      />
-      <meta
-        property="og:description"
-        content="Professional web design and development services that help businesses stand out online and convert visitors into customers."
-      />
-      <meta
-        property="og:image"
-        content="https://opengraph.b-cdn.net/production/images/40e0381d-2e18-492d-9d62-b28f91325c80.png?token=YppRUxFo_RY90wjKvO1wzFnn6GYaRN0a92OA3vCfZZU&height=630&width=1200&expires=33278720984"
-      />
+      <StructuredData />
       {/* body*/}
       <body
         className={cn(

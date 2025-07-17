@@ -1,13 +1,35 @@
 import React from "react";
-import { Projects } from "../../components";
 import { Metadata } from "next";
 import { getAllProjects } from "../../data/projects";
-import { BackgroundHero } from "@/components/ui";
+import {
+  BackgroundHero,
+  SectionContainer,
+  ProjectCard,
+  GridLayout,
+  VisualElement,
+} from "@/components/ui";
 
 export const metadata: Metadata = {
-  title: "Projects | Awab Elkhalil",
+  title: "Portfolio Projects | Awab Elkhalil - Web Designer & Developer",
   description:
-    "Portfolio of design and web development projects by Awab Elkhalil",
+    "Browse my complete portfolio of web design and development projects. See examples of modern websites, UI/UX designs, and digital solutions created for clients.",
+  keywords: [
+    "portfolio projects",
+    "web design portfolio",
+    "UI/UX projects",
+    "website examples",
+    "design case studies",
+    "web development projects",
+  ],
+  openGraph: {
+    title: "Portfolio Projects | Awab Elkhalil - Web Designer & Developer",
+    description:
+      "Browse my complete portfolio of web design and development projects. See examples of modern websites, UI/UX designs, and digital solutions created for clients.",
+    url: "https://awab.design/projects",
+  },
+  alternates: {
+    canonical: "/projects",
+  },
 };
 
 const ProjectsPage = async () => {
@@ -23,9 +45,27 @@ const ProjectsPage = async () => {
         className="relative overflow-hidden"
       />
 
-      <div className="w-full">
-        <Projects projects={allProjects} />
-      </div>
+      <SectionContainer
+        title="All Projects"
+        subtitle="Browse through my complete portfolio"
+        centered
+        decorative
+        className="relative overflow-hidden"
+      >
+        <VisualElement
+          type="blob"
+          position="bottom-right"
+          size="medium"
+          opacity={0.05}
+        />
+
+        {/* Project Cards */}
+        <GridLayout columns={3} gap="gap-8">
+          {allProjects.map((project) => (
+            <ProjectCard key={project.id} project={project} />
+          ))}
+        </GridLayout>
+      </SectionContainer>
     </main>
   );
 };

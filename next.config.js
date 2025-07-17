@@ -1,4 +1,5 @@
-module.exports = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   images: {
     remotePatterns: [
       {
@@ -15,4 +16,14 @@ module.exports = {
       },
     ],
   },
+  // SEO optimizations
+  compress: true,
+  poweredByHeader: false,
+  generateEtags: false,
+  // Add structured data support
+  experimental: {
+    optimizeCss: true,
+  },
 };
+
+module.exports = nextConfig;
