@@ -122,7 +122,7 @@ const Contact = () => {
                 </div>
                 <div>
                   <h4 className="font-medium">Email</h4>
-                  <a
+                  <Link
                     href="mailto:awabe.adam@gmail.com"
                     className="text-sm text-muted-foreground hover:text-primary"
                     onClick={() => {
@@ -131,7 +131,7 @@ const Contact = () => {
                     }}
                   >
                     awabe.adam@gmail.com
-                  </a>
+                  </Link>
                 </div>
               </CardContent>
             </Card>
@@ -143,7 +143,7 @@ const Contact = () => {
                 </div>
                 <div>
                   <h4 className="font-medium">Phone</h4>
-                  <a
+                  <Link
                     href="tel:+905541759945"
                     className="text-sm text-muted-foreground hover:text-primary"
                     onClick={() => {
@@ -152,7 +152,7 @@ const Contact = () => {
                     }}
                   >
                     +90 554 175 9945
-                  </a>
+                  </Link>
                 </div>
               </CardContent>
             </Card>
