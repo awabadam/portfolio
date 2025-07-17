@@ -3,6 +3,8 @@ import { Inter as FontSans } from "next/font/google";
 import "./globals.css";
 import { Navbar, Footer, ThemeProvider } from "../components";
 import { cn } from "@/lib/utils";
+import GoogleAnalytics from "@/components/GoogleAnalytics";
+import PageTracking from "@/components/PageTracking";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -139,6 +141,24 @@ export default function RootLayout({
           `,
         }}
       />
+      {/* Google Analytics 4 */}
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-EL4WEH4X3X', {
+              page_title: document.title,
+              page_location: window.location.href,
+            });
+          `,
+        }}
+      />
+      <script
+        async
+        src="https://www.googletagmanager.com/gtag/js?id=G-EL4WEH4X3X"
+      />
       {/* body*/}
       <body
         className={cn(
@@ -161,6 +181,8 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <GoogleAnalytics />
+          <PageTracking />
           <Navbar />
           {children}
           <Footer />
