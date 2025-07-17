@@ -7,6 +7,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { Check, Mail, MessageSquare, Phone } from "lucide-react";
 import Link from "next/link";
+import {
+  trackFormSubmission,
+  trackContactAction,
+  trackLeadGeneration,
+} from "@/lib/gtm";
 
 const Contact = () => {
   const [formState, setFormState] = useState({
@@ -51,6 +56,11 @@ const Contact = () => {
       }
 
       setIsSubmitted(true);
+
+      // Track form submission
+      trackFormSubmission("contact_form", formState.projectType);
+      trackLeadGeneration("contact_page", formState.projectType);
+
       // Reset form after 5 seconds
       setTimeout(() => {
         setIsSubmitted(false);
@@ -114,6 +124,7 @@ const Contact = () => {
                   <a
                     href="mailto:awabe.adam@gmail.com"
                     className="text-sm text-muted-foreground hover:text-primary"
+                    onClick={() => trackContactAction("email_click", "email")}
                   >
                     awabe.adam@gmail.com
                   </a>
@@ -131,6 +142,7 @@ const Contact = () => {
                   <a
                     href="tel:+905541759945"
                     className="text-sm text-muted-foreground hover:text-primary"
+                    onClick={() => trackContactAction("phone_click", "phone")}
                   >
                     +90 554 175 9945
                   </a>
@@ -148,6 +160,9 @@ const Contact = () => {
                   <a
                     href="https://wa.me/905541759945"
                     className="text-sm text-muted-foreground hover:text-primary"
+                    onClick={() =>
+                      trackContactAction("whatsapp_click", "whatsapp")
+                    }
                   >
                     Message on WhatsApp
                   </a>

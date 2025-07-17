@@ -3,16 +3,23 @@ import Image from "next/image";
 import { Project } from "@/types";
 import { ContentCard } from "@/components/ui";
 import { Badge } from "@/components/ui/badge";
+import { trackProjectView, trackButtonClick } from "@/lib/gtm";
 
 interface ProjectCardProps {
   project: Project;
 }
 
 const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
+  const handleProjectClick = () => {
+    trackProjectView(project.id, project.title);
+    trackButtonClick("view_project", project.title);
+  };
+
   return (
     <Link
       href={`/projects/${project.id}`}
       className="group block w-full transition-all duration-300"
+      onClick={handleProjectClick}
     >
       <ContentCard
         title={project.title}

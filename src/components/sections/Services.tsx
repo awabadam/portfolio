@@ -20,6 +20,11 @@ import {
   DollarSign,
   Target,
 } from "lucide-react";
+import {
+  trackServiceInterest,
+  trackButtonClick,
+  trackLeadGeneration,
+} from "@/lib/gtm";
 
 interface Service {
   icon: React.ReactNode;
@@ -160,6 +165,10 @@ const Services = () => {
                   asChild
                   variant="ghost"
                   className="group p-0 text-primary"
+                  onClick={() => {
+                    trackServiceInterest(service.title);
+                    trackButtonClick("get_started", service.title);
+                  }}
                 >
                   <Link href={service.link} className="flex items-center gap-2">
                     Get started
@@ -172,7 +181,14 @@ const Services = () => {
         </div>
 
         <div className="mt-12 text-center">
-          <Button asChild size="lg">
+          <Button
+            asChild
+            size="lg"
+            onClick={() => {
+              trackButtonClick("free_consultation", "services_section");
+              trackLeadGeneration("services_section", "consultation");
+            }}
+          >
             <Link href="#contact">Get a Free Consultation</Link>
           </Button>
           <p className="mt-4 text-sm text-muted-foreground">

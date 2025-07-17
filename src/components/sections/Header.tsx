@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { useState } from "react";
 import { Check, Star, Users, Zap } from "lucide-react";
+import { trackFormSubmission, trackLeadGeneration } from "@/lib/gtm";
 
 const Header = () => {
   const [email, setEmail] = useState("");
@@ -42,6 +43,11 @@ const Header = () => {
       }
 
       setIsSubmitted(true);
+
+      // Track form submission
+      trackFormSubmission("header_audit_form", "website_audit");
+      trackLeadGeneration("hero_section", "website_audit");
+
       setTimeout(() => {
         setIsSubmitted(false);
         setEmail("");
