@@ -11,6 +11,7 @@ import {
   trackFormSubmission,
   trackContactAction,
   trackLeadGeneration,
+  trackContactClick,
 } from "@/lib/gtm";
 
 const Contact = () => {
@@ -124,7 +125,10 @@ const Contact = () => {
                   <a
                     href="mailto:awabe.adam@gmail.com"
                     className="text-sm text-muted-foreground hover:text-primary"
-                    onClick={() => trackContactAction("email_click", "email")}
+                    onClick={() => {
+                      trackContactAction("email_click", "email");
+                      trackContactClick("email", "contact_card");
+                    }}
                   >
                     awabe.adam@gmail.com
                   </a>
@@ -142,7 +146,10 @@ const Contact = () => {
                   <a
                     href="tel:+905541759945"
                     className="text-sm text-muted-foreground hover:text-primary"
-                    onClick={() => trackContactAction("phone_click", "phone")}
+                    onClick={() => {
+                      trackContactAction("phone_click", "phone");
+                      trackContactClick("phone", "contact_card");
+                    }}
                   >
                     +90 554 175 9945
                   </a>
@@ -160,9 +167,10 @@ const Contact = () => {
                   <a
                     href="https://wa.me/905541759945"
                     className="text-sm text-muted-foreground hover:text-primary"
-                    onClick={() =>
-                      trackContactAction("whatsapp_click", "whatsapp")
-                    }
+                    onClick={() => {
+                      trackContactAction("whatsapp_click", "whatsapp");
+                      trackContactClick("whatsapp", "contact_card");
+                    }}
                   >
                     Message on WhatsApp
                   </a>

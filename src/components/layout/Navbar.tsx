@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { ModeToggle } from "@/components/ui/mode-toggle";
 import { Button } from "@/components/ui/button";
+import { trackNavigationClick, trackContactClick } from "@/lib/gtm";
 import {
   Sheet,
   SheetContent,
@@ -34,14 +35,24 @@ const Navbar = () => {
           <NavigationMenu>
             <NavigationMenuList>
               <NavigationMenuItem>
-                <Link href="/about" legacyBehavior passHref>
+                <Link
+                  href="/about"
+                  legacyBehavior
+                  passHref
+                  onClick={() => trackNavigationClick("about", "navbar")}
+                >
                   <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                     About
                   </NavigationMenuLink>
                 </Link>
               </NavigationMenuItem>
               <NavigationMenuItem>
-                <Link href="/projects" legacyBehavior passHref>
+                <Link
+                  href="/projects"
+                  legacyBehavior
+                  passHref
+                  onClick={() => trackNavigationClick("work", "navbar")}
+                >
                   <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                     Work
                   </NavigationMenuLink>
@@ -50,7 +61,11 @@ const Navbar = () => {
             </NavigationMenuList>
           </NavigationMenu>
 
-          <Button asChild variant="outline">
+          <Button
+            asChild
+            variant="outline"
+            onClick={() => trackContactClick("whatsapp", "navbar")}
+          >
             <Link
               href="https://wa.me/905541759945"
               target="_blank"

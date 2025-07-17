@@ -7,7 +7,13 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { useState } from "react";
 import { Check, Star, Users, Zap } from "lucide-react";
-import { trackFormSubmission, trackLeadGeneration } from "@/lib/gtm";
+import {
+  trackFormSubmission,
+  trackLeadGeneration,
+  trackCTAClick,
+  trackButtonClick,
+  trackNavigationClick,
+} from "@/lib/gtm";
 
 const Header = () => {
   const [email, setEmail] = useState("");
@@ -154,10 +160,34 @@ const Header = () => {
           </Card>
 
           <div className="flex flex-col gap-4 sm:flex-row">
-            <Button asChild size="lg" variant="outline">
+            <Button
+              asChild
+              size="lg"
+              variant="outline"
+              onClick={() => {
+                trackCTAClick("view_portfolio", "hero_section");
+                trackButtonClick(
+                  "view_portfolio",
+                  "hero_section",
+                  "secondary_cta",
+                );
+              }}
+            >
               <Link href="/projects">View My Portfolio</Link>
             </Button>
-            <Button asChild variant="ghost" size="lg">
+            <Button
+              asChild
+              variant="ghost"
+              size="lg"
+              onClick={() => {
+                trackNavigationClick("explore_services", "hero_section");
+                trackButtonClick(
+                  "explore_services",
+                  "hero_section",
+                  "navigation",
+                );
+              }}
+            >
               <Link href="#services">Explore Services</Link>
             </Button>
           </div>

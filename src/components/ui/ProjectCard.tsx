@@ -3,7 +3,11 @@ import Image from "next/image";
 import { Project } from "@/types";
 import { ContentCard } from "@/components/ui";
 import { Badge } from "@/components/ui/badge";
-import { trackProjectView, trackButtonClick } from "@/lib/gtm";
+import {
+  trackProjectView,
+  trackButtonClick,
+  trackProjectClick,
+} from "@/lib/gtm";
 
 interface ProjectCardProps {
   project: Project;
@@ -12,7 +16,8 @@ interface ProjectCardProps {
 const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
   const handleProjectClick = () => {
     trackProjectView(project.id, project.title);
-    trackButtonClick("view_project", project.title);
+    trackProjectClick(project.title, "project_card");
+    trackButtonClick("view_project", project.title, "project_cta");
   };
 
   return (

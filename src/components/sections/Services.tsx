@@ -24,6 +24,8 @@ import {
   trackServiceInterest,
   trackButtonClick,
   trackLeadGeneration,
+  trackServiceClick,
+  trackCTAClick,
 } from "@/lib/gtm";
 
 interface Service {
@@ -167,7 +169,12 @@ const Services = () => {
                   className="group p-0 text-primary"
                   onClick={() => {
                     trackServiceInterest(service.title);
-                    trackButtonClick("get_started", service.title);
+                    trackServiceClick(service.title, "services_card");
+                    trackButtonClick(
+                      "get_started",
+                      service.title,
+                      "service_cta",
+                    );
                   }}
                 >
                   <Link href={service.link} className="flex items-center gap-2">
@@ -185,7 +192,12 @@ const Services = () => {
             asChild
             size="lg"
             onClick={() => {
-              trackButtonClick("free_consultation", "services_section");
+              trackCTAClick("free_consultation", "services_section");
+              trackButtonClick(
+                "free_consultation",
+                "services_section",
+                "primary_cta",
+              );
               trackLeadGeneration("services_section", "consultation");
             }}
           >

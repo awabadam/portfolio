@@ -1,6 +1,11 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Mail, Phone, MapPin, Github, Linkedin, Twitter } from "lucide-react";
+import {
+  trackSocialClick,
+  trackContactClick,
+  trackNavigationClick,
+} from "@/lib/gtm";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -19,17 +24,32 @@ const Footer = () => {
               healthcare businesses and startups.
             </p>
             <div className="flex gap-4">
-              <Button asChild variant="ghost" size="sm">
+              <Button
+                asChild
+                variant="ghost"
+                size="sm"
+                onClick={() => trackContactClick("email", "footer")}
+              >
                 <Link href="mailto:awabe.adam@gmail.com">
                   <Mail className="h-4 w-4" />
                 </Link>
               </Button>
-              <Button asChild variant="ghost" size="sm">
+              <Button
+                asChild
+                variant="ghost"
+                size="sm"
+                onClick={() => trackContactClick("phone", "footer")}
+              >
                 <Link href="tel:+905541759945">
                   <Phone className="h-4 w-4" />
                 </Link>
               </Button>
-              <Button asChild variant="ghost" size="sm">
+              <Button
+                asChild
+                variant="ghost"
+                size="sm"
+                onClick={() => trackSocialClick("github", "footer")}
+              >
                 <Link
                   href="https://github.com/awabelkhalil"
                   target="_blank"
@@ -38,7 +58,12 @@ const Footer = () => {
                   <Github className="h-4 w-4" />
                 </Link>
               </Button>
-              <Button asChild variant="ghost" size="sm">
+              <Button
+                asChild
+                variant="ghost"
+                size="sm"
+                onClick={() => trackSocialClick("linkedin", "footer")}
+              >
                 <Link
                   href="https://linkedin.com/in/awabelkhalil"
                   target="_blank"
@@ -119,7 +144,12 @@ const Footer = () => {
             </p>
           </div>
           <div className="flex gap-4">
-            <Button asChild variant="ghost" size="sm">
+            <Button
+              asChild
+              variant="ghost"
+              size="sm"
+              onClick={() => trackContactClick("whatsapp", "footer")}
+            >
               <Link
                 href="https://wa.me/905541759945"
                 target="_blank"
@@ -128,7 +158,12 @@ const Footer = () => {
                 Get Quote
               </Link>
             </Button>
-            <Button asChild variant="ghost" size="sm">
+            <Button
+              asChild
+              variant="ghost"
+              size="sm"
+              onClick={() => trackNavigationClick("view_work", "footer")}
+            >
               <Link href="/projects">View Work</Link>
             </Button>
           </div>
