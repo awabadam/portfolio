@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { useState } from "react";
-import { Check } from "lucide-react";
+import { Check, Star, Users, Zap } from "lucide-react";
 
 const Header = () => {
   const [email, setEmail] = useState("");
@@ -27,9 +27,9 @@ const Header = () => {
         },
         body: JSON.stringify({
           email,
-          formType: "header", // Identify this as a header form submission
-          name: "Website Audit Request", // Default name for header form
-          projectType: "audit", // Default project type for header form
+          formType: "header",
+          name: "Website Audit Request",
+          projectType: "audit",
           message:
             "This user has requested a free website audit & consultation.",
         }),
@@ -42,7 +42,6 @@ const Header = () => {
       }
 
       setIsSubmitted(true);
-      // Reset form after 5 seconds
       setTimeout(() => {
         setIsSubmitted(false);
         setEmail("");
@@ -51,7 +50,6 @@ const Header = () => {
       if (err instanceof Error) {
         setError(err.message);
       } else if (typeof err === "object" && err !== null && "error" in err) {
-        // Handle API error response
         setError((err as any).error || "Failed to send message");
       } else {
         setError("Something went wrong. Please try again later.");
@@ -69,17 +67,36 @@ const Header = () => {
         <div className="flex flex-col justify-center space-y-6">
           <div className="space-y-2">
             <h2 className="text-sm font-semibold uppercase tracking-widest text-primary">
-              Elevate Your Digital Presence
+              Istanbul-Based Web Designer & Developer
             </h2>
             <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
-              Stunning Web Design That Converts
+              Websites That Drive{" "}
+              <span className="text-primary">Real Results</span>
             </h1>
           </div>
 
           <p className="text-xl leading-relaxed text-muted-foreground">
-            I help businesses stand out online with modern, responsive websites
-            that attract clients and drive results.
+            I help healthcare businesses and startups in Istanbul create
+            websites that
+            <strong> convert visitors into patients and customers</strong>.
+            Specializing in modern, fast-loading sites that rank well on Google.
           </p>
+
+          {/* Social Proof Stats */}
+          <div className="flex flex-wrap gap-6 text-sm">
+            <div className="flex items-center gap-2">
+              <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+              <span className="font-medium">5+ Years Experience</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Users className="h-4 w-4 text-primary" />
+              <span className="font-medium">50+ Projects Completed</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Zap className="h-4 w-4 text-primary" />
+              <span className="font-medium">24hr Response Time</span>
+            </div>
+          </div>
 
           {/* Lead Capture Form */}
           <Card className="border-primary/20 bg-background/50 backdrop-blur">
@@ -146,7 +163,7 @@ const Header = () => {
           <div className="relative z-10 aspect-square w-full max-w-xl overflow-hidden">
             <Image
               src="/img/awab_hero.webp"
-              alt="Awab Elkhalil"
+              alt="Awab Elkhalil - Web Designer & Developer in Istanbul"
               fill
               sizes="(max-width: 768px) 100vw, 50vw"
               className="object-contain"

@@ -3,7 +3,6 @@ import { Inter as FontSans } from "next/font/google";
 import "./globals.css";
 import { Navbar, Footer, ThemeProvider } from "../components";
 import { cn } from "@/lib/utils";
-import StructuredData from "@/components/StructuredData";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -84,6 +83,41 @@ export const metadata: Metadata = {
     yandex: "your-yandex-verification-code",
     yahoo: "your-yahoo-verification-code",
   },
+  other: {
+    "application/ld+json": JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Person",
+      name: "Awab Elkhalil",
+      jobTitle: "Web Designer & Developer",
+      description:
+        "Professional web designer and developer specializing in modern, conversion-focused websites",
+      url: "https://awab.design",
+      sameAs: [
+        "https://linkedin.com/in/awabelkhalil",
+        "https://github.com/awabelkhalil",
+        "https://twitter.com/awabelkhalil",
+      ],
+      worksFor: {
+        "@type": "Organization",
+        name: "Freelance",
+      },
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: "Istanbul",
+        addressCountry: "TR",
+      },
+      knowsAbout: [
+        "Web Design",
+        "Web Development",
+        "UI/UX Design",
+        "Next.js",
+        "React",
+        "Tailwind CSS",
+        "JavaScript",
+        "TypeScript",
+      ],
+    }),
+  },
 };
 
 export default function RootLayout({
@@ -93,7 +127,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <StructuredData />
       {/* body*/}
       <body
         className={cn(

@@ -54,7 +54,8 @@ export default async function Home() {
         <Projects projects={featuredProjects} featured={true} />
       </div>
 
-      {/* Testimonials - Social proof  <Testimonials /> */}
+      {/* Testimonials - Social proof */}
+      <Testimonials />
 
       {/* About Section - Personal connection */}
       <About />

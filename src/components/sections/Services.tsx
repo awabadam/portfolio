@@ -10,42 +10,86 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { ArrowRight, Code, Layout, Palette, PenTool } from "lucide-react";
+import {
+  ArrowRight,
+  Code,
+  Layout,
+  Palette,
+  PenTool,
+  Clock,
+  DollarSign,
+  Target,
+} from "lucide-react";
 
 interface Service {
   icon: React.ReactNode;
   title: string;
   description: string;
+  benefits: string[];
+  timeframe: string;
+  priceRange: string;
   link: string;
 }
 
 const services: Service[] = [
   {
     icon: <Layout className="h-10 w-10 text-primary" />,
-    title: "Web Design",
+    title: "Website Design & Development",
     description:
-      "Custom, responsive websites that look stunning on all devices and help convert visitors into customers.",
-    link: "#contact",
-  },
-  {
-    icon: <Code className="h-10 w-10 text-primary" />,
-    title: "Web Development",
-    description:
-      "Fast, secure, and scalable websites built with modern technologies like Next.js and Tailwind CSS.",
+      "Complete website solutions from concept to launch. Modern, responsive designs that convert visitors into customers.",
+    benefits: [
+      "Mobile-first responsive design",
+      "SEO-optimized structure",
+      "Fast loading times",
+      "Contact forms & lead capture",
+    ],
+    timeframe: "2-4 weeks",
+    priceRange: "Starting from $1,500",
     link: "#contact",
   },
   {
     icon: <Palette className="h-10 w-10 text-primary" />,
     title: "UI/UX Design",
     description:
-      "Intuitive user interfaces and seamless experiences that keep users engaged and drive conversions.",
+      "User-centered design that creates intuitive experiences and drives engagement. From wireframes to final designs.",
+    benefits: [
+      "User research & personas",
+      "Wireframes & prototypes",
+      "Interactive mockups",
+      "Design system creation",
+    ],
+    timeframe: "1-3 weeks",
+    priceRange: "Starting from $800",
     link: "#contact",
   },
   {
     icon: <PenTool className="h-10 w-10 text-primary" />,
-    title: "Brand Identity",
+    title: "Brand Identity Design",
     description:
-      "Cohesive visual identities that communicate your brand's values and resonate with your target audience.",
+      "Complete brand identity packages including logos, color palettes, typography, and brand guidelines.",
+    benefits: [
+      "Logo design & variations",
+      "Color palette & typography",
+      "Brand guidelines",
+      "Business card & stationery",
+    ],
+    timeframe: "1-2 weeks",
+    priceRange: "Starting from $600",
+    link: "#contact",
+  },
+  {
+    icon: <Code className="h-10 w-10 text-primary" />,
+    title: "Website Maintenance",
+    description:
+      "Ongoing website maintenance, updates, and optimization to keep your site secure, fast, and up-to-date.",
+    benefits: [
+      "Regular security updates",
+      "Performance optimization",
+      "Content updates",
+      "24/7 support",
+    ],
+    timeframe: "Ongoing",
+    priceRange: "From $200/month",
     link: "#contact",
   },
 ];
@@ -59,11 +103,12 @@ const Services = () => {
             Services
           </h2>
           <h3 className="mt-2 text-3xl font-bold">
-            How I Can Help Your Business
+            Solutions That Drive Business Growth
           </h3>
           <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
-            I offer comprehensive design and development services to help your
-            business stand out in the digital landscape and achieve your goals.
+            I offer comprehensive design and development services tailored to
+            help your business stand out in Istanbul's competitive market and
+            achieve measurable results.
           </p>
         </div>
 
@@ -75,10 +120,40 @@ const Services = () => {
             >
               <CardHeader>
                 <div className="mb-4">{service.icon}</div>
-                <CardTitle>{service.title}</CardTitle>
+                <CardTitle className="text-lg">{service.title}</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="space-y-4">
                 <p className="text-muted-foreground">{service.description}</p>
+
+                {/* Benefits */}
+                <div className="space-y-2">
+                  <h4 className="text-sm font-medium text-primary">
+                    What's included:
+                  </h4>
+                  <ul className="space-y-1">
+                    {service.benefits.map((benefit, idx) => (
+                      <li
+                        key={idx}
+                        className="flex items-center gap-2 text-sm text-muted-foreground"
+                      >
+                        <Target className="h-3 w-3 text-primary" />
+                        {benefit}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Timeframe & Price */}
+                <div className="flex items-center justify-between text-sm">
+                  <div className="flex items-center gap-1 text-muted-foreground">
+                    <Clock className="h-3 w-3" />
+                    <span>{service.timeframe}</span>
+                  </div>
+                  <div className="flex items-center gap-1 font-medium text-primary">
+                    <DollarSign className="h-3 w-3" />
+                    <span>{service.priceRange}</span>
+                  </div>
+                </div>
               </CardContent>
               <CardFooter>
                 <Button
@@ -87,7 +162,7 @@ const Services = () => {
                   className="group p-0 text-primary"
                 >
                   <Link href={service.link} className="flex items-center gap-2">
-                    Learn more
+                    Get started
                     <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                   </Link>
                 </Button>
@@ -100,6 +175,9 @@ const Services = () => {
           <Button asChild size="lg">
             <Link href="#contact">Get a Free Consultation</Link>
           </Button>
+          <p className="mt-4 text-sm text-muted-foreground">
+            All projects include free revisions and ongoing support
+          </p>
         </div>
       </div>
     </section>
