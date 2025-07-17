@@ -164,7 +164,7 @@ const Contact = () => {
                 </div>
                 <div>
                   <h4 className="font-medium">WhatsApp</h4>
-                  <a
+                  <Link
                     href="https://wa.me/905541759945"
                     className="text-sm text-muted-foreground hover:text-primary"
                     onClick={() => {
@@ -173,7 +173,7 @@ const Contact = () => {
                     }}
                   >
                     Message on WhatsApp
-                  </a>
+                  </Link>
                 </div>
               </CardContent>
             </Card>
