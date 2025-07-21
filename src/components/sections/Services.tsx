@@ -41,14 +41,15 @@ interface Service {
 const services: Service[] = [
   {
     icon: <Layout className="h-10 w-10 text-primary" />,
-    title: "Website Design & Development",
+    title: "Webdesign Istanbul - Website Design & Development",
     description:
-      "Complete website solutions from concept to launch. Modern, responsive designs that convert visitors into customers.",
+      "Professional webdesign Istanbul services. Complete website solutions from concept to launch. Modern, responsive designs that convert visitors into customers.",
     benefits: [
-      "Mobile-first responsive design",
-      "SEO-optimized structure",
+      "Mobile-first responsive webdesign",
+      "SEO-optimized structure for Istanbul market",
       "Fast loading times",
       "Contact forms & lead capture",
+      "Local Istanbul business optimization",
     ],
     timeframe: "2-4 weeks",
     priceRange: "Starting from $1,500",
@@ -56,10 +57,11 @@ const services: Service[] = [
   },
   {
     icon: <Palette className="h-10 w-10 text-primary" />,
-    title: "UI/UX Design",
+    title: "Graphic Design Istanbul - UI/UX Design",
     description:
-      "User-centered design that creates intuitive experiences and drives engagement. From wireframes to final designs.",
+      "Expert graphic design Istanbul services. User-centered design that creates intuitive experiences and drives engagement. From wireframes to final designs.",
     benefits: [
+      "Professional graphic design Istanbul",
       "User research & personas",
       "Wireframes & prototypes",
       "Interactive mockups",
@@ -71,14 +73,15 @@ const services: Service[] = [
   },
   {
     icon: <PenTool className="h-10 w-10 text-primary" />,
-    title: "Brand Identity Design",
+    title: "Graphic Design Istanbul - Brand Identity",
     description:
-      "Complete brand identity packages including logos, color palettes, typography, and brand guidelines.",
+      "Complete graphic design Istanbul packages including logos, color palettes, typography, and brand guidelines for Istanbul businesses.",
     benefits: [
       "Logo design & variations",
       "Color palette & typography",
       "Brand guidelines",
       "Business card & stationery",
+      "Istanbul market branding",
     ],
     timeframe: "1-2 weeks",
     priceRange: "Starting from $600",
@@ -86,14 +89,15 @@ const services: Service[] = [
   },
   {
     icon: <Code className="h-10 w-10 text-primary" />,
-    title: "Website Maintenance",
+    title: "Webdesign Istanbul - Website Maintenance",
     description:
-      "Ongoing website maintenance, updates, and optimization to keep your site secure, fast, and up-to-date.",
+      "Ongoing webdesign Istanbul maintenance, updates, and optimization to keep your site secure, fast, and up-to-date.",
     benefits: [
       "Regular security updates",
       "Performance optimization",
       "Content updates",
       "24/7 support",
+      "Local Istanbul SEO maintenance",
     ],
     timeframe: "Ongoing",
     priceRange: "From $200/month",
@@ -110,12 +114,12 @@ const Services = () => {
             Services
           </h2>
           <h3 className="mt-2 text-3xl font-bold">
-            Solutions That Drive Business Growth
+            Webdesign Istanbul & Graphic Design Services
           </h3>
           <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
-            I offer comprehensive design and development services tailored to
-            help your business stand out in Istanbul's competitive market and
-            achieve measurable results.
+            Professional webdesign Istanbul and graphic design Istanbul services
+            tailored to help your business stand out in Istanbul's competitive
+            market and achieve measurable results.
           </p>
         </div>
 

@@ -1,8 +1,17 @@
 User-agent: *
 Allow: /
 
+# Block admin areas
+Disallow: /admin/
+Disallow: /api/
+
 # Sitemap location
 Sitemap: https://awab.design/sitemap
 
-# Crawl delay (optional)
-Crawl-delay: 1 
+# Crawl delay for better performance
+Crawl-delay: 1
+
+# Allow Googlebot full access
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 0.5 

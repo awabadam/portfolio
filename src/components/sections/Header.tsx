@@ -79,19 +79,20 @@ const Header = () => {
         <div className="flex flex-col justify-center space-y-6">
           <div className="space-y-2">
             <h2 className="text-sm font-semibold uppercase tracking-widest text-primary">
-              Istanbul-Based Web Designer & Developer
+              Professional Webdesign & Graphic Design Istanbul
             </h2>
             <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
-              Websites That Drive{" "}
-              <span className="text-primary">Real Results</span>
+              Webdesign Istanbul &{" "}
+              <span className="text-primary">Graphic Design</span> Expert
             </h1>
           </div>
 
           <p className="text-xl leading-relaxed text-muted-foreground">
-            I help healthcare businesses and startups in Istanbul create
-            websites that
-            <strong> convert visitors into patients and customers</strong>.
-            Specializing in modern, fast-loading sites that rank well on Google.
+            Professional <strong>webdesign Istanbul</strong> and{" "}
+            <strong>graphic design Istanbul</strong> services. I help businesses
+            in Istanbul create stunning websites, logos, and branding that drive
+            real results. Specializing in modern, fast-loading sites that rank
+            well on Google.
           </p>
 
           {/* Social Proof Stats */}
