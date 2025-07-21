@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter as FontSans } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { Navbar, Footer, ThemeProvider } from "../components";
 import { cn } from "@/lib/utils";
@@ -129,37 +130,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      {/* Google Tag Manager */}
-      <script
-        dangerouslySetInnerHTML={{
-          __html: `
-            (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-            })(window,document,'script','dataLayer','GTM-WJHCGKSQ');
-          `,
-        }}
-      />
-      {/* Google Analytics 4 */}
-      <script
-        dangerouslySetInnerHTML={{
-          __html: `
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-EL4WEH4X3X', {
-              page_title: document.title,
-              page_location: window.location.href,
-            });
-          `,
-        }}
-      />
-      <script
-        async
-        src="https://www.googletagmanager.com/gtag/js?id=G-EL4WEH4X3X"
-      />
-      {/* body*/}
       <body
         className={cn(
           "h-full w-screen overflow-x-clip bg-background font-sans antialiased",
@@ -175,6 +145,38 @@ export default function RootLayout({
             style={{ display: "none", visibility: "hidden" }}
           />
         </noscript>
+        {/* Google Tag Manager */}
+        <Script
+          id="gtm-script"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+              new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+              j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+              'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+              })(window,document,'script','dataLayer','GTM-WJHCGKSQ');
+            `,
+          }}
+        />
+
+        {/* Google Analytics 4 */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-EL4WEH4X3X"
+          strategy="afterInteractive"
+        />
+        <Script id="ga-script" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-EL4WEH4X3X', {
+              page_title: document.title,
+              page_location: window.location.href,
+            });
+          `}
+        </Script>
+
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

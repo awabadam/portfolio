@@ -15,3 +15,4 @@ export * from "./sheet";
 export * from "./navigation-menu";
 export * from "./avatar";
 export * from "./checkbox";
+export * from "./separator";

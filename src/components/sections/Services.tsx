@@ -192,21 +192,38 @@ const Services = () => {
         </div>
 
         <div className="mt-12 text-center">
-          <Button
-            asChild
-            size="lg"
-            onClick={() => {
-              trackCTAClick("free_consultation", "services_section");
-              trackButtonClick(
-                "free_consultation",
-                "services_section",
-                "primary_cta",
-              );
-              trackLeadGeneration("services_section", "consultation");
-            }}
-          >
-            <Link href="#contact">Get a Free Consultation</Link>
-          </Button>
+          <div className="flex flex-col justify-center gap-4 sm:flex-row">
+            <Button
+              asChild
+              size="lg"
+              onClick={() => {
+                trackCTAClick("free_consultation", "services_section");
+                trackButtonClick(
+                  "free_consultation",
+                  "services_section",
+                  "primary_cta",
+                );
+                trackLeadGeneration("services_section", "consultation");
+              }}
+            >
+              <Link href="#contact">Get a Free Consultation</Link>
+            </Button>
+            <Button
+              asChild
+              variant="outline"
+              size="lg"
+              onClick={() => {
+                trackCTAClick("rate_calculator", "services_section");
+                trackButtonClick(
+                  "rate_calculator",
+                  "services_section",
+                  "secondary_cta",
+                );
+              }}
+            >
+              <Link href="/rate-calculator">Get Instant Quote</Link>
+            </Button>
+          </div>
           <p className="mt-4 text-sm text-muted-foreground">
             All projects include free revisions and ongoing support
           </p>

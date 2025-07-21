@@ -178,6 +178,21 @@ const Header = () => {
             </Button>
             <Button
               asChild
+              variant="outline"
+              size="lg"
+              onClick={() => {
+                trackCTAClick("rate_calculator", "hero_section");
+                trackButtonClick(
+                  "rate_calculator",
+                  "hero_section",
+                  "secondary_cta",
+                );
+              }}
+            >
+              <Link href="/rate-calculator">Get Price Quote</Link>
+            </Button>
+            <Button
+              asChild
               variant="ghost"
               size="lg"
               onClick={() => {

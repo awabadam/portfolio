@@ -9,6 +9,8 @@ import {
 } from "../components";
 import { Metadata } from "next";
 import { getFeaturedProjects } from "../data/projects";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Webdesign Istanbul | Graphic Design Istanbul | Awab Elkhalil",
@@ -139,6 +141,21 @@ export default async function Home() {
                 </li>
               </ul>
             </div>
+          </div>
+
+          {/* CTA Section */}
+          <div className="mt-12 text-center">
+            <div className="flex flex-col justify-center gap-4 sm:flex-row">
+              <Button asChild size="lg">
+                <Link href="/rate-calculator">Get Instant Price Quote</Link>
+              </Button>
+              <Button asChild variant="outline" size="lg">
+                <Link href="#contact">Free Consultation</Link>
+              </Button>
+            </div>
+            <p className="mt-4 text-sm text-muted-foreground">
+              Get a personalized quote for your Istanbul business website
+            </p>
           </div>
         </div>
       </section>

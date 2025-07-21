@@ -100,6 +100,12 @@ const Footer = () => {
                 Services
               </Link>
               <Link
+                href="/rate-calculator"
+                className="block text-sm text-muted-foreground hover:text-primary"
+              >
+                Pricing Calculator
+              </Link>
+              <Link
                 href="#contact"
                 className="block text-sm text-muted-foreground hover:text-primary"
               >
@@ -159,6 +165,14 @@ const Footer = () => {
               >
                 Get Quote
               </Link>
+            </Button>
+            <Button
+              asChild
+              variant="ghost"
+              size="sm"
+              onClick={() => trackNavigationClick("rate_calculator", "footer")}
+            >
+              <Link href="/rate-calculator">Pricing</Link>
             </Button>
             <Button
               asChild
