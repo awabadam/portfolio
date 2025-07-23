@@ -28,6 +28,7 @@ import {
   Database,
 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 interface PricingConfig {
   basePrices: {
@@ -65,93 +66,81 @@ interface PricingConfig {
 
 const pricingConfig: PricingConfig = {
   basePrices: {
-    landing: 150,
-    business: 300,
-    custom: 800,
+    landing: 250,
+    business: 500,
+    custom: 1100,
   },
   pagePricing: {
     included: 3,
     additional: 50,
   },
   features: {
-    contactForms: {
-      name: "Contact Forms",
-      price: 20,
-      description: "Professional contact forms with email notifications",
-      icon: <Mail className="h-4 w-4" />,
-    },
     newsletter: {
-      name: "Newsletter Signup",
-      price: 15,
-      description: "Email newsletter integration",
+      name: "Email Marketing",
+      price: 25,
+      description: "Email newsletters and automated campaigns",
       icon: <Mail className="h-4 w-4" />,
-    },
-    gallery: {
-      name: "Image Gallery",
-      price: 30,
-      description: "Professional image gallery with lightbox",
-      icon: <Image className="h-4 w-4" />,
     },
     blog: {
-      name: "Blog Section",
-      price: 60,
-      description: "Full blog with categories and search",
+      name: "Blog & Content Hub",
+      price: 100,
+      description:
+        "Professional blog to establish expertise and attract customers",
       icon: <FileText className="h-4 w-4" />,
     },
-    socialMedia: {
-      name: "Social Media Integration",
-      price: 25,
-      description: "Social media sharing and feeds",
-      icon: <Globe className="h-4 w-4" />,
-    },
-    multilingual: {
-      name: "Multi-language Support",
-      price: 80,
-      description: "Support for multiple languages",
-      icon: <Globe className="h-4 w-4" />,
-    },
-    animations: {
-      name: "Custom Animations",
-      price: 40,
-      description: "Smooth scroll animations and effects",
-      icon: <Palette className="h-4 w-4" />,
-    },
-    advancedNav: {
-      name: "Advanced Navigation",
-      price: 35,
-      description: "Mega menu and advanced navigation",
-      icon: <Code className="h-4 w-4" />,
-    },
-    search: {
-      name: "Search Functionality",
-      price: 45,
-      description: "Site-wide search with filters",
-      icon: <Search className="h-4 w-4" />,
-    },
-    userRegistration: {
-      name: "User Registration",
-      price: 100,
-      description: "User accounts and login system",
-      icon: <Settings className="h-4 w-4" />,
-    },
     seo: {
-      name: "SEO Optimization",
-      price: 60,
-      description: "Complete SEO setup and optimization",
+      name: "Local SEO Setup",
+      price: 80,
+      description: "Help customers find your business on Google searches",
       icon: <Search className="h-4 w-4" />,
     },
     analytics: {
-      name: "Google Analytics Setup",
-      price: 20,
-      description: "Analytics and tracking setup",
+      name: "Business Analytics",
+      price: 30,
+      description: "Track visitors, leads, and understand your customers",
       icon: <Settings className="h-4 w-4" />,
     },
     performance: {
-      name: "Performance Optimization",
-      price: 50,
-      description: "Speed optimization and caching",
+      name: "Mobile & Speed Optimization",
+      price: 60,
+      description:
+        "Fast loading on all devices - essential for customer experience",
       icon: <Zap className="h-4 w-4" />,
     },
+    onlineBooking: {
+      name: "Online Booking System",
+      price: 120,
+      description:
+        "Let customers book appointments online (payment gateway setup not included)",
+      icon: <Settings className="h-4 w-4" />,
+    },
+    liveChat: {
+      name: "Live Chat Support",
+      price: 40,
+      description: "Real-time chat to help visitors become customers",
+      icon: <Mail className="h-4 w-4" />,
+    },
+    testimonials: {
+      name: "Customer Reviews & Testimonials",
+      price: 25,
+      description: "Showcase positive customer feedback to build trust",
+      icon: <Settings className="h-4 w-4" />,
+    },
+    ecommerce: {
+      name: "Online Store Setup",
+      price: 150,
+      description:
+        "Product catalog and store setup (payment gateway setup not included)",
+      icon: <Settings className="h-4 w-4" />,
+    },
+    multilingual: {
+      name: "Multi-language Support",
+      price: 150,
+      description:
+        "Support for multiple languages (essential for diverse markets)",
+      icon: <Globe className="h-4 w-4" />,
+    },
+
     security: {
       name: "Security Features",
       price: 40,
@@ -166,38 +155,40 @@ const pricingConfig: PricingConfig = {
     },
     copywriting: {
       name: "Professional Copywriting",
-      price: 40,
-      description: "Professional content writing per page",
+      price: 60,
+      description:
+        "Compelling website copy that converts visitors to customers",
       icon: <FileText className="h-4 w-4" />,
     },
     logoDesign: {
       name: "Logo Design",
-      price: 80,
-      description: "Custom logo with variations",
+      price: 150,
+      description: "Custom logo that represents your brand professionally",
       icon: <Palette className="h-4 w-4" />,
     },
     branding: {
       name: "Brand Identity Package",
-      price: 120,
-      description: "Complete brand identity design",
+      price: 250,
+      description:
+        "Complete brand identity: logo, colors, fonts, business cards",
       icon: <Palette className="h-4 w-4" />,
     },
     stockPhotos: {
-      name: "Stock Photos Included",
-      price: 30,
-      description: "Professional stock photos for your site",
+      name: "Professional Photography",
+      price: 80,
+      description: "High-quality photos for your business and website",
       icon: <Image className="h-4 w-4" />,
     },
     cms: {
-      name: "Content Management System",
-      price: 80,
-      description: "Easy-to-use CMS for content updates",
+      name: "Easy Website Updates",
+      price: 40,
+      description: "Simple system to update your website yourself",
       icon: <Settings className="h-4 w-4" />,
     },
     training: {
-      name: "Training Session",
-      price: 50,
-      description: "1-hour training on how to manage your site",
+      name: "Website Training & Support",
+      price: 80,
+      description: "Learn to manage your website + 3 months email support",
       icon: <Settings className="h-4 w-4" />,
     },
   },
@@ -224,25 +215,31 @@ const pricingConfig: PricingConfig = {
       price: 0,
       description: "You'll manage updates yourself",
     },
+    quarterly: {
+      name: "Quarterly Updates (Recommended)",
+      price: 15,
+      description: "Perfect for small businesses - updates every 3 months",
+    },
     monthly: {
       name: "Monthly Maintenance",
       price: 30,
-      description: "Regular updates and support",
-    },
-    quarterly: {
-      name: "Quarterly Updates",
-      price: 15,
-      description: "Updates every 3 months",
+      description: "For businesses that need frequent updates",
     },
   },
 };
 
 export default function RateCalculator() {
+  const router = useRouter();
   const [projectType, setProjectType] = useState<string>("business");
   const [pageCount, setPageCount] = useState<number>(5);
-  const [selectedFeatures, setSelectedFeatures] = useState<string[]>([]);
+  const [selectedFeatures, setSelectedFeatures] = useState<string[]>([
+    "blog",
+    "seo",
+    "analytics",
+    "performance",
+  ]);
   const [timeline, setTimeline] = useState<string>("standard");
-  const [maintenance, setMaintenance] = useState<string>("none");
+  const [maintenance, setMaintenance] = useState<string>("quarterly");
 
   // Form submission states
   const [showForm, setShowForm] = useState<boolean>(false);
@@ -364,19 +361,12 @@ Project Description: ${formData.projectDescription}`,
         throw new Error(data.error || "Failed to send message");
       }
 
-      setIsSubmitted(true);
-      setShowForm(false);
-
-      setTimeout(() => {
-        setIsSubmitted(false);
-        setFormData({
-          name: "",
-          email: "",
-          phone: "",
-          company: "",
-          projectDescription: "",
-        });
-      }, 5000);
+      // Redirect to thank you page with query parameters
+      const params = new URLSearchParams({
+        type: "quote",
+        name: formData.name,
+      });
+      router.push(`/thank-you?${params.toString()}`);
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
@@ -390,23 +380,12 @@ Project Description: ${formData.projectDescription}`,
   };
 
   const featureCategories = {
-    essential: ["contactForms", "newsletter", "gallery", "blog", "socialMedia"],
-    advanced: [
-      "multilingual",
-      "animations",
-      "advancedNav",
-      "search",
-      "userRegistration",
-    ],
-    technical: ["seo", "analytics", "performance", "security", "database"],
-    content: [
-      "copywriting",
-      "logoDesign",
-      "branding",
-      "stockPhotos",
-      "cms",
-      "training",
-    ],
+    recommended: ["blog", "seo", "analytics", "performance"],
+    getCustomers: ["newsletter", "liveChat", "testimonials"],
+    sellOnline: ["onlineBooking", "ecommerce"],
+    lookProfessional: ["copywriting", "logoDesign", "branding", "stockPhotos"],
+    manageEasily: ["cms", "training"],
+    advanced: ["multilingual", "security", "database"],
   };
 
   return (
@@ -421,8 +400,10 @@ Project Description: ${formData.projectDescription}`,
             </h1>
           </div>
           <p className="mx-auto max-w-3xl text-xl leading-relaxed text-muted-foreground">
-            Get an instant, personalized quote for your website project.
-            Professional web design at Turkish market prices.
+            Get an instant quote for your small business website. Professional
+            web design that helps you attract customers and grow your business.
+            All websites include contact forms, image gallery, and social media
+            integration.
           </p>
         </div>
       </section>
@@ -447,17 +428,20 @@ Project Description: ${formData.projectDescription}`,
                       {
                         id: "landing",
                         name: "Landing Page",
-                        desc: "Single page, conversion-focused",
+                        desc: "Perfect for single service/product promotion",
+                        popular: false,
                       },
                       {
                         id: "business",
                         name: "Business Website",
-                        desc: "Multi-page professional site",
+                        desc: "Most popular - Complete online presence for your business",
+                        popular: true,
                       },
                       {
                         id: "custom",
                         name: "Custom Website",
-                        desc: "Advanced features & functionality",
+                        desc: "For complex businesses with unique requirements",
+                        popular: false,
                       },
                     ].map((type) => (
                       <div
@@ -469,7 +453,14 @@ Project Description: ${formData.projectDescription}`,
                         }`}
                         onClick={() => setProjectType(type.id)}
                       >
-                        <div className="font-semibold">{type.name}</div>
+                        <div className="flex items-center justify-between">
+                          <div className="font-semibold">{type.name}</div>
+                          {type.popular && (
+                            <Badge variant="default" className="text-xs">
+                              Most Popular
+                            </Badge>
+                          )}
+                        </div>
                         <div className="mt-1 text-sm text-muted-foreground">
                           {type.desc}
                         </div>
@@ -530,7 +521,11 @@ Project Description: ${formData.projectDescription}`,
                 <CardHeader>
                   <CardTitle>Additional Features</CardTitle>
                   <p className="text-sm text-muted-foreground">
-                    Select the features you need for your website
+                    Choose additional features based on your business goals.
+                    Contact forms, image gallery, and social media are already
+                    included. Features are organized by what they help you
+                    achieve - from getting more customers to looking
+                    professional.
                   </p>
                 </CardHeader>
                 <CardContent>
@@ -538,12 +533,35 @@ Project Description: ${formData.projectDescription}`,
                     {Object.entries(featureCategories).map(
                       ([category, features]) => (
                         <div key={category}>
-                          <h4 className="mb-3 font-semibold capitalize">
-                            {category === "essential" && "Essential Features"}
-                            {category === "advanced" && "Advanced Features"}
-                            {category === "technical" && "Technical Features"}
-                            {category === "content" && "Content & Branding"}
-                          </h4>
+                          <div className="mb-4">
+                            <h4 className="mb-2 font-semibold">
+                              {category === "recommended" &&
+                                "📈 Recommended for Growth"}
+                              {category === "getCustomers" &&
+                                "🎯 Get More Customers"}
+                              {category === "sellOnline" &&
+                                "💰 Online Store & Booking"}
+                              {category === "lookProfessional" &&
+                                "✨ Look Professional"}
+                              {category === "manageEasily" &&
+                                "⚙️ Manage Your Website"}
+                              {category === "advanced" && "🔧 Advanced Options"}
+                            </h4>
+                            <p className="mb-3 text-sm text-muted-foreground">
+                              {category === "recommended" &&
+                                "Essential tools every small business needs to compete online"}
+                              {category === "getCustomers" &&
+                                "Features that help attract visitors and turn them into customers"}
+                              {category === "sellOnline" &&
+                                "Set up online booking and product catalogs (payment gateway setup separate)"}
+                              {category === "lookProfessional" &&
+                                "Build trust and credibility with professional design"}
+                              {category === "manageEasily" &&
+                                "Tools to help you update and maintain your website"}
+                              {category === "advanced" &&
+                                "Specialized features for specific business needs"}
+                            </p>
+                          </div>
                           <div className="grid gap-3 md:grid-cols-2">
                             {features.map((featureId) => {
                               const feature = pricingConfig.features[featureId];
@@ -695,6 +713,27 @@ Project Description: ${formData.projectDescription}`,
                     </span>
                   </div>
 
+                  {/* Included Features Note */}
+                  <div className="rounded-lg bg-green-50 p-3 text-sm dark:bg-green-950/20">
+                    <div className="font-medium text-green-800 dark:text-green-200">
+                      ✓ Included by default:
+                    </div>
+                    <div className="mt-1 text-green-700 dark:text-green-300">
+                      Contact forms, image gallery, social media integration
+                    </div>
+                  </div>
+
+                  {/* Recommended Features Note */}
+                  <div className="rounded-lg bg-blue-50 p-3 text-sm dark:bg-blue-950/20">
+                    <div className="font-medium text-blue-800 dark:text-blue-200">
+                      📈 Recommended for Growth:
+                    </div>
+                    <div className="mt-1 text-blue-700 dark:text-blue-300">
+                      Blog (attract customers), SEO (be found online), Analytics
+                      (track success), Fast Loading (keep visitors)
+                    </div>
+                  </div>
+
                   {/* Page Cost */}
                   {getPageCount() > 0 && (
                     <div className="flex items-center justify-between">
@@ -817,12 +856,12 @@ Project Description: ${formData.projectDescription}`,
           <div className="mx-auto grid max-w-4xl gap-8 md:grid-cols-2">
             <div>
               <h3 className="mb-2 text-lg font-semibold">
-                How accurate is this calculator?
+                Why do I need SEO and analytics?
               </h3>
               <p className="text-muted-foreground">
-                This calculator provides a good estimate based on typical
-                project requirements. Final pricing may vary based on specific
-                needs and complexity.
+                SEO helps customers find your business online, while analytics
+                show you which marketing efforts are working. These are
+                essential for any business website.
               </p>
             </div>
             <div>
@@ -830,8 +869,9 @@ Project Description: ${formData.projectDescription}`,
                 What's included in the price?
               </h3>
               <p className="text-muted-foreground">
-                All prices include design, development, testing, and basic SEO
-                setup. Hosting and domain registration are additional.
+                All prices include design, development, testing, contact forms,
+                image gallery, social media integration, and basic SEO setup.
+                Hosting and domain registration are additional.
               </p>
             </div>
             <div>
@@ -840,17 +880,18 @@ Project Description: ${formData.projectDescription}`,
               </h3>
               <p className="text-muted-foreground">
                 Yes! We require a 50% deposit to start, with the remaining
-                balance due upon project completion.
+                balance due upon project completion. Perfect for small business
+                budgets.
               </p>
             </div>
             <div>
               <h3 className="mb-2 text-lg font-semibold">
-                Can I make changes after launch?
+                How will this help my business?
               </h3>
               <p className="text-muted-foreground">
-                We include free revisions during development and 30 days of
-                support after launch. Additional changes can be quoted
-                separately.
+                A professional website builds trust, makes you look credible,
+                and helps customers find and contact you 24/7. It's your best
+                marketing investment.
               </p>
             </div>
           </div>
@@ -869,122 +910,111 @@ Project Description: ${formData.projectDescription}`,
               </p>
             </CardHeader>
             <CardContent>
-              {isSubmitted ? (
-                <div className="py-8 text-center">
-                  <CheckCircle className="mx-auto mb-4 h-12 w-12 text-green-500" />
-                  <h3 className="mb-2 text-lg font-semibold">Thank You!</h3>
-                  <p className="text-muted-foreground">
-                    Your consultation request has been sent. I'll get back to
-                    you within 24 hours.
-                  </p>
+              <form onSubmit={handleFormSubmit} className="space-y-4">
+                <div>
+                  <Label htmlFor="name">Full Name *</Label>
+                  <Input
+                    id="name"
+                    type="text"
+                    required
+                    value={formData.name}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        name: e.target.value,
+                      }))
+                    }
+                  />
                 </div>
-              ) : (
-                <form onSubmit={handleFormSubmit} className="space-y-4">
-                  <div>
-                    <Label htmlFor="name">Full Name *</Label>
-                    <Input
-                      id="name"
-                      type="text"
-                      required
-                      value={formData.name}
-                      onChange={(e) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          name: e.target.value,
-                        }))
-                      }
-                    />
-                  </div>
 
-                  <div>
-                    <Label htmlFor="email">Email Address *</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      required
-                      value={formData.email}
-                      onChange={(e) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          email: e.target.value,
-                        }))
-                      }
-                    />
-                  </div>
+                <div>
+                  <Label htmlFor="email">Email Address *</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    required
+                    value={formData.email}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        email: e.target.value,
+                      }))
+                    }
+                  />
+                </div>
 
-                  <div>
-                    <Label htmlFor="phone">Phone Number</Label>
-                    <Input
-                      id="phone"
-                      type="tel"
-                      value={formData.phone}
-                      onChange={(e) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          phone: e.target.value,
-                        }))
-                      }
-                    />
-                  </div>
+                <div>
+                  <Label htmlFor="phone">Phone Number</Label>
+                  <Input
+                    id="phone"
+                    type="tel"
+                    value={formData.phone}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        phone: e.target.value,
+                      }))
+                    }
+                  />
+                </div>
 
-                  <div>
-                    <Label htmlFor="company">Company Name</Label>
-                    <Input
-                      id="company"
-                      type="text"
-                      value={formData.company}
-                      onChange={(e) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          company: e.target.value,
-                        }))
-                      }
-                    />
-                  </div>
+                <div>
+                  <Label htmlFor="company">Company Name</Label>
+                  <Input
+                    id="company"
+                    type="text"
+                    value={formData.company}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        company: e.target.value,
+                      }))
+                    }
+                  />
+                </div>
 
-                  <div>
-                    <Label htmlFor="projectDescription">
-                      Project Description
-                    </Label>
-                    <Textarea
-                      id="projectDescription"
-                      rows={3}
-                      value={formData.projectDescription}
-                      onChange={(e) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          projectDescription: e.target.value,
-                        }))
-                      }
-                      placeholder="Tell me more about your project..."
-                    />
-                  </div>
+                <div>
+                  <Label htmlFor="projectDescription">
+                    Project Description
+                  </Label>
+                  <Textarea
+                    id="projectDescription"
+                    rows={3}
+                    value={formData.projectDescription}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        projectDescription: e.target.value,
+                      }))
+                    }
+                    placeholder="Tell me more about your project..."
+                  />
+                </div>
 
-                  {error && (
-                    <div className="text-center text-sm text-red-500">
-                      {error}
-                    </div>
-                  )}
-
-                  <div className="flex gap-3">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => setShowForm(false)}
-                      className="flex-1"
-                    >
-                      Cancel
-                    </Button>
-                    <Button
-                      type="submit"
-                      disabled={isSubmitting}
-                      className="flex-1"
-                    >
-                      {isSubmitting ? "Sending..." : "Send Request"}
-                    </Button>
+                {error && (
+                  <div className="text-center text-sm text-red-500">
+                    {error}
                   </div>
-                </form>
-              )}
+                )}
+
+                <div className="flex gap-3">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setShowForm(false)}
+                    className="flex-1"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="flex-1"
+                  >
+                    {isSubmitting ? "Sending..." : "Send Request"}
+                  </Button>
+                </div>
+              </form>
             </CardContent>
           </Card>
         </div>

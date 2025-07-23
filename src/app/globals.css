@@ -4,48 +4,50 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    --primary: 240 5.9% 10%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
-    --destructive: 0 84.2% 60.2%;
+    /* Light mode - Clean white and grays */
+    --background: 0 0% 98%;          /* Light gray background */
+    --foreground: 0 0% 0%;           /* Pure black text */
+    --card: 0 0% 100%;               /* Pure white cards */
+    --card-foreground: 0 0% 0%;      /* Black text on cards */
+    --popover: 0 0% 100%;            /* White popovers */
+    --popover-foreground: 0 0% 0%;   /* Black text on popovers */
+    --primary: 0 0% 0%;              /* Black primary */
+    --primary-foreground: 0 0% 100%; /* White text on primary */
+    --secondary: 0 0% 96%;           /* Light gray secondary */
+    --secondary-foreground: 0 0% 0%; /* Black text on secondary */
+    --muted: 0 0% 96%;               /* Light gray muted */
+    --muted-foreground: 0 0% 35%;    /* Dark gray muted text */
+    --accent: 0 0% 96%;              /* Light gray accent */
+    --accent-foreground: 0 0% 0%;    /* Black accent text */
+    --destructive: 0 84.2% 60.2%;    /* Keep red for errors */
     --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 240 5.9% 10%;
+    --border: 0 0% 89%;              /* Light gray borders */
+    --input: 0 0% 89%;               /* Light gray inputs */
+    --ring: 0 0% 0%;                 /* Black focus rings */
     --radius: 0.5rem;
   }
 
   .dark {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 240 5.9% 10%;
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
+    /* Dark mode - Clean blacks and grays with subtle blue tint */
+    --background: 220 13% 4%;        /* Near black background with blue hint */
+    --foreground: 0 0% 98%;          /* White text */
+    --card: 220 13% 7%;              /* Dark gray cards with blue hint */
+    --card-foreground: 0 0% 98%;     /* White text on cards */
+    --popover: 220 13% 7%;           /* Dark gray popovers with blue hint */
+    --popover-foreground: 0 0% 98%;  /* White text on popovers */
+    --primary: 0 0% 98%;             /* White primary */
+    --primary-foreground: 0 0% 0%;   /* Black text on primary */
+    --secondary: 220 13% 14%;        /* Medium gray secondary with blue hint */
+    --secondary-foreground: 0 0% 98%; /* White text on secondary */
+    --muted: 220 13% 14%;            /* Medium gray muted with blue hint */
+    --muted-foreground: 0 0% 65%;    /* Light gray muted text */
+    --accent: 220 13% 14%;           /* Medium gray accent with blue hint */
+    --accent-foreground: 0 0% 98%;   /* White accent text */
+    --destructive: 0 62.8% 30.6%;    /* Darker red for dark mode */
     --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 240 4.9% 83.9%;
+    --border: 220 13% 20%;           /* Medium gray borders with blue hint */
+    --input: 220 13% 20%;            /* Medium gray inputs with blue hint */
+    --ring: 0 0% 83%;                /* Light gray focus rings */
   }
 }
 
