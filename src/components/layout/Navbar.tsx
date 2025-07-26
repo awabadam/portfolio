@@ -58,6 +58,18 @@ const Navbar = () => {
                   </NavigationMenuLink>
                 </Link>
               </NavigationMenuItem>
+              <NavigationMenuItem>
+                <Link
+                  href="/blog"
+                  legacyBehavior
+                  passHref
+                  onClick={() => trackNavigationClick("blog", "navbar")}
+                >
+                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                    Blog
+                  </NavigationMenuLink>
+                </Link>
+              </NavigationMenuItem>
             </NavigationMenuList>
           </NavigationMenu>
 
@@ -105,6 +117,14 @@ const Navbar = () => {
                     className="flex w-full items-center py-2 text-lg font-medium"
                   >
                     Work
+                  </Link>
+                </SheetClose>
+                <SheetClose asChild>
+                  <Link
+                    href="/blog"
+                    className="flex w-full items-center py-2 text-lg font-medium"
+                  >
+                    Blog
                   </Link>
                 </SheetClose>
                 <SheetClose asChild>

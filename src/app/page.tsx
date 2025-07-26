@@ -6,11 +6,16 @@ import {
   Services,
   Testimonials,
   Contact,
+  Blog,
 } from "../components";
 import { Metadata } from "next";
 import { getFeaturedProjects } from "../data/projects";
+import { getFeaturedBlogPosts } from "../data/blog";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+
+// Revalidate every 60 seconds to show fresh content including featured blog posts
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "Webdesign Istanbul | Graphic Design Istanbul | Awab Elkhalil",
@@ -56,7 +61,10 @@ export const metadata: Metadata = {
 };
 
 export default async function Home() {
-  const featuredProjects = await getFeaturedProjects(3);
+  const [featuredProjects, featuredBlogPosts] = await Promise.all([
+    getFeaturedProjects(3),
+    getFeaturedBlogPosts(3),
+  ]);
 
   return (
     <main className="flex min-h-screen w-full flex-col items-center">
@@ -79,6 +87,9 @@ export default async function Home() {
 
       {/* Skills Section - Technical expertise */}
       <Skills />
+
+      {/* Blog Section - SEO content */}
+      <Blog posts={featuredBlogPosts} />
 
       {/* Local SEO Section */}
       <section className="w-full bg-muted/30 py-16">

@@ -1,5 +1,6 @@
 import { MetadataRoute } from 'next'
 import { getAllProjects } from '@/data/projects'
+import { getAllBlogPosts } from '@/data/blog'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://awab.design'
@@ -48,11 +49,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'weekly' as const,
       priority: 0.8,
     },
+    {
+      url: `${baseUrl}/blog`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.8,
+    },
   ]
 
   try {
-    // Get all projects for dynamic sitemap
-    const projects = await getAllProjects()
+    // Get all projects and blog posts for dynamic sitemap
+    const [projects, blogPosts] = await Promise.all([
+      getAllProjects(),
+      getAllBlogPosts()
+    ])
     
     // Dynamic project pages
     const projectPages = projects.map((project) => ({
@@ -62,10 +72,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     }))
 
-    return [...staticPages, ...projectPages]
+    // Dynamic blog post pages
+    const blogPages = blogPosts.map((post) => ({
+      url: `${baseUrl}/blog/${post.slug}`,
+      lastModified: new Date(post.updated_at),
+      changeFrequency: 'monthly' as const,
+      priority: 0.6,
+    }))
+
+    return [...staticPages, ...projectPages, ...blogPages]
   } catch (error) {
     console.error('Error generating sitemap:', error)
-    // Return only static pages if projects fail to load
+    // Return only static pages if dynamic content fails to load
     return staticPages
   }
 } 

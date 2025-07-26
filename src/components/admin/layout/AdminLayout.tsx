@@ -79,6 +79,14 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             </li>
             <li>
               <Link
+                href="/admin/blog"
+                className="text-sm font-medium hover:text-primary"
+              >
+                Blog
+              </Link>
+            </li>
+            <li>
+              <Link
                 href="/admin/settings"
                 className="text-sm font-medium hover:text-primary"
               >

@@ -6,6 +6,7 @@ import Skills from "@/components/sections/Skills";
 import Services from "@/components/sections/Services";
 import Testimonials from "@/components/sections/Testimonials";
 import Contact from "@/components/sections/Contact";
+import { Blog } from "@/components/sections/Blog";
 
 // Layout components
 import Navbar from "@/components/layout/Navbar";
@@ -31,7 +32,8 @@ export {
   Skills,
   Services,
   Testimonials,
-  Contact
+  Contact,
+  Blog
 };
 
 // Export layout components

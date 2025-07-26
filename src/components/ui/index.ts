@@ -6,6 +6,7 @@ export { default as GridLayout } from "./GridLayout";
 export { default as VisualElement } from "./VisualElement";
 export { default as ProjectCard } from "./ProjectCard";
 export { default as ImageGallery } from "./ImageGallery";
+export { BlogCard } from "./BlogCard";
 export * from "./button";
 export * from "./card";
 export * from "./badge";

@@ -78,6 +78,22 @@ export default function AdminDashboardPage() {
               </Button>
             </CardFooter>
           </Card>
+
+          {/* Blog Card */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Blog Posts</CardTitle>
+              <CardDescription>Manage your blog content</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p>Create, edit, and manage your blog posts for better SEO.</p>
+            </CardContent>
+            <CardFooter>
+              <Button asChild variant="outline">
+                <Link href="/admin/blog">Manage Blog</Link>
+              </Button>
+            </CardFooter>
+          </Card>
         </div>
       </div>
     </AdminLayout>
