@@ -1,9 +1,30 @@
 User-agent: *
 Allow: /
 
-# Block admin areas
+# Block admin areas and sensitive pages
 Disallow: /admin/
+Disallow: /admin-setup/
 Disallow: /api/
+Disallow: /debug-admin/
+Disallow: /test/
+Disallow: /test-login/
+Disallow: /login/
+
+# Block admin sub-pages specifically
+Disallow: /admin/blog/
+Disallow: /admin/projects/
+Disallow: /admin/settings/
+Disallow: /admin/users/
+Disallow: /admin/login/
+
+# Block API endpoints
+Disallow: /api/contact/
+Disallow: /api/contact-simple/
+Disallow: /api/email-diagnostic/
+Disallow: /api/projects/
+Disallow: /api/test/
+Disallow: /api/test-email/
+Disallow: /api/test-env/
 
 # Sitemap location
 Sitemap: https://awab.design/sitemap
@@ -11,7 +32,14 @@ Sitemap: https://awab.design/sitemap
 # Crawl delay for better performance
 Crawl-delay: 1
 
-# Allow Googlebot full access
+# Allow Googlebot full access to public content only
 User-agent: Googlebot
 Allow: /
+Disallow: /admin/
+Disallow: /admin-setup/
+Disallow: /api/
+Disallow: /debug-admin/
+Disallow: /test/
+Disallow: /test-login/
+Disallow: /login/
 Crawl-delay: 0.5 
