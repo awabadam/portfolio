@@ -55,7 +55,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/og-image.png",
+        url: "/img/hero-image.jpg",
         width: 1200,
         height: 630,
         alt: "Awab Elkhalil - Web Designer & Developer",
@@ -67,7 +67,7 @@ export const metadata: Metadata = {
     title: "Awab Elkhalil | Web Designer & Developer | Istanbul",
     description:
       "Professional web design and development services that help businesses stand out online and convert visitors into customers.",
-    images: ["/og-image.png"],
+    images: ["/img/hero-image.jpg"],
     creator: "@awabelkhalil",
   },
   robots: {

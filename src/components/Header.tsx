@@ -33,7 +33,7 @@ const Header = () => {
         </div>
         <Image
           className="md:w-[450px]"
-          src="/img/awab_hero.webp"
+          src="/img/hero-image.jpg"
           alt="hero-img"
           width={300}
           height={30}

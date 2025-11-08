@@ -214,7 +214,7 @@ const Header = () => {
           <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_center,rgba(0,0,0,0)_0,rgba(0,0,0,0.4)_100%)]"></div>
           <div className="relative z-10 aspect-square w-full max-w-xl overflow-hidden">
             <Image
-              src="/img/awab_hero.webp"
+              src="/img/hero-image.jpg"
               alt="Awab Elkhalil - Web Designer & Developer in Istanbul"
               fill
               sizes="(max-width: 768px) 100vw, 50vw"

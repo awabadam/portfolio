@@ -35,7 +35,7 @@ const About = () => {
             <div className="relative mx-auto aspect-square max-w-sm overflow-hidden rounded-2xl bg-gradient-to-br from-primary/5 to-primary/20">
               <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_center,rgba(0,0,0,0)_0,rgba(0,0,0,0.4)_100%)]"></div>
               <Image
-                src="/img/awab_hero.webp"
+                src="/img/hero-image.jpg"
                 alt="Awab Elkhalil"
                 fill
                 sizes="(max-width: 768px) 100vh, 100vw"

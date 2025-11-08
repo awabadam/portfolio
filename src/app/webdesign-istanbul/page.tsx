@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     title: "Webdesign Istanbul | Professional Website Design Services",
     description:
       "Professional webdesign Istanbul services. Expert website design and development in Istanbul, Turkey.",
-    images: ["/og-image.png"],
+    images: ["/img/hero-image.jpg"],
     creator: "@awabelkhalil",
   },
 };

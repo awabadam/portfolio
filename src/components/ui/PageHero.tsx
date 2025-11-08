@@ -30,7 +30,7 @@ const PageHero: React.FC<PageHeroProps> = ({
   title,
   subtitle,
   description,
-  imageSrc = "/img/awab_hero.webp",
+  imageSrc = "/img/hero-image.jpg",
   hasForm = false,
   formTitle = "Get a free website audit & consultation",
   ctaText,

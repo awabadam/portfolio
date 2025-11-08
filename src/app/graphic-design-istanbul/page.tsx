@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     title: "Graphic Design Istanbul | Professional Design Services",
     description:
       "Professional graphic design Istanbul services. Expert logo design, branding, and UI/UX design in Istanbul, Turkey.",
-    images: ["/og-image.png"],
+    images: ["/img/hero-image.jpg"],
     creator: "@awabelkhalil",
   },
 };

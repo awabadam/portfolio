@@ -55,7 +55,7 @@ export const metadata: Metadata = {
     title: "Webdesign Istanbul | Graphic Design Istanbul | Awab Elkhalil",
     description:
       "Professional webdesign and graphic design services in Istanbul. Expert designer creating modern websites and branding solutions.",
-    images: ["/og-image.png"],
+    images: ["/img/hero-image.jpg"],
     creator: "@awabelkhalil",
   },
 };

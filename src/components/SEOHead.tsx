@@ -13,7 +13,7 @@ export default function SEOHead({
   title,
   description,
   keywords = [],
-  image = "/og-image.png",
+  image = "/img/hero-image.jpg",
   url,
   type = "website",
 }: SEOHeadProps) {
