@@ -87,6 +87,14 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             </li>
             <li>
               <Link
+                href="/admin/chat"
+                className="text-sm font-medium hover:text-primary"
+              >
+                Chat Logs
+              </Link>
+            </li>
+            <li>
+              <Link
                 href="/admin/settings"
                 className="text-sm font-medium hover:text-primary"
               >

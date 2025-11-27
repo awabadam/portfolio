@@ -4,14 +4,9 @@ import { getAllBlogPosts, getAllBlogCategories } from "../../data/blog";
 import {
   BackgroundHero,
   SectionContainer,
-  BlogCard,
-  GridLayout,
   VisualElement,
 } from "@/components/ui";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import { Search, Filter } from "lucide-react";
+import BlogInteractive from "@/components/blog/BlogInteractive";
 
 // Revalidate every 60 seconds to show fresh blog content
 export const revalidate = 60;
@@ -71,46 +66,7 @@ const BlogPage = async () => {
           opacity={0.05}
         />
 
-        {/* Categories Filter */}
-        <div className="mb-8 flex flex-wrap justify-center gap-2">
-          <Button variant="outline" size="sm" className="gap-2">
-            <Filter className="h-4 w-4" />
-            All Categories
-          </Button>
-          {categories.map((category) => (
-            <Button key={category.id} variant="ghost" size="sm" asChild>
-              <Link href={`/blog/category/${category.slug}`}>
-                {category.name}
-              </Link>
-            </Button>
-          ))}
-        </div>
-
-        {/* Blog Posts Grid */}
-        <GridLayout columns={3} gap="gap-8">
-          {allPosts.map((post) => (
-            <BlogCard key={post.id} post={post} />
-          ))}
-        </GridLayout>
-
-        {/* Newsletter Signup */}
-        <div className="mt-16 rounded-lg bg-muted/50 p-8 text-center">
-          <h3 className="mb-4 text-2xl font-semibold">
-            Stay Updated with Design Insights
-          </h3>
-          <p className="mb-6 text-muted-foreground">
-            Get the latest web design trends, SEO tips, and industry insights
-            delivered to your inbox.
-          </p>
-          <div className="mx-auto flex max-w-md gap-2">
-            <input
-              type="email"
-              placeholder="Enter your email"
-              className="flex-1 rounded-md border bg-background px-3 py-2 text-sm"
-            />
-            <Button>Subscribe</Button>
-          </div>
-        </div>
+        <BlogInteractive posts={allPosts} categories={categories} />
       </SectionContainer>
     </main>
   );

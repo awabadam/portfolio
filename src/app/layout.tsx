@@ -6,6 +6,7 @@ import { Navbar, Footer, ThemeProvider } from "../components";
 import { cn } from "@/lib/utils";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 import PageTracking from "@/components/PageTracking";
+import ChatWidget from "@/components/chat/ChatWidget";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -188,6 +189,7 @@ export default function RootLayout({
           <Navbar />
           {children}
           <Footer />
+          <ChatWidget />
         </ThemeProvider>
       </body>
     </html>

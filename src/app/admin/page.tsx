@@ -94,6 +94,22 @@ export default function AdminDashboardPage() {
               </Button>
             </CardFooter>
           </Card>
+
+          {/* Chat Logs Card */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Chat Logs</CardTitle>
+              <CardDescription>View and manage chat conversations</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p>Review all chat conversations with visitors and manage leads.</p>
+            </CardContent>
+            <CardFooter>
+              <Button asChild variant="outline">
+                <Link href="/admin/chat">View Chat Logs</Link>
+              </Button>
+            </CardFooter>
+          </Card>
         </div>
       </div>
     </AdminLayout>
