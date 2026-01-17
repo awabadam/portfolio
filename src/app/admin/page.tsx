@@ -147,7 +147,7 @@ export default function AdminDashboardPage() {
           <h2 className="mb-4 text-lg font-semibold">Quick Actions</h2>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {/* Leads Card */}
-            <Card className="group transition-shadow hover:shadow-md">
+            <Card>
               <CardHeader>
                 <div className="flex items-center gap-3">
                   <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100 text-blue-600 dark:bg-blue-900/20">
@@ -165,17 +165,17 @@ export default function AdminDashboardPage() {
                 </p>
               </CardContent>
               <CardFooter>
-                <Button asChild className="w-full group-hover:bg-primary">
+                <Button asChild className="w-full">
                   <Link href="/admin/leads" className="gap-2">
                     View Leads
-                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                    <ArrowRight className="h-4 w-4" />
                   </Link>
                 </Button>
               </CardFooter>
             </Card>
 
             {/* Projects Card */}
-            <Card className="group transition-shadow hover:shadow-md">
+            <Card>
               <CardHeader>
                 <div className="flex items-center gap-3">
                   <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-100 text-purple-600 dark:bg-purple-900/20">
@@ -196,14 +196,14 @@ export default function AdminDashboardPage() {
                 <Button asChild variant="outline" className="w-full">
                   <Link href="/admin/projects" className="gap-2">
                     Manage Projects
-                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                    <ArrowRight className="h-4 w-4" />
                   </Link>
                 </Button>
               </CardFooter>
             </Card>
 
             {/* Blog Card */}
-            <Card className="group transition-shadow hover:shadow-md">
+            <Card>
               <CardHeader>
                 <div className="flex items-center gap-3">
                   <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-100 text-green-600 dark:bg-green-900/20">
@@ -224,14 +224,14 @@ export default function AdminDashboardPage() {
                 <Button asChild variant="outline" className="w-full">
                   <Link href="/admin/blog" className="gap-2">
                     Manage Blog
-                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                    <ArrowRight className="h-4 w-4" />
                   </Link>
                 </Button>
               </CardFooter>
             </Card>
 
             {/* Chat Logs Card */}
-            <Card className="group transition-shadow hover:shadow-md">
+            <Card>
               <CardHeader>
                 <div className="flex items-center gap-3">
                   <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-orange-100 text-orange-600 dark:bg-orange-900/20">
@@ -252,7 +252,7 @@ export default function AdminDashboardPage() {
                 <Button asChild variant="outline" className="w-full">
                   <Link href="/admin/chat" className="gap-2">
                     View Chat Logs
-                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                    <ArrowRight className="h-4 w-4" />
                   </Link>
                 </Button>
               </CardFooter>
