@@ -33,29 +33,44 @@ export async function POST(request: Request) {
 
       // Get or create conversation
       if (!currentConversationId) {
-        const headers = request.headers;
-        const ipAddress =
-          headers.get("x-forwarded-for") ||
-          headers.get("x-real-ip") ||
-          "unknown";
-        const userAgent = headers.get("user-agent") || "unknown";
-
-        const { data: conversation, error: convError } = await supabase
+        // First, check if there's an existing active conversation for this session
+        const { data: existingConversation } = await supabase
           .from("chat_conversations")
-          .insert({
-            session_id: sessionId,
-            ip_address: ipAddress,
-            user_agent: userAgent,
-            status: "active",
-          })
-          .select()
-          .single();
+          .select("id")
+          .eq("session_id", sessionId)
+          .eq("status", "active")
+          .order("started_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
 
-        if (convError) {
-          console.warn("Database unavailable for chat storage:", convError.message);
-          dbAvailable = false;
+        if (existingConversation) {
+          currentConversationId = existingConversation.id;
         } else {
-          currentConversationId = conversation.id;
+          // No existing conversation, create a new one
+          const headers = request.headers;
+          const ipAddress =
+            headers.get("x-forwarded-for") ||
+            headers.get("x-real-ip") ||
+            "unknown";
+          const userAgent = headers.get("user-agent") || "unknown";
+
+          const { data: conversation, error: convError } = await supabase
+            .from("chat_conversations")
+            .insert({
+              session_id: sessionId,
+              ip_address: ipAddress,
+              user_agent: userAgent,
+              status: "active",
+            })
+            .select()
+            .single();
+
+          if (convError) {
+            console.warn("Database unavailable for chat storage:", convError.message);
+            dbAvailable = false;
+          } else {
+            currentConversationId = conversation.id;
+          }
         }
       }
 

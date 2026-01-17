@@ -220,8 +220,25 @@ async function handleChatMessage(connection: ClientConnection, userMessage: stri
     // Get or create conversation
     let currentConversationId = conversationId;
     if (!currentConversationId) {
-      currentConversationId = await createConversation(sessionId, connection.ipAddress, connection.userAgent);
-      connection.conversationId = currentConversationId;
+      // First, check if there's an existing active conversation for this session
+      const supabase = createAnonClientWithSession(sessionId);
+      const { data: existingConversation } = await supabase
+        .from('chat_conversations')
+        .select('id')
+        .eq('session_id', sessionId)
+        .eq('status', 'active')
+        .order('started_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (existingConversation) {
+        currentConversationId = existingConversation.id;
+        connection.conversationId = currentConversationId;
+      } else {
+        // No existing conversation, create a new one
+        currentConversationId = await createConversation(sessionId, connection.ipAddress, connection.userAgent);
+        connection.conversationId = currentConversationId;
+      }
     }
 
     // Get AI response
