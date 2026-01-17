@@ -30,8 +30,18 @@ export function useSupabase() {
 export function useSupabaseAuth() {
   const supabase = useSupabase();
   const [session, setSession] = useState<any>(null);
-  const [localAuth, setLocalAuth] = useState<any>(null);
+  const [localAuth, setLocalAuth] = useState<any>(() => {
+    // Initialize local auth from localStorage on first render (client-side only)
+    if (typeof window !== 'undefined' && isLocalAuthEnabled()) {
+      const localSession = getLocalSession();
+      if (localSession) {
+        return { user: localUserToSupabaseUser(localSession) };
+      }
+    }
+    return null;
+  });
   const [loading, setLoading] = useState(true);
+  const [supabaseChecked, setSupabaseChecked] = useState(false);
 
   useEffect(() => {
     // Check for local auth first (only in development)
@@ -47,14 +57,25 @@ export function useSupabaseAuth() {
 
     // Fall back to Supabase auth
     if (!supabase) {
-      setLoading(false);
-      return;
+      // Only stop loading if we've confirmed there's no supabase client coming
+      // Give it a moment to initialize
+      const timeout = setTimeout(() => {
+        if (!supabase) {
+          setLoading(false);
+          setSupabaseChecked(true);
+        }
+      }, 100);
+      return () => clearTimeout(timeout);
     }
 
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setLoading(false);
+      setSupabaseChecked(true);
+    }).catch(() => {
+      setLoading(false);
+      setSupabaseChecked(true);
     });
 
     // Listen for auth changes
@@ -80,6 +101,16 @@ export function useSupabaseAuth() {
 
   // Check if Supabase is properly configured (has client or is in local dev mode)
   const isConfigured = !!supabase || isLocalAuthEnabled();
+  
+  // Debug logging in development
+  if (typeof window !== 'undefined' && isLocalAuthEnabled() && !loading) {
+    console.log('[Auth Debug]', { 
+      hasLocalAuth: !!localAuth, 
+      hasSession: !!session, 
+      hasUser: !!activeUser,
+      supabaseReady: !!supabase 
+    });
+  }
 
   return {
     supabase,
