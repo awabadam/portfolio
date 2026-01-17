@@ -22,13 +22,14 @@ export default function ChatWindow({
   isOpen,
   onClose,
   sessionId,
-  conversationId,
+  conversationId: initialConversationId,
 }: ChatWindowProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
+  const [currentConversationId, setCurrentConversationId] = useState<string | undefined>(initialConversationId);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const wsRef = useRef<WebSocket | null>(null);
@@ -61,7 +62,7 @@ export default function ChatWindow({
     }
 
     // Initialize with welcome message if not already initialized and no conversationId
-    if (!isInitialized && !conversationId) {
+    if (!isInitialized && !currentConversationId) {
       setMessages([
         {
           role: "assistant",
@@ -80,7 +81,7 @@ export default function ChatWindow({
     const connectWebSocket = () => {
       try {
         const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-        const wsUrl = `${protocol}//${window.location.host}/api/chat/ws?sessionId=${sessionId}${conversationId ? `&conversationId=${conversationId}` : ''}`;
+        const wsUrl = `${protocol}//${window.location.host}/api/chat/ws?sessionId=${sessionId}${currentConversationId ? `&conversationId=${currentConversationId}` : ''}`;
         
         const ws = new WebSocket(wsUrl);
         wsRef.current = ws;
@@ -116,7 +117,8 @@ export default function ChatWindow({
                 setMessages((prev) => [...prev, newMessage]);
                 
                 // Update conversationId if provided
-                if (data.data.conversationId && !conversationId) {
+                if (data.data.conversationId && !currentConversationId) {
+                  setCurrentConversationId(data.data.conversationId);
                   window.history.replaceState(
                     {},
                     "",
@@ -176,7 +178,7 @@ export default function ChatWindow({
         reconnectTimeoutRef.current = null;
       }
     };
-  }, [isOpen, sessionId, conversationId]);
+  }, [isOpen, sessionId, currentConversationId]);
 
   useEffect(() => {
     scrollToBottom();
@@ -219,7 +221,7 @@ export default function ChatWindow({
         body: JSON.stringify({
           message: userMessage,
           sessionId,
-          conversationId,
+          conversationId: currentConversationId,
         }),
       });
 
@@ -233,7 +235,8 @@ export default function ChatWindow({
         };
         setMessages((prev) => [...prev, assistantMessage]);
 
-        if (data.conversationId && !conversationId) {
+        if (data.conversationId && !currentConversationId) {
+          setCurrentConversationId(data.conversationId);
           window.history.replaceState(
             {},
             "",
