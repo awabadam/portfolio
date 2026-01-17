@@ -23,6 +23,9 @@ export default function DeleteProjectPage() {
         setError(null);
 
         const supabase = createBrowserSupabaseClient();
+        if (!supabase) {
+          throw new Error("Database connection not available");
+        }
         const { data, error } = await supabase
           .from("projects")
           .select("title")
@@ -59,6 +62,9 @@ export default function DeleteProjectPage() {
       setError(null);
 
       const supabase = createBrowserSupabaseClient();
+      if (!supabase) {
+        throw new Error("Database connection not available");
+      }
       const { error } = await supabase
         .from("projects")
         .delete()

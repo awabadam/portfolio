@@ -55,6 +55,9 @@ export default function ProjectForm({
 
     try {
       const supabase = createBrowserSupabaseClient();
+      if (!supabase) {
+        throw new Error("Database connection not available");
+      }
       const newImageUrls: string[] = [];
 
       for (const file of acceptedFiles) {
@@ -102,6 +105,9 @@ export default function ProjectForm({
 
     try {
       const supabase = createBrowserSupabaseClient();
+      if (!supabase) {
+        throw new Error("Database connection not available");
+      }
       const file = acceptedFiles[0]; // Only use the first file
 
       // Create a unique file name
@@ -192,6 +198,9 @@ export default function ProjectForm({
       }
 
       const supabase = createBrowserSupabaseClient();
+      if (!supabase) {
+        throw new Error("Database connection not available");
+      }
 
       // Prepare project data for Supabase
       const projectData = {

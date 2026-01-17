@@ -23,6 +23,9 @@ export default function EditProjectPage() {
         setError(null);
 
         const supabase = createBrowserSupabaseClient();
+        if (!supabase) {
+          throw new Error("Database connection not available");
+        }
         const { data, error } = await supabase
           .from("projects")
           .select("*")
