@@ -3,38 +3,46 @@ export interface Project {
   title: string;
   category: string;
   description: string;
-  behance_url: string;
   thumbnail_url?: string;
-  images?: string[];
+  live_url?: string;
+  github_url?: string;
+  technologies: string[];
   featured?: boolean;
   
-  // Case study fields
-  role?: string;               // e.g., "Graphic Designer"
-  overview?: string;           // Detailed project overview
-  objectives?: string[];       // Bullet points of project goals
-  approach?: string[];         // Bullet points of approach taken
-  designConcept?: string;      // Design concept description
-  finalThoughts?: string;      // Concluding remarks
+  // Case Study Fields
+  role?: string;
+  overview?: string;
+  objectives?: string[];
+  approach?: string[];
+  designConcept?: string;
+  finalThoughts?: string;
+  behance_url?: string;
+  images?: string[];
 }
 
 export interface BlogPost {
   id: string;
   title: string;
-  slug: string;
   excerpt: string;
   content: string;
+  slug: string;
+  cover_image?: string;
   featured_image_url?: string;
-  category: string;
-  tags: string[];
-  author_id?: string;
+  published_at: string;
   published: boolean;
-  published_at?: string;
-  created_at: string;
-  updated_at: string;
+  category: string;
+  author?: {
+    name: string;
+    avatar: string;
+  };
+  author_id?: string;
+  tags: string[];
   meta_title?: string;
   meta_description?: string;
-  reading_time: number;
-  view_count: number;
+  reading_time?: number;
+  view_count?: number;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface BlogCategory {

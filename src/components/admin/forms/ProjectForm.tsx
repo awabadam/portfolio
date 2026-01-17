@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Project } from "@/types";
-import { createBrowserSupabaseClient } from "@/lib/supabase";
+import { createBrowserSupabaseClient } from "@/lib/supabase/client-side";
 import { useSupabaseAuth } from "@/lib/hooks/useSupabase";
 import { useDropzone } from "react-dropzone";
 import Image from "next/image";

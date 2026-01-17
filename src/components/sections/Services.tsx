@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { motion } from "framer-motion";
 import {
   Card,
   CardContent,
@@ -19,6 +20,8 @@ import {
   Clock,
   DollarSign,
   Target,
+  MessageSquare,
+  Bot,
 } from "lucide-react";
 import {
   trackServiceInterest,
@@ -27,6 +30,7 @@ import {
   trackServiceClick,
   trackCTAClick,
 } from "@/lib/gtm";
+import { fadeInUp, staggerContainer } from "@/lib/animations";
 
 interface Service {
   icon: React.ReactNode;
@@ -52,7 +56,7 @@ const services: Service[] = [
       "Local Istanbul business optimization",
     ],
     timeframe: "2-4 weeks",
-    priceRange: "Starting from $1,500",
+    priceRange: "Starting from $1,200",
     link: "#contact",
   },
   {
@@ -68,7 +72,7 @@ const services: Service[] = [
       "Design system creation",
     ],
     timeframe: "1-3 weeks",
-    priceRange: "Starting from $800",
+    priceRange: "Starting from $700",
     link: "#contact",
   },
   {
@@ -84,7 +88,7 @@ const services: Service[] = [
       "Istanbul market branding",
     ],
     timeframe: "1-2 weeks",
-    priceRange: "Starting from $600",
+    priceRange: "Starting from $550",
     link: "#contact",
   },
   {
@@ -100,35 +104,74 @@ const services: Service[] = [
       "Local Istanbul SEO maintenance",
     ],
     timeframe: "Ongoing",
-    priceRange: "From $200/month",
+    priceRange: "From $150/month",
+    link: "#contact",
+  },
+  {
+    icon: <Bot className="h-10 w-10 text-primary" />,
+    title: "AI Chatbot Integration",
+    description:
+      "Integrate intelligent AI chatbots to automate customer support, qualify leads, and provide 24/7 assistance on your website.",
+    benefits: [
+      "AI-powered conversation flows",
+      "Lead qualification & capture",
+      "24/7 automated support",
+      "Multi-language support",
+      "Analytics & insights",
+    ],
+    timeframe: "1-2 weeks",
+    priceRange: "Starting from $350",
     link: "#contact",
   },
 ];
 
 const Services = () => {
   return (
-    <section id="services" className="w-full bg-muted/30 py-16">
-      <div className="container mx-auto px-4">
-        <div className="mb-12 text-center">
-          <h2 className="text-sm font-semibold uppercase tracking-widest text-primary">
+    <section id="services" className="relative w-full overflow-hidden bg-muted/30 py-24 md:py-32">
+      {/* Background decorative elements */}
+      <div className="absolute -left-40 top-40 h-96 w-96 rounded-full bg-primary/5 blur-3xl"></div>
+      <div className="absolute -right-40 bottom-40 h-96 w-96 rounded-full bg-primary/5 blur-3xl"></div>
+
+      <div className="container relative z-10 mx-auto px-4">
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={staggerContainer}
+          className="mb-16 text-center md:mb-20"
+        >
+          <motion.p
+            className="mb-4 text-sm font-medium uppercase tracking-[0.2em] text-muted-foreground"
+            variants={fadeInUp}
+          >
             Services
-          </h2>
-          <h3 className="mt-2 text-3xl font-bold">
-            Webdesign Istanbul & Graphic Design Services
-          </h3>
-          <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
+          </motion.p>
+          <motion.h2
+            className="font-display text-display-3 leading-none tracking-tight"
+            variants={fadeInUp}
+          >
+            Webdesign & Graphic Design Services
+          </motion.h2>
+          <motion.p
+            className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground"
+            variants={fadeInUp}
+          >
             Professional webdesign Istanbul and graphic design Istanbul services
             tailored to help your business stand out in Istanbul's competitive
             market and achieve measurable results.
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
 
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={staggerContainer}
+          className="grid gap-8 md:grid-cols-2 lg:grid-cols-3"
+        >
           {services.map((service, index) => (
-            <Card
-              key={index}
-              className="border-border/40 bg-card/50 backdrop-blur transition-all duration-300 hover:border-primary/50 hover:shadow-md"
-            >
+            <motion.div key={index} variants={fadeInUp}>
+              <Card className="group h-full border-border/40 bg-card/50 backdrop-blur transition-all duration-500 hover:border-primary/50 hover:shadow-xl">
               <CardHeader>
                 <div className="mb-4">{service.icon}</div>
                 <CardTitle className="text-lg">{service.title}</CardTitle>
@@ -188,14 +231,22 @@ const Services = () => {
                 </Button>
               </CardFooter>
             </Card>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
 
-        <div className="mt-12 text-center">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.4 }}
+          className="mt-16 text-center"
+        >
           <div className="flex flex-col justify-center gap-4 sm:flex-row">
             <Button
               asChild
               size="lg"
+              className="h-14 px-8 text-lg font-medium"
               onClick={() => {
                 trackCTAClick("free_consultation", "services_section");
                 trackButtonClick(
@@ -212,6 +263,7 @@ const Services = () => {
               asChild
               variant="outline"
               size="lg"
+              className="h-14 px-8 text-lg font-medium"
               onClick={() => {
                 trackCTAClick("rate_calculator", "services_section");
                 trackButtonClick(
@@ -224,10 +276,10 @@ const Services = () => {
               <Link href="/rate-calculator">Get Instant Quote</Link>
             </Button>
           </div>
-          <p className="mt-4 text-sm text-muted-foreground">
+          <p className="mt-6 text-sm text-muted-foreground">
             All projects include free revisions and ongoing support
           </p>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

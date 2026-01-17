@@ -15,7 +15,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { useSupabaseAuth } from "@/lib/hooks/useSupabase";
 import { Project } from "@/types";
-import { createBrowserSupabaseClient } from "@/lib/supabase";
+import { createBrowserSupabaseClient } from "@/lib/supabase/client-side";
 
 export default function AdminProjectsPage() {
   const { user, loading } = useSupabaseAuth();
@@ -50,6 +50,7 @@ export default function AdminProjectsPage() {
           behance_url: item.behance_url,
           thumbnail_url: item.thumbnail_url,
           featured: item.featured,
+          technologies: item.technologies || [],
         }));
 
         setProjects(mappedProjects);

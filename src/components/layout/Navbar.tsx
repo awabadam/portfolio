@@ -1,148 +1,157 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
 import { Menu, X } from "lucide-react";
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import { ModeToggle } from "@/components/ui/mode-toggle";
 import { Button } from "@/components/ui/button";
 import { trackNavigationClick, trackContactClick } from "@/lib/gtm";
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-  SheetClose,
-} from "@/components/ui/sheet";
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-  navigationMenuTriggerStyle,
-} from "@/components/ui/navigation-menu";
+import { useWhatsApp } from "@/components/chat/WhatsAppContext";
+import { fadeIn, staggerContainer } from "@/lib/animations";
 
 const Navbar = () => {
+  const { openWhatsApp } = useWhatsApp();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const { scrollY } = useScroll();
+
+  useEffect(() => {
+    return scrollY.onChange((latest) => {
+      setIsScrolled(latest > 50);
+    });
+  }, [scrollY]);
+
+  const navItems = [
+    { href: "/about", label: "About" },
+    { href: "/projects", label: "Work" },
+    { href: "/blog", label: "Journal" },
+    { href: "/contact", label: "Contact" },
+  ];
+
+  const handleNavClick = (label: string) => {
+    trackNavigationClick(label.toLowerCase(), "navbar");
+    setIsMenuOpen(false);
+  };
+
   return (
-    <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        <Link className="text-lg font-bold md:text-xl" href="/">
-          Awab Elkhalil
-        </Link>
-
-        {/* Desktop Navigation */}
-        <div className="hidden md:flex md:items-center md:gap-4">
-          <NavigationMenu>
-            <NavigationMenuList>
-              <NavigationMenuItem>
-                <Link
-                  href="/about"
-                  legacyBehavior
-                  passHref
-                  onClick={() => trackNavigationClick("about", "navbar")}
-                >
-                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                    About
-                  </NavigationMenuLink>
-                </Link>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <Link
-                  href="/projects"
-                  legacyBehavior
-                  passHref
-                  onClick={() => trackNavigationClick("work", "navbar")}
-                >
-                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                    Work
-                  </NavigationMenuLink>
-                </Link>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <Link
-                  href="/blog"
-                  legacyBehavior
-                  passHref
-                  onClick={() => trackNavigationClick("blog", "navbar")}
-                >
-                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                    Blog
-                  </NavigationMenuLink>
-                </Link>
-              </NavigationMenuItem>
-            </NavigationMenuList>
-          </NavigationMenu>
-
-          <Button
-            asChild
-            variant="outline"
-            onClick={() => trackContactClick("whatsapp", "navbar")}
+    <>
+      <motion.nav 
+        className={`fixed top-0 z-50 w-full transition-colors duration-300 ${
+          isScrolled ? "bg-background/80 backdrop-blur-md border-b border-border/10" : "bg-transparent"
+        }`}
+        initial={{ y: -100 }}
+        animate={{ y: 0 }}
+        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+      >
+        <div className="container mx-auto flex h-24 items-center justify-between px-6">
+          <Link
+            href="/"
+            className="group relative z-50 font-display text-2xl font-bold tracking-tighter mix-blend-difference"
+            onClick={() => handleNavClick("home")}
           >
-            <Link
-              href="https://wa.me/905541759945"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Reach out
-            </Link>
-          </Button>
+            <span className="relative inline-block overflow-hidden">
+              <span className="inline-block transition-transform duration-500 group-hover:-translate-y-full">AWAB</span>
+              <span className="absolute left-0 top-0 inline-block translate-y-full transition-transform duration-500 group-hover:translate-y-0">AWAB</span>
+            </span>
+          </Link>
 
-          <ModeToggle />
-        </div>
-
-        {/* Mobile Navigation */}
-        <div className="flex items-center gap-2 md:hidden">
-          <ModeToggle />
-
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="md:hidden">
-                <Menu className="h-5 w-5" />
-                <span className="sr-only">Toggle menu</span>
+          {/* Desktop Navigation */}
+          <div className="hidden items-center gap-12 md:flex">
+            {navItems.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="group relative text-sm font-medium uppercase tracking-widest text-muted-foreground transition-colors hover:text-foreground"
+                onClick={() => handleNavClick(item.label)}
+              >
+                {item.label}
+                <span className="absolute -bottom-1 left-0 h-px w-0 bg-foreground transition-all duration-300 group-hover:w-full" />
+              </Link>
+            ))}
+            
+            <div className="flex items-center gap-4 border-l border-border/20 pl-8">
+              <ModeToggle />
+              <Button
+                variant="outline"
+                className="rounded-full px-6 transition-all hover:bg-foreground hover:text-background"
+                onClick={() => {
+                  trackContactClick("whatsapp", "navbar");
+                  openWhatsApp();
+                }}
+              >
+                Let's Talk
               </Button>
-            </SheetTrigger>
-            <SheetContent side="right">
-              <div className="flex flex-col gap-4 py-4">
-                <SheetClose asChild>
-                  <Link
-                    href="/about"
-                    className="flex w-full items-center py-2 text-lg font-medium"
-                  >
-                    About
-                  </Link>
-                </SheetClose>
-                <SheetClose asChild>
-                  <Link
-                    href="/projects"
-                    className="flex w-full items-center py-2 text-lg font-medium"
-                  >
-                    Work
-                  </Link>
-                </SheetClose>
-                <SheetClose asChild>
-                  <Link
-                    href="/blog"
-                    className="flex w-full items-center py-2 text-lg font-medium"
-                  >
-                    Blog
-                  </Link>
-                </SheetClose>
-                <SheetClose asChild>
-                  <Link
-                    href="https://wa.me/905541759945"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex w-full items-center py-2 text-lg font-medium"
-                  >
-                    Reach out
-                  </Link>
-                </SheetClose>
-              </div>
-            </SheetContent>
-          </Sheet>
+            </div>
+          </div>
+
+          {/* Mobile Menu Button */}
+          <div className="flex items-center gap-4 md:hidden">
+            <ModeToggle />
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="group z-50 flex h-10 w-10 flex-col items-center justify-center gap-1.5"
+              aria-label="Toggle menu"
+            >
+              <span className={`h-0.5 w-6 bg-foreground transition-all duration-300 ${isMenuOpen ? "rotate-45 translate-y-2" : ""}`} />
+              <span className={`h-0.5 w-6 bg-foreground transition-all duration-300 ${isMenuOpen ? "opacity-0" : ""}`} />
+              <span className={`h-0.5 w-6 bg-foreground transition-all duration-300 ${isMenuOpen ? "-rotate-45 -translate-y-2" : ""}`} />
+            </button>
+          </div>
         </div>
-      </div>
-    </nav>
+      </motion.nav>
+
+      {/* Full-Screen Menu Overlay */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.4 }}
+            className="fixed inset-0 z-40 flex flex-col justify-center bg-background/95 backdrop-blur-xl md:hidden"
+          >
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              exit="hidden"
+              variants={staggerContainer}
+              className="container mx-auto flex flex-col gap-8 px-6"
+            >
+              {navItems.map((item, index) => (
+                <motion.div key={item.href} variants={fadeIn}>
+                  <Link
+                    href={item.href}
+                    className="font-display text-5xl font-bold uppercase tracking-tight text-foreground transition-colors hover:text-muted-foreground"
+                    onClick={() => handleNavClick(item.label)}
+                  >
+                    {item.label}
+                  </Link>
+                </motion.div>
+              ))}
+              
+              <motion.div variants={fadeIn} className="mt-12 h-px w-full bg-border" />
+              
+              <motion.div variants={fadeIn} className="flex flex-col gap-4">
+                <span className="font-mono text-sm uppercase text-muted-foreground">Get in touch</span>
+                <a href="mailto:hello@awab.design" className="text-xl">hello@awab.design</a>
+                <Button
+                  size="lg"
+                  className="mt-4 w-full rounded-full"
+                  onClick={() => {
+                    trackContactClick("whatsapp", "navbar-mobile");
+                    openWhatsApp();
+                    setIsMenuOpen(false);
+                  }}
+                >
+                  Start a Project
+                </Button>
+              </motion.div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 };
 

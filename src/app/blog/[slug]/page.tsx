@@ -4,10 +4,10 @@ import { notFound } from "next/navigation";
 import { getBlogPostBySlug, getAllBlogPosts } from "../../../data/blog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
-import { Calendar, Clock, ArrowLeft, Share2, BookOpen } from "lucide-react";
-import { BlogPost } from "@/types";
+import Image from "next/image";
+import { Calendar, Clock, ArrowLeft, Share2 } from "lucide-react";
+import BlogContent from "@/components/blog/BlogContent";
 
 // Revalidate every 60 seconds to show fresh blog content
 export const revalidate = 60;
@@ -88,175 +88,82 @@ const BlogPostPage = async ({ params }: BlogPostPageProps) => {
     });
   };
 
-  // Convert markdown content to HTML (simple conversion for now)
-  const convertMarkdownToHtml = (markdown: string) => {
-    return markdown
-      .replace(
-        /^### (.*$)/gim,
-        '<h3 class="text-xl font-semibold mb-4 mt-6">$1</h3>',
-      )
-      .replace(
-        /^## (.*$)/gim,
-        '<h2 class="text-2xl font-bold mb-6 mt-8">$1</h2>',
-      )
-      .replace(
-        /^# (.*$)/gim,
-        '<h1 class="text-3xl font-bold mb-6 mt-8">$1</h1>',
-      )
-      .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
-      .replace(/\*(.*?)\*/g, "<em>$1</em>")
-      .replace(/^- (.*$)/gim, '<li class="ml-4">$1</li>')
-      .replace(/\n\n/g, '</p><p class="mb-4">')
-      .replace(/^<p/, '<p class="mb-4"')
-      .replace(/<\/p>$/, "</p>");
-  };
-
   return (
-    <main className="flex min-h-screen w-full flex-col items-center">
-      {/* Hero Section */}
-      <section className="w-full bg-gradient-to-br from-primary/5 to-secondary/5 py-16">
-        <div className="container mx-auto px-4">
-          <div className="mx-auto max-w-4xl">
-            {/* Breadcrumb */}
-            <nav className="mb-8">
-              <Button variant="ghost" size="sm" asChild>
-                <Link href="/blog" className="gap-2">
-                  <ArrowLeft className="h-4 w-4" />
-                  Back to Blog
-                </Link>
-              </Button>
-            </nav>
-
-            {/* Post Header */}
-            <div className="mb-8">
-              <Badge variant="secondary" className="mb-4">
-                {post.category}
-              </Badge>
-              <h1 className="mb-4 text-4xl font-bold leading-tight md:text-5xl">
+    <main className="min-h-screen bg-background">
+      {/* Immersive Hero */}
+      <div className="relative h-[80vh] w-full overflow-hidden">
+        {post.featured_image_url && (
+          <Image
+            src={post.featured_image_url}
+            alt={post.title}
+            fill
+            className="object-cover"
+            priority
+          />
+        )}
+        <div className="absolute inset-0 bg-black/60" />
+        
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="container px-4 text-center">
+            <div className="mx-auto max-w-4xl space-y-8">
+              <div className="flex justify-center gap-4">
+                <Badge variant="secondary" className="rounded-full bg-white/10 text-white hover:bg-white/20">
+                  {post.category}
+                </Badge>
+              </div>
+              
+              <h1 className="font-display text-5xl font-bold leading-tight tracking-tight text-white md:text-7xl">
                 {post.title}
               </h1>
-              <p className="mb-6 text-xl text-muted-foreground">
-                {post.excerpt}
-              </p>
 
-              {/* Post Meta */}
-              <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-                <div className="flex items-center gap-1">
+              <div className="flex flex-wrap items-center justify-center gap-8 text-white/80">
+                <div className="flex items-center gap-2">
                   <Calendar className="h-4 w-4" />
-                  <span>
-                    {formatDate(post.published_at || post.created_at)}
-                  </span>
+                  <span>{formatDate(post.published_at || post.created_at)}</span>
                 </div>
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-2">
                   <Clock className="h-4 w-4" />
                   <span>{post.reading_time} min read</span>
                 </div>
-                <div className="flex items-center gap-1">
-                  <BookOpen className="h-4 w-4" />
-                  <span>{post.view_count} views</span>
-                </div>
               </div>
-            </div>
-
-            {/* Featured Image */}
-            {post.featured_image_url && (
-              <div className="mb-8 aspect-video overflow-hidden rounded-lg">
-                <img
-                  src={post.featured_image_url}
-                  alt={post.title}
-                  className="h-full w-full object-cover"
-                />
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* Article Content */}
-      <section className="w-full py-16">
-        <div className="container mx-auto px-4">
-          <div className="mx-auto max-w-4xl">
-            <div className="grid gap-8 lg:grid-cols-4">
-              {/* Main Content */}
-              <article className="lg:col-span-3">
-                <div
-                  className="prose prose-lg prose-headings:font-bold prose-headings:text-foreground prose-p:text-muted-foreground prose-strong:text-foreground prose-li:text-muted-foreground max-w-none"
-                  dangerouslySetInnerHTML={{
-                    __html: convertMarkdownToHtml(post.content),
-                  }}
-                />
-
-                {/* Tags */}
-                <div className="mt-8 flex flex-wrap gap-2">
-                  {post.tags.map((tag) => (
-                    <Badge key={tag} variant="outline">
-                      {tag}
-                    </Badge>
-                  ))}
-                </div>
-
-                {/* Share Buttons */}
-                <div className="mt-8 flex items-center gap-4">
-                  <span className="text-sm text-muted-foreground">
-                    Share this article:
-                  </span>
-                  <Button variant="outline" size="sm" className="gap-2">
-                    <Share2 className="h-4 w-4" />
-                    Share
-                  </Button>
-                </div>
-              </article>
-
-              {/* Sidebar */}
-              <aside className="lg:col-span-1">
-                <Card>
-                  <CardContent className="p-6">
-                    <h3 className="mb-4 text-lg font-semibold">
-                      About the Author
-                    </h3>
-                    <p className="text-sm text-muted-foreground">
-                      Awab Elkhalil is a professional web designer and developer
-                      based in Istanbul, specializing in creating modern,
-                      conversion-focused websites.
-                    </p>
-                    <Button asChild className="mt-4 w-full">
-                      <Link href="/about">Learn More</Link>
-                    </Button>
-                  </CardContent>
-                </Card>
-
-                <Card className="mt-6">
-                  <CardContent className="p-6">
-                    <h3 className="mb-4 text-lg font-semibold">
-                      Related Articles
-                    </h3>
-                    <div className="space-y-3">
-                      <Link
-                        href="/blog"
-                        className="block text-sm text-muted-foreground hover:text-foreground"
-                      >
-                        Web Design Trends That Will Dominate 2024
-                      </Link>
-                      <Link
-                        href="/blog"
-                        className="block text-sm text-muted-foreground hover:text-foreground"
-                      >
-                        SEO Tips Every Web Designer Should Know
-                      </Link>
-                      <Link
-                        href="/blog"
-                        className="block text-sm text-muted-foreground hover:text-foreground"
-                      >
-                        Freelance Design Success: Tips from an Istanbul Designer
-                      </Link>
-                    </div>
-                  </CardContent>
-                </Card>
-              </aside>
             </div>
           </div>
         </div>
-      </section>
+      </div>
+
+      {/* Content */}
+      <div className="container mx-auto px-4 py-24">
+        <div className="mx-auto max-w-3xl">
+          <Link 
+            href="/blog" 
+            className="mb-12 inline-flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to Journal
+          </Link>
+
+          <p className="lead mb-16 text-2xl leading-relaxed text-foreground md:text-3xl">
+            {post.excerpt}
+          </p>
+
+          <BlogContent content={post.content} />
+
+          <div className="mt-16 flex flex-wrap gap-2 border-t border-border pt-16">
+            {post.tags.map((tag) => (
+              <Badge key={tag} variant="outline" className="rounded-full px-4 py-2">
+                #{tag}
+              </Badge>
+            ))}
+          </div>
+
+          <div className="mt-12 flex justify-between border-t border-border pt-12">
+            <Button variant="outline" className="gap-2">
+              <Share2 className="h-4 w-4" />
+              Share Article
+            </Button>
+          </div>
+        </div>
+      </div>
     </main>
   );
 };

@@ -1,12 +1,7 @@
 import React from "react";
 import { Metadata } from "next";
 import { getAllBlogPosts, getAllBlogCategories } from "../../data/blog";
-import {
-  BackgroundHero,
-  SectionContainer,
-  VisualElement,
-} from "@/components/ui";
-import BlogInteractive from "@/components/blog/BlogInteractive";
+import BlogList from "@/components/blog/BlogList";
 
 // Revalidate every 60 seconds to show fresh blog content
 export const revalidate = 60;
@@ -43,31 +38,20 @@ const BlogPage = async () => {
   ]);
 
   return (
-    <main className="flex min-h-screen w-full flex-col items-center">
-      <BackgroundHero
-        title="Blog"
-        subtitle="Design Insights & Tips"
-        description="Explore the latest trends in web design, UI/UX best practices, SEO strategies, and insights from the digital design industry."
-        backgroundSrc="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?q=80&w=2072&auto=format&fit=crop"
-        className="relative overflow-hidden"
-      />
+    <main className="flex min-h-screen w-full flex-col bg-background pt-32">
+      <div className="container mx-auto mb-24 px-4">
+        <h1 className="font-display text-display-1 font-bold leading-none tracking-tighter">
+          JOURNAL
+          <span className="ml-4 text-lg font-normal tracking-normal text-muted-foreground md:text-xl">
+            ({allPosts.length})
+          </span>
+        </h1>
+        <p className="mt-8 max-w-2xl text-xl leading-relaxed text-muted-foreground">
+          Thoughts on design, development, and the future of digital experiences.
+        </p>
+      </div>
 
-      <SectionContainer
-        title="All Articles"
-        subtitle="Browse through our latest insights and tips"
-        centered
-        decorative
-        className="relative overflow-hidden"
-      >
-        <VisualElement
-          type="blob"
-          position="bottom-right"
-          size="medium"
-          opacity={0.05}
-        />
-
-        <BlogInteractive posts={allPosts} categories={categories} />
-      </SectionContainer>
+      <BlogList posts={allPosts} categories={categories} />
     </main>
   );
 };

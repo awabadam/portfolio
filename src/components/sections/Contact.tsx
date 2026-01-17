@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { Check, Mail, MessageSquare, Phone } from "lucide-react";
 import Link from "next/link";
+import { useWhatsApp } from "@/components/chat/WhatsAppContext";
 import {
   trackFormSubmission,
   trackContactAction,
@@ -15,6 +16,7 @@ import {
 } from "@/lib/gtm";
 
 const Contact = () => {
+  const { openWhatsApp } = useWhatsApp();
   const [formState, setFormState] = useState({
     name: "",
     email: "",
@@ -157,23 +159,23 @@ const Contact = () => {
               </CardContent>
             </Card>
 
-            <Card className="border-border/40 bg-card/50 backdrop-blur transition-all duration-300 hover:border-primary/30 hover:shadow-md">
+            <Card 
+              className="cursor-pointer border-border/40 bg-card/50 backdrop-blur transition-all duration-300 hover:border-primary/30 hover:shadow-md"
+              onClick={() => {
+                trackContactAction("whatsapp_click", "whatsapp");
+                trackContactClick("whatsapp", "contact_card");
+                openWhatsApp();
+              }}
+            >
               <CardContent className="flex items-center gap-4 p-4">
                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
                   <MessageSquare className="h-6 w-6 text-primary" />
                 </div>
                 <div>
                   <h4 className="font-medium">WhatsApp</h4>
-                  <Link
-                    href="https://wa.me/905541759945"
-                    className="text-sm text-muted-foreground hover:text-primary"
-                    onClick={() => {
-                      trackContactAction("whatsapp_click", "whatsapp");
-                      trackContactClick("whatsapp", "contact_card");
-                    }}
-                  >
+                  <span className="text-sm text-muted-foreground hover:text-primary">
                     Message on WhatsApp
-                  </Link>
+                  </span>
                 </div>
               </CardContent>
             </Card>

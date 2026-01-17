@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter as FontSans } from "next/font/google";
+import { Inter as FontSans, Space_Grotesk as FontDisplay } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { Navbar, Footer, ThemeProvider } from "../components";
@@ -7,10 +7,22 @@ import { cn } from "@/lib/utils";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 import PageTracking from "@/components/PageTracking";
 import ChatWidget from "@/components/chat/ChatWidget";
+import { WhatsAppProvider } from "@/components/chat/WhatsAppContext";
+import ScrollProgress from "@/components/ui/ScrollProgress";
+import SmoothScroll from "@/components/ui/SmoothScroll";
+import NoiseOverlay from "@/components/ui/NoiseOverlay";
+import { AnimatePresence } from "framer-motion";
+import PageTransition from "@/components/ui/PageTransition";
 
 const fontSans = FontSans({
   subsets: ["latin"],
   variable: "--font-sans",
+});
+
+const fontDisplay = FontDisplay({
+  subsets: ["latin"],
+  variable: "--font-display",
+  weight: ["300", "400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -135,6 +147,7 @@ export default function RootLayout({
         className={cn(
           "h-full w-screen overflow-x-clip bg-background font-sans antialiased",
           fontSans.variable,
+          fontDisplay.variable,
         )}
       >
         {/* Google Tag Manager (noscript) */}
@@ -184,12 +197,17 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <GoogleAnalytics />
-          <PageTracking />
-          <Navbar />
-          {children}
-          <Footer />
-          <ChatWidget />
+          <WhatsAppProvider>
+            <GoogleAnalytics />
+            <PageTracking />
+            <ScrollProgress />
+            <SmoothScroll />
+            <NoiseOverlay />
+            <Navbar />
+            <PageTransition>{children}</PageTransition>
+            <Footer />
+            <ChatWidget />
+          </WhatsAppProvider>
         </ThemeProvider>
       </body>
     </html>

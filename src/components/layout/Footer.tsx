@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Mail, Phone, MapPin, Github, Linkedin, Twitter } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
+import { useWhatsApp } from "@/components/chat/WhatsAppContext";
 import {
   trackSocialClick,
   trackContactClick,
@@ -10,178 +11,98 @@ import {
 } from "@/lib/gtm";
 
 const Footer = () => {
+  const { openWhatsApp } = useWhatsApp();
   const currentYear = new Date().getFullYear();
 
+  const footerLinks = [
+    { name: "About", href: "/about" },
+    { name: "Work", href: "/projects" },
+    { name: "Services", href: "/#services" },
+    { name: "Pricing", href: "/rate-calculator" },
+    { name: "Blog", href: "/blog" },
+  ];
+
+  const socialLinks = [
+    { name: "LinkedIn", href: "https://linkedin.com/in/awabelkhalil" },
+    { name: "GitHub", href: "https://github.com/awabelkhalil" },
+    { name: "Instagram", href: "https://instagram.com/awabelkhalil" },
+    { name: "Twitter", href: "https://twitter.com/awabelkhalil" },
+  ];
+
   return (
-    <footer className="w-full border-t bg-background py-12">
-      <div className="container mx-auto px-4">
-        {/* Main Footer Content */}
-        <div className="grid gap-8 md:grid-cols-4">
-          {/* Brand Section */}
-          <div className="md:col-span-2">
-            <h3 className="mb-4 text-lg font-bold">Awab Elkhalil</h3>
-            <p className="mb-4 text-muted-foreground">
-              Professional web designer and developer based in Istanbul,
-              specializing in creating modern, conversion-focused websites for
-              healthcare businesses and startups.
-            </p>
-            <div className="flex gap-4">
-              <Button
-                asChild
-                variant="ghost"
-                size="sm"
-                onClick={() => trackContactClick("email", "footer")}
+    <footer className="relative z-10 w-full overflow-hidden bg-foreground text-background pt-24 pb-12">
+      <div className="container mx-auto px-6">
+        <div className="grid gap-16 lg:grid-cols-2">
+          {/* Brand & CTA */}
+          <div className="flex flex-col justify-between space-y-12">
+            <div>
+              <h2 className="font-display text-[12vw] leading-none tracking-tighter md:text-[8vw]">
+                AWAB.
+              </h2>
+            </div>
+            
+            <div className="max-w-md space-y-6">
+              <p className="text-xl text-background/80">
+                Crafting digital experiences that merge art, technology, and strategy for forward-thinking brands.
+              </p>
+              <Button 
+                className="h-14 rounded-full bg-background px-8 text-lg text-foreground hover:bg-background/90"
+                onClick={() => {
+                  trackContactClick("whatsapp", "footer");
+                  openWhatsApp();
+                }}
               >
-                <Link href="mailto:awabe.adam@gmail.com">
-                  <Mail className="h-4 w-4" />
-                </Link>
-              </Button>
-              <Button
-                asChild
-                variant="ghost"
-                size="sm"
-                onClick={() => trackContactClick("phone", "footer")}
-              >
-                <Link href="tel:+905541759945">
-                  <Phone className="h-4 w-4" />
-                </Link>
-              </Button>
-              <Button
-                asChild
-                variant="ghost"
-                size="sm"
-                onClick={() => trackSocialClick("github", "footer")}
-              >
-                <Link
-                  href="https://github.com/awabelkhalil"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <Github className="h-4 w-4" />
-                </Link>
-              </Button>
-              <Button
-                asChild
-                variant="ghost"
-                size="sm"
-                onClick={() => trackSocialClick("linkedin", "footer")}
-              >
-                <Link
-                  href="https://linkedin.com/in/awabelkhalil"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <Linkedin className="h-4 w-4" />
-                </Link>
+                Start a Project
               </Button>
             </div>
           </div>
 
-          {/* Quick Links */}
-          <div>
-            <h4 className="mb-4 font-semibold">Quick Links</h4>
-            <div className="space-y-2">
-              <Link
-                href="/about"
-                className="block text-sm text-muted-foreground hover:text-primary"
-              >
-                About Me
-              </Link>
-              <Link
-                href="/projects"
-                className="block text-sm text-muted-foreground hover:text-primary"
-              >
-                Portfolio
-              </Link>
-              <Link
-                href="#services"
-                className="block text-sm text-muted-foreground hover:text-primary"
-              >
-                Services
-              </Link>
-              <Link
-                href="/rate-calculator"
-                className="block text-sm text-muted-foreground hover:text-primary"
-              >
-                Pricing Calculator
-              </Link>
-              <Link
-                href="#contact"
-                className="block text-sm text-muted-foreground hover:text-primary"
-              >
-                Contact
-              </Link>
+          {/* Navigation Links */}
+          <div className="grid grid-cols-2 gap-12 md:grid-cols-2 lg:pl-24">
+            <div className="space-y-6">
+              <h3 className="font-mono text-sm uppercase text-background/50">Sitemap</h3>
+              <ul className="space-y-4">
+                {footerLinks.map((link) => (
+                  <li key={link.name}>
+                    <Link 
+                      href={link.href}
+                      className="group flex items-center gap-2 text-lg transition-colors hover:text-background/70"
+                      onClick={() => trackNavigationClick(link.name.toLowerCase(), "footer")}
+                    >
+                      {link.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             </div>
-          </div>
 
-          {/* Contact Info */}
-          <div>
-            <h4 className="mb-4 font-semibold">Contact Info</h4>
-            <div className="space-y-2 text-sm text-muted-foreground">
-              <div className="flex items-center gap-2">
-                <MapPin className="h-4 w-4" />
-                <span>Istanbul, Turkey</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Mail className="h-4 w-4" />
-                <a
-                  href="mailto:awabe.adam@gmail.com"
-                  className="hover:text-primary"
-                >
-                  awabe.adam@gmail.com
-                </a>
-              </div>
-              <div className="flex items-center gap-2">
-                <Phone className="h-4 w-4" />
-                <a href="tel:+905541759945" className="hover:text-primary">
-                  +90 554 175 9945
-                </a>
-              </div>
+            <div className="space-y-6">
+              <h3 className="font-mono text-sm uppercase text-background/50">Socials</h3>
+              <ul className="space-y-4">
+                {socialLinks.map((link) => (
+                  <li key={link.name}>
+                    <Link 
+                      href={link.href}
+                      target="_blank"
+                      className="group flex items-center gap-2 text-lg transition-colors hover:text-background/70"
+                      onClick={() => trackSocialClick(link.name.toLowerCase(), "footer")}
+                    >
+                      {link.name}
+                      <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-1 group-hover:translate-x-1" />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
         </div>
 
-        {/* Bottom Section */}
-        <div className="mt-8 flex flex-col items-center justify-between gap-4 border-t border-border/40 pt-8 md:flex-row">
-          <div className="flex flex-col items-center gap-2 md:items-start">
-            <p className="text-sm text-muted-foreground">
-              © {currentYear} Awab Elkhalil. All rights reserved.
-            </p>
-            <p className="text-xs text-muted-foreground">
-              Built with Next.js, TypeScript & Tailwind CSS
-            </p>
-          </div>
-          <div className="flex gap-4">
-            <Button
-              asChild
-              variant="ghost"
-              size="sm"
-              onClick={() => trackContactClick("whatsapp", "footer")}
-            >
-              <Link
-                href="https://wa.me/905541759945"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Get Quote
-              </Link>
-            </Button>
-            <Button
-              asChild
-              variant="ghost"
-              size="sm"
-              onClick={() => trackNavigationClick("rate_calculator", "footer")}
-            >
-              <Link href="/rate-calculator">Pricing</Link>
-            </Button>
-            <Button
-              asChild
-              variant="ghost"
-              size="sm"
-              onClick={() => trackNavigationClick("view_work", "footer")}
-            >
-              <Link href="/projects">View Work</Link>
-            </Button>
+        {/* Bottom Bar */}
+        <div className="mt-24 flex flex-col items-center justify-between gap-6 border-t border-background/10 pt-8 text-sm text-background/40 md:flex-row">
+          <p>© {currentYear} Awab Elkhalil. All rights reserved.</p>
+          <div className="flex gap-8">
+            <span className="hidden md:inline">Istanbul, Turkey</span>
+            <span>(GMT+3)</span>
           </div>
         </div>
       </div>

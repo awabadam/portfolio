@@ -173,7 +173,7 @@ const BlogAdminPage = () => {
       featured_image_url: post.featured_image_url || "",
       meta_title: post.meta_title || "",
       meta_description: post.meta_description || "",
-      reading_time: post.reading_time,
+      reading_time: post.reading_time || 0,
       published: post.published,
     });
     setShowForm(true);

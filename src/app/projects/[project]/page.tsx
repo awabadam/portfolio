@@ -1,18 +1,15 @@
-import React from "react";
+"use client";
+
 import Image from "next/image";
-import { Metadata } from "next";
-import { getProjectById } from "@/data/projects";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Badge } from "@/components/ui/badge";
+import { Project } from "@/types";
+import { getProjectById } from "@/data/projects";
 import { Button } from "@/components/ui/button";
-import {
-  SectionContainer,
-  ContentCard,
-  BackgroundHero,
-  VisualElement,
-  ImageGallery,
-} from "@/components/ui";
+import { Badge } from "@/components/ui/badge";
+import { ArrowLeft, ExternalLink, Github, Calendar, User } from "lucide-react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
 
 interface ProjectPageProps {
   params: {
@@ -20,218 +17,144 @@ interface ProjectPageProps {
   };
 }
 
-// Generate metadata for project pages
-export async function generateMetadata({
-  params,
-}: ProjectPageProps): Promise<Metadata> {
-  const project = await getProjectById(params.project);
-
-  if (!project) {
-    return {
-      title: "Project Not Found",
-      description: "The requested project could not be found.",
-    };
-  }
-
-  return {
-    title: `${project.title} | Project Portfolio`,
-    description:
-      project.description ||
-      `View the ${project.title} project by Awab Elkhalil. ${project.category} project showcasing modern web design and development.`,
-    keywords: [
-      project.title.toLowerCase(),
-      project.category.toLowerCase(),
-      "web design project",
-      "portfolio case study",
-      "UI/UX design",
-      "web development",
-    ],
-    openGraph: {
-      title: `${project.title} | Project Portfolio`,
-      description:
-        project.description ||
-        `View the ${project.title} project by Awab Elkhalil. ${project.category} project showcasing modern web design and development.`,
-      url: `https://awab.design/projects/${params.project}`,
-      images: project.thumbnail_url ? [project.thumbnail_url] : undefined,
-    },
-    alternates: {
-      canonical: `/projects/${params.project}`,
-    },
-  };
-}
-
-const ProjectPage = async ({ params }: ProjectPageProps) => {
+export default async function ProjectPage({ params }: ProjectPageProps) {
   const project = await getProjectById(params.project);
 
   if (!project) {
     notFound();
   }
 
-  // Use thumbnail as background if no images are available
-  const backgroundImage =
-    project.thumbnail_url ||
-    "https://images.unsplash.com/photo-1561070791-2526d30994b5?q=80&w=2000&auto=format&fit=crop";
+  return <ProjectContent project={project} />;
+}
+
+function ProjectContent({ project }: { project: Project }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end end"],
+  });
+
+  const scale = useTransform(scrollYProgress, [0, 0.2], [1, 0.9]);
+  const opacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
 
   return (
-    <main className="flex min-h-screen w-full flex-col items-center">
-      {/* Project Hero */}
-      <BackgroundHero
-        title={project.title}
-        subtitle={`${project.category}${project.role ? ` - ${project.role}` : ""}`}
-        description={project.description}
-        backgroundSrc={backgroundImage}
-        overlayOpacity={0.7}
-        className="min-h-[70vh]"
-      />
-
-      {/* Consolidated Case Study Section */}
-      <SectionContainer
-        title="Case Study"
-        subtitle="Project Details & Process"
-        className="relative overflow-hidden"
-        decorative
+    <div ref={containerRef} className="relative bg-background">
+      {/* Hero Section */}
+      <motion.section 
+        className="relative h-screen w-full overflow-hidden"
+        style={{ scale, opacity }}
       >
-        <VisualElement
-          type="blob"
-          position="bottom-right"
-          size="medium"
-          opacity={0.05}
+        <Image
+          src={project.thumbnail_url || ""}
+          alt={project.title}
+          fill
+          className="object-cover"
+          priority
         />
-        <VisualElement
-          type="blob"
-          position="top-left"
-          size="small"
-          opacity={0.05}
-        />
+        <div className="absolute inset-0 bg-black/40" />
+        <div className="absolute bottom-0 left-0 w-full p-8 md:p-16">
+          <div className="container mx-auto">
+            <motion.h1 
+              initial={{ y: 100, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+              className="font-display text-6xl font-bold text-white md:text-8xl lg:text-9xl"
+            >
+              {project.title}
+            </motion.h1>
+          </div>
+        </div>
+      </motion.section>
 
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
-          {/* Main Content Column */}
-          <div className="lg:col-span-7">
-            {/* Overview */}
-            <ContentCard className="mb-8 border-l-4 border-l-primary/50">
-              <div className="mb-4">
-                <h3 className="mb-2 text-xl font-semibold">Overview</h3>
-                {project.role && (
-                  <Badge variant="outline" className="mb-4 border-primary/30">
-                    Role: {project.role}
-                  </Badge>
-                )}
-              </div>
-              <div className="space-y-6">
-                <p className="text-lg leading-relaxed">
-                  {project.overview || project.description}
-                </p>
-              </div>
-            </ContentCard>
-
-            {/* Objectives & Approach */}
-            <div className="mb-8 grid grid-cols-1 gap-8 md:grid-cols-2">
-              {/* Objectives */}
-              {project.objectives && project.objectives.length > 0 && (
-                <ContentCard className="border-t-4 border-t-primary/30 bg-card/70">
-                  <h3 className="mb-4 text-xl font-semibold">Objectives</h3>
-                  <ul className="space-y-3 pl-5">
-                    {project.objectives.map((objective, index) => (
-                      <li key={index} className="relative text-base">
-                        <span className="absolute -left-5 text-primary">•</span>
-                        {objective}
-                      </li>
+      {/* Content Section */}
+      <section className="relative z-10 bg-background pt-24 md:pt-32">
+        <div className="container mx-auto px-4">
+          <div className="grid gap-16 lg:grid-cols-12">
+            {/* Sticky Sidebar */}
+            <div className="lg:col-span-4">
+              <div className="sticky top-32 space-y-8">
+                <div>
+                  <h3 className="mb-2 font-mono text-sm uppercase text-muted-foreground">Category</h3>
+                  <p className="text-xl font-medium">{project.category}</p>
+                </div>
+                
+                <div>
+                  <h3 className="mb-2 font-mono text-sm uppercase text-muted-foreground">Technologies</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {project.technologies.map((tech) => (
+                      <Badge key={tech} variant="secondary" className="rounded-full px-4 py-1">
+                        {tech}
+                      </Badge>
                     ))}
-                  </ul>
-                </ContentCard>
-              )}
+                  </div>
+                </div>
 
-              {/* Approach */}
-              {project.approach && project.approach.length > 0 && (
-                <ContentCard className="border-t-4 border-t-primary/30 bg-card/70">
-                  <h3 className="mb-4 text-xl font-semibold">Approach</h3>
-                  <ul className="space-y-3 pl-5">
-                    {project.approach.map((item, index) => (
-                      <li key={index} className="relative text-base">
-                        <span className="absolute -left-5 text-primary">•</span>
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </ContentCard>
-              )}
+                <div className="space-y-4 pt-8">
+                  {project.live_url && (
+                    <Button asChild className="w-full" size="lg">
+                      <Link href={project.live_url} target="_blank">
+                        Visit Live Site <ExternalLink className="ml-2 h-4 w-4" />
+                      </Link>
+                    </Button>
+                  )}
+                  {project.github_url && (
+                    <Button asChild variant="outline" className="w-full" size="lg">
+                      <Link href={project.github_url} target="_blank">
+                        View Code <Github className="ml-2 h-4 w-4" />
+                      </Link>
+                    </Button>
+                  )}
+                </div>
+              </div>
             </div>
 
-            {/* Design Concept */}
-            {project.designConcept && (
-              <ContentCard className="mb-8 border-l-4 border-l-primary/50">
-                <h3 className="mb-4 text-xl font-semibold">Design Concept</h3>
-                <p className="text-base leading-relaxed">
-                  {project.designConcept}
+            {/* Main Content */}
+            <div className="lg:col-span-8">
+              <div className="prose prose-lg max-w-none dark:prose-invert">
+                <p className="lead text-2xl leading-relaxed md:text-3xl">
+                  {project.description}
                 </p>
-              </ContentCard>
-            )}
-
-            {/* Final Thoughts */}
-            {project.finalThoughts && (
-              <ContentCard className="mb-8 border-l-4 border-l-primary/50">
-                <h3 className="mb-4 text-xl font-semibold">Final Thoughts</h3>
-                <p className="text-base leading-relaxed">
-                  {project.finalThoughts}
-                </p>
-              </ContentCard>
-            )}
-          </div>
-
-          {/* Sidebar/Visual Column */}
-          <div className="lg:col-span-5">
-            {/* Image Gallery */}
-            {project.images && project.images.length > 0 && (
-              <ContentCard className="mb-8 overflow-hidden border-none p-0">
-                <h3 className="mb-4 p-4 text-xl font-semibold">
-                  Project Gallery
-                </h3>
-                <div className="overflow-hidden rounded-lg">
-                  <ImageGallery images={project.images} />
-                </div>
-              </ContentCard>
-            )}
-
-            {/* Project Info Card */}
-            <ContentCard className="mb-8 bg-primary/5">
-              <h3 className="mb-4 text-xl font-semibold">Project Info</h3>
-              <div className="space-y-3">
-                <div>
-                  <span className="text-sm font-medium text-muted-foreground">
-                    Category:
-                  </span>
-                  <p className="text-base">{project.category}</p>
-                </div>
-                {project.role && (
-                  <div>
-                    <span className="text-sm font-medium text-muted-foreground">
-                      Role:
-                    </span>
-                    <p className="text-base">{project.role}</p>
+                
+                {/* Add more content structure here if available in project object */}
+                {/* This is a placeholder for the long-form content */}
+                <div className="my-16 space-y-8">
+                  <h2 className="font-display text-4xl font-bold">The Challenge</h2>
+                  <p>
+                    Every project starts with a unique set of challenges. For {project.title}, 
+                    the main goal was to create an immersive experience that...
+                  </p>
+                  
+                  <div className="relative my-12 aspect-video w-full overflow-hidden rounded-lg">
+                    <Image
+                      src={project.thumbnail_url || ""}
+                      alt="Project detail"
+                      fill
+                      className="object-cover"
+                    />
                   </div>
-                )}
+
+                  <h2 className="font-display text-4xl font-bold">The Solution</h2>
+                  <p>
+                    Our approach focused on simplifying the user journey while maximizing 
+                    visual impact. We implemented...
+                  </p>
+                </div>
               </div>
-            </ContentCard>
+            </div>
           </div>
         </div>
-      </SectionContainer>
 
-      {/* Links Section */}
-      <SectionContainer title="Links" className="relative overflow-hidden">
-        <div className="flex flex-wrap gap-4">
-          <Button asChild>
-            <Link href={`${project.behance_url}`} target="_blank">
-              View on Behance
-            </Link>
-          </Button>
-
-          <Button asChild variant="outline">
-            <Link href="/projects">← Back to Projects</Link>
-          </Button>
+        {/* Next Project Footer */}
+        <div className="mt-32 border-t border-border py-32 text-center">
+          <p className="mb-4 font-mono text-sm uppercase text-muted-foreground">Next Case Study</p>
+          <Link 
+            href="/projects" 
+            className="font-display text-6xl font-bold transition-colors hover:text-primary md:text-8xl"
+          >
+            VIEW ALL WORK
+          </Link>
         </div>
-      </SectionContainer>
-    </main>
+      </section>
+    </div>
   );
-};
-
-export default ProjectPage;
+}

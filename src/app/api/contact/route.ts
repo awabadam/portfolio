@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
+import { createAppServerClient } from "@/lib/supabase/server-app";
 
 // Email template functions
 function generateQuoteConfirmationEmail(formData: any) {
@@ -175,6 +176,32 @@ export async function POST(request: Request) {
   
   try {
     formData = await request.json();
+    
+    // Save lead to database
+    try {
+      const headers = request.headers;
+      const ipAddress = headers.get("x-forwarded-for") || headers.get("x-real-ip") || "unknown";
+      const userAgent = headers.get("user-agent") || "unknown";
+      
+      const supabase = createAppServerClient();
+      await supabase.from("leads").insert({
+        source: formData.formType === 'rate_calculator' ? 'contact_form' : 'contact_form',
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        message: formData.message,
+        project_type: formData.projectType,
+        ip_address: ipAddress,
+        user_agent: userAgent,
+        metadata: {
+          company: formData.company,
+          formType: formData.formType,
+        },
+      });
+    } catch (leadError) {
+      console.error("Error saving lead:", leadError);
+      // Continue even if lead saving fails
+    }
     
     // Debug: Log environment variables (only in development)
     if (process.env.NODE_ENV === 'development') {

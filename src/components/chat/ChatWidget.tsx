@@ -1,15 +1,16 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { MessageCircle, X, MessageSquare } from "lucide-react";
+import { MessageCircle, X } from "lucide-react";
+import { FaWhatsapp } from "react-icons/fa";
 import ChatWindow from "./ChatWindow";
-import WhatsAppForm from "./WhatsAppForm";
+import { useWhatsApp } from "./WhatsAppContext";
 import { generateSessionId } from "@/lib/chat/chatBot";
 
 export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
-  const [showWhatsApp, setShowWhatsApp] = useState(false);
   const [sessionId, setSessionId] = useState<string>("");
+  const { openWhatsApp, isOpen: isWhatsAppOpen } = useWhatsApp();
 
   useEffect(() => {
     // Generate or retrieve session ID
@@ -25,12 +26,11 @@ export default function ChatWidget() {
 
   const toggleChat = () => {
     setIsOpen(!isOpen);
-    setShowWhatsApp(false);
   };
 
-  const toggleWhatsApp = () => {
-    setShowWhatsApp(!showWhatsApp);
-    setIsOpen(false);
+  const handleWhatsAppClick = () => {
+    setIsOpen(false); // Close chat if open
+    openWhatsApp();
   };
 
   return (
@@ -42,20 +42,19 @@ export default function ChatWidget() {
         sessionId={sessionId}
       />
 
-      {/* WhatsApp Form */}
-      {showWhatsApp && <WhatsAppForm onClose={() => setShowWhatsApp(false)} />}
-
       {/* Action Buttons Container */}
       <div className="fixed bottom-4 right-4 z-50 flex flex-col gap-3 sm:bottom-6 sm:right-6">
-        {/* WhatsApp Button */}
+        {/* WhatsApp Button - Green */}
         <button
-          onClick={toggleWhatsApp}
-          className="group relative flex h-14 w-14 items-center justify-center rounded-full border border-border/40 bg-card shadow-lg transition-all duration-200 hover:scale-105 hover:border-primary/30 hover:shadow-xl"
-          aria-label="Open WhatsApp form"
+          onClick={handleWhatsAppClick}
+          className="group relative flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg transition-all duration-200 hover:scale-105 hover:bg-[#128C7E] hover:shadow-xl"
+          aria-label="Open WhatsApp"
         >
-          <MessageSquare className="h-6 w-6 text-primary transition-transform group-hover:scale-110" />
+          <FaWhatsapp className="h-7 w-7 transition-transform group-hover:scale-110" />
           {/* Pulse animation ring */}
-          <span className="absolute inset-0 animate-ping rounded-full bg-primary/20 opacity-75"></span>
+          {!isWhatsAppOpen && (
+            <span className="absolute inset-0 animate-ping rounded-full bg-[#25D366]/40 opacity-75"></span>
+          )}
         </button>
 
         {/* Chat Button - More Prominent */}

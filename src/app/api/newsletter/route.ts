@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
+import { createAppServerClient } from "@/lib/supabase/server-app";
 
 export async function POST(request: Request) {
   try {
@@ -10,6 +11,24 @@ export async function POST(request: Request) {
         { error: "Valid email address is required" },
         { status: 400 }
       );
+    }
+
+    // Save lead to database
+    try {
+      const headers = request.headers;
+      const ipAddress = headers.get("x-forwarded-for") || headers.get("x-real-ip") || "unknown";
+      const userAgent = headers.get("user-agent") || "unknown";
+      
+      const supabase = createAppServerClient();
+      await supabase.from("leads").insert({
+        source: "newsletter",
+        email: email,
+        ip_address: ipAddress,
+        user_agent: userAgent,
+      });
+    } catch (leadError) {
+      console.error("Error saving newsletter lead:", leadError);
+      // Continue even if lead saving fails
     }
 
     // Check if email configuration is set

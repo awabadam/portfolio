@@ -1,13 +1,7 @@
 import React from "react";
 import { Metadata } from "next";
 import { getAllProjects } from "../../data/projects";
-import {
-  BackgroundHero,
-  SectionContainer,
-  ProjectCard,
-  GridLayout,
-  VisualElement,
-} from "@/components/ui";
+import ProjectList from "@/components/projects/ProjectList";
 
 export const metadata: Metadata = {
   title: "Portfolio Projects | Awab Elkhalil - Web Designer & Developer",
@@ -36,36 +30,25 @@ const ProjectsPage = async () => {
   const allProjects = await getAllProjects();
 
   return (
-    <main className="flex min-h-screen w-full flex-col items-center">
-      <BackgroundHero
-        title="My Projects"
-        subtitle="Portfolio Showcase"
-        description="Browse through my complete portfolio of web design and development projects. Each project represents a unique challenge and creative solution."
-        backgroundSrc="https://images.unsplash.com/photo-1558655146-d09347e92766?q=80&w=2064&auto=format&fit=crop"
-        className="relative overflow-hidden"
-      />
+    <main className="flex min-h-screen w-full flex-col bg-background pt-32">
+      <div className="container mx-auto mb-24 px-4">
+        <h1 className="font-display text-display-1 font-bold leading-none tracking-tighter">
+          SELECTED
+          <br />
+          <span className="text-muted-foreground">WORKS</span>
+          <span className="ml-4 text-lg font-normal tracking-normal text-muted-foreground md:text-xl">
+            ({allProjects.length})
+          </span>
+        </h1>
+      </div>
 
-      <SectionContainer
-        title="All Projects"
-        subtitle="Browse through my complete portfolio"
-        centered
-        decorative
-        className="relative overflow-hidden"
-      >
-        <VisualElement
-          type="blob"
-          position="bottom-right"
-          size="medium"
-          opacity={0.05}
-        />
-
-        {/* Project Cards */}
-        <GridLayout columns={3} gap="gap-8">
-          {allProjects.map((project) => (
-            <ProjectCard key={project.id} project={project} />
-          ))}
-        </GridLayout>
-      </SectionContainer>
+      <ProjectList projects={allProjects} />
+      
+      <div className="flex h-[40vh] items-center justify-center">
+        <p className="text-center text-muted-foreground">
+          More projects coming soon...
+        </p>
+      </div>
     </main>
   );
 };

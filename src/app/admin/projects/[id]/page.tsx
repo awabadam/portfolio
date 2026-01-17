@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import AdminLayout from "@/components/admin/layout/AdminLayout";
 import ProjectForm from "@/components/admin/forms/ProjectForm";
 import { Project } from "@/types";
-import { createBrowserSupabaseClient } from "@/lib/supabase";
+import { createBrowserSupabaseClient } from "@/lib/supabase/client-side";
 
 export default function EditProjectPage() {
   const params = useParams();
@@ -53,6 +53,7 @@ export default function EditProjectPage() {
           behance_url: data.behance_url,
           thumbnail_url: data.thumbnail_url,
           featured: data.featured,
+          technologies: data.technologies || [],
         });
       } catch (err) {
         console.error("Error fetching project:", err);
