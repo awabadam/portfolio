@@ -16,7 +16,14 @@ interface Message {
   role: "user" | "assistant" | "system";
   content: string;
   created_at: string;
+  conversation_id: string;
   metadata?: any;
+}
+
+interface MessageGroup {
+  conversationId: string;
+  conversation?: Conversation;
+  messages: Message[];
 }
 
 interface Conversation {
@@ -39,6 +46,8 @@ export default function ConversationDetailPage() {
   const conversationId = params.id as string;
   const [conversation, setConversation] = useState<Conversation | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
+  const [messageGroups, setMessageGroups] = useState<MessageGroup[]>([]);
+  const [allConversations, setAllConversations] = useState<Conversation[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -78,7 +87,11 @@ export default function ConversationDetailPage() {
       }
 
       setConversation(data.conversation);
+      // Set all messages from the session (already sorted by created_at)
       setMessages(data.messages || []);
+      
+      // Set all conversations for this session (for display purposes)
+      setAllConversations(data.allConversations || [data.conversation]);
     } catch (err) {
       console.error("Error fetching conversation:", err);
       setError("Failed to load conversation. Please try again.");
@@ -272,22 +285,35 @@ export default function ConversationDetailPage() {
           </CardContent>
         </Card>
 
-        {/* Messages */}
+        {/* Messages - Show all messages from the session */}
         <Card>
           <CardHeader>
-            <CardTitle>Conversation ({messages.length} messages)</CardTitle>
+            <CardTitle>
+              All Messages ({messages.length} messages)
+              {allConversations.length > 1 && (
+                <span className="text-sm font-normal text-muted-foreground ml-2">
+                  (from {allConversations.length} conversations)
+                </span>
+              )}
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4 max-h-[600px] overflow-y-auto">
-              {messages.map((message) => (
-                <MessageBubble
-                  key={message.id}
-                  role={message.role}
-                  content={message.content}
-                  timestamp={new Date(message.created_at)}
-                />
-              ))}
-            </div>
+            {messages.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">
+                No messages found in this conversation.
+              </div>
+            ) : (
+              <div className="space-y-4 max-h-[600px] overflow-y-auto">
+                {messages.map((message) => (
+                  <MessageBubble
+                    key={message.id}
+                    role={message.role}
+                    content={message.content}
+                    timestamp={new Date(message.created_at)}
+                  />
+                ))}
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>

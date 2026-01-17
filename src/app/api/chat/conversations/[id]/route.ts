@@ -60,11 +60,23 @@ export async function GET(
       );
     }
 
-    // Get messages
-    const { data: messages, error: messagesError } = await adminSupabase
+    // Get all conversation IDs for this session first
+    const { data: sessionConversations, error: convsError } = await adminSupabase
+      .from("chat_conversations")
+      .select("id")
+      .eq("session_id", conversation.session_id);
+
+    if (convsError) {
+      console.error("Error fetching session conversations:", convsError);
+    }
+
+    // Get all messages for all conversations in this session
+    // This ensures we show all messages from the same session, even if they were split into different conversations
+    const conversationIds = sessionConversations?.map(c => c.id) || [conversationId];
+    const { data: allMessages, error: messagesError } = await adminSupabase
       .from("chat_messages")
       .select("*")
-      .eq("conversation_id", conversationId)
+      .in("conversation_id", conversationIds)
       .order("created_at", { ascending: true });
 
     if (messagesError) {
@@ -75,9 +87,28 @@ export async function GET(
       );
     }
 
+    // Group messages by conversation_id
+    const messagesByConversation: Record<string, typeof allMessages> = {};
+    (allMessages || []).forEach((message) => {
+      const convId = message.conversation_id;
+      if (!messagesByConversation[convId]) {
+        messagesByConversation[convId] = [];
+      }
+      messagesByConversation[convId].push(message);
+    });
+
+    // Get all conversations for this session
+    const { data: allConversations } = await adminSupabase
+      .from("chat_conversations")
+      .select("*")
+      .eq("session_id", conversation.session_id)
+      .order("started_at", { ascending: true });
+
     return NextResponse.json({
       conversation,
-      messages: messages || [],
+      messages: allMessages || [],
+      messagesByConversation,
+      allConversations: allConversations || [],
     });
   } catch (error) {
     console.error("Error in conversation detail API:", error);
