@@ -1,15 +1,15 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import AdminLayout from "@/components/admin/layout/AdminLayout";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useSupabaseAuth } from "@/lib/hooks/useSupabase";
 import Link from "next/link";
-import { ArrowLeft, Archive, Trash2, Mail, Phone, User } from "lucide-react";
+import { ArrowLeft, Archive, Trash2, Mail, Phone, User, MessageSquare, Clock } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import MessageBubble from "@/components/chat/MessageBubble";
+import { cn } from "@/lib/utils";
 
 interface Message {
   id: string;
@@ -18,12 +18,6 @@ interface Message {
   created_at: string;
   conversation_id: string;
   metadata?: any;
-}
-
-interface MessageGroup {
-  conversationId: string;
-  conversation?: Conversation;
-  messages: Message[];
 }
 
 interface Conversation {
@@ -46,16 +40,20 @@ export default function ConversationDetailPage() {
   const conversationId = params.id as string;
   const [conversation, setConversation] = useState<Conversation | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
-  const [messageGroups, setMessageGroups] = useState<MessageGroup[]>([]);
   const [allConversations, setAllConversations] = useState<Conversation[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (user && !loading && conversationId) {
       fetchConversation();
     }
   }, [user, loading, conversationId]);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   const fetchConversation = async () => {
     try {
@@ -87,10 +85,7 @@ export default function ConversationDetailPage() {
       }
 
       setConversation(data.conversation);
-      // Set all messages from the session (already sorted by created_at)
       setMessages(data.messages || []);
-      
-      // Set all conversations for this session (for display purposes)
       setAllConversations(data.allConversations || [data.conversation]);
     } catch (err) {
       console.error("Error fetching conversation:", err);
@@ -166,8 +161,11 @@ export default function ConversationDetailPage() {
   if (isLoading) {
     return (
       <AdminLayout>
-        <div className="flex h-40 items-center justify-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-t-2 border-primary"></div>
+        <div className="flex h-[calc(100vh-200px)] items-center justify-center">
+          <div className="flex flex-col items-center gap-4">
+            <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary/20 border-t-primary"></div>
+            <p className="text-sm text-muted-foreground">Loading conversation...</p>
+          </div>
         </div>
       </AdminLayout>
     );
@@ -176,148 +174,209 @@ export default function ConversationDetailPage() {
   if (error || !conversation) {
     return (
       <AdminLayout>
-        <div className="space-y-6">
-          <div className="rounded-md bg-red-50 p-4 text-sm text-red-500">
-            {error || "Conversation not found"}
+        <div className="flex h-[calc(100vh-200px)] items-center justify-center">
+          <div className="text-center space-y-4 max-w-md">
+            <div className="rounded-full bg-destructive/10 p-4 mx-auto w-fit">
+              <MessageSquare className="h-8 w-8 text-destructive" />
+            </div>
+            <div className="space-y-2">
+              <h3 className="text-xl font-semibold">{error || "Conversation not found"}</h3>
+              <p className="text-sm text-muted-foreground">
+                {error || "The conversation you're looking for doesn't exist or has been deleted."}
+              </p>
+            </div>
+            <Button asChild className="mt-4">
+              <Link href="/admin/chat">
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Back to Chat Logs
+              </Link>
+            </Button>
           </div>
-          <Button asChild>
-            <Link href="/admin/chat">Back to Chat Logs</Link>
-          </Button>
         </div>
       </AdminLayout>
     );
   }
 
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+    });
+  };
+
   return (
     <AdminLayout>
-      <div className="space-y-6">
+      <div className="flex h-[calc(100vh-64px)] flex-col gap-6 pb-8">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Button variant="outline" size="sm" asChild>
+        <div className="flex items-start justify-between gap-4 border-b border-border/50 pb-6">
+          <div className="flex items-start gap-4">
+            <Button variant="ghost" size="icon" asChild className="shrink-0">
               <Link href="/admin/chat">
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Back
+                <ArrowLeft className="h-5 w-5" />
               </Link>
             </Button>
-            <div>
-              <h1 className="text-3xl font-bold tracking-tight">
-                Conversation Details
-              </h1>
-              <p className="text-muted-foreground">
-                Session ID: {conversation.session_id}
-              </p>
+            <div className="space-y-1">
+              <div className="flex items-center gap-3">
+                <h1 className="text-3xl font-bold tracking-tight text-foreground">
+                  {conversation.visitor_name || "Anonymous Visitor"}
+                </h1>
+                <Badge
+                  variant={conversation.status === "active" ? "default" : "secondary"}
+                  className="text-xs"
+                >
+                  {conversation.status}
+                </Badge>
+              </div>
+              <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                <span className="flex items-center gap-1.5">
+                  <Clock className="h-4 w-4" />
+                  {formatDate(conversation.started_at)}
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <MessageSquare className="h-4 w-4" />
+                  {messages.length} {messages.length === 1 ? "message" : "messages"}
+                  {allConversations.length > 1 && (
+                    <span className="text-xs">• {allConversations.length} conversations</span>
+                  )}
+                </span>
+              </div>
             </div>
           </div>
-          <div className="flex gap-2">
+          <div className="flex items-center gap-2 shrink-0">
             {conversation.status === "active" && (
-              <Button variant="outline" onClick={handleArchive}>
+              <Button variant="outline" size="sm" onClick={handleArchive}>
                 <Archive className="mr-2 h-4 w-4" />
                 Archive
               </Button>
             )}
-            <Button variant="outline" onClick={handleDelete}>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleDelete}
+              className="text-destructive hover:text-destructive hover:bg-destructive/10 hover:border-destructive/20"
+            >
               <Trash2 className="mr-2 h-4 w-4" />
               Delete
             </Button>
           </div>
         </div>
 
-        {/* Visitor Info */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Visitor Information</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-sm font-medium">
-                  <User className="h-4 w-4" />
-                  Name
+        <div className="grid gap-6 lg:grid-cols-[320px_1fr] flex-1 overflow-hidden">
+          {/* Sidebar - Visitor Info */}
+          <aside className="space-y-6 lg:sticky lg:top-6 lg:h-fit">
+            <div className="rounded-xl border border-border/50 bg-gradient-to-br from-card to-card/50 p-6 shadow-sm">
+              <h2 className="text-sm font-semibold text-foreground mb-4">Visitor Information</h2>
+              <div className="space-y-4">
+                <div className="space-y-1.5">
+                  <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                    <User className="h-3.5 w-3.5" />
+                    Name
+                  </div>
+                  <p className="text-sm font-medium text-foreground">
+                    {conversation.visitor_name || (
+                      <span className="text-muted-foreground italic">Not provided</span>
+                    )}
+                  </p>
                 </div>
-                <div className="text-muted-foreground">
-                  {conversation.visitor_name || "Not provided"}
+
+                <div className="space-y-1.5">
+                  <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                    <Mail className="h-3.5 w-3.5" />
+                    Email
+                  </div>
+                  <p className="text-sm font-medium text-foreground break-all">
+                    {conversation.visitor_email || (
+                      <span className="text-muted-foreground italic">Not provided</span>
+                    )}
+                  </p>
                 </div>
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-sm font-medium">
-                  <Mail className="h-4 w-4" />
-                  Email
+
+                <div className="space-y-1.5">
+                  <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                    <Phone className="h-3.5 w-3.5" />
+                    Phone
+                  </div>
+                  <p className="text-sm font-medium text-foreground">
+                    {conversation.visitor_phone || (
+                      <span className="text-muted-foreground italic">Not provided</span>
+                    )}
+                  </p>
                 </div>
-                <div className="text-muted-foreground">
-                  {conversation.visitor_email || "Not provided"}
-                </div>
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-sm font-medium">
-                  <Phone className="h-4 w-4" />
-                  Phone
-                </div>
-                <div className="text-muted-foreground">
-                  {conversation.visitor_phone || "Not provided"}
-                </div>
-              </div>
-              <div className="space-y-2">
-                <div className="text-sm font-medium">Status</div>
-                <Badge
-                  variant={
-                    conversation.status === "active" ? "default" : "secondary"
-                  }
-                >
-                  {conversation.status}
-                </Badge>
-              </div>
-              <div className="space-y-2">
-                <div className="text-sm font-medium">Started</div>
-                <div className="text-muted-foreground">
-                  {new Date(conversation.started_at).toLocaleString()}
-                </div>
-              </div>
-              {conversation.ended_at && (
-                <div className="space-y-2">
-                  <div className="text-sm font-medium">Ended</div>
-                  <div className="text-muted-foreground">
-                    {new Date(conversation.ended_at).toLocaleString()}
+
+                <div className="pt-4 border-t border-border/50 space-y-2">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-muted-foreground">Started</span>
+                    <span className="font-medium text-foreground">
+                      {new Date(conversation.started_at).toLocaleDateString()}
+                    </span>
+                  </div>
+                  {conversation.ended_at && (
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-muted-foreground">Ended</span>
+                      <span className="font-medium text-foreground">
+                        {new Date(conversation.ended_at).toLocaleDateString()}
+                      </span>
+                    </div>
+                  )}
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-muted-foreground">Session ID</span>
+                    <code className="text-[10px] font-mono text-muted-foreground bg-muted px-1.5 py-0.5 rounded">
+                      {conversation.session_id.slice(0, 8)}...
+                    </code>
                   </div>
                 </div>
-              )}
+              </div>
             </div>
-          </CardContent>
-        </Card>
+          </aside>
 
-        {/* Messages - Show all messages from the session */}
-        <Card>
-          <CardHeader>
-            <CardTitle>
-              All Messages ({messages.length} messages)
-              {allConversations.length > 1 && (
-                <span className="text-sm font-normal text-muted-foreground ml-2">
-                  (from {allConversations.length} conversations)
-                </span>
-              )}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+          {/* Main Content - Messages */}
+          <main className="flex flex-col min-h-0">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <h2 className="text-lg font-semibold text-foreground">Conversation</h2>
+                {allConversations.length > 1 && (
+                  <Badge variant="outline" className="text-xs">
+                    {allConversations.length} conversations merged
+                  </Badge>
+                )}
+              </div>
+            </div>
+
             {messages.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">
-                No messages found in this conversation.
+              <div className="flex-1 flex items-center justify-center rounded-xl border border-dashed border-border/50 bg-muted/20 p-12">
+                <div className="text-center space-y-3">
+                  <div className="rounded-full bg-muted p-4 mx-auto w-fit">
+                    <MessageSquare className="h-8 w-8 text-muted-foreground" />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-medium mb-1">No messages found</h3>
+                    <p className="text-sm text-muted-foreground">
+                      This conversation doesn't have any messages yet.
+                    </p>
+                  </div>
+                </div>
               </div>
             ) : (
-              <div className="space-y-4 max-h-[600px] overflow-y-auto">
-                {messages.map((message) => (
-                  <MessageBubble
-                    key={message.id}
-                    role={message.role}
-                    content={message.content}
-                    timestamp={new Date(message.created_at)}
-                  />
-                ))}
+              <div className="flex-1 overflow-y-auto rounded-xl border border-border/50 bg-gradient-to-b from-card to-card/50 shadow-sm">
+                <div className="p-6 space-y-6">
+                  {messages.map((message, index) => (
+                    <MessageBubble
+                      key={message.id}
+                      role={message.role}
+                      content={message.content}
+                      timestamp={new Date(message.created_at)}
+                    />
+                  ))}
+                  <div ref={messagesEndRef} />
+                </div>
               </div>
             )}
-          </CardContent>
-        </Card>
+          </main>
+        </div>
       </div>
     </AdminLayout>
   );
 }
-
