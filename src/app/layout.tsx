@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import { Inter as FontSans, Space_Grotesk as FontDisplay } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
-import { Navbar, Footer, ThemeProvider } from "../components";
+import { ThemeProvider } from "../components";
+import { ConditionalLayout } from "@/components/layout/ConditionalLayout";
 import { cn } from "@/lib/utils";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 import PageTracking from "@/components/PageTracking";
-import ChatWidget from "@/components/chat/ChatWidget";
 import { WhatsAppProvider } from "@/components/chat/WhatsAppContext";
 import ScrollProgress from "@/components/ui/ScrollProgress";
 import SmoothScroll from "@/components/ui/SmoothScroll";
@@ -203,10 +203,8 @@ export default function RootLayout({
             <ScrollProgress />
             <SmoothScroll />
             <NoiseOverlay />
-            <Navbar />
+            <ConditionalLayout />
             <PageTransition>{children}</PageTransition>
-            <Footer />
-            <ChatWidget />
           </WhatsAppProvider>
         </ThemeProvider>
       </body>

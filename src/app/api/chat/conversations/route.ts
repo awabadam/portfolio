@@ -4,6 +4,18 @@ import { createAppServerClient } from "@/lib/supabase/server-app";
 export async function GET(request: Request) {
   try {
     const supabase = createAppServerClient();
+    
+    // Get the current user session
+    const { data: { session } } = await supabase.auth.getSession();
+    
+    // Check if user is authenticated
+    if (!session) {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+    
     const { searchParams } = new URL(request.url);
     const status = searchParams.get("status");
     const limit = parseInt(searchParams.get("limit") || "50");

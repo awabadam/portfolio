@@ -7,6 +7,18 @@ export async function GET(
 ) {
   try {
     const supabase = createAppServerClient();
+    
+    // Get the current user session
+    const { data: { session } } = await supabase.auth.getSession();
+    
+    // Check if user is authenticated
+    if (!session) {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+    
     const conversationId = params.id;
 
     // Get conversation
@@ -57,6 +69,18 @@ export async function PATCH(
 ) {
   try {
     const supabase = createAppServerClient();
+    
+    // Get the current user session
+    const { data: { session } } = await supabase.auth.getSession();
+    
+    // Check if user is authenticated
+    if (!session) {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+    
     const conversationId = params.id;
     const body = await request.json();
 
@@ -91,6 +115,18 @@ export async function DELETE(
 ) {
   try {
     const supabase = createAppServerClient();
+    
+    // Get the current user session
+    const { data: { session } } = await supabase.auth.getSession();
+    
+    // Check if user is authenticated
+    if (!session) {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+    
     const conversationId = params.id;
 
     const { error } = await supabase
