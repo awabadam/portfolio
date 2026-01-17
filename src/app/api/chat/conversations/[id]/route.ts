@@ -8,11 +8,11 @@ export async function GET(
   try {
     const supabase = createAppServerClient();
     
-    // Get the current user session
-    const { data: { session } } = await supabase.auth.getSession();
+    // Get the current user
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
     
     // Check if user is authenticated
-    if (!session) {
+    if (authError || !user) {
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 401 }
@@ -70,11 +70,11 @@ export async function PATCH(
   try {
     const supabase = createAppServerClient();
     
-    // Get the current user session
-    const { data: { session } } = await supabase.auth.getSession();
+    // Get the current user
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
     
     // Check if user is authenticated
-    if (!session) {
+    if (authError || !user) {
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 401 }
@@ -116,11 +116,11 @@ export async function DELETE(
   try {
     const supabase = createAppServerClient();
     
-    // Get the current user session
-    const { data: { session } } = await supabase.auth.getSession();
+    // Get the current user
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
     
     // Check if user is authenticated
-    if (!session) {
+    if (authError || !user) {
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 401 }
