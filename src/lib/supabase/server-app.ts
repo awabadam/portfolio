@@ -3,8 +3,8 @@ import { cookies } from 'next/headers';
 import { type CookieOptions } from '@supabase/ssr';
 
 // For use in app directory (Server Components) only
-export function createAppServerClient() {
-  const cookieStore = cookies();
+export async function createAppServerClient() {
+  const cookieStore = await cookies();
   
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,

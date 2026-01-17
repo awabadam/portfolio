@@ -27,7 +27,7 @@ export async function POST(request: Request) {
 
     // Try to use database, but gracefully handle if unavailable
     try {
-      const supabase = createAppServerClient();
+      const supabase = await createAppServerClient();
 
       // Get or create conversation
       if (!currentConversationId) {
@@ -159,7 +159,7 @@ export async function POST(request: Request) {
     // Try to save to database if available
     if (dbAvailable && currentConversationId) {
       try {
-        const supabase = createAppServerClient();
+        const supabase = await createAppServerClient();
 
         // Save user message
         await supabase.from("chat_messages").insert({
