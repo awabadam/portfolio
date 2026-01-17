@@ -81,17 +81,10 @@ const getProjectTypes = (serviceType: string) => {
         popular: true,
       },
       {
-        id: "ecommerce",
-        name: "E-commerce Website",
-        description: "Online store with shopping cart and payment",
-        basePrice: 2500,
-        icon: <Zap className="h-6 w-6" />,
-      },
-      {
         id: "custom",
         name: "Custom Website",
         description: "Complex website with custom features and integrations",
-        basePrice: 4000,
+        basePrice: 3000,
         icon: <Code className="h-6 w-6" />,
       },
     ];
@@ -101,7 +94,7 @@ const getProjectTypes = (serviceType: string) => {
         id: "logo",
         name: "Logo Design",
         description: "Professional logo with variations",
-        basePrice: 400,
+        basePrice: 300,
         icon: <Palette className="h-6 w-6" />,
       },
       {
@@ -133,14 +126,14 @@ const getProjectTypes = (serviceType: string) => {
         id: "basic",
         name: "Basic Chatbot",
         description: "Simple Q&A chatbot with basic automation",
-        basePrice: 350,
+        basePrice: 1000,
         icon: <Bot className="h-6 w-6" />,
       },
       {
         id: "advanced",
         name: "Advanced Chatbot",
         description: "AI-powered chatbot with lead qualification and integrations",
-        basePrice: 800,
+        basePrice: 3000,
         icon: <Bot className="h-6 w-6" />,
         popular: true,
       },
@@ -148,7 +141,7 @@ const getProjectTypes = (serviceType: string) => {
         id: "enterprise",
         name: "Enterprise Solution",
         description: "Custom AI chatbot with analytics and multi-language support",
-        basePrice: 2000,
+        basePrice: 8000,
         icon: <Zap className="h-6 w-6" />,
       },
     ];

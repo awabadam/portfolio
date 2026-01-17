@@ -7,7 +7,7 @@ import { ArrowLeft, CheckCircle, Clock, DollarSign } from "lucide-react";
 export const metadata: Metadata = {
   title: "AI Chatbot Integration Services | Awab Elkhalil",
   description:
-    "Integrate intelligent AI chatbots to automate customer support, qualify leads, and provide 24/7 assistance on your website. Starting from $350. 1-2 weeks delivery.",
+    "Integrate intelligent AI chatbots to automate customer support, qualify leads, and provide 24/7 assistance on your website. Starting from $1,000. 1-2 weeks delivery.",
   keywords: [
     "AI chatbot integration",
     "chatbot development",
@@ -56,7 +56,7 @@ const AIChatbotIntegrationPage = () => {
             <div className="flex items-center gap-2">
               <DollarSign className="h-5 w-5 text-primary" />
               <span className="text-xl font-semibold text-primary">
-                Starting from $350
+                Starting from $1,000
               </span>
             </div>
             <div className="flex items-center gap-2">

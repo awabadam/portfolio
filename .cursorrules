@@ -1,0 +1,255 @@
+# Cursor Rules for Next.js + Supabase Portfolio Project
+
+## Project Context
+This is a Next.js 14.2.5 portfolio website with:
+- App Router architecture
+- Custom Node.js server with WebSocket support (server.ts)
+- Supabase for database, auth, and storage
+- TypeScript with strict mode
+- Tailwind CSS with shadcn/ui components
+- Framer Motion for animations
+- Custom WebSocket chat implementation
+
+## Next.js Best Practices
+
+### File Structure
+- Use App Router: `src/app/` for pages and routes
+- Components in `src/components/` organized by feature
+- API routes in `src/app/api/`
+- Shared utilities in `src/lib/`
+- Types in `src/types/`
+
+### Code Style
+- Use TypeScript strict mode
+- Prefer "use client" only when needed (interactivity, hooks, browser APIs)
+- Use Server Components by default
+- Import paths use `@/` alias (configured in tsconfig.json)
+- Use async/await for data fetching
+- Handle errors with try/catch and proper error boundaries
+
+### Next.js Specific Rules
+- Always use `next/image` for images, not `<img>`
+- Use `next/link` for client-side navigation
+- Environment variables: `NEXT_PUBLIC_*` for client-side, others server-only
+- Use `metadata` export for SEO in Server Components
+- Use `generateMetadata` for dynamic metadata
+- Prefer `fetch` with Next.js caching: `{ next: { revalidate: 3600 } }`
+
+### Server vs Client Components
+- Server Components: Default, can use async, direct database access
+- Client Components: Mark with "use client", use hooks, browser APIs
+- Pass data from Server to Client via props, not context in Server Components
+
+## Supabase Best Practices
+
+### Client Creation
+- Browser: Use `createBrowserClient()` from `@/lib/supabase/client`
+- Server (App Router): Use `createServerClient()` from `@supabase/ssr`
+- Middleware: Use `createMiddlewareSupabaseClient()` from `@/lib/supabase/middleware`
+- API Routes: Use `createApiClient()` from `@/lib/supabase/server-app`
+
+### Authentication
+- Always check session with `supabase.auth.getSession()`
+- Use RLS (Row Level Security) policies for data access
+- Refresh sessions in middleware
+- Handle auth errors gracefully
+
+### Database Queries
+- Use TypeScript types from Supabase CLI: `supabase gen types typescript`
+- Always handle errors: `const { data, error } = await supabase.from('table').select()`
+- Use `.single()` for single row queries
+- Use `.maybeSingle()` when row might not exist
+- Implement proper error handling and user feedback
+
+### RLS Policies
+- Enable RLS on all tables: `ALTER TABLE table_name ENABLE ROW LEVEL SECURITY;`
+- Public read: `USING (true)` for SELECT
+- Authenticated write: `WITH CHECK (auth.uid() = user_id)` for INSERT/UPDATE
+- Test RLS policies in Supabase dashboard
+
+### Storage
+- Use Supabase Storage for images/files
+- Public bucket for public assets
+- Private bucket with RLS for user uploads
+- Use signed URLs for private files
+
+### Environment Variables
+- Never commit .env files
+- Use .env.example as template
+- Document all required env vars
+- Use different .env files for dev/staging/prod
+
+## TypeScript Rules
+
+### Type Safety
+- Use strict mode: `"strict": true` in tsconfig.json
+- Define types in `src/types/index.ts`
+- Use interfaces for object shapes
+- Use types for unions, intersections, utilities
+- Avoid `any`, use `unknown` if type is truly unknown
+- Use type guards for runtime type checking
+
+### Import/Export
+- Use named exports for utilities
+- Use default exports for pages and main components
+- Group imports: external, internal, relative
+- Use absolute imports with `@/` prefix
+
+## React Best Practices
+
+### Hooks
+- Use custom hooks for reusable logic (in `src/lib/hooks/`)
+- Follow Rules of Hooks (top-level only, same order)
+- Use `useMemo` and `useCallback` sparingly (only when needed)
+- Clean up effects with return functions
+
+### Component Structure
+- Keep components small and focused
+- Extract logic to custom hooks
+- Use composition over inheritance
+- Props: use TypeScript interfaces
+- Default props: use default parameters
+
+### State Management
+- Use `useState` for local component state
+- Use `useContext` for shared state (theme, auth)
+- Consider Zustand or Jotai for complex global state
+- Avoid prop drilling beyond 2-3 levels
+
+## Performance
+
+### Next.js Optimization
+- Use `next/image` with proper sizing
+- Implement ISR (Incremental Static Regeneration) where possible
+- Use `dynamic()` for code splitting heavy components
+- Optimize fonts with `next/font`
+- Use `next/script` for third-party scripts
+
+### Database
+- Use indexes on frequently queried columns
+- Implement pagination for large datasets
+- Use `.select()` to limit returned columns
+- Cache queries when appropriate
+
+### Bundle Size
+- Analyze bundle with `next build --analyze`
+- Use dynamic imports for heavy libraries
+- Tree-shake unused code
+- Monitor bundle size in CI/CD
+
+## Security
+
+### General
+- Never expose API keys in client code
+- Use environment variables for secrets
+- Validate and sanitize user input
+- Use HTTPS in production
+- Implement rate limiting for APIs
+
+### Supabase
+- Use RLS policies, don't rely on client-side checks
+- Validate user permissions server-side
+- Use service role key only in secure server contexts
+- Sanitize file uploads (type, size, content)
+
+## Error Handling
+
+### Patterns
+- Use try/catch for async operations
+- Provide user-friendly error messages
+- Log errors server-side (never expose stack traces to users)
+- Use error boundaries for React components
+- Return proper HTTP status codes in API routes
+
+### Supabase Errors
+- Always check `error` object from Supabase queries
+- Handle specific error codes (PGRST116, 23505, etc.)
+- Provide fallback UI for errors
+- Log errors for debugging
+
+## Testing
+
+### Structure
+- Write tests for utilities and hooks
+- Test API routes with proper mocking
+- Use React Testing Library for components
+- Test error cases, not just happy paths
+
+## Code Quality
+
+### Linting
+- Use ESLint with Next.js config
+- Fix linting errors before committing
+- Use Prettier for formatting (configured in .prettierrc)
+
+### Git
+- Write clear commit messages
+- Use feature branches
+- Review code before merging
+- Keep commits atomic
+
+## When Writing Code
+
+1. **Check existing patterns**: Look at similar files in the codebase
+2. **Follow the structure**: Match the existing file organization
+3. **Use existing utilities**: Check `src/lib/utils.ts` and other shared code
+4. **Type everything**: No `any` types, use proper TypeScript
+5. **Handle errors**: Always include error handling
+6. **Test manually**: Verify functionality before marking complete
+7. **Consider performance**: Think about bundle size and runtime performance
+8. **Security first**: Validate inputs, use RLS, protect secrets
+
+## Common Patterns in This Project
+
+### Supabase Client Usage
+```typescript
+// Server Component
+import { createServerClient } from '@/lib/supabase/server-app'
+const supabase = createServerClient()
+const { data, error } = await supabase.from('table').select()
+
+// Client Component
+import { createBrowserClient } from '@/lib/supabase/client'
+const supabase = createBrowserClient()
+```
+
+### API Route Pattern
+```typescript
+import { NextRequest, NextResponse } from 'next/server'
+import { createApiClient } from '@/lib/supabase/server-app'
+
+export async function POST(request: NextRequest) {
+  try {
+    const supabase = createApiClient()
+    // ... logic
+    return NextResponse.json({ success: true })
+  } catch (error) {
+    return NextResponse.json({ error: 'Message' }, { status: 500 })
+  }
+}
+```
+
+### Page Component Pattern
+```typescript
+// Server Component (default)
+export default async function Page() {
+  const data = await fetchData()
+  return <ClientComponent data={data} />
+}
+
+// Client Component (when needed)
+"use client"
+export default function ClientComponent({ data }) {
+  // hooks, interactivity
+}
+```
+
+## Questions to Ask Before Coding
+
+1. Is this a Server or Client Component?
+2. Does this need authentication?
+3. What RLS policies apply?
+4. How should errors be handled?
+5. Is this data cached or fresh?
+6. What's the TypeScript type?
+7. Does this follow existing patterns?

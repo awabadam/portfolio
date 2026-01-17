@@ -7,7 +7,7 @@ import { ArrowLeft, CheckCircle, Clock, DollarSign } from "lucide-react";
 export const metadata: Metadata = {
   title: "Brand Identity Design Services Istanbul | Awab Elkhalil",
   description:
-    "Complete graphic design Istanbul packages including logos, color palettes, typography, and brand guidelines for Istanbul businesses. Starting from $550. 1-2 weeks delivery.",
+    "Complete graphic design Istanbul packages including logos, color palettes, typography, and brand guidelines for Istanbul businesses. Starting from $1,000. 1-2 weeks delivery.",
   keywords: [
     "brand identity Istanbul",
     "logo design Istanbul",
@@ -56,7 +56,7 @@ const BrandIdentityPage = () => {
             <div className="flex items-center gap-2">
               <DollarSign className="h-5 w-5 text-primary" />
               <span className="text-xl font-semibold text-primary">
-                Starting from $550
+                Starting from $1,000
               </span>
             </div>
             <div className="flex items-center gap-2">

@@ -131,9 +131,9 @@ export function processMessage(
   // Handle specific queries
   if (lowerMessage.includes("service") || lowerMessage.includes("what do you")) {
     const serviceList = services
-      .map((s, i) => `${i + 1}. ${s.name}: ${s.description}`)
+      .map((s, i) => `${i + 1}. ${s.name}: ${s.description}${s.pricing ? ` (${s.pricing})` : ""}`)
       .join("\n\n");
-    response = `I offer three main services:\n\n${serviceList}\n\nWould you like to know more about any specific service?`;
+    response = `I offer ${services.length} main services:\n\n${serviceList}\n\nWould you like to know more about any specific service or get a detailed quote?`;
     return { response, context: newContext };
   }
 
@@ -142,7 +142,7 @@ export function processMessage(
     lowerMessage.includes("cost") ||
     lowerMessage.includes("how much")
   ) {
-    response = `Here's our pricing structure:\n\n• Landing Page: Starting at $${pricingInfo.landing.base}\n• Business Website: Starting at $${pricingInfo.business.base}\n• Custom Website: Starting at $${pricingInfo.custom.base}\n\nYou can use our rate calculator at ${pricingInfo.calculator} for a detailed quote based on your specific needs.`;
+    response = `Here's our pricing structure:\n\n• Landing Page: Starting at $${pricingInfo.landing.base.toLocaleString()}\n• Business Website: Starting at $${pricingInfo.business.base.toLocaleString()}\n• Custom Website: Starting at $${pricingInfo.custom.base.toLocaleString()}\n\nYou can use our rate calculator at ${pricingInfo.calculator} for a detailed quote based on your specific needs, including add-ons and complexity adjustments.`;
     return { response, context: newContext, action: "show_pricing" };
   }
 

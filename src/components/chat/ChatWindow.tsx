@@ -125,6 +125,11 @@ export default function ChatWindow({
                     `?conversation=${data.data.conversationId}`
                   );
                 }
+                
+                // Focus input after message is received
+                setTimeout(() => {
+                  inputRef.current?.focus();
+                }, 0);
               }
             } else if (data.type === 'typing') {
               setIsTyping(data.data?.typing || false);
@@ -199,6 +204,11 @@ export default function ChatWindow({
     };
     setMessages((prev) => [...prev, newUserMessage]);
 
+    // Maintain focus after clearing input
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 0);
+
     // Send message via WebSocket if available, otherwise use HTTP
     if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
       wsRef.current.send(JSON.stringify({
@@ -243,6 +253,11 @@ export default function ChatWindow({
             `?conversation=${data.conversationId}`
           );
         }
+        
+        // Focus input after response is received
+        setTimeout(() => {
+          inputRef.current?.focus();
+        }, 0);
       } else {
         const errorMessage: ChatMessage = {
           role: "assistant",

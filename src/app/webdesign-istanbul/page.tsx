@@ -14,7 +14,6 @@ export const metadata: Metadata = {
     "web designer Istanbul",
     "website development Istanbul",
     "responsive web design Istanbul",
-    "e-commerce website Istanbul",
     "business website Istanbul",
     "professional webdesign Istanbul",
     "Istanbul web design services",
@@ -125,36 +124,6 @@ export default function WebdesignIstanbul() {
               </CardContent>
             </Card>
 
-            <Card className="border-border/40 bg-card/50 backdrop-blur">
-              <CardHeader>
-                <Code className="mb-4 h-10 w-10 text-primary" />
-                <CardTitle>E-commerce Website Design</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="mb-4 text-muted-foreground">
-                  Complete e-commerce solutions for online businesses in
-                  Istanbul.
-                </p>
-                <ul className="space-y-2">
-                  <li className="flex items-center gap-2 text-sm">
-                    <Check className="h-3 w-3 text-primary" />
-                    Shopping cart & payment integration
-                  </li>
-                  <li className="flex items-center gap-2 text-sm">
-                    <Check className="h-3 w-3 text-primary" />
-                    Product catalog management
-                  </li>
-                  <li className="flex items-center gap-2 text-sm">
-                    <Check className="h-3 w-3 text-primary" />
-                    Order tracking system
-                  </li>
-                  <li className="flex items-center gap-2 text-sm">
-                    <Check className="h-3 w-3 text-primary" />
-                    Mobile shopping experience
-                  </li>
-                </ul>
-              </CardContent>
-            </Card>
 
             <Card className="border-border/40 bg-card/50 backdrop-blur">
               <CardHeader>
