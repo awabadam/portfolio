@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { isLocalAuthEnabled } from "@/lib/auth/localAuth";
 
 export default function LoginForm() {
-  const { user, signIn, loading, isLocalAuth } = useSupabaseAuth();
+  const { user, signIn, loading, isLocalAuth, isConfigured } = useSupabaseAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -58,6 +58,16 @@ export default function LoginForm() {
           Enter your credentials to access your account
         </p>
       </div>
+
+      {/* Configuration Warning */}
+      {!loading && !isConfigured && !isDev && (
+        <div className="rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-800 dark:border-red-800 dark:bg-red-950 dark:text-red-200">
+          <p className="font-semibold">Authentication Not Configured</p>
+          <p className="mt-1 text-xs">
+            The authentication service is not properly configured. Please ensure the Supabase environment variables are set correctly.
+          </p>
+        </div>
+      )}
 
       {/* Local Dev Info */}
       {isDev && (

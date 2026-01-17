@@ -78,12 +78,16 @@ export function useSupabaseAuth() {
   const activeSession = isLocalAuthEnabled() && localAuth ? localAuth : session;
   const activeUser = activeSession?.user ?? null;
 
+  // Check if Supabase is properly configured (has client or is in local dev mode)
+  const isConfigured = !!supabase || isLocalAuthEnabled();
+
   return {
     supabase,
     session: activeSession,
     loading,
     user: activeUser,
     isLocalAuth: isLocalAuthEnabled() && !!localAuth,
+    isConfigured,
     signIn: async (email: string, password: string) => {
       // Try local auth first (only in development)
       if (isLocalAuthEnabled() && validateLocalCredentials(email, password)) {
@@ -95,7 +99,13 @@ export function useSupabaseAuth() {
       }
 
       // Fall back to Supabase auth
-      if (!supabase) return { error: { message: 'Supabase client not initialized' } };
+      if (!supabase) {
+        return { 
+          error: { 
+            message: 'Authentication service is not configured. Please contact the administrator.' 
+          } 
+        };
+      }
       const result = await supabase.auth.signInWithPassword({ email, password });
       
       // If Supabase login succeeds, clear any local auth
@@ -115,7 +125,7 @@ export function useSupabaseAuth() {
       }
 
       // Otherwise sign out from Supabase
-      if (!supabase) return { error: { message: 'Supabase client not initialized' } };
+      if (!supabase) return { error: { message: 'Authentication service not configured' } };
       return await supabase.auth.signOut();
     },
   };
