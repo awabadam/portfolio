@@ -82,7 +82,42 @@ export async function GET(request: Request) {
       })
     );
 
-    return NextResponse.json({ conversations: conversationsWithCounts });
+    // Group conversations by session_id and combine message counts
+    const groupedBySession: Record<string, typeof conversationsWithCounts> = {};
+    conversationsWithCounts.forEach((conv) => {
+      const sessionId = conv.session_id;
+      if (!groupedBySession[sessionId]) {
+        groupedBySession[sessionId] = [];
+      }
+      groupedBySession[sessionId].push(conv);
+    });
+
+    // Create grouped conversations: use the most recent conversation as the primary one
+    // but combine message counts and use the earliest start time
+    const groupedConversations = Object.entries(groupedBySession).map(([sessionId, convs]) => {
+      // Sort by started_at descending to get most recent first
+      const sorted = [...convs].sort((a, b) => 
+        new Date(b.started_at).getTime() - new Date(a.started_at).getTime()
+      );
+      const primary = sorted[0];
+      const totalMessages = convs.reduce((sum, c) => sum + (c.message_count || 0), 0);
+      const earliestStart = sorted[sorted.length - 1].started_at;
+
+      return {
+        ...primary,
+        message_count: totalMessages,
+        started_at: earliestStart,
+        conversation_ids: convs.map(c => c.id), // Keep track of all conversation IDs
+        conversation_count: convs.length, // How many conversations were grouped
+      };
+    });
+
+    // Sort grouped conversations by most recent start time
+    groupedConversations.sort((a, b) => 
+      new Date(b.started_at).getTime() - new Date(a.started_at).getTime()
+    );
+
+    return NextResponse.json({ conversations: groupedConversations });
   } catch (error) {
     console.error("Error in conversations API:", error);
     return NextResponse.json(

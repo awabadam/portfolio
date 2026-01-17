@@ -27,6 +27,8 @@ interface Conversation {
   ended_at?: string;
   status: string;
   message_count: number;
+  conversation_ids?: string[]; // For grouped conversations
+  conversation_count?: number; // Number of conversations in this group
 }
 
 export default function AdminChatPage() {
@@ -296,8 +298,20 @@ export default function AdminChatPage() {
                     </TableCell>
                     <TableCell>
                       {new Date(conversation.started_at).toLocaleString()}
+                      {conversation.conversation_count && conversation.conversation_count > 1 && (
+                        <div className="text-xs text-muted-foreground mt-1">
+                          {conversation.conversation_count} conversations grouped
+                        </div>
+                      )}
                     </TableCell>
-                    <TableCell>{conversation.message_count}</TableCell>
+                    <TableCell>
+                      {conversation.message_count}
+                      {conversation.conversation_count && conversation.conversation_count > 1 && (
+                        <span className="text-xs text-muted-foreground ml-1">
+                          (combined)
+                        </span>
+                      )}
+                    </TableCell>
                     <TableCell>
                       <Badge
                         variant={
