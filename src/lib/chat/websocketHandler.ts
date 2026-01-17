@@ -27,7 +27,7 @@ const connections = new Map<string, ClientConnection>();
 // Cleanup inactive connections (30 minutes)
 setInterval(() => {
   const now = Date.now();
-  for (const [sessionId, conn] of connections.entries()) {
+  for (const [sessionId, conn] of Array.from(connections.entries())) {
     if (now - conn.lastPing > 30 * 60 * 1000) {
       conn.ws.close();
       connections.delete(sessionId);
