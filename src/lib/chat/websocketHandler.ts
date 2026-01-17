@@ -277,8 +277,10 @@ async function handleChatMessage(connection: ClientConnection, userMessage: stri
     // Update connection context
     connection.context = updatedContext;
 
-    // Save to database
-    await saveMessages(currentConversationId, userMessage, response, action, updatedContext, sessionId);
+    // Save to database (only if we have a valid conversation ID)
+    if (currentConversationId) {
+      await saveMessages(currentConversationId, userMessage, response, action, updatedContext, sessionId);
+    }
 
     // Send response
     ws.send(JSON.stringify({
@@ -292,7 +294,7 @@ async function handleChatMessage(connection: ClientConnection, userMessage: stri
         role: 'assistant',
         content: response,
         metadata: action ? { action } : null,
-        conversationId: currentConversationId,
+        conversationId: currentConversationId || undefined,
       },
     }));
   } catch (error) {
