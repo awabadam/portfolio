@@ -89,7 +89,7 @@ export default function AboutPage() {
       </section>
 
       {/* Skills Marquee */}
-      <section className="overflow-hidden bg-foreground py-24 text-background">
+      <section className="overflow-hidden bg-black py-24 text-white dark:bg-zinc-950 dark:text-zinc-100">
         <div className="flex whitespace-nowrap">
           <motion.div
             animate={{ x: ["0%", "-50%"] }}

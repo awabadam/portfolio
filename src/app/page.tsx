@@ -96,12 +96,15 @@ export default function HomePage() {
 
           <div className="divide-y divide-border border-y border-border">
             {[
-              { title: "Web Design", desc: "Immersive, conversion-focused websites" },
-              { title: "Development", desc: "React, Next.js, WebGL, Creative Coding" },
-              { title: "Strategy", desc: "Digital transformation & brand positioning" },
-              { title: "AI Integration", desc: "Custom chatbots & automation solutions" },
+              { title: "Web Design & Development", desc: "Immersive, conversion-focused websites built with React, Next.js, WebGL, and Creative Coding", link: "/services/webdesign-istanbul" },
+              { title: "Graphic Design", desc: "User-centered UI/UX design that creates intuitive experiences and drives engagement", link: "/services/graphic-design-istanbul" },
+              { title: "AI Chatbot Integration", desc: "Custom chatbots & automation solutions for 24/7 customer support", link: "/services/ai-chatbot-integration" },
             ].map((service, i) => (
-              <div key={i} className="group flex flex-col justify-between gap-4 py-12 transition-colors hover:bg-muted/30 md:flex-row md:items-center md:py-16">
+              <Link
+                key={i}
+                href={service.link}
+                className="group flex flex-col justify-between gap-4 py-12 transition-colors hover:bg-muted/30 md:flex-row md:items-center md:py-16"
+              >
                 <h3 className="font-display text-3xl font-bold transition-transform duration-500 group-hover:translate-x-4 md:text-5xl">
                   {service.title}
                 </h3>
@@ -109,20 +112,20 @@ export default function HomePage() {
                   <p className="max-w-xs text-muted-foreground">{service.desc}</p>
                   <ArrowRight className="hidden h-6 w-6 -rotate-45 transition-transform duration-500 group-hover:rotate-0 md:block" />
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
       </section>
 
       {/* Selected Work Preview */}
-      <section className="bg-foreground py-32 text-background md:py-48">
+      <section className="bg-background py-32 text-foreground md:py-48">
         <div className="container mx-auto px-4">
           <div className="mb-16 flex items-end justify-between md:mb-32">
-            <h2 className="font-display text-[10vw] font-bold leading-none tracking-tighter opacity-20 md:text-[8vw]">
+            <h2 className="font-display text-[10vw] font-bold leading-none tracking-tighter opacity-10 md:text-[8vw]">
               WORK
             </h2>
-            <Button asChild variant="outline" className="hidden border-background text-background hover:bg-background hover:text-foreground md:flex">
+            <Button asChild variant="outline" className="hidden border-border bg-transparent hover:bg-primary hover:text-primary-foreground md:flex">
               <Link href="/projects">View All Projects</Link>
             </Button>
           </div>
@@ -137,14 +140,14 @@ export default function HomePage() {
             ) : (
               // Loading/Fallback State
               <>
-                <div className="group relative aspect-[4/3] w-full flex-1 animate-pulse overflow-hidden rounded-2xl border border-background/10 bg-background/5" />
-                <div className="group relative aspect-[4/3] w-full flex-1 animate-pulse overflow-hidden rounded-2xl border border-background/10 bg-background/5" />
+                <div className="group relative aspect-[4/3] w-full flex-1 animate-pulse overflow-hidden rounded-2xl border border-border bg-muted" />
+                <div className="group relative aspect-[4/3] w-full flex-1 animate-pulse overflow-hidden rounded-2xl border border-border bg-muted" />
               </>
             )}
           </div>
           
           <div className="mt-8 md:hidden">
-            <Button asChild variant="outline" className="w-full border-background text-background hover:bg-background hover:text-foreground">
+            <Button asChild variant="outline" className="w-full border-border bg-transparent hover:bg-primary hover:text-primary-foreground">
               <Link href="/projects">View All Projects</Link>
             </Button>
           </div>

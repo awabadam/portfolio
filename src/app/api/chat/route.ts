@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createAppServerClient } from "@/lib/supabase/server-app";
 import { processMessage, ChatContext, ChatMessage } from "@/lib/chat/chatBot";
+import { getOpenRouterResponse } from "@/lib/chat/openRouter";
 
 export async function POST(request: Request) {
   try {
@@ -87,11 +88,73 @@ export async function POST(request: Request) {
       dbAvailable = false;
     }
 
-    // Process message and get response (always works, with or without DB)
-    const { response, context: updatedContext, action } = processMessage(
-      message,
-      context
-    );
+    // Process message and get response
+    // Try OpenRouter first if API key is available, fallback to rule-based system
+    let response: string;
+    let updatedContext: ChatContext = { ...context };
+    let action: string | undefined;
+
+    const hasOpenRouterKey = !!process.env.OPENROUTER_KEY;
+
+    // Extract contact information from user message if present
+    const emailRegex = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/gi;
+    const phoneRegex = /(\+?\d{1,3}[-.\s]?\(?\d{1,4}\)?[-.\s]?\d{1,4}[-.\s]?\d{1,9})/g;
+    
+    const emailMatch = message.match(emailRegex);
+    const phoneMatch = message.match(phoneRegex);
+    
+    // If we're collecting info, extract it from the message
+    if (context.isCollectingInfo) {
+      if (context.isCollectingInfo.type === "name" && !emailMatch && !phoneMatch) {
+        // Assume the message is the name if it doesn't contain email/phone
+        updatedContext.visitorName = message.trim();
+        updatedContext.isCollectingInfo = { type: "email" };
+      } else if (context.isCollectingInfo.type === "email" && emailMatch) {
+        updatedContext.visitorEmail = emailMatch[0];
+        updatedContext.isCollectingInfo = { type: "phone" };
+      } else if (context.isCollectingInfo.type === "phone") {
+        if (phoneMatch) {
+          updatedContext.visitorPhone = phoneMatch[0];
+        }
+        // Mark as collected if we have email or phone
+        if (updatedContext.visitorEmail || updatedContext.visitorPhone) {
+          updatedContext.isCollectingInfo = undefined;
+          action = "contact_collected";
+        }
+      }
+    }
+
+    if (hasOpenRouterKey) {
+      try {
+        // Use OpenRouter AI
+        response = await getOpenRouterResponse(message, updatedContext);
+        
+        // Update conversation history for next request
+        updatedContext.conversationHistory = [
+          ...updatedContext.conversationHistory,
+          { role: "user", content: message },
+          { role: "assistant", content: response },
+        ];
+        
+        // If we just collected contact info, ensure action is set
+        if (updatedContext.visitorEmail && !action && !updatedContext.isCollectingInfo) {
+          action = "contact_collected";
+        }
+      } catch (openRouterError) {
+        console.warn("OpenRouter API failed, falling back to rule-based system:", openRouterError);
+        // Fallback to rule-based system
+        const result = processMessage(message, updatedContext);
+        response = result.response;
+        updatedContext = result.context;
+        action = result.action;
+      }
+    } else {
+      // Use rule-based system
+      const result = processMessage(message, updatedContext);
+      response = result.response;
+      updatedContext = result.context;
+      action = result.action;
+    }
 
     // Try to save to database if available
     if (dbAvailable && currentConversationId) {

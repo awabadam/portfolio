@@ -48,10 +48,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
         onClick={handleProjectClick}
       >
         <div className={cn(
-          "relative overflow-hidden rounded-2xl border transition-all duration-500 hover:shadow-lg",
+          "relative overflow-hidden rounded-2xl border transition-all duration-500 group-hover:shadow-2xl group-hover:-translate-y-1",
           inverse 
-            ? "border-background/10 bg-background/5 hover:border-background/20" 
-            : "border-border/40 bg-card hover:border-primary/30"
+            ? "border-border/40 bg-card/50 group-hover:border-primary/50" 
+            : "border-border/40 bg-card group-hover:border-primary/50"
         )}>
           {/* Project Thumbnail - Larger */}
           {project.thumbnail_url && (
@@ -63,12 +63,21 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                 className="object-cover transition-transform duration-700 group-hover:scale-110"
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+              <div className={cn(
+                "absolute inset-0 bg-gradient-to-t to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100",
+                inverse 
+                  ? "from-black/90 via-black/40 dark:from-zinc-900/90 dark:via-zinc-900/40" 
+                  : "from-background/90 via-background/40"
+              )} />
               <motion.div
-                className="absolute bottom-4 right-4 flex h-12 w-12 items-center justify-center rounded-full bg-background/90 backdrop-blur-sm opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-                whileHover={{ scale: 1.1 }}
+                className={cn(
+                  "absolute bottom-4 right-4 flex h-12 w-12 items-center justify-center rounded-full backdrop-blur-md opacity-0 transition-all duration-300 group-hover:opacity-100 shadow-lg",
+                  "bg-background text-foreground"
+                )}
+                whileHover={{ scale: 1.15 }}
+                transition={{ type: "spring", stiffness: 400, damping: 17 }}
               >
-                <ArrowRight className="h-5 w-5 text-foreground" />
+                <ArrowRight className="h-5 w-5" />
               </motion.div>
             </div>
           )}
@@ -80,7 +89,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                 variant="outline"
                 className={cn(
                   "text-xs font-medium",
-                  inverse ? "border-background/20 text-background/80" : "border-primary/20"
+                  "border-primary/20"
                 )}
               >
                 {project.category}
@@ -88,22 +97,25 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
             </div>
 
             <h3 className={cn(
-              "mb-2 font-display text-2xl font-bold tracking-tight transition-colors group-hover:text-primary",
-              inverse ? "text-background" : "text-foreground"
+              "mb-2 font-display text-2xl font-bold tracking-tight transition-colors duration-300",
+              "text-foreground group-hover:text-primary"
             )}>
               {project.title}
             </h3>
 
             <p className={cn(
-              "line-clamp-2 text-sm leading-relaxed",
-              inverse ? "text-background/60" : "text-muted-foreground"
+              "line-clamp-2 text-sm leading-relaxed transition-opacity duration-300",
+              "text-muted-foreground group-hover:text-foreground/80"
             )}>
               {project.description}
             </p>
 
-            <div className="mt-4 flex items-center gap-2 text-sm font-medium text-primary opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+            <div className={cn(
+              "mt-4 flex items-center gap-2 text-sm font-medium opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0 translate-y-2",
+              "text-primary"
+            )}>
               View Case Study
-              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+              <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-2" />
             </div>
           </div>
         </div>

@@ -17,12 +17,16 @@ import {
   Code,
   Zap,
   Mail,
+  Layout,
+  Palette,
+  Bot,
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { fadeInUp, staggerContainer } from "@/lib/animations";
 
 interface CalculatorData {
+  serviceType: string;
   projectType: string;
   complexity: string;
   addOns: string[];
@@ -34,30 +38,149 @@ interface CalculatorData {
   description?: string;
 }
 
-const projectTypes = [
+const services = [
   {
-    id: "landing",
-    name: "Landing Page",
-    description: "Single page for product/service promotion",
-    basePrice: 200,
-    icon: <Globe className="h-6 w-6" />,
+    id: "web-design",
+    name: "Web Design & Development",
+    description: "Complete website solutions from concept to launch",
+    icon: <Layout className="h-8 w-8" />,
+    slug: "webdesign-istanbul",
   },
   {
-    id: "business",
-    name: "Business Website",
-    description: "Complete website for your business (3-5 pages)",
-    basePrice: 450,
-    icon: <Code className="h-6 w-6" />,
-    popular: true,
+    id: "graphic-design",
+    name: "Graphic Design",
+    description: "UI/UX design and visual identity services",
+    icon: <Palette className="h-8 w-8" />,
+    slug: "graphic-design-istanbul",
   },
   {
-    id: "custom",
-    name: "Custom Website",
-    description: "Complex website with custom features",
-    basePrice: 900,
-    icon: <Zap className="h-6 w-6" />,
+    id: "ai-chatbot",
+    name: "AI Chatbot Integration",
+    description: "Intelligent chatbots for customer support and lead generation",
+    icon: <Bot className="h-8 w-8" />,
+    slug: "ai-chatbot-integration",
   },
 ];
+
+const getProjectTypes = (serviceType: string) => {
+  if (serviceType === "web-design") {
+    return [
+      {
+        id: "landing",
+        name: "Landing Page",
+        description: "Single page for product/service promotion",
+        basePrice: 800,
+        icon: <Globe className="h-6 w-6" />,
+      },
+      {
+        id: "business",
+        name: "Business Website",
+        description: "Complete website for your business (3-5 pages)",
+        basePrice: 1200,
+        icon: <Code className="h-6 w-6" />,
+        popular: true,
+      },
+      {
+        id: "ecommerce",
+        name: "E-commerce Website",
+        description: "Online store with shopping cart and payment",
+        basePrice: 2500,
+        icon: <Zap className="h-6 w-6" />,
+      },
+      {
+        id: "custom",
+        name: "Custom Website",
+        description: "Complex website with custom features and integrations",
+        basePrice: 4000,
+        icon: <Code className="h-6 w-6" />,
+      },
+    ];
+  } else if (serviceType === "graphic-design") {
+    return [
+      {
+        id: "logo",
+        name: "Logo Design",
+        description: "Professional logo with variations",
+        basePrice: 400,
+        icon: <Palette className="h-6 w-6" />,
+      },
+      {
+        id: "ui-ux",
+        name: "UI/UX Design",
+        description: "Complete user interface and experience design",
+        basePrice: 700,
+        icon: <Layout className="h-6 w-6" />,
+        popular: true,
+      },
+      {
+        id: "brand-identity",
+        name: "Brand Identity",
+        description: "Complete brand package (logo, colors, typography, guidelines)",
+        basePrice: 1200,
+        icon: <Palette className="h-6 w-6" />,
+      },
+      {
+        id: "custom-design",
+        name: "Custom Design Package",
+        description: "Tailored design solution for your specific needs",
+        basePrice: 2000,
+        icon: <Zap className="h-6 w-6" />,
+      },
+    ];
+  } else if (serviceType === "ai-chatbot") {
+    return [
+      {
+        id: "basic",
+        name: "Basic Chatbot",
+        description: "Simple Q&A chatbot with basic automation",
+        basePrice: 350,
+        icon: <Bot className="h-6 w-6" />,
+      },
+      {
+        id: "advanced",
+        name: "Advanced Chatbot",
+        description: "AI-powered chatbot with lead qualification and integrations",
+        basePrice: 800,
+        icon: <Bot className="h-6 w-6" />,
+        popular: true,
+      },
+      {
+        id: "enterprise",
+        name: "Enterprise Solution",
+        description: "Custom AI chatbot with analytics and multi-language support",
+        basePrice: 2000,
+        icon: <Zap className="h-6 w-6" />,
+      },
+    ];
+  }
+  return [];
+};
+
+const getAddOns = (serviceType: string) => {
+  if (serviceType === "web-design") {
+    return [
+      { id: "seo", name: "SEO Setup", price: 200, icon: <Zap className="h-4 w-4" /> },
+      { id: "blog", name: "Blog System", price: 300, icon: <Mail className="h-4 w-4" /> },
+      { id: "mobile", name: "Mobile App", price: 1500, icon: <Smartphone className="h-4 w-4" /> },
+      { id: "cms", name: "Content Management", price: 400, icon: <Code className="h-4 w-4" /> },
+    ];
+  } else if (serviceType === "graphic-design") {
+    return [
+      { id: "social", name: "Social Media Graphics", price: 150, icon: <Globe className="h-4 w-4" /> },
+      { id: "print", name: "Print Materials", price: 200, icon: <Mail className="h-4 w-4" /> },
+      { id: "animation", name: "Animation & Motion", price: 500, icon: <Zap className="h-4 w-4" /> },
+      { id: "illustration", name: "Custom Illustrations", price: 300, icon: <Palette className="h-4 w-4" /> },
+    ];
+  } else if (serviceType === "ai-chatbot") {
+    return [
+      { id: "multilang", name: "Multi-language Support", price: 200, icon: <Globe className="h-4 w-4" /> },
+      { id: "analytics", name: "Advanced Analytics", price: 150, icon: <Zap className="h-4 w-4" /> },
+      { id: "integration", name: "CRM Integration", price: 300, icon: <Code className="h-4 w-4" /> },
+      { id: "training", name: "Custom Training Data", price: 400, icon: <Bot className="h-4 w-4" /> },
+    ];
+  }
+  return [];
+};
 
 const complexities = [
   { id: "simple", name: "Simple", multiplier: 1 },
@@ -65,17 +188,12 @@ const complexities = [
   { id: "complex", name: "Complex", multiplier: 1.5 },
 ];
 
-const popularAddOns = [
-  { id: "seo", name: "SEO Setup", price: 70, icon: <Zap className="h-4 w-4" /> },
-  { id: "blog", name: "Blog System", price: 90, icon: <Mail className="h-4 w-4" /> },
-  { id: "mobile", name: "Mobile Optimization", price: 50, icon: <Smartphone className="h-4 w-4" /> },
-];
-
 export default function RateCalculator() {
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [calculatorData, setCalculatorData] = useState<CalculatorData>({
-    projectType: "business",
+    serviceType: "",
+    projectType: "",
     complexity: "medium",
     addOns: [],
     contactInfo: {
@@ -88,6 +206,12 @@ export default function RateCalculator() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const projectTypes = getProjectTypes(calculatorData.serviceType);
+  const popularAddOns = getAddOns(calculatorData.serviceType);
+  
+  const selectedService = services.find(
+    (s) => s.id === calculatorData.serviceType,
+  );
   const selectedProject = projectTypes.find(
     (p) => p.id === calculatorData.projectType,
   );
@@ -125,9 +249,10 @@ export default function RateCalculator() {
           email: calculatorData.contactInfo.email,
           phone: calculatorData.contactInfo.phone,
           formType: "rate_calculator",
-          projectType: "website_quote",
+          projectType: `${selectedService?.name} - ${selectedProject?.name}`,
           message: `Rate Calculator Quote Request:
 
+Service: ${selectedService?.name}
 Project Type: ${selectedProject?.name}
 Complexity: ${selectedComplexity?.name}
 Selected Add-ons: ${selectedAddOns.join(", ") || "None"}
@@ -181,14 +306,14 @@ Project Description: ${calculatorData.description || "N/A"}`,
           >
             <Calculator className="h-8 w-8 text-primary" />
             <h1 className="font-display text-display-3 tracking-tight">
-              Website Cost Calculator
+              Service Cost Calculator
             </h1>
           </motion.div>
           <motion.p
             className="mx-auto max-w-2xl text-xl leading-relaxed text-muted-foreground"
             variants={fadeInUp}
           >
-            Get an instant estimate in just 3 simple steps. No complicated forms,
+            Get an instant estimate for our services in just 4 simple steps. No complicated forms,
             just the essentials.
           </motion.p>
         </motion.div>
@@ -200,7 +325,7 @@ Project Description: ${calculatorData.description || "N/A"}`,
           <div className="mx-auto max-w-4xl">
             {/* Progress Steps */}
             <div className="mb-12 flex items-center justify-center gap-4">
-              {[1, 2, 3].map((stepNumber) => (
+              {[1, 2, 3, 4].map((stepNumber) => (
                 <div key={stepNumber} className="flex items-center gap-4">
                   <div
                     className={`flex h-10 w-10 items-center justify-center rounded-full border-2 font-medium transition-all ${
@@ -215,7 +340,7 @@ Project Description: ${calculatorData.description || "N/A"}`,
                       stepNumber
                     )}
                   </div>
-                  {stepNumber < 3 && (
+                    {stepNumber < 4 && (
                     <div
                       className={`h-1 w-16 transition-all ${
                         step > stepNumber ? "bg-primary" : "bg-border"
@@ -239,11 +364,74 @@ Project Description: ${calculatorData.description || "N/A"}`,
                   <Card>
                     <CardHeader>
                       <CardTitle className="font-display text-3xl">
-                        What type of website do you need?
+                        Which service are you interested in?
                       </CardTitle>
+                      <p className="text-muted-foreground">
+                        Select the service that best matches your needs
+                      </p>
                     </CardHeader>
                     <CardContent>
                       <div className="grid gap-4 md:grid-cols-3">
+                        {services.map((service) => (
+                          <button
+                            key={service.id}
+                            onClick={() =>
+                              setCalculatorData((prev) => ({
+                                ...prev,
+                                serviceType: service.id,
+                                projectType: "", // Reset project type when service changes
+                                addOns: [], // Reset add-ons when service changes
+                              }))
+                            }
+                            className={`group relative rounded-lg border-2 p-6 text-left transition-all hover:border-primary/50 ${
+                              calculatorData.serviceType === service.id
+                                ? "border-primary bg-primary/5"
+                                : "border-border"
+                            }`}
+                          >
+                            <div className="mb-3 text-primary">{service.icon}</div>
+                            <h3 className="mb-1 font-display text-xl font-semibold">
+                              {service.name}
+                            </h3>
+                            <p className="text-sm text-muted-foreground">
+                              {service.description}
+                            </p>
+                          </button>
+                        ))}
+                      </div>
+
+                      <div className="mt-8 flex justify-end">
+                        <Button
+                          onClick={() => setStep(2)}
+                          size="lg"
+                          className="h-14 px-8 text-lg"
+                          disabled={!calculatorData.serviceType}
+                        >
+                          Next: Choose Project Type
+                          <ArrowRight className="ml-2 h-5 w-5" />
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              )}
+
+              {step === 2 && (
+                <motion.div
+                  key="step2"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="font-display text-3xl">
+                        What type of {selectedService?.name.toLowerCase()} project do you need?
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="grid gap-4 md:grid-cols-2">
                         {projectTypes.map((type) => (
                           <button
                             key={type.id}
@@ -272,15 +460,24 @@ Project Description: ${calculatorData.description || "N/A"}`,
                               {type.description}
                             </p>
                             <div className="text-2xl font-bold text-primary">
-                              ${type.basePrice}
+                              ${type.basePrice.toLocaleString()}
                             </div>
                           </button>
                         ))}
                       </div>
 
-                      <div className="mt-8 flex justify-end">
+                      <div className="mt-8 flex justify-between">
                         <Button
-                          onClick={() => setStep(2)}
+                          onClick={() => setStep(1)}
+                          variant="outline"
+                          size="lg"
+                          className="h-14 px-8 text-lg"
+                        >
+                          <ArrowLeft className="mr-2 h-5 w-5" />
+                          Back
+                        </Button>
+                        <Button
+                          onClick={() => setStep(3)}
                           size="lg"
                           className="h-14 px-8 text-lg"
                           disabled={!calculatorData.projectType}
@@ -294,7 +491,7 @@ Project Description: ${calculatorData.description || "N/A"}`,
                 </motion.div>
               )}
 
-              {step === 2 && (
+              {step === 3 && (
                 <motion.div
                   key="step2"
                   initial={{ opacity: 0, x: 20 }}
@@ -342,12 +539,13 @@ Project Description: ${calculatorData.description || "N/A"}`,
                         ))}
                       </div>
 
-                      <div className="rounded-lg border border-border/40 bg-muted/30 p-6">
-                        <h4 className="mb-4 font-semibold">
-                          Popular Add-ons (Optional)
-                        </h4>
-                        <div className="grid gap-3 md:grid-cols-3">
-                          {popularAddOns.map((addOn) => (
+                      {popularAddOns.length > 0 && (
+                        <div className="rounded-lg border border-border/40 bg-muted/30 p-6">
+                          <h4 className="mb-4 font-semibold">
+                            Popular Add-ons (Optional)
+                          </h4>
+                          <div className="grid gap-3 md:grid-cols-3">
+                            {popularAddOns.map((addOn) => (
                             <button
                               key={addOn.id}
                               onClick={() => toggleAddOn(addOn.id)}
@@ -368,13 +566,14 @@ Project Description: ${calculatorData.description || "N/A"}`,
                                 <CheckCircle className="h-5 w-5 text-primary" />
                               )}
                             </button>
-                          ))}
+                            ))}
+                          </div>
                         </div>
-                      </div>
+                      )}
 
                       <div className="flex justify-between">
                         <Button
-                          onClick={() => setStep(1)}
+                          onClick={() => setStep(2)}
                           variant="outline"
                           size="lg"
                           className="h-14 px-8 text-lg"
@@ -383,7 +582,7 @@ Project Description: ${calculatorData.description || "N/A"}`,
                           Back
                         </Button>
                         <Button
-                          onClick={() => setStep(3)}
+                          onClick={() => setStep(4)}
                           size="lg"
                           className="h-14 px-8 text-lg"
                         >
@@ -419,6 +618,9 @@ Project Description: ${calculatorData.description || "N/A"}`,
                         <div className="rounded-lg border border-border/40 bg-muted/30 p-6">
                           <h4 className="mb-4 font-semibold">Estimate Summary</h4>
                           <div className="space-y-2 text-sm">
+                            <div className="flex justify-between">
+                              <span className="font-medium">{selectedService?.name}</span>
+                            </div>
                             <div className="flex justify-between">
                               <span>{selectedProject?.name}</span>
                               <span>${basePrice.toLocaleString()}</span>
@@ -557,7 +759,7 @@ Project Description: ${calculatorData.description || "N/A"}`,
                         <div className="flex justify-between">
                           <Button
                             type="button"
-                            onClick={() => setStep(2)}
+                            onClick={() => setStep(3)}
                             variant="outline"
                             size="lg"
                             className="h-14 px-8 text-lg"

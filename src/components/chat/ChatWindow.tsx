@@ -5,8 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { X, Send, Loader2, MessageCircle } from "lucide-react";
+import { FaWhatsapp } from "react-icons/fa";
 import MessageBubble from "./MessageBubble";
 import QuickActions from "./QuickActions";
+import { useWhatsApp } from "./WhatsAppContext";
 import type { ChatMessage } from "@/lib/chat/chatBot";
 
 interface ChatWindowProps {
@@ -26,54 +28,161 @@ export default function ChatWindow({
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const wsRef = useRef<WebSocket | null>(null);
+  const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const reconnectAttempts = useRef(0);
+  const { openWhatsApp } = useWhatsApp();
+
+  const handleWhatsAppClick = () => {
+    onClose(); // Close chat window
+    openWhatsApp(); // Open WhatsApp modal
+  };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  // WebSocket connection management
   useEffect(() => {
-    if (isOpen && !isInitialized) {
-      // Load conversation history if conversationId exists
-      if (conversationId) {
-        loadConversation();
-      } else {
-        // Start with welcome message
-        setMessages([
-          {
-            role: "assistant",
-            content:
-              "Hello! I'm here to help you learn about Awab's web design services. How can I assist you today?",
-          },
-        ]);
+    if (!isOpen) {
+      // Close WebSocket when chat is closed
+      if (wsRef.current) {
+        wsRef.current.close();
+        wsRef.current = null;
       }
+      if (reconnectTimeoutRef.current) {
+        clearTimeout(reconnectTimeoutRef.current);
+        reconnectTimeoutRef.current = null;
+      }
+      return;
+    }
+
+    // Initialize with welcome message if not already initialized and no conversationId
+    if (!isInitialized && !conversationId) {
+      setMessages([
+        {
+          role: "assistant",
+          content:
+            "Hello! I'm here to help you learn about Awab's web design services. How can I assist you today?",
+        },
+      ]);
+      setIsInitialized(true);
+      inputRef.current?.focus();
+    } else if (!isInitialized) {
       setIsInitialized(true);
       inputRef.current?.focus();
     }
-  }, [isOpen, conversationId, isInitialized]);
+
+    // Connect WebSocket
+    const connectWebSocket = () => {
+      try {
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const wsUrl = `${protocol}//${window.location.host}/api/chat/ws?sessionId=${sessionId}${conversationId ? `&conversationId=${conversationId}` : ''}`;
+        
+        const ws = new WebSocket(wsUrl);
+        wsRef.current = ws;
+
+        ws.onopen = () => {
+          console.log('WebSocket connected');
+          reconnectAttempts.current = 0;
+        };
+
+        ws.onmessage = (event) => {
+          try {
+            const data = JSON.parse(event.data);
+            
+            if (data.type === 'init') {
+              setIsInitialized(true);
+              if (data.data?.messages && Array.isArray(data.data.messages)) {
+                // Load conversation history
+                setMessages(data.data.messages);
+              } else if (data.data?.message) {
+                // Single welcome message
+                setMessages([data.data.message]);
+              }
+              inputRef.current?.focus();
+            } else if (data.type === 'message') {
+              setIsTyping(false);
+              setIsLoading(false);
+              if (data.data) {
+                const newMessage: ChatMessage = {
+                  role: data.data.role,
+                  content: data.data.content,
+                  metadata: data.data.metadata,
+                };
+                setMessages((prev) => [...prev, newMessage]);
+                
+                // Update conversationId if provided
+                if (data.data.conversationId && !conversationId) {
+                  window.history.replaceState(
+                    {},
+                    "",
+                    `?conversation=${data.data.conversationId}`
+                  );
+                }
+              }
+            } else if (data.type === 'typing') {
+              setIsTyping(data.data?.typing || false);
+            } else if (data.type === 'pong') {
+              // Keep-alive response
+            }
+          } catch (error) {
+            console.error('Error parsing WebSocket message:', error);
+          }
+        };
+
+        ws.onerror = (error) => {
+          console.error('WebSocket error:', error);
+        };
+
+        ws.onclose = () => {
+          console.log('WebSocket disconnected');
+          wsRef.current = null;
+          
+          // Attempt to reconnect if chat is still open
+          if (isOpen && reconnectAttempts.current < 5) {
+            reconnectAttempts.current++;
+            const delay = Math.min(1000 * Math.pow(2, reconnectAttempts.current), 30000);
+            reconnectTimeoutRef.current = setTimeout(() => {
+              connectWebSocket();
+            }, delay);
+          }
+        };
+      } catch (error) {
+        console.error('Error connecting WebSocket:', error);
+        // Fallback: try again after delay
+        if (isOpen && reconnectAttempts.current < 5) {
+          reconnectAttempts.current++;
+          reconnectTimeoutRef.current = setTimeout(() => {
+            connectWebSocket();
+          }, 2000);
+        }
+      }
+    };
+
+    connectWebSocket();
+
+    // Cleanup on unmount
+    return () => {
+      if (wsRef.current) {
+        wsRef.current.close();
+        wsRef.current = null;
+      }
+      if (reconnectTimeoutRef.current) {
+        clearTimeout(reconnectTimeoutRef.current);
+        reconnectTimeoutRef.current = null;
+      }
+    };
+  }, [isOpen, sessionId, conversationId]);
 
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
 
-  const loadConversation = async () => {
-    if (!conversationId) return;
-
-    try {
-      const response = await fetch(`/api/chat/conversations/${conversationId}`);
-      if (response.ok) {
-        const data = await response.json();
-        if (data.messages) {
-          setMessages(data.messages);
-        }
-      }
-    } catch (error) {
-      console.error("Error loading conversation:", error);
-    }
-  };
-
-  const handleSend = async (e: React.FormEvent) => {
+  const handleSend = (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim() || isLoading) return;
 
@@ -88,6 +197,19 @@ export default function ChatWindow({
     };
     setMessages((prev) => [...prev, newUserMessage]);
 
+    // Send message via WebSocket if available, otherwise use HTTP
+    if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+      wsRef.current.send(JSON.stringify({
+        type: 'message',
+        message: userMessage,
+      }));
+    } else {
+      // Fallback to HTTP if WebSocket is not available
+      handleSendHTTP(userMessage);
+    }
+  };
+
+  const handleSendHTTP = async (userMessage: string) => {
     try {
       const response = await fetch("/api/chat", {
         method: "POST",
@@ -111,7 +233,6 @@ export default function ChatWindow({
         };
         setMessages((prev) => [...prev, assistantMessage]);
 
-        // Update conversationId if this is a new conversation
         if (data.conversationId && !conversationId) {
           window.history.replaceState(
             {},
@@ -158,14 +279,28 @@ export default function ChatWindow({
             </p>
           </div>
         </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-8 w-8 hover:bg-muted"
-          onClick={onClose}
-        >
-          <X className="h-4 w-4" />
-        </Button>
+        <div className="flex items-center gap-2">
+          {/* WhatsApp Button */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-9 w-9 hover:bg-[#25D366]/10"
+            onClick={handleWhatsAppClick}
+            aria-label="Open WhatsApp"
+            title="Chat on WhatsApp"
+          >
+            <FaWhatsapp className="h-5 w-5 text-[#25D366]" />
+          </Button>
+          {/* Close Button */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 hover:bg-muted"
+            onClick={onClose}
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
 
       {/* Messages */}
@@ -192,7 +327,7 @@ export default function ChatWindow({
             timestamp={new Date()}
           />
         ))}
-        {isLoading && (
+        {(isLoading || isTyping) && (
           <div className="flex items-center gap-2 text-muted-foreground">
             <Loader2 className="h-4 w-4 animate-spin" />
             <span className="text-sm">Thinking...</span>

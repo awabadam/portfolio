@@ -5,24 +5,23 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Web Design & Development Services | Istanbul | Awab Elkhalil",
+  title: "Web Design, Graphic Design & AI Chatbot Services | Istanbul | Awab Elkhalil",
   description:
-    "Professional webdesign Istanbul and graphic design Istanbul services. Website design, UI/UX design, brand identity, website maintenance, and AI chatbot integration. Starting from $550.",
+    "Professional webdesign Istanbul, graphic design Istanbul, and AI chatbot integration services. Website design & development, UI/UX design, and intelligent chatbot solutions. Starting from $350.",
   keywords: [
     "webdesign Istanbul",
     "graphic design Istanbul",
     "website design Istanbul",
     "UI/UX design Istanbul",
-    "brand identity Istanbul",
-    "website maintenance Istanbul",
     "AI chatbot integration",
     "web development Istanbul",
     "responsive web design Istanbul",
+    "chatbot development Istanbul",
   ],
   openGraph: {
-    title: "Web Design & Development Services | Istanbul | Awab Elkhalil",
+    title: "Web Design, Graphic Design & AI Chatbot Services | Istanbul | Awab Elkhalil",
     description:
-      "Professional webdesign Istanbul and graphic design Istanbul services. Website design, UI/UX design, brand identity, website maintenance, and AI chatbot integration.",
+      "Professional webdesign Istanbul, graphic design Istanbul, and AI chatbot integration services. Website design & development, UI/UX design, and intelligent chatbot solutions.",
     url: "https://awab.design/services",
   },
   alternates: {
@@ -33,7 +32,7 @@ export const metadata: Metadata = {
 const servicesList = [
   {
     id: "webdesign-istanbul",
-    title: "Webdesign Istanbul - Website Design & Development",
+    title: "Web Design & Development",
     slug: "webdesign-istanbul",
     description:
       "Professional webdesign Istanbul services. Complete website solutions from concept to launch. Modern, responsive designs that convert visitors into customers.",
@@ -41,8 +40,8 @@ const servicesList = [
     timeframe: "2-4 weeks",
   },
   {
-    id: "ui-ux-design",
-    title: "Graphic Design Istanbul - UI/UX Design",
+    id: "graphic-design-istanbul",
+    title: "Graphic Design",
     slug: "graphic-design-istanbul",
     description:
       "Expert graphic design Istanbul services. User-centered design that creates intuitive experiences and drives engagement. From wireframes to final designs.",
@@ -50,25 +49,7 @@ const servicesList = [
     timeframe: "1-3 weeks",
   },
   {
-    id: "brand-identity",
-    title: "Graphic Design Istanbul - Brand Identity",
-    slug: "brand-identity",
-    description:
-      "Complete graphic design Istanbul packages including logos, color palettes, typography, and brand guidelines for Istanbul businesses.",
-    priceRange: "Starting from $550",
-    timeframe: "1-2 weeks",
-  },
-  {
-    id: "website-maintenance",
-    title: "Webdesign Istanbul - Website Maintenance",
-    slug: "website-maintenance",
-    description:
-      "Ongoing webdesign Istanbul maintenance, updates, and optimization to keep your site secure, fast, and up-to-date.",
-    priceRange: "From $150/month",
-    timeframe: "Ongoing",
-  },
-  {
-    id: "ai-chatbot",
+    id: "ai-chatbot-integration",
     title: "AI Chatbot Integration",
     slug: "ai-chatbot-integration",
     description:
@@ -87,7 +68,7 @@ const ServicesPage = () => {
           SERVICES
         </h1>
         <p className="mt-8 max-w-2xl text-xl leading-relaxed text-muted-foreground">
-          Professional webdesign Istanbul and graphic design Istanbul services
+          Professional web design, graphic design, and AI chatbot integration services
           tailored to help your business stand out in Istanbul's competitive
           market and achieve measurable results.
         </p>
@@ -95,7 +76,7 @@ const ServicesPage = () => {
 
       {/* Services Grid */}
       <section className="container mx-auto mb-24 px-4">
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto">
           {servicesList.map((service) => (
             <Link
               key={service.id}

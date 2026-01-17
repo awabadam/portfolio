@@ -13,14 +13,11 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import {
   ArrowRight,
-  Code,
   Layout,
   Palette,
-  PenTool,
   Clock,
   DollarSign,
   Target,
-  MessageSquare,
   Bot,
 } from "lucide-react";
 import {
@@ -40,12 +37,13 @@ interface Service {
   timeframe: string;
   priceRange: string;
   link: string;
+  slug: string;
 }
 
 const services: Service[] = [
   {
     icon: <Layout className="h-10 w-10 text-primary" />,
-    title: "Webdesign Istanbul - Website Design & Development",
+    title: "Web Design & Development",
     description:
       "Professional webdesign Istanbul services. Complete website solutions from concept to launch. Modern, responsive designs that convert visitors into customers.",
     benefits: [
@@ -58,10 +56,11 @@ const services: Service[] = [
     timeframe: "2-4 weeks",
     priceRange: "Starting from $1,200",
     link: "#contact",
+    slug: "webdesign-istanbul",
   },
   {
     icon: <Palette className="h-10 w-10 text-primary" />,
-    title: "Graphic Design Istanbul - UI/UX Design",
+    title: "Graphic Design",
     description:
       "Expert graphic design Istanbul services. User-centered design that creates intuitive experiences and drives engagement. From wireframes to final designs.",
     benefits: [
@@ -74,38 +73,7 @@ const services: Service[] = [
     timeframe: "1-3 weeks",
     priceRange: "Starting from $700",
     link: "#contact",
-  },
-  {
-    icon: <PenTool className="h-10 w-10 text-primary" />,
-    title: "Graphic Design Istanbul - Brand Identity",
-    description:
-      "Complete graphic design Istanbul packages including logos, color palettes, typography, and brand guidelines for Istanbul businesses.",
-    benefits: [
-      "Logo design & variations",
-      "Color palette & typography",
-      "Brand guidelines",
-      "Business card & stationery",
-      "Istanbul market branding",
-    ],
-    timeframe: "1-2 weeks",
-    priceRange: "Starting from $550",
-    link: "#contact",
-  },
-  {
-    icon: <Code className="h-10 w-10 text-primary" />,
-    title: "Webdesign Istanbul - Website Maintenance",
-    description:
-      "Ongoing webdesign Istanbul maintenance, updates, and optimization to keep your site secure, fast, and up-to-date.",
-    benefits: [
-      "Regular security updates",
-      "Performance optimization",
-      "Content updates",
-      "24/7 support",
-      "Local Istanbul SEO maintenance",
-    ],
-    timeframe: "Ongoing",
-    priceRange: "From $150/month",
-    link: "#contact",
+    slug: "graphic-design-istanbul",
   },
   {
     icon: <Bot className="h-10 w-10 text-primary" />,
@@ -122,6 +90,7 @@ const services: Service[] = [
     timeframe: "1-2 weeks",
     priceRange: "Starting from $350",
     link: "#contact",
+    slug: "ai-chatbot-integration",
   },
 ];
 
@@ -150,13 +119,13 @@ const Services = () => {
             className="font-display text-display-3 leading-none tracking-tight"
             variants={fadeInUp}
           >
-            Webdesign & Graphic Design Services
+            Web Design, Graphic Design & AI Chatbot Services
           </motion.h2>
           <motion.p
             className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground"
             variants={fadeInUp}
           >
-            Professional webdesign Istanbul and graphic design Istanbul services
+            Professional web design, graphic design, and AI chatbot integration services
             tailored to help your business stand out in Istanbul's competitive
             market and achieve measurable results.
           </motion.p>
@@ -167,7 +136,7 @@ const Services = () => {
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
           variants={staggerContainer}
-          className="grid gap-8 md:grid-cols-2 lg:grid-cols-3"
+          className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto"
         >
           {services.map((service, index) => (
             <motion.div key={index} variants={fadeInUp}>
@@ -224,8 +193,8 @@ const Services = () => {
                     );
                   }}
                 >
-                  <Link href={service.link} className="flex items-center gap-2">
-                    Get started
+                  <Link href={`/services/${service.slug}`} className="flex items-center gap-2">
+                    Learn More
                     <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                   </Link>
                 </Button>

@@ -30,7 +30,7 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="relative z-10 w-full overflow-hidden bg-foreground text-background pt-24 pb-12">
+    <footer className="relative z-10 w-full overflow-hidden bg-background text-foreground pt-24 pb-12">
       <div className="container mx-auto px-6">
         <div className="grid gap-16 lg:grid-cols-2">
           {/* Brand & CTA */}
@@ -42,11 +42,11 @@ const Footer = () => {
             </div>
             
             <div className="max-w-md space-y-6">
-              <p className="text-xl text-background/80">
+              <p className="text-xl opacity-80">
                 Crafting digital experiences that merge art, technology, and strategy for forward-thinking brands.
               </p>
               <Button 
-                className="h-14 rounded-full bg-background px-8 text-lg text-foreground hover:bg-background/90"
+                className="h-14 rounded-full bg-primary px-8 text-lg text-primary-foreground hover:bg-primary/90"
                 onClick={() => {
                   trackContactClick("whatsapp", "footer");
                   openWhatsApp();
@@ -60,13 +60,13 @@ const Footer = () => {
           {/* Navigation Links */}
           <div className="grid grid-cols-2 gap-12 md:grid-cols-2 lg:pl-24">
             <div className="space-y-6">
-              <h3 className="font-mono text-sm uppercase text-background/50">Sitemap</h3>
+              <h3 className="font-mono text-sm uppercase opacity-50">Sitemap</h3>
               <ul className="space-y-4">
                 {footerLinks.map((link) => (
                   <li key={link.name}>
                     <Link 
                       href={link.href}
-                      className="group flex items-center gap-2 text-lg transition-colors hover:text-background/70"
+                      className="group flex items-center gap-2 text-lg transition-colors hover:opacity-70"
                       onClick={() => trackNavigationClick(link.name.toLowerCase(), "footer")}
                     >
                       {link.name}
@@ -77,14 +77,14 @@ const Footer = () => {
             </div>
 
             <div className="space-y-6">
-              <h3 className="font-mono text-sm uppercase text-background/50">Socials</h3>
+              <h3 className="font-mono text-sm uppercase opacity-50">Socials</h3>
               <ul className="space-y-4">
                 {socialLinks.map((link) => (
                   <li key={link.name}>
                     <Link 
                       href={link.href}
                       target="_blank"
-                      className="group flex items-center gap-2 text-lg transition-colors hover:text-background/70"
+                      className="group flex items-center gap-2 text-lg transition-colors hover:opacity-70"
                       onClick={() => trackSocialClick(link.name.toLowerCase(), "footer")}
                     >
                       {link.name}
@@ -98,7 +98,7 @@ const Footer = () => {
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-24 flex flex-col items-center justify-between gap-6 border-t border-background/10 pt-8 text-sm text-background/40 md:flex-row">
+        <div className="mt-24 flex flex-col items-center justify-between gap-6 border-t border-current/10 pt-8 text-sm opacity-40 md:flex-row">
           <p>© {currentYear} Awab Elkhalil. All rights reserved.</p>
           <div className="flex gap-8">
             <span className="hidden md:inline">Istanbul, Turkey</span>

@@ -2,7 +2,9 @@
 
 import { Button } from "@/components/ui/button";
 import { Calculator, Mail, Briefcase, DollarSign } from "lucide-react";
+import { FaWhatsapp } from "react-icons/fa";
 import { useRouter } from "next/navigation";
+import { useWhatsApp } from "./WhatsAppContext";
 
 interface QuickActionsProps {
   onActionClick?: (action: string) => void;
@@ -10,6 +12,7 @@ interface QuickActionsProps {
 
 export default function QuickActions({ onActionClick }: QuickActionsProps) {
   const router = useRouter();
+  const { openWhatsApp } = useWhatsApp();
 
   const handleAction = (action: string, path: string) => {
     if (onActionClick) {
@@ -18,8 +21,24 @@ export default function QuickActions({ onActionClick }: QuickActionsProps) {
     router.push(path);
   };
 
+  const handleWhatsApp = () => {
+    if (onActionClick) {
+      onActionClick("whatsapp");
+    }
+    openWhatsApp();
+  };
+
   return (
     <div className="flex flex-wrap gap-2 justify-center">
+      <Button
+        variant="outline"
+        size="sm"
+        className="gap-2 text-xs border-[#25D366]/30 hover:bg-[#25D366]/10 hover:border-[#25D366]"
+        onClick={handleWhatsApp}
+      >
+        <FaWhatsapp className="h-3.5 w-3.5 text-[#25D366]" />
+        WhatsApp
+      </Button>
       <Button
         variant="outline"
         size="sm"

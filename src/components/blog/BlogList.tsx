@@ -29,8 +29,8 @@ export default function BlogList({ posts, categories }: BlogListProps) {
             onClick={() => setSelectedCategory("All")}
             className={`rounded-full px-6 py-2 text-sm transition-all ${
               selectedCategory === "All"
-                ? "bg-foreground text-background"
-                : "border border-border bg-background hover:border-foreground"
+                ? "bg-primary text-primary-foreground"
+                : "border border-border bg-background hover:border-primary"
             }`}
           >
             All
@@ -41,8 +41,8 @@ export default function BlogList({ posts, categories }: BlogListProps) {
               onClick={() => setSelectedCategory(category.name)}
               className={`rounded-full px-6 py-2 text-sm transition-all ${
                 selectedCategory === category.name
-                  ? "bg-foreground text-background"
-                  : "border border-border bg-background hover:border-foreground"
+                  ? "bg-primary text-primary-foreground"
+                  : "border border-border bg-background hover:border-primary"
               }`}
             >
               {category.name}

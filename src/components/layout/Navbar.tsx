@@ -25,6 +25,7 @@ const Navbar = () => {
   const navItems = [
     { href: "/about", label: "About" },
     { href: "/projects", label: "Work" },
+    { href: "/services", label: "Services" },
     { href: "/blog", label: "Journal" },
     { href: "/contact", label: "Contact" },
   ];
@@ -47,7 +48,9 @@ const Navbar = () => {
         <div className="container mx-auto flex h-24 items-center justify-between px-6">
           <Link
             href="/"
-            className="group relative z-50 font-display text-2xl font-bold tracking-tighter mix-blend-difference"
+            className={`group relative z-50 font-display text-2xl font-bold tracking-tighter transition-colors duration-300 ${
+              isScrolled ? "text-foreground" : "text-white"
+            }`}
             onClick={() => handleNavClick("home")}
           >
             <span className="relative inline-block overflow-hidden">
@@ -62,19 +65,31 @@ const Navbar = () => {
               <Link
                 key={item.href}
                 href={item.href}
-                className="group relative text-sm font-medium uppercase tracking-widest text-muted-foreground transition-colors hover:text-foreground"
+                className={`group relative text-sm font-medium uppercase tracking-widest transition-colors duration-300 ${
+                  isScrolled 
+                    ? "text-muted-foreground hover:text-foreground" 
+                    : "text-white/80 hover:text-white"
+                }`}
                 onClick={() => handleNavClick(item.label)}
               >
                 {item.label}
-                <span className="absolute -bottom-1 left-0 h-px w-0 bg-foreground transition-all duration-300 group-hover:w-full" />
+                <span className={`absolute -bottom-1 left-0 h-px w-0 transition-all duration-300 group-hover:w-full ${
+                  isScrolled ? "bg-foreground" : "bg-white"
+                }`} />
               </Link>
             ))}
             
-            <div className="flex items-center gap-4 border-l border-border/20 pl-8">
+            <div className={`flex items-center gap-4 border-l pl-8 transition-colors duration-300 ${
+              isScrolled ? "border-border/20" : "border-white/20"
+            }`}>
               <ModeToggle />
               <Button
                 variant="outline"
-                className="rounded-full px-6 transition-all hover:bg-foreground hover:text-background"
+                className={`rounded-full px-6 transition-all ${
+                  isScrolled 
+                    ? "hover:bg-foreground hover:text-background" 
+                    : "border-white/50 bg-transparent text-white hover:bg-white hover:text-black"
+                }`}
                 onClick={() => {
                   trackContactClick("whatsapp", "navbar");
                   openWhatsApp();
@@ -93,9 +108,15 @@ const Navbar = () => {
               className="group z-50 flex h-10 w-10 flex-col items-center justify-center gap-1.5"
               aria-label="Toggle menu"
             >
-              <span className={`h-0.5 w-6 bg-foreground transition-all duration-300 ${isMenuOpen ? "rotate-45 translate-y-2" : ""}`} />
-              <span className={`h-0.5 w-6 bg-foreground transition-all duration-300 ${isMenuOpen ? "opacity-0" : ""}`} />
-              <span className={`h-0.5 w-6 bg-foreground transition-all duration-300 ${isMenuOpen ? "-rotate-45 -translate-y-2" : ""}`} />
+              <span className={`h-0.5 w-6 transition-all duration-300 ${isMenuOpen ? "rotate-45 translate-y-2" : ""} ${
+                isScrolled ? "bg-foreground" : "bg-white"
+              }`} />
+              <span className={`h-0.5 w-6 transition-all duration-300 ${isMenuOpen ? "opacity-0" : ""} ${
+                isScrolled ? "bg-foreground" : "bg-white"
+              }`} />
+              <span className={`h-0.5 w-6 transition-all duration-300 ${isMenuOpen ? "-rotate-45 -translate-y-2" : ""} ${
+                isScrolled ? "bg-foreground" : "bg-white"
+              }`} />
             </button>
           </div>
         </div>

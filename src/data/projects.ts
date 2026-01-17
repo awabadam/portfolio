@@ -9,7 +9,7 @@ export const fallbackProjects: Project[] = [
     category: "Web Design",
     description: "Modern corporate website for a dental implants manufacturer in Istanbul.",
     behance_url: "https://www.behance.net/gallery/215767839/Omega-Implants-Webdesign",
-    thumbnail_url: "https://mir-s3-cdn-cf.behance.net/project_modules/1400/32822a215767839.676fcce277a83.png",
+    thumbnail_url: "/img/projects/omega-implants.png",
     featured: true,
     technologies: ["React", "Next.js", "Tailwind CSS"],
     role: "Lead Designer & Developer",
@@ -27,9 +27,7 @@ export const fallbackProjects: Project[] = [
       "Implemented a fast-loading static site architecture"
     ],
     images: [
-      "https://mir-s3-cdn-cf.behance.net/project_modules/1400/32822a215767839.676fcce277a83.png",
-      "https://mir-s3-cdn-cf.behance.net/project_modules/fs/77c386215767839.676fcce275e7d.png",
-      "https://mir-s3-cdn-cf.behance.net/project_modules/fs/82822a215767839.676fcce276c2e.png"
+      "/img/projects/omega-implants.png"
     ],
     designConcept: "The design focuses on sterility, precision, and trust - core values in the dental implant industry. We used a clean color palette of white and medical blue, with high-quality product photography and ample whitespace.",
     finalThoughts: "The new website successfully positions Omega Implants as a modern, reliable partner for dental professionals, with improved user engagement and inquiry rates."
@@ -40,7 +38,7 @@ export const fallbackProjects: Project[] = [
     category: "Social Media Design",
     description: "Creative social media campaign designs for brand awareness.",
     behance_url: "https://www.behance.net/gallery/216262447/January-Campaign-Designs",
-    thumbnail_url: "https://mir-s3-cdn-cf.behance.net/project_modules/1400/ea2624216262447.67765ecf988c8.jpg",
+    thumbnail_url: "/img/projects/january-campaign.png",
     featured: true,
     technologies: ["Photoshop", "Illustrator", "After Effects"],
     role: "Graphic Designer",
@@ -58,7 +56,7 @@ export const fallbackProjects: Project[] = [
       "Designed for maximum scroll-stopping power"
     ],
     images: [
-      "https://mir-s3-cdn-cf.behance.net/project_modules/1400/ea2624216262447.67765ecf988c8.jpg"
+      "/img/projects/january-campaign.png"
     ],
     designConcept: "We utilized dynamic compositions and high-contrast visuals to grab attention in crowded social feeds. The designs maintain brand consistency while introducing a fresh seasonal look.",
     finalThoughts: "The campaign resulted in a 40% increase in social engagement and helped establish a strong start to the marketing year."
@@ -69,7 +67,7 @@ export const fallbackProjects: Project[] = [
     category: "Branding",
     description: "Comprehensive brand identity package for a local startup.",
     behance_url: "https://www.behance.net/awabelkhalil",
-    thumbnail_url: "https://mir-s3-cdn-cf.behance.net/project_modules/1400/32822a215767839.676fcce277a83.png",
+    thumbnail_url: "/img/projects/brand-identity.jpg",
     featured: true,
     technologies: ["Illustrator", "Indesign", "Figma"],
     role: "Brand Strategist & Designer",
@@ -87,7 +85,7 @@ export const fallbackProjects: Project[] = [
       "Documented guidelines for consistent usage"
     ],
     images: [
-      "https://mir-s3-cdn-cf.behance.net/project_modules/1400/32822a215767839.676fcce277a83.png"
+      "/img/projects/brand-identity.jpg"
     ],
     designConcept: "The identity is built around simplicity and boldness, ensuring the brand is easily recognizable even at small sizes. The visual language communicates innovation and reliability.",
     finalThoughts: "The new brand identity provided the client with a professional toolkit to launch their business with confidence and consistency."
