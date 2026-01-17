@@ -16,8 +16,18 @@ export function ConditionalLayout() {
   return (
     <>
       <Navbar />
-      <Footer />
       <ChatWidget />
     </>
   );
+}
+
+export function ConditionalFooter() {
+  const pathname = usePathname();
+  const isAdminRoute = pathname?.startsWith("/admin");
+
+  if (isAdminRoute) {
+    return null;
+  }
+
+  return <Footer />;
 }

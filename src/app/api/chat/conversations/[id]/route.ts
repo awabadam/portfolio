@@ -1,18 +1,43 @@
 import { NextResponse } from "next/server";
-import { createAppServerClient } from "@/lib/supabase/server-app";
+import { createApiClient, createAuthenticatedClient, createAnonClient } from "@/lib/supabase/server-app";
+
+// Helper function to get authenticated client
+async function getAdminClient(request: Request) {
+  const supabase = createApiClient();
+  const authHeader = request.headers.get("authorization");
+  let user = null;
+  let accessToken: string | null = null;
+  
+  if (authHeader?.startsWith("Bearer ")) {
+    accessToken = authHeader.substring(7);
+    const { data: { user: tokenUser }, error: tokenError } = await supabase.auth.getUser(accessToken);
+    if (!tokenError && tokenUser) {
+      user = tokenUser;
+    }
+  }
+  
+  const isLocalAuth = request.headers.get("x-local-auth") === "true";
+  const isDevelopment = process.env.NODE_ENV === "development";
+  
+  if (!user && !(isLocalAuth && isDevelopment)) {
+    return { authorized: false, client: null };
+  }
+  
+  const client = accessToken 
+    ? createAuthenticatedClient(accessToken)
+    : createAnonClient();
+    
+  return { authorized: true, client };
+}
 
 export async function GET(
   request: Request,
   { params }: { params: { id: string } }
 ) {
   try {
-    const supabase = await createAppServerClient();
+    const { authorized, client: adminSupabase } = await getAdminClient(request);
     
-    // Get the current user
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    
-    // Check if user is authenticated
-    if (authError || !user) {
+    if (!authorized || !adminSupabase) {
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 401 }
@@ -22,7 +47,7 @@ export async function GET(
     const conversationId = params.id;
 
     // Get conversation
-    const { data: conversation, error: convError } = await supabase
+    const { data: conversation, error: convError } = await adminSupabase
       .from("chat_conversations")
       .select("*")
       .eq("id", conversationId)
@@ -36,7 +61,7 @@ export async function GET(
     }
 
     // Get messages
-    const { data: messages, error: messagesError } = await supabase
+    const { data: messages, error: messagesError } = await adminSupabase
       .from("chat_messages")
       .select("*")
       .eq("conversation_id", conversationId)
@@ -68,13 +93,9 @@ export async function PATCH(
   { params }: { params: { id: string } }
 ) {
   try {
-    const supabase = await createAppServerClient();
+    const { authorized, client: adminSupabase } = await getAdminClient(request);
     
-    // Get the current user
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    
-    // Check if user is authenticated
-    if (authError || !user) {
+    if (!authorized || !adminSupabase) {
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 401 }
@@ -84,7 +105,7 @@ export async function PATCH(
     const conversationId = params.id;
     const body = await request.json();
 
-    const { data, error } = await supabase
+    const { data, error } = await adminSupabase
       .from("chat_conversations")
       .update(body)
       .eq("id", conversationId)
@@ -114,13 +135,9 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    const supabase = await createAppServerClient();
+    const { authorized, client: adminSupabase } = await getAdminClient(request);
     
-    // Get the current user
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    
-    // Check if user is authenticated
-    if (authError || !user) {
+    if (!authorized || !adminSupabase) {
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 401 }
@@ -129,7 +146,7 @@ export async function DELETE(
     
     const conversationId = params.id;
 
-    const { error } = await supabase
+    const { error } = await adminSupabase
       .from("chat_conversations")
       .delete()
       .eq("id", conversationId);

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createAppServerClient } from "@/lib/supabase/server-app";
+import { createAnonClientWithSession } from "@/lib/supabase/server-app";
 import { processMessage, ChatContext, ChatMessage } from "@/lib/chat/chatBot";
 import { getOpenRouterResponse } from "@/lib/chat/openRouter";
 
@@ -27,7 +27,9 @@ export async function POST(request: Request) {
 
     // Try to use database, but gracefully handle if unavailable
     try {
-      const supabase = await createAppServerClient();
+      // Use anon client with session ID for RLS
+      // RLS policies allow anonymous users to create/update their own conversations
+      const supabase = createAnonClientWithSession(sessionId);
 
       // Get or create conversation
       if (!currentConversationId) {
@@ -159,22 +161,31 @@ export async function POST(request: Request) {
     // Try to save to database if available
     if (dbAvailable && currentConversationId) {
       try {
-        const supabase = await createAppServerClient();
+        // Use anon client with session ID for RLS
+        const supabase = createAnonClientWithSession(sessionId);
 
         // Save user message
-        await supabase.from("chat_messages").insert({
+        const { error: userMsgError } = await supabase.from("chat_messages").insert({
           conversation_id: currentConversationId,
           role: "user",
           content: message,
         });
 
+        if (userMsgError) {
+          console.error("Error saving user message:", userMsgError);
+        }
+
         // Save assistant response
-        await supabase.from("chat_messages").insert({
+        const { error: assistantMsgError } = await supabase.from("chat_messages").insert({
           conversation_id: currentConversationId,
           role: "assistant",
           content: response,
           metadata: action ? { action } : null,
         });
+
+        if (assistantMsgError) {
+          console.error("Error saving assistant message:", assistantMsgError);
+        }
 
         // Update conversation with visitor info if collected
         if (
@@ -193,10 +204,14 @@ export async function POST(request: Request) {
             updateData.visitor_phone = updatedContext.visitorPhone;
           }
 
-          await supabase
+          const { error: updateError } = await supabase
             .from("chat_conversations")
             .update(updateData)
             .eq("id", currentConversationId);
+
+          if (updateError) {
+            console.error("Error updating conversation:", updateError);
+          }
 
           if (action === "contact_collected" && updatedContext.visitorEmail) {
             console.log("Contact collected:", {

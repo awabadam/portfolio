@@ -1,27 +1,48 @@
 import { NextResponse } from "next/server";
-import { createAppServerClient } from "@/lib/supabase/server-app";
+import { createApiClient, createAuthenticatedClient, createAnonClient } from "@/lib/supabase/server-app";
 
 export async function GET(request: Request) {
   try {
-    const supabase = await createAppServerClient();
+    const supabase = createApiClient();
     
-    // Get the current user
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    // Check for Authorization header (Bearer token)
+    const authHeader = request.headers.get("authorization");
+    let user = null;
+    let accessToken: string | null = null;
     
-    // Check if user is authenticated
-    if (authError || !user) {
+    if (authHeader?.startsWith("Bearer ")) {
+      // If Bearer token is provided, verify it
+      accessToken = authHeader.substring(7);
+      const { data: { user: tokenUser }, error: tokenError } = await supabase.auth.getUser(accessToken);
+      if (!tokenError && tokenUser) {
+        user = tokenUser;
+      }
+    }
+    
+    // In development, allow local auth (check for local-auth header)
+    const isLocalAuth = request.headers.get("x-local-auth") === "true";
+    const isDevelopment = process.env.NODE_ENV === "development";
+    
+    // Check if user is authenticated (or using local auth in dev)
+    if (!user && !(isLocalAuth && isDevelopment)) {
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 401 }
       );
     }
     
+    // Use authenticated client with access token for RLS (admin can see all)
+    // In dev with local auth, use anon client (RLS policies should be configured for this)
+    const adminSupabase = accessToken 
+      ? createAuthenticatedClient(accessToken)
+      : createAnonClient(); // Fallback for local auth in dev
+    
     const { searchParams } = new URL(request.url);
     const status = searchParams.get("status");
     const limit = parseInt(searchParams.get("limit") || "50");
     const offset = parseInt(searchParams.get("offset") || "0");
 
-    let query = supabase
+    let query = adminSupabase
       .from("chat_conversations")
       .select("*")
       .order("started_at", { ascending: false })
@@ -34,9 +55,14 @@ export async function GET(request: Request) {
     const { data: conversations, error } = await query;
 
     if (error) {
-      console.error("Error fetching conversations:", error);
+      console.error("Error fetching conversations:", {
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+        code: error.code,
+      });
       return NextResponse.json(
-        { error: "Failed to fetch conversations" },
+        { error: "Failed to fetch conversations", details: error.message },
         { status: 500 }
       );
     }
@@ -44,7 +70,7 @@ export async function GET(request: Request) {
     // Get message counts for each conversation
     const conversationsWithCounts = await Promise.all(
       (conversations || []).map(async (conv) => {
-        const { count } = await supabase
+        const { count } = await adminSupabase
           .from("chat_messages")
           .select("*", { count: "exact", head: true })
           .eq("conversation_id", conv.id);

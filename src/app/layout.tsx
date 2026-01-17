@@ -3,7 +3,7 @@ import { Inter as FontSans, Space_Grotesk as FontDisplay } from "next/font/googl
 import Script from "next/script";
 import "./globals.css";
 import { ThemeProvider } from "../components";
-import { ConditionalLayout } from "@/components/layout/ConditionalLayout";
+import { ConditionalLayout, ConditionalFooter } from "@/components/layout/ConditionalLayout";
 import { cn } from "@/lib/utils";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 import PageTracking from "@/components/PageTracking";
@@ -205,6 +205,7 @@ export default function RootLayout({
             <NoiseOverlay />
             <ConditionalLayout />
             <PageTransition>{children}</PageTransition>
+            <ConditionalFooter />
           </WhatsAppProvider>
         </ThemeProvider>
       </body>

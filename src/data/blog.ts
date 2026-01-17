@@ -1,5 +1,4 @@
 import { BlogPost, BlogCategory } from "../types";
-import { createAppServerClient } from "@/lib/supabase/server-app";
 import { createStaticSupabaseClient } from "@/lib/supabase/server-static";
 
 // Fallback blog posts data if Supabase is not available

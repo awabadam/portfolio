@@ -30,7 +30,7 @@ interface Conversation {
 }
 
 export default function AdminChatPage() {
-  const { user, loading } = useSupabaseAuth();
+  const { user, loading, supabase, isLocalAuth } = useSupabaseAuth();
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -53,7 +53,28 @@ export default function AdminChatPage() {
         url.searchParams.set("status", statusFilter);
       }
 
-      const response = await fetch(url.toString());
+      // Get access token from session for authenticated requests
+      const headers: HeadersInit = {
+        "Content-Type": "application/json",
+      };
+
+      // If using local auth, send a header to indicate it
+      if (isLocalAuth) {
+        headers["x-local-auth"] = "true";
+      } else if (supabase) {
+        // If using Supabase auth, get the access token
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.access_token) {
+          headers["Authorization"] = `Bearer ${session.access_token}`;
+        }
+      }
+
+      const response = await fetch(url.toString(), {
+        method: "GET",
+        headers,
+        credentials: "include", // Include cookies for session-based auth
+      });
+
       const data = await response.json();
 
       if (!response.ok) {
@@ -71,11 +92,23 @@ export default function AdminChatPage() {
 
   const handleArchive = async (id: string) => {
     try {
+      const headers: HeadersInit = {
+        "Content-Type": "application/json",
+      };
+
+      if (isLocalAuth) {
+        headers["x-local-auth"] = "true";
+      } else if (supabase) {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.access_token) {
+          headers["Authorization"] = `Bearer ${session.access_token}`;
+        }
+      }
+
       const response = await fetch(`/api/chat/conversations/${id}`, {
         method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers,
+        credentials: "include",
         body: JSON.stringify({ status: "archived" }),
       });
 
@@ -93,8 +126,23 @@ export default function AdminChatPage() {
     }
 
     try {
+      const headers: HeadersInit = {
+        "Content-Type": "application/json",
+      };
+
+      if (isLocalAuth) {
+        headers["x-local-auth"] = "true";
+      } else if (supabase) {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.access_token) {
+          headers["Authorization"] = `Bearer ${session.access_token}`;
+        }
+      }
+
       const response = await fetch(`/api/chat/conversations/${id}`, {
         method: "DELETE",
+        headers,
+        credentials: "include",
       });
 
       if (response.ok) {

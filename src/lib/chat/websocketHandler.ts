@@ -1,6 +1,6 @@
 import { WebSocket } from 'ws';
 import { IncomingMessage } from 'http';
-import { createAppServerClient } from '@/lib/supabase/server-app';
+import { createAnonClientWithSession } from '@/lib/supabase/server-app';
 import { ChatContext, ChatMessage, generateSessionId } from './chatBot';
 import { getOpenRouterResponse } from './openRouter';
 
@@ -54,7 +54,7 @@ export function handleWebSocketConnection(ws: WebSocket, req: IncomingMessage) {
 
   // Load conversation history if conversationId exists
   if (conversationId) {
-    loadConversationHistory(conversationId).then((history) => {
+    loadConversationHistory(conversationId, sessionId).then((history) => {
       if (history) {
         context = history;
         const conn = connections.get(sessionId);
@@ -146,9 +146,9 @@ export function handleWebSocketConnection(ws: WebSocket, req: IncomingMessage) {
   }, 30000);
 }
 
-async function loadConversationHistory(conversationId: string): Promise<ChatContext | null> {
+async function loadConversationHistory(conversationId: string, sessionId: string): Promise<ChatContext | null> {
   try {
-    const supabase = createAppServerClient();
+    const supabase = createAnonClientWithSession(sessionId);
     const { data: conversation } = await supabase
       .from('chat_conversations')
       .select('*')
@@ -261,7 +261,7 @@ async function handleChatMessage(connection: ClientConnection, userMessage: stri
     connection.context = updatedContext;
 
     // Save to database
-    await saveMessages(currentConversationId, userMessage, response, action, updatedContext);
+    await saveMessages(currentConversationId, userMessage, response, action, updatedContext, sessionId);
 
     // Send response
     ws.send(JSON.stringify({
@@ -296,7 +296,7 @@ async function handleChatMessage(connection: ClientConnection, userMessage: stri
 
 async function createConversation(sessionId: string, ipAddress: string = 'unknown', userAgent: string = 'WebSocket Client'): Promise<string> {
   try {
-    const supabase = createAppServerClient();
+    const supabase = createAnonClientWithSession(sessionId);
 
     const { data, error } = await supabase
       .from('chat_conversations')
@@ -322,25 +322,34 @@ async function saveMessages(
   userMessage: string,
   response: string,
   action: string | undefined,
-  context: ChatContext
+  context: ChatContext,
+  sessionId: string
 ) {
   try {
-    const supabase = createAppServerClient();
+    const supabase = createAnonClientWithSession(sessionId);
 
     // Save user message
-    await supabase.from('chat_messages').insert({
+    const { error: userMsgError } = await supabase.from('chat_messages').insert({
       conversation_id: conversationId,
       role: 'user',
       content: userMessage,
     });
 
+    if (userMsgError) {
+      console.error('Error saving user message:', userMsgError);
+    }
+
     // Save assistant response
-    await supabase.from('chat_messages').insert({
+    const { error: assistantMsgError } = await supabase.from('chat_messages').insert({
       conversation_id: conversationId,
       role: 'assistant',
       content: response,
       metadata: action ? { action } : null,
     });
+
+    if (assistantMsgError) {
+      console.error('Error saving assistant message:', assistantMsgError);
+    }
 
     // Update conversation with visitor info
     if (context.visitorName || context.visitorEmail || context.visitorPhone) {
@@ -349,10 +358,14 @@ async function saveMessages(
       if (context.visitorEmail) updateData.visitor_email = context.visitorEmail;
       if (context.visitorPhone) updateData.visitor_phone = context.visitorPhone;
 
-      await supabase
+      const { error: updateError } = await supabase
         .from('chat_conversations')
         .update(updateData)
         .eq('id', conversationId);
+
+      if (updateError) {
+        console.error('Error updating conversation:', updateError);
+      }
     }
   } catch (error) {
     console.error('Error saving messages:', error);
