@@ -97,9 +97,9 @@ export default function AboutPage() {
             className="flex gap-16 pr-16 font-display text-6xl font-bold uppercase tracking-tight md:text-9xl"
           >
             {[
-              "React", "Next.js", "TypeScript", "Tailwind", "Motion", 
-              "Design", "Strategy", "UI/UX", "Development", 
-              "React", "Next.js", "TypeScript", "Tailwind", "Motion"
+              "React", "Next.js", "TypeScript", "Generative AI", "Motion", 
+              "LLMs", "Strategy", "UI/UX", "Development", 
+              "Prompt Engineering", "Next.js", "AI Integration", "Tailwind", "Motion"
             ].map((skill, i) => (
               <span key={i} className="flex items-center gap-16">
                 {skill} <span className="text-primary">•</span>
@@ -116,7 +116,7 @@ export default function AboutPage() {
             <div>
               <h2 className="mb-8 font-mono text-sm uppercase text-muted-foreground">Philosophy</h2>
               <p className="text-2xl leading-relaxed md:text-4xl">
-                I believe that good design is invisible. It&apos;s about creating intuitive 
+                I believe that good design is invisible. I leverage AI to amplify creativity and precision, ensuring every project is cutting-edge. It&apos;s about creating intuitive 
                 pathways that guide users effortlessly to their destination. Every pixel, 
                 every interaction, and every line of code serves a purpose.
               </p>

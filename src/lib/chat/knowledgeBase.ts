@@ -16,18 +16,18 @@ export const services: Service[] = [
     name: "Web Design & Development",
     description:
       "Custom website design using Next.js, React, and Tailwind CSS. Responsive, mobile-first design approach. Landing page optimization for conversions.",
-    pricing: "Starting at $800 for landing pages, $1,200 for business websites",
+    pricing: "Starting at $500 for landing pages, $1,000 for business websites",
     link: "/rate-calculator",
   },
   {
     name: "Graphic Design",
     description:
-      "Logo design and brand identity development. Marketing materials (brochures, business cards, social media graphics). Digital advertising creatives and brand guideline development. Starting at $150 for logo design.",
+      "Logo design and brand identity development. Marketing materials (brochures, business cards, social media graphics). Digital advertising creatives and brand guideline development. Starting at $100 for logo design.",
   },
   {
     name: "UI/UX Design",
     description:
-      "User experience research and design. Wireframing and prototyping. Interface design for web and mobile applications. Usability testing and optimization. Starting at $500.",
+      "User experience research and design. Wireframing and prototyping. Interface design for web and mobile applications. Usability testing and optimization. Starting at $400.",
   },
   {
     name: "AI Chatbot Integration",
@@ -39,15 +39,15 @@ export const services: Service[] = [
 
 export const pricingInfo = {
   landing: {
-    base: 800,
+    base: 500,
     description: "Landing Page - Perfect for single-page websites",
   },
   business: {
-    base: 1200,
+    base: 1000,
     description: "Business Website - Multi-page professional sites (3-5 pages)",
   },
   custom: {
-    base: 3000,
+    base: 2500,
     description: "Custom Website - Complex website with custom features and integrations",
   },
   calculator: "/rate-calculator",
@@ -75,7 +75,7 @@ export const faqs: FAQ[] = [
   {
     question: "How much does a website cost?",
     answer:
-      "Website pricing depends on the type: Landing Page starting at $800, Business Website starting at $1,200, and Custom Website starting at $3,000. You can use our rate calculator at /rate-calculator for a detailed quote based on your specific needs.",
+      "Website pricing depends on the type: Landing Page starting at $500, Business Website starting at $1,000, and Custom Website starting at $2,500. You can use our rate calculator at /rate-calculator for a detailed quote based on your specific needs.",
     keywords: ["price", "cost", "pricing", "how much", "fee"],
   },
   {

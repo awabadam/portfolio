@@ -67,7 +67,7 @@ export default function HomePage() {
             transition={{ delay: 0.5, duration: 1 }}
             className="mt-8 max-w-xl text-center text-lg text-white font-medium drop-shadow-lg md:text-xl"
           >
-            Crafting immersive digital experiences that merge art, technology, and strategy.
+            Crafting immersive digital experiences that merge art, AI, and strategy.
           </motion.p>
         </div>
 
@@ -96,8 +96,8 @@ export default function HomePage() {
 
           <div className="divide-y divide-border border-y border-border">
             {[
-              { title: "Web Design & Development", desc: "Immersive, conversion-focused websites built with React, Next.js, WebGL, and Creative Coding", link: "/services/webdesign-istanbul" },
-              { title: "Graphic Design", desc: "User-centered UI/UX design that creates intuitive experiences and drives engagement", link: "/services/graphic-design-istanbul" },
+              { title: "Web Design & Development", desc: <>Immersive, conversion-focused websites built with React, Next.js, WebGL, and <span className="text-foreground font-medium">AI-driven optimization</span></>, link: "/services/webdesign-istanbul" },
+              { title: "Graphic Design", desc: <>User-centered UI/UX design enhanced by <span className="text-foreground font-medium">Generative AI</span> for unique, rapid visual concepts</>, link: "/services/graphic-design-istanbul" },
               { title: "AI Chatbot Integration", desc: "Custom chatbots & automation solutions for 24/7 customer support", link: "/services/ai-chatbot-integration" },
             ].map((service, i) => (
               <Link

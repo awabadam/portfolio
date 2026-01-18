@@ -7,7 +7,7 @@ import { ArrowLeft, CheckCircle, Clock, DollarSign } from "lucide-react";
 export const metadata: Metadata = {
   title: "Webdesign Istanbul - Website Design & Development Services | Awab Elkhalil",
   description:
-    "Professional webdesign Istanbul services. Complete website solutions from concept to launch. Modern, responsive designs that convert visitors into customers. Starting from $800. 2-4 weeks delivery.",
+    "Professional webdesign Istanbul services. Complete website solutions from concept to launch. Modern, responsive designs that convert visitors into customers. Starting from $500. 2-4 weeks delivery.",
   keywords: [
     "webdesign Istanbul",
     "website design Istanbul",
@@ -57,7 +57,7 @@ const WebdesignIstanbulPage = () => {
             <div className="flex items-center gap-2">
               <DollarSign className="h-5 w-5 text-primary" />
               <span className="text-xl font-semibold text-primary">
-                Starting from $800
+                Starting from $500
               </span>
             </div>
             <div className="flex items-center gap-2">

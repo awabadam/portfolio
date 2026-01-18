@@ -7,7 +7,7 @@ import { ArrowLeft, CheckCircle, Clock, DollarSign } from "lucide-react";
 export const metadata: Metadata = {
   title: "Graphic Design Istanbul - UI/UX Design Services | Awab Elkhalil",
   description:
-    "Expert graphic design Istanbul services. User-centered design that creates intuitive experiences and drives engagement. From wireframes to final designs. Starting from $500. 1-3 weeks delivery.",
+    "Expert graphic design Istanbul services. User-centered design that creates intuitive experiences and drives engagement. From wireframes to final designs. Starting from $400. 1-3 weeks delivery.",
   keywords: [
     "graphic design Istanbul",
     "UI/UX design Istanbul",
@@ -57,7 +57,7 @@ const GraphicDesignIstanbulPage = () => {
             <div className="flex items-center gap-2">
               <DollarSign className="h-5 w-5 text-primary" />
               <span className="text-xl font-semibold text-primary">
-                Starting from $500
+                Starting from $400
               </span>
             </div>
             <div className="flex items-center gap-2">

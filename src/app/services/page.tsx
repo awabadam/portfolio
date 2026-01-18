@@ -7,7 +7,7 @@ import { ArrowRight } from "lucide-react";
 export const metadata: Metadata = {
   title: "Web Design, Graphic Design & AI Chatbot Services | Istanbul | Awab Elkhalil",
   description:
-    "Professional webdesign Istanbul, graphic design Istanbul, and AI chatbot integration services. Website design & development, UI/UX design, and intelligent chatbot solutions. Starting from $150.",
+    "Professional webdesign Istanbul, graphic design Istanbul, and AI chatbot integration services. Website design & development, UI/UX design, and intelligent chatbot solutions. Starting from $100.",
   keywords: [
     "webdesign Istanbul",
     "graphic design Istanbul",
@@ -35,8 +35,8 @@ const servicesList = [
     title: "Web Design & Development",
     slug: "webdesign-istanbul",
     description:
-      "Professional webdesign Istanbul services. Complete website solutions from concept to launch. Modern, responsive designs that convert visitors into customers.",
-    priceRange: "Starting from $800",
+      "Professional webdesign Istanbul services. Complete website solutions from concept to launch. Modern, responsive designs with AI-driven optimization that convert visitors into customers.",
+    priceRange: "Starting from $400",
     timeframe: "2-4 weeks",
   },
   {
@@ -44,8 +44,8 @@ const servicesList = [
     title: "Graphic Design",
     slug: "graphic-design-istanbul",
     description:
-      "Expert graphic design Istanbul services. User-centered design that creates intuitive experiences and drives engagement. From wireframes to final designs.",
-    priceRange: "Starting from $500",
+      "Expert graphic design Istanbul services. User-centered design enhanced by Generative AI for unique, rapid visual concepts. From wireframes to final designs.",
+    priceRange: "Starting from $400",
     timeframe: "1-3 weeks",
   },
   {
