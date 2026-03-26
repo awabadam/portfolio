@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { GA4_TRACKING_ID, initGA4 } from "@/lib/ga4";
+import { GA4_TRACKING_ID, initGA4 } from "@/lib/analytics/ga4";
 
 export default function GoogleAnalytics() {
   useEffect(() => {
