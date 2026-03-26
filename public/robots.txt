@@ -19,7 +19,6 @@ Disallow: /admin/login/
 
 # Block API endpoints
 Disallow: /api/contact/
-Disallow: /api/contact-simple/
 Disallow: /api/email-diagnostic/
 Disallow: /api/projects/
 Disallow: /api/test/

@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import AdminLayout from "@/components/admin/layout/AdminLayout";
 import { Button } from "@/components/ui/button";
-import { createBrowserSupabaseClient } from "@/lib/supabase/client-side";
+import { createBrowserSupabaseClient } from "@/lib/supabase";
 
 export default function DeleteProjectPage() {
   const params = useParams();

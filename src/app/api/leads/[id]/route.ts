@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createAppServerClient } from "@/lib/supabase/server-app";
+import { createAppServerClient } from "@/lib/supabase";
 
 // GET - Fetch a single lead
 export async function GET(

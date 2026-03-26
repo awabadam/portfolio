@@ -4,7 +4,7 @@ import AdminLayout from "@/components/admin/layout/AdminLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useSupabaseAuth } from "@/lib/hooks/useSupabase";
+import { useSupabaseAuth } from "@/hooks/useSupabase";
 import { useState } from "react";
 import {
   Card,

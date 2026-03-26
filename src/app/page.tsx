@@ -2,13 +2,19 @@
 
 import { useRef, useState, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
+import dynamic from "next/dynamic";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowDown, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Project } from "@/types";
 import { getFeaturedProjects } from "@/data/projects";
-import ProjectCard from "@/components/ui/ProjectCard"; // Correct import based on previous file read
+import ProjectCard from "@/components/cards/ProjectCard";
+
+// Dynamic import for Three.js component (no SSR)
+const InteractiveCubes = dynamic(
+  () => import("@/components/three/InteractiveCubes"),
+  { ssr: false }
+);
 
 export default function HomePage() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -38,15 +44,9 @@ export default function HomePage() {
         style={{ opacity: heroOpacity, scale: heroScale }}
       >
         <div className="absolute inset-0 bg-black">
-          {/* Replace with video/WebGL background later */}
-          <Image
-            src="/img/hero-image.jpg"
-            alt="Hero Background"
-            fill
-            className="object-cover opacity-50"
-            priority
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/80" />
+          {/* Interactive 3D Cubes Background */}
+          <InteractiveCubes cubeCount={20} isDark={true} />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/60 pointer-events-none" />
         </div>
 
         <div className="absolute inset-0 flex flex-col items-center justify-center p-4">

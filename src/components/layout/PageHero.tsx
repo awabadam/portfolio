@@ -3,11 +3,18 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { Check } from "lucide-react";
+
+// Dynamic import for Three.js component (no SSR)
+const InteractiveCubes = dynamic(
+  () => import("@/components/three/InteractiveCubes"),
+  { ssr: false }
+);
 
 interface PageHeroProps {
   title: string;
@@ -24,6 +31,9 @@ interface PageHeroProps {
   imageClassName?: string;
   showTrustIndicators?: boolean;
   trustIndicators?: string[];
+  useInteractiveCubes?: boolean;
+  cubeCount?: number;
+  isDark?: boolean;
 }
 
 const PageHero: React.FC<PageHeroProps> = ({
@@ -49,6 +59,9 @@ const PageHero: React.FC<PageHeroProps> = ({
     "Italy Pizza",
     "Chef's Burger",
   ],
+  useInteractiveCubes = false,
+  cubeCount = 12,
+  isDark = true,
 }) => {
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -189,21 +202,31 @@ const PageHero: React.FC<PageHeroProps> = ({
           )}
         </div>
 
-        {/* Right Column - Image */}
+        {/* Right Column - Image or Interactive Cubes */}
         <div
-          className={`relative flex items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-br from-primary/5 to-primary/20 ${imageClassName}`}
+          className={`relative flex items-center justify-center overflow-hidden rounded-2xl ${
+            useInteractiveCubes
+              ? "bg-black"
+              : "bg-gradient-to-br from-primary/5 to-primary/20"
+          } ${imageClassName}`}
         >
-          <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_center,rgba(0,0,0,0)_0,rgba(0,0,0,0.4)_100%)]"></div>
-          <div className="relative z-10 aspect-square w-full max-w-xl overflow-hidden">
-            <Image
-              src={imageSrc}
-              alt="Hero Image"
-              fill
-              sizes="(max-width: 768px) 100vw, 50vw"
-              className="object-contain"
-              priority
-            />
-          </div>
+          {useInteractiveCubes ? (
+            <InteractiveCubes cubeCount={cubeCount} isDark={isDark} />
+          ) : (
+            <>
+              <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_center,rgba(0,0,0,0)_0,rgba(0,0,0,0.4)_100%)]"></div>
+              <div className="relative z-10 aspect-square w-full max-w-xl overflow-hidden">
+                <Image
+                  src={imageSrc}
+                  alt="Hero Image"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-contain"
+                  priority
+                />
+              </div>
+            </>
+          )}
         </div>
       </div>
 

@@ -1,6 +1,6 @@
 import { WebSocket } from 'ws';
 import { IncomingMessage } from 'http';
-import { createAnonClientWithSession } from '@/lib/supabase/server-app';
+import { createAnonClientWithSession } from '@/lib/supabase';
 import { ChatContext, ChatMessage, generateSessionId } from './chatBot';
 import { getOpenRouterResponse } from './openRouter';
 

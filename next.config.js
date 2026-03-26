@@ -30,6 +30,10 @@ const nextConfig = {
   experimental: {
     // optimizeCss: true, // Removed due to critters dependency issues
   },
+  // Use webpack bundler instead of Turbopack for build
+  turbopack: {
+    root: process.cwd(),
+  },
 };
 
 module.exports = nextConfig;

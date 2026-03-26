@@ -1,8 +1,9 @@
 "use client";
 
 import { BlogPost } from "@/types";
-import { BlogCard } from "@/components/ui/BlogCard";
-import { SectionContainer, GridLayout, VisualElement } from "@/components/ui";
+import { BlogCard } from "@/components/cards/BlogCard";
+import { SectionContainer, GridLayout } from "@/components/layout";
+import { VisualElement } from "@/components/effects";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";

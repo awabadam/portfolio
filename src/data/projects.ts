@@ -1,5 +1,5 @@
 import { Project } from "@/types";
-import { createBrowserClient } from "@/lib/supabase/client";
+import { createSimpleBrowserClient as createBrowserClient } from "@/lib/supabase";
 
 // Fallback projects data if Supabase is not available
 export const fallbackProjects: Project[] = [

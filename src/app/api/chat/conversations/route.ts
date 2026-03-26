@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createApiClient, createAuthenticatedClient, createAnonClient } from "@/lib/supabase/server-app";
+import { createApiClient, createAuthenticatedClient, createAnonClient } from "@/lib/supabase";
 
 export async function GET(request: Request) {
   try {

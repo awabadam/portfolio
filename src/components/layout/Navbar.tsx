@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import { ModeToggle } from "@/components/ui/mode-toggle";
 import { Button } from "@/components/ui/button";
-import { trackNavigationClick, trackContactClick } from "@/lib/gtm";
+import { trackNavigationClick, trackContactClick } from "@/lib/analytics/gtm";
 import { useWhatsApp } from "@/components/chat/WhatsAppContext";
 import { fadeIn, staggerContainer } from "@/lib/animations";
 

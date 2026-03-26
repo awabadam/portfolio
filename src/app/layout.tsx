@@ -8,11 +8,8 @@ import { cn } from "@/lib/utils";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 import PageTracking from "@/components/PageTracking";
 import { WhatsAppProvider } from "@/components/chat/WhatsAppContext";
-import ScrollProgress from "@/components/ui/ScrollProgress";
-import SmoothScroll from "@/components/ui/SmoothScroll";
-import NoiseOverlay from "@/components/ui/NoiseOverlay";
+import { ScrollProgress, SmoothScroll, NoiseOverlay, PageTransition } from "@/components/effects";
 import { AnimatePresence } from "framer-motion";
-import PageTransition from "@/components/ui/PageTransition";
 
 const fontSans = FontSans({
   subsets: ["latin"],

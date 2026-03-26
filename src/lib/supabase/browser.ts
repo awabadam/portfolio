@@ -5,6 +5,11 @@ import { type SupabaseClient } from '@supabase/supabase-js';
 let browserClient: SupabaseClient | null = null;
 let clientCreationAttempted = false;
 
+/**
+ * Creates a browser-side Supabase client using singleton pattern.
+ * Gracefully handles missing environment variables.
+ * @returns SupabaseClient or null if configuration is missing
+ */
 export function createBrowserSupabaseClient(): SupabaseClient | null {
   // Return existing client if already created
   if (browserClient) {
@@ -35,3 +40,13 @@ export function createBrowserSupabaseClient(): SupabaseClient | null {
     return null;
   }
 }
+
+/**
+ * Simple browser client factory (for backwards compatibility)
+ * @deprecated Use createBrowserSupabaseClient() instead for better error handling
+ */
+export const createSimpleBrowserClient = () =>
+  createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );

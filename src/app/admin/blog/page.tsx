@@ -12,7 +12,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Plus, Edit, Trash2, Eye, Calendar, Clock } from "lucide-react";
 import Link from "next/link";
 import AdminLayout from "@/components/admin/layout/AdminLayout";
-import { useSupabaseAuth } from "@/lib/hooks/useSupabase";
+import { useSupabaseAuth } from "@/hooks/useSupabase";
 
 const BlogAdminPage = () => {
   const { user, supabase } = useSupabaseAuth();

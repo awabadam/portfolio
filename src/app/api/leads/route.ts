@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createAppServerClient } from "@/lib/supabase/server-app";
+import { createAppServerClient } from "@/lib/supabase";
 
 // Check if Supabase is properly configured
 function isSupabaseConfigured() {

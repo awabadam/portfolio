@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import AdminLayout from "@/components/admin/layout/AdminLayout";
 import ProjectForm from "@/components/admin/forms/ProjectForm";
 import { Project } from "@/types";
-import { createBrowserSupabaseClient } from "@/lib/supabase/client-side";
+import { createBrowserSupabaseClient } from "@/lib/supabase";
 
 export default function EditProjectPage() {
   const params = useParams();

@@ -11,7 +11,7 @@ import {
   trackProjectView,
   trackButtonClick,
   trackProjectClick,
-} from "@/lib/gtm";
+} from "@/lib/analytics/gtm";
 import { fadeInUp } from "@/lib/animations";
 
 interface ProjectCardProps {

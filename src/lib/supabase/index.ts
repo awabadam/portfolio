@@ -1,3 +1,16 @@
-export * from './client';
-export * from './server-app';
-export * from './server-static';
+// Browser-side client
+export { createBrowserSupabaseClient, createSimpleBrowserClient } from './browser';
+
+// Server-side clients
+export {
+  createApiClient,
+  createAppServerClient,
+  createAnonClient,
+  createAnonClientWithSession,
+  createAuthenticatedClient,
+  createStaticSupabaseClient,
+  createServerSupabaseClient,
+} from './server';
+
+// Middleware client
+export { createMiddlewareSupabaseClient } from './middleware';

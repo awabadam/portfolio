@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
@@ -9,8 +9,14 @@ import {
   trackCTAClick,
   trackButtonClick,
   trackNavigationClick,
-} from "@/lib/gtm";
+} from "@/lib/analytics/gtm";
 import { fadeInUp, staggerContainer, textReveal, staggerText } from "@/lib/animations";
+
+// Dynamic import for Three.js component (no SSR)
+const InteractiveCubes = dynamic(
+  () => import("@/components/three/InteractiveCubes"),
+  { ssr: false }
+);
 
 const Header = () => {
   const scrollToNext = () => {
@@ -104,22 +110,14 @@ const Header = () => {
             </motion.div>
           </motion.div>
 
-          {/* Right Column - Image */}
+          {/* Right Column - Interactive 3D Cubes */}
           <motion.div
             className="relative flex items-center justify-center"
             variants={fadeInUp}
           >
-            <div className="relative aspect-square w-full max-w-lg overflow-hidden rounded-2xl">
-              <div className="absolute inset-0 z-0 bg-gradient-to-br from-primary/10 to-primary/5"></div>
-              <Image
-                src="/img/hero-image.jpg"
-                alt="Awab Elkhalil - Web Designer & Developer in Istanbul"
-                fill
-                className="object-cover"
-                priority
-                sizes="(max-width: 768px) 100vw, 50vw"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-background/20 via-transparent to-transparent"></div>
+            <div className="relative aspect-square w-full max-w-lg overflow-hidden rounded-2xl bg-black">
+              <InteractiveCubes cubeCount={12} isDark={true} />
+              <div className="absolute inset-0 bg-gradient-to-t from-background/10 via-transparent to-transparent pointer-events-none"></div>
             </div>
           </motion.div>
         </div>

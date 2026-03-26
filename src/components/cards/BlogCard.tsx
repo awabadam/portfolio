@@ -4,8 +4,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { Calendar, Clock, Tag } from "lucide-react";
 import { BlogPost } from "@/types";
-import { Card, CardContent, CardFooter } from "./card";
-import { Badge } from "./badge";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 interface BlogCardProps {
   post: BlogPost;

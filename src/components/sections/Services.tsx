@@ -26,7 +26,7 @@ import {
   trackLeadGeneration,
   trackServiceClick,
   trackCTAClick,
-} from "@/lib/gtm";
+} from "@/lib/analytics/gtm";
 import { fadeInUp, staggerContainer } from "@/lib/animations";
 
 interface Service {

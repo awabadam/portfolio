@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createAnonClientWithSession } from "@/lib/supabase/server-app";
+import { createAnonClientWithSession } from "@/lib/supabase";
 import { processMessage, ChatContext, ChatMessage } from "@/lib/chat/chatBot";
 import { getOpenRouterResponse } from "@/lib/chat/openRouter";
 

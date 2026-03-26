@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
-import { createAppServerClient } from "@/lib/supabase/server-app";
+import { createAppServerClient } from "@/lib/supabase";
 
 export async function POST(request: Request) {
   try {

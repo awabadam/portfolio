@@ -4,7 +4,7 @@ import React, { useEffect, useState, useRef } from "react";
 import AdminLayout from "@/components/admin/layout/AdminLayout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { useSupabaseAuth } from "@/lib/hooks/useSupabase";
+import { useSupabaseAuth } from "@/hooks/useSupabase";
 import Link from "next/link";
 import { ArrowLeft, Archive, Trash2, Mail, Phone, User, MessageSquare, Clock } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";

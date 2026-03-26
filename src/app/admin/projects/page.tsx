@@ -13,9 +13,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { useSupabaseAuth } from "@/lib/hooks/useSupabase";
+import { useSupabaseAuth } from "@/hooks/useSupabase";
 import { Project } from "@/types";
-import { createBrowserSupabaseClient } from "@/lib/supabase/client-side";
+import { createBrowserSupabaseClient } from "@/lib/supabase";
 
 export default function AdminProjectsPage() {
   const { user, loading } = useSupabaseAuth();

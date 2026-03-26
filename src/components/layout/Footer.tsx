@@ -8,7 +8,7 @@ import {
   trackSocialClick,
   trackContactClick,
   trackNavigationClick,
-} from "@/lib/gtm";
+} from "@/lib/analytics/gtm";
 
 const Footer = () => {
   const { openWhatsApp } = useWhatsApp();

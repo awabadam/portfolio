@@ -1,5 +1,5 @@
 import { BlogPost, BlogCategory } from "../types";
-import { createStaticSupabaseClient } from "@/lib/supabase/server-static";
+import { createStaticSupabaseClient } from "@/lib/supabase";
 
 // Fallback blog posts data if Supabase is not available
 export const fallbackBlogPosts: BlogPost[] = [

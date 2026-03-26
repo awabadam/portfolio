@@ -1,12 +1,10 @@
-export { default as PageHero } from "./PageHero";
-export { default as BackgroundHero } from "./BackgroundHero";
-export { default as SectionContainer } from "./SectionContainer";
-export { default as ContentCard } from "./ContentCard";
-export { default as GridLayout } from "./GridLayout";
-export { default as VisualElement } from "./VisualElement";
-export { default as ProjectCard } from "./ProjectCard";
-export { default as ImageGallery } from "./ImageGallery";
-export { BlogCard } from "./BlogCard";
+// Re-export from new locations for backwards compatibility
+export { PageHero, BackgroundHero, SectionContainer, GridLayout } from "@/components/layout";
+export { ContentCard, ProjectCard, BlogCard } from "@/components/cards";
+export { VisualElement } from "@/components/effects";
+export { ImageGallery } from "@/components/media";
+
+// shadcn/ui primitives
 export * from "./button";
 export * from "./card";
 export * from "./badge";

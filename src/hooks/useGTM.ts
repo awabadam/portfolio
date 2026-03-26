@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
-import { initGTM, trackPageView } from '../gtm';
+import { initGTM, trackPageView } from '@/lib/analytics/gtm';
 
 export const useGTM = () => {
   const pathname = usePathname();

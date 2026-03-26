@@ -5,7 +5,7 @@ import AdminLayout from "@/components/admin/layout/AdminLayout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { useSupabaseAuth } from "@/lib/hooks/useSupabase";
+import { useSupabaseAuth } from "@/hooks/useSupabase";
 import Link from "next/link";
 import { Eye, Search, Archive, Trash2, RefreshCw, MessageSquare, Users, Clock, Filter } from "lucide-react";
 import { cn } from "@/lib/utils";

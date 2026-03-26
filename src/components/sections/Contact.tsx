@@ -13,7 +13,7 @@ import {
   trackContactAction,
   trackLeadGeneration,
   trackContactClick,
-} from "@/lib/gtm";
+} from "@/lib/analytics/gtm";
 
 const Contact = () => {
   const { openWhatsApp } = useWhatsApp();
