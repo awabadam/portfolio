@@ -1,10 +1,17 @@
 "use client";
 
 import Image from "next/image";
+import dynamic from "next/dynamic";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import { ArrowDown } from "lucide-react";
 import { fadeInUp, staggerContainer } from "@/lib/animations";
+
+// Dynamic import for Three.js component (no SSR)
+const InteractiveTetrahedrons = dynamic(
+  () => import("@/components/three/InteractiveTetrahedrons"),
+  { ssr: false }
+);
 
 export default function AboutPage() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -23,34 +30,33 @@ export default function AboutPage() {
         className="relative h-screen w-full overflow-hidden"
         style={{ scale: heroScale, opacity: heroOpacity }}
       >
-        <Image
-          src="/img/hero-image.jpg"
-          alt="Awab Elkhalil"
-          fill
-          className="object-cover grayscale"
-          priority
-        />
-        <div className="absolute inset-0 bg-black/60" />
+        <div className="absolute inset-0 bg-black">
+          <InteractiveTetrahedrons shapeCount={70} isDark={true} />
+        </div>
+
         <div className="absolute inset-0 flex items-center justify-center">
           <motion.h1
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-            className="text-center font-display text-[15vw] font-bold leading-none tracking-tighter text-white/90 drop-shadow-2xl mix-blend-normal"
+            className="text-center font-display text-[15vw] font-bold leading-none tracking-tighter text-white/70 md:text-[12vw]"
           >
             CREATIVE
             <br />
             DEVELOPER
           </motion.h1>
         </div>
-        
-        <motion.div 
+
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1, duration: 1 }}
           className="absolute bottom-12 left-1/2 -translate-x-1/2 text-white/50"
         >
-          <ArrowDown className="h-6 w-6 animate-bounce" />
+          <div className="flex flex-col items-center gap-2">
+            <span className="text-xs uppercase tracking-widest">Scroll</span>
+            <ArrowDown className="h-4 w-4 animate-bounce" />
+          </div>
         </motion.div>
       </motion.section>
 
