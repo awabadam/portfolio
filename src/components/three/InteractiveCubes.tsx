@@ -135,9 +135,9 @@ function AtmosphericGlow({ isDark }: { isDark: boolean }) {
       <mesh position={[0, 0, -12]}>
         <circleGeometry args={[8, 32]} />
         <meshBasicMaterial
-          color={isDark ? "#1a1a2e" : "#e0e0e0"}
+          color={isDark ? "#1a1a1a" : "#e0e0e0"}
           transparent
-          opacity={0.6}
+          opacity={0.5}
           blending={THREE.AdditiveBlending}
         />
       </mesh>
@@ -146,7 +146,7 @@ function AtmosphericGlow({ isDark }: { isDark: boolean }) {
       <mesh position={[5, 4, -10]}>
         <circleGeometry args={[4, 32]} />
         <meshBasicMaterial
-          color={isDark ? "#16213e" : "#d0d0d0"}
+          color={isDark ? "#222222" : "#d0d0d0"}
           transparent
           opacity={0.3}
           blending={THREE.AdditiveBlending}
@@ -157,7 +157,7 @@ function AtmosphericGlow({ isDark }: { isDark: boolean }) {
       <mesh position={[-4, -3, -11]}>
         <circleGeometry args={[3, 32]} />
         <meshBasicMaterial
-          color={isDark ? "#0f3460" : "#c0c0c0"}
+          color={isDark ? "#1a1a1a" : "#c0c0c0"}
           transparent
           opacity={0.2}
           blending={THREE.AdditiveBlending}
@@ -303,7 +303,7 @@ function Scene({ cubeCount = 60, isDark = true }: { cubeCount?: number; isDark?:
       <pointLight
         position={[0, 0, -10]}
         intensity={isDark ? 0.5 : 0.3}
-        color="#aaaaaa"
+        color="#ffffff"
       />
 
       {/* Atmospheric glow in background */}
