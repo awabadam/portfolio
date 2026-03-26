@@ -104,7 +104,7 @@ function Particle({
   );
 }
 
-function Scene({ cubeCount = 15, isDark = true }: { cubeCount?: number; isDark?: boolean }) {
+function Scene({ cubeCount = 35, isDark = true }: { cubeCount?: number; isDark?: boolean }) {
   const mousePosition = useRef({ x: 0, y: 0 });
   const smoothMouse = useRef({ x: 0, y: 0 });
 
@@ -212,7 +212,7 @@ interface InteractiveCubesProps {
 
 export default function InteractiveCubes({
   className = "",
-  cubeCount = 15,
+  cubeCount = 35,
   isDark = true,
 }: InteractiveCubesProps) {
   return (

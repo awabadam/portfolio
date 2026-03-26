@@ -30,7 +30,7 @@ const BackgroundHero: React.FC<BackgroundHeroProps> = ({
   className = "",
   overlayOpacity = 0.6,
   useInteractiveCubes = false,
-  cubeCount = 15,
+  cubeCount = 30,
   isDark = true,
 }) => {
   return (

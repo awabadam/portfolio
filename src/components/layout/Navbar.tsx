@@ -1,20 +1,27 @@
 "use client";
 
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
+import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
+import { motion, AnimatePresence, useScroll } from "framer-motion";
 import { ModeToggle } from "@/components/ui/mode-toggle";
 import { Button } from "@/components/ui/button";
 import { trackNavigationClick, trackContactClick } from "@/lib/analytics/gtm";
 import { useWhatsApp } from "@/components/chat/WhatsAppContext";
 import { fadeIn, staggerContainer } from "@/lib/animations";
 
+// Pages with dark hero sections where white text is needed
+const DARK_HERO_PAGES = ["/", "/about"];
+
 const Navbar = () => {
   const { openWhatsApp } = useWhatsApp();
+  const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const { scrollY } = useScroll();
+
+  // Check if current page has a dark hero
+  const hasDarkHero = DARK_HERO_PAGES.includes(pathname || "");
 
   useEffect(() => {
     return scrollY.onChange((latest) => {
@@ -49,7 +56,7 @@ const Navbar = () => {
           <Link
             href="/"
             className={`group relative z-50 font-display text-2xl font-bold tracking-tighter transition-colors duration-300 ${
-              isScrolled ? "text-foreground" : "text-white"
+              isScrolled || !hasDarkHero ? "text-foreground" : "text-white"
             }`}
             onClick={() => handleNavClick("home")}
           >
@@ -66,28 +73,28 @@ const Navbar = () => {
                 key={item.href}
                 href={item.href}
                 className={`group relative text-sm font-medium uppercase tracking-widest transition-colors duration-300 ${
-                  isScrolled 
-                    ? "text-muted-foreground hover:text-foreground" 
+                  isScrolled || !hasDarkHero
+                    ? "text-muted-foreground hover:text-foreground"
                     : "text-white/80 hover:text-white"
                 }`}
                 onClick={() => handleNavClick(item.label)}
               >
                 {item.label}
                 <span className={`absolute -bottom-1 left-0 h-px w-0 transition-all duration-300 group-hover:w-full ${
-                  isScrolled ? "bg-foreground" : "bg-white"
+                  isScrolled || !hasDarkHero ? "bg-foreground" : "bg-white"
                 }`} />
               </Link>
             ))}
             
             <div className={`flex items-center gap-4 border-l pl-8 transition-colors duration-300 ${
-              isScrolled ? "border-border/20" : "border-white/20"
+              isScrolled || !hasDarkHero ? "border-border/20" : "border-white/20"
             }`}>
               <ModeToggle />
               <Button
                 variant="outline"
                 className={`rounded-full px-6 transition-all ${
-                  isScrolled 
-                    ? "hover:bg-foreground hover:text-background" 
+                  isScrolled || !hasDarkHero
+                    ? "hover:bg-foreground hover:text-background"
                     : "border-white/50 bg-transparent text-white hover:bg-white hover:text-black"
                 }`}
                 onClick={() => {
@@ -109,13 +116,13 @@ const Navbar = () => {
               aria-label="Toggle menu"
             >
               <span className={`h-0.5 w-6 transition-all duration-300 ${isMenuOpen ? "rotate-45 translate-y-2" : ""} ${
-                isScrolled ? "bg-foreground" : "bg-white"
+                isScrolled || !hasDarkHero ? "bg-foreground" : "bg-white"
               }`} />
               <span className={`h-0.5 w-6 transition-all duration-300 ${isMenuOpen ? "opacity-0" : ""} ${
-                isScrolled ? "bg-foreground" : "bg-white"
+                isScrolled || !hasDarkHero ? "bg-foreground" : "bg-white"
               }`} />
               <span className={`h-0.5 w-6 transition-all duration-300 ${isMenuOpen ? "-rotate-45 -translate-y-2" : ""} ${
-                isScrolled ? "bg-foreground" : "bg-white"
+                isScrolled || !hasDarkHero ? "bg-foreground" : "bg-white"
               }`} />
             </button>
           </div>

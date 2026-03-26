@@ -45,7 +45,7 @@ export default function HomePage() {
       >
         <div className="absolute inset-0 bg-black">
           {/* Interactive 3D Cubes Background */}
-          <InteractiveCubes cubeCount={20} isDark={true} />
+          <InteractiveCubes cubeCount={40} isDark={true} />
           <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/60 pointer-events-none" />
         </div>
 
