@@ -238,8 +238,8 @@ function Scene({ cubeCount = 60, isDark = true }: { cubeCount?: number; isDark?:
         rotationSpeed: (0.3 + Math.random() * 0.6) * speedMultiplier,
         color: isDark
           ? isWireframe
-            ? "#ffffff"
-            : `hsl(0, 0%, ${70 + Math.random() * 25}%)`
+            ? `hsl(0, 0%, ${60 + Math.random() * 30}%)`
+            : `hsl(0, 0%, ${15 + Math.random() * 35}%)`
           : isWireframe
             ? "#000000"
             : `hsl(0, 0%, ${20 + Math.random() * 30}%)`,
