@@ -2,9 +2,25 @@ import { NextResponse } from "next/server";
 import { createAnonClientWithSession } from "@/lib/supabase";
 import { processMessage, ChatContext, ChatMessage } from "@/lib/chat/chatBot";
 import { getOpenRouterResponse } from "@/lib/chat/openRouter";
+import { checkRateLimit, getIdentifier, getRateLimitHeaders, rateLimiters } from "@/lib/rateLimit";
+import { sanitizeChatMessage } from "@/lib/sanitize";
 
 export async function POST(request: Request) {
   try {
+    // Rate limiting
+    const identifier = getIdentifier(request);
+    const rateLimitResult = checkRateLimit(identifier, rateLimiters.chat);
+
+    if (!rateLimitResult.success) {
+      return NextResponse.json(
+        { error: "Too many messages. Please wait a moment before sending more." },
+        {
+          status: 429,
+          headers: getRateLimitHeaders(rateLimitResult)
+        }
+      );
+    }
+
     const { message, sessionId, conversationId } = await request.json();
 
     if (!message || !sessionId) {
@@ -13,6 +29,9 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
+
+    // Sanitize the message
+    const sanitizedMessage = sanitizeChatMessage(message);
 
     // Initialize context - will be populated from DB if available
     let context: ChatContext = {
@@ -117,14 +136,14 @@ export async function POST(request: Request) {
     const emailRegex = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/gi;
     const phoneRegex = /(\+?\d{1,3}[-.\s]?\(?\d{1,4}\)?[-.\s]?\d{1,4}[-.\s]?\d{1,9})/g;
     
-    const emailMatch = message.match(emailRegex);
-    const phoneMatch = message.match(phoneRegex);
-    
+    const emailMatch = sanitizedMessage.match(emailRegex);
+    const phoneMatch = sanitizedMessage.match(phoneRegex);
+
     // If we're collecting info, extract it from the message
     if (context.isCollectingInfo) {
       if (context.isCollectingInfo.type === "name" && !emailMatch && !phoneMatch) {
         // Assume the message is the name if it doesn't contain email/phone
-        updatedContext.visitorName = message.trim();
+        updatedContext.visitorName = sanitizedMessage.trim();
         updatedContext.isCollectingInfo = { type: "email" };
       } else if (context.isCollectingInfo.type === "email" && emailMatch) {
         updatedContext.visitorEmail = emailMatch[0];
@@ -144,12 +163,12 @@ export async function POST(request: Request) {
     if (hasOpenRouterKey) {
       try {
         // Use OpenRouter AI
-        response = await getOpenRouterResponse(message, updatedContext);
-        
+        response = await getOpenRouterResponse(sanitizedMessage, updatedContext);
+
         // Update conversation history for next request
         updatedContext.conversationHistory = [
           ...updatedContext.conversationHistory,
-          { role: "user", content: message },
+          { role: "user", content: sanitizedMessage },
           { role: "assistant", content: response },
         ];
         
@@ -160,14 +179,14 @@ export async function POST(request: Request) {
       } catch (openRouterError) {
         console.warn("OpenRouter API failed, falling back to rule-based system:", openRouterError);
         // Fallback to rule-based system
-        const result = processMessage(message, updatedContext);
+        const result = processMessage(sanitizedMessage, updatedContext);
         response = result.response;
         updatedContext = result.context;
         action = result.action;
       }
     } else {
       // Use rule-based system
-      const result = processMessage(message, updatedContext);
+      const result = processMessage(sanitizedMessage, updatedContext);
       response = result.response;
       updatedContext = result.context;
       action = result.action;
@@ -183,7 +202,7 @@ export async function POST(request: Request) {
         const { error: userMsgError } = await supabase.from("chat_messages").insert({
           conversation_id: currentConversationId,
           role: "user",
-          content: message,
+          content: sanitizedMessage,
         });
 
         if (userMsgError) {

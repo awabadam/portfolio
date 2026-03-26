@@ -4,12 +4,12 @@ import { createApiClient, createAuthenticatedClient, createAnonClient } from "@/
 export async function GET(request: Request) {
   try {
     const supabase = createApiClient();
-    
+
     // Check for Authorization header (Bearer token)
     const authHeader = request.headers.get("authorization");
     let user = null;
     let accessToken: string | null = null;
-    
+
     if (authHeader?.startsWith("Bearer ")) {
       // If Bearer token is provided, verify it
       accessToken = authHeader.substring(7);
@@ -18,11 +18,11 @@ export async function GET(request: Request) {
         user = tokenUser;
       }
     }
-    
+
     // In development, allow local auth (check for local-auth header)
     const isLocalAuth = request.headers.get("x-local-auth") === "true";
     const isDevelopment = process.env.NODE_ENV === "development";
-    
+
     // Check if user is authenticated (or using local auth in dev)
     if (!user && !(isLocalAuth && isDevelopment)) {
       return NextResponse.json(
@@ -30,21 +30,26 @@ export async function GET(request: Request) {
         { status: 401 }
       );
     }
-    
+
     // Use authenticated client with access token for RLS (admin can see all)
     // In dev with local auth, use anon client (RLS policies should be configured for this)
-    const adminSupabase = accessToken 
+    const adminSupabase = accessToken
       ? createAuthenticatedClient(accessToken)
       : createAnonClient(); // Fallback for local auth in dev
-    
+
     const { searchParams } = new URL(request.url);
     const status = searchParams.get("status");
     const limit = parseInt(searchParams.get("limit") || "50");
     const offset = parseInt(searchParams.get("offset") || "0");
 
+    // Build query with message counts using a single query
+    // This fixes the N+1 problem by using a lateral join / subquery approach
     let query = adminSupabase
       .from("chat_conversations")
-      .select("*")
+      .select(`
+        *,
+        chat_messages(count)
+      `)
       .order("started_at", { ascending: false })
       .range(offset, offset + limit - 1);
 
@@ -67,20 +72,12 @@ export async function GET(request: Request) {
       );
     }
 
-    // Get message counts for each conversation
-    const conversationsWithCounts = await Promise.all(
-      (conversations || []).map(async (conv) => {
-        const { count } = await adminSupabase
-          .from("chat_messages")
-          .select("*", { count: "exact", head: true })
-          .eq("conversation_id", conv.id);
-
-        return {
-          ...conv,
-          message_count: count || 0,
-        };
-      })
-    );
+    // Transform the data to include message_count
+    const conversationsWithCounts = (conversations || []).map((conv: any) => ({
+      ...conv,
+      message_count: conv.chat_messages?.[0]?.count || 0,
+      chat_messages: undefined, // Remove the nested object
+    }));
 
     // Group conversations by session_id and combine message counts
     const groupedBySession: Record<string, typeof conversationsWithCounts> = {};
@@ -96,7 +93,7 @@ export async function GET(request: Request) {
     // but combine message counts and use the earliest start time
     const groupedConversations = Object.entries(groupedBySession).map(([sessionId, convs]) => {
       // Sort by started_at descending to get most recent first
-      const sorted = [...convs].sort((a, b) => 
+      const sorted = [...convs].sort((a, b) =>
         new Date(b.started_at).getTime() - new Date(a.started_at).getTime()
       );
       const primary = sorted[0];
@@ -107,13 +104,13 @@ export async function GET(request: Request) {
         ...primary,
         message_count: totalMessages,
         started_at: earliestStart,
-        conversation_ids: convs.map(c => c.id), // Keep track of all conversation IDs
+        conversation_ids: convs.map((c) => c.id), // Keep track of all conversation IDs
         conversation_count: convs.length, // How many conversations were grouped
       };
     });
 
     // Sort grouped conversations by most recent start time
-    groupedConversations.sort((a, b) => 
+    groupedConversations.sort((a, b) =>
       new Date(b.started_at).getTime() - new Date(a.started_at).getTime()
     );
 
@@ -126,4 +123,3 @@ export async function GET(request: Request) {
     );
   }
 }
-

@@ -17,6 +17,11 @@ export interface OpenRouterResponse {
   };
 }
 
+// Constants for context management
+const MAX_CONTEXT_MESSAGES = 20; // Maximum messages to keep
+const MAX_TOTAL_CHARS = 8000; // Approximate character limit for context
+const PRIORITY_MESSAGE_COUNT = 4; // Always keep the last N messages
+
 /**
  * Builds a system prompt with knowledge base information
  */
@@ -86,6 +91,72 @@ GUIDELINES:
 }
 
 /**
+ * Smart context management - keeps important messages while staying within limits
+ */
+function getOptimizedHistory(history: ChatMessage[]): ChatMessage[] {
+  if (history.length <= PRIORITY_MESSAGE_COUNT) {
+    return history;
+  }
+
+  // Always keep the last N priority messages
+  const priorityMessages = history.slice(-PRIORITY_MESSAGE_COUNT);
+
+  // Get remaining messages
+  const olderMessages = history.slice(0, -PRIORITY_MESSAGE_COUNT);
+
+  // Calculate character budget
+  const priorityChars = priorityMessages.reduce((sum, m) => sum + m.content.length, 0);
+  const remainingBudget = MAX_TOTAL_CHARS - priorityChars;
+
+  // Select older messages that fit within budget, prioritizing newer ones
+  const selectedOlderMessages: ChatMessage[] = [];
+  let currentChars = 0;
+
+  // Process from newest to oldest
+  for (let i = olderMessages.length - 1; i >= 0; i--) {
+    const msg = olderMessages[i];
+    const msgChars = msg.content.length;
+
+    if (currentChars + msgChars <= remainingBudget) {
+      selectedOlderMessages.unshift(msg);
+      currentChars += msgChars;
+    }
+
+    // Stop if we've collected enough messages
+    if (selectedOlderMessages.length >= MAX_CONTEXT_MESSAGES - PRIORITY_MESSAGE_COUNT) {
+      break;
+    }
+  }
+
+  // If we have contact info messages, prioritize keeping them
+  const contactMessages = olderMessages.filter(
+    (m) =>
+      m.content.toLowerCase().includes("email") ||
+      m.content.toLowerCase().includes("phone") ||
+      m.content.toLowerCase().includes("name") ||
+      m.content.toLowerCase().includes("@")
+  );
+
+  // Add important contact messages if not already included
+  for (const contactMsg of contactMessages) {
+    if (!selectedOlderMessages.includes(contactMsg) && !priorityMessages.includes(contactMsg)) {
+      const msgChars = contactMsg.content.length;
+      if (currentChars + msgChars <= remainingBudget) {
+        selectedOlderMessages.push(contactMsg);
+        currentChars += msgChars;
+      }
+    }
+  }
+
+  // Sort by original order
+  selectedOlderMessages.sort((a, b) => {
+    return olderMessages.indexOf(a) - olderMessages.indexOf(b);
+  });
+
+  return [...selectedOlderMessages, ...priorityMessages];
+}
+
+/**
  * Calls OpenRouter API to get AI response
  */
 export async function getOpenRouterResponse(
@@ -106,9 +177,10 @@ export async function getOpenRouterResponse(
     },
   ];
 
-  // Add conversation history (last 8 messages to avoid token limits, leaving room for system prompt and current message)
-  const recentHistory = context.conversationHistory.slice(-8);
-  for (const msg of recentHistory) {
+  // Get optimized conversation history
+  const optimizedHistory = getOptimizedHistory(context.conversationHistory);
+
+  for (const msg of optimizedHistory) {
     // Skip system messages from history (we have our own system prompt)
     if (msg.role !== "system") {
       messages.push({

@@ -22,6 +22,8 @@ export default function MessageBubble({
         "flex w-full items-start gap-3",
         isUser ? "flex-row-reverse" : "flex-row",
       )}
+      role="article"
+      aria-label={`${isUser ? "You" : "Assistant"} said`}
     >
       <div
         className={cn(
@@ -30,6 +32,7 @@ export default function MessageBubble({
             ? "bg-primary text-primary-foreground"
             : "bg-primary/10 text-primary",
         )}
+        aria-hidden="true"
       >
         {isUser ? <User className="h-5 w-5" /> : <Bot className="h-5 w-5" />}
       </div>
@@ -52,11 +55,17 @@ export default function MessageBubble({
               "text-xs text-muted-foreground",
               isUser ? "text-right" : "text-left",
             )}
-          >
-            {timestamp.toLocaleTimeString([], {
+            aria-label={`Sent at ${timestamp.toLocaleTimeString([], {
               hour: "2-digit",
               minute: "2-digit",
-            })}
+            })}`}
+          >
+            <time dateTime={timestamp.toISOString()}>
+              {timestamp.toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </time>
           </span>
         )}
       </div>

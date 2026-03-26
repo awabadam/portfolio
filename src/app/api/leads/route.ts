@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { createAppServerClient } from "@/lib/supabase";
+import { checkRateLimit, getIdentifier, getRateLimitHeaders, rateLimiters } from "@/lib/rateLimit";
+import { sanitizeText } from "@/lib/sanitize";
 
 // Check if Supabase is properly configured
 function isSupabaseConfigured() {
@@ -91,17 +93,35 @@ export async function GET(request: Request) {
 // POST - Create a new lead
 export async function POST(request: Request) {
   try {
+    // Rate limiting
+    const identifier = getIdentifier(request);
+    const rateLimitResult = checkRateLimit(identifier, rateLimiters.leads);
+
+    if (!rateLimitResult.success) {
+      return NextResponse.json(
+        { error: "Too many submissions. Please try again later." },
+        {
+          status: 429,
+          headers: getRateLimitHeaders(rateLimitResult)
+        }
+      );
+    }
+
     // Check if Supabase is configured
     if (!isSupabaseConfigured()) {
       console.warn("Supabase not configured, lead not saved");
-      return NextResponse.json({ 
-        success: true, 
-        message: "Lead received but not saved (database not configured)" 
+      return NextResponse.json({
+        success: true,
+        message: "Lead received but not saved (database not configured)"
       });
     }
 
     const body = await request.json();
     const { source, name, email, phone, message, project_type, metadata } = body;
+
+    // Sanitize text inputs
+    const sanitizedName = name ? sanitizeText(name) : undefined;
+    const sanitizedMessage = message ? sanitizeText(message) : undefined;
 
     if (!source) {
       return NextResponse.json({ error: "Source is required" }, { status: 400 });
@@ -120,10 +140,10 @@ export async function POST(request: Request) {
       .from("leads")
       .insert({
         source,
-        name,
+        name: sanitizedName,
         email,
         phone,
-        message,
+        message: sanitizedMessage,
         project_type,
         ip_address: ipAddress,
         user_agent: userAgent,

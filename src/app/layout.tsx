@@ -10,6 +10,7 @@ import PageTracking from "@/components/PageTracking";
 import { WhatsAppProvider } from "@/components/chat/WhatsAppContext";
 import { ScrollProgress, SmoothScroll, NoiseOverlay, PageTransition } from "@/components/effects";
 import { AnimatePresence } from "framer-motion";
+import { Toaster } from "@/components/ui/toaster";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -203,6 +204,7 @@ export default function RootLayout({
             <ConditionalLayout />
             <PageTransition>{children}</PageTransition>
             <ConditionalFooter />
+            <Toaster position="top-right" richColors closeButton />
           </WhatsAppProvider>
         </ThemeProvider>
       </body>

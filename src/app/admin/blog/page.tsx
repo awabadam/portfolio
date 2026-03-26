@@ -9,10 +9,23 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Plus, Edit, Trash2, Eye, Calendar, Clock } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { toast } from "@/components/ui/toaster";
+import { blogPostSchema, getValidationErrors } from "@/lib/validation/schemas";
+import { Plus, Edit, Trash2, Eye, Calendar, Clock, X } from "lucide-react";
 import Link from "next/link";
 import AdminLayout from "@/components/admin/layout/AdminLayout";
 import { useSupabaseAuth } from "@/hooks/useSupabase";
+import { z } from "zod";
 
 const BlogAdminPage = () => {
   const { user, supabase } = useSupabaseAuth();
@@ -20,6 +33,9 @@ const BlogAdminPage = () => {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [postToDelete, setPostToDelete] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [formData, setFormData] = useState({
     title: "",
     slug: "",
@@ -44,7 +60,6 @@ const BlogAdminPage = () => {
     if (!supabase) return;
 
     try {
-      console.log("Fetching blog posts...");
       const { data, error } = await supabase
         .from("blog_posts")
         .select("*")
@@ -52,19 +67,45 @@ const BlogAdminPage = () => {
 
       if (error) {
         console.error("Error fetching posts:", error);
-        alert(`Error fetching posts: ${error.message}`);
+        toast.error(`Error fetching posts: ${error.message}`);
         return;
       }
 
-      console.log("Posts fetched successfully:", data?.length || 0);
       setPosts(data || []);
     } catch (error) {
       console.error("Error:", error);
-      alert(
-        `Error: ${error instanceof Error ? error.message : "Unknown error"}`,
-      );
+      toast.error(error instanceof Error ? error.message : "Unknown error");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const validateForm = () => {
+    try {
+      // Construct the validation object
+      const dataToValidate = {
+        title: formData.title,
+        slug: formData.slug,
+        excerpt: formData.excerpt || undefined,
+        content: formData.content,
+        coverImage: formData.featured_image_url || undefined,
+        published: formData.published,
+        tags: formData.tags
+          ? formData.tags.split(",").map((t) => t.trim()).filter(Boolean)
+          : undefined,
+      };
+
+      blogPostSchema.parse(dataToValidate);
+      setFieldErrors({});
+      return true;
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const errors = getValidationErrors(error);
+        setFieldErrors(errors);
+        const firstError = error.issues[0]?.message || "Validation failed";
+        toast.error(firstError);
+      }
+      return false;
     }
   };
 
@@ -72,11 +113,9 @@ const BlogAdminPage = () => {
     e.preventDefault();
 
     if (!supabase) return;
+    if (!validateForm()) return;
 
     try {
-      console.log("Submitting post data...");
-      console.log("Current user:", user?.email);
-
       const postData = {
         ...formData,
         tags: formData.tags
@@ -87,77 +126,59 @@ const BlogAdminPage = () => {
         author_id: user?.id || null,
       };
 
-      console.log("Post data to save:", postData);
-
       if (editingPost) {
-        console.log("Updating existing post:", editingPost.id);
-        const { data, error } = await supabase
+        const { error } = await supabase
           .from("blog_posts")
           .update(postData)
           .eq("id", editingPost.id)
           .select();
 
-        if (error) {
-          console.error("Update error:", error);
-          throw error;
-        }
-        console.log("Update successful:", data);
+        if (error) throw error;
+        toast.success("Post updated successfully!");
       } else {
-        console.log("Creating new post");
-        const { data, error } = await supabase
+        const { error } = await supabase
           .from("blog_posts")
           .insert([postData])
           .select();
 
-        if (error) {
-          console.error("Insert error:", error);
-          throw error;
-        }
-        console.log("Insert successful:", data);
+        if (error) throw error;
+        toast.success("Post created successfully!");
       }
 
       setShowForm(false);
       setEditingPost(null);
       resetForm();
       fetchPosts();
-      alert(
-        editingPost
-          ? "Post updated successfully!"
-          : "Post created successfully!",
-      );
     } catch (error) {
       console.error("Error saving post:", error);
       const errorMessage =
         error instanceof Error ? error.message : "Failed to save post";
-      alert(`Error: ${errorMessage}`);
+      toast.error(errorMessage);
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this post?")) return;
-    if (!supabase) return;
+  const handleDelete = async () => {
+    if (!postToDelete || !supabase) return;
 
     try {
-      console.log("Deleting post:", id);
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from("blog_posts")
         .delete()
-        .eq("id", id)
+        .eq("id", postToDelete)
         .select();
 
-      if (error) {
-        console.error("Delete error:", error);
-        throw error;
-      }
+      if (error) throw error;
 
-      console.log("Delete successful:", data);
+      toast.success("Post deleted successfully!");
       fetchPosts();
-      alert("Post deleted successfully!");
     } catch (error) {
       console.error("Error deleting post:", error);
       const errorMessage =
         error instanceof Error ? error.message : "Failed to delete post";
-      alert(`Error: ${errorMessage}`);
+      toast.error(errorMessage);
+    } finally {
+      setDeleteDialogOpen(false);
+      setPostToDelete(null);
     }
   };
 
@@ -176,6 +197,7 @@ const BlogAdminPage = () => {
       reading_time: post.reading_time || 0,
       published: post.published,
     });
+    setFieldErrors({});
     setShowForm(true);
   };
 
@@ -193,6 +215,14 @@ const BlogAdminPage = () => {
       reading_time: 5,
       published: false,
     });
+    setFieldErrors({});
+  };
+
+  const generateSlug = (title: string) => {
+    return title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)/g, "");
   };
 
   const formatDate = (dateString: string) => {
@@ -204,7 +234,7 @@ const BlogAdminPage = () => {
       <AdminLayout>
         <div className="flex items-center justify-center py-12">
           <div className="text-center">
-            <h2 className="mb-4 text-2xl font-semibold">Loading...</h2>
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent mx-auto mb-4"></div>
             <p className="text-muted-foreground">Loading blog posts...</p>
           </div>
         </div>
@@ -216,43 +246,73 @@ const BlogAdminPage = () => {
     <AdminLayout>
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold">Blog Posts Management</h1>
+          <div>
+            <h1 className="text-3xl font-bold">Blog Posts</h1>
+            <p className="text-muted-foreground">Create and manage blog posts</p>
+          </div>
           <Button onClick={() => setShowForm(true)} className="gap-2">
             <Plus className="h-4 w-4" />
             New Post
           </Button>
         </div>
+
         {showForm && (
           <Card className="mb-8">
-            <CardHeader>
+            <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle>
                 {editingPost ? "Edit Post" : "Create New Post"}
               </CardTitle>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => {
+                  setShowForm(false);
+                  setEditingPost(null);
+                  resetForm();
+                }}
+              >
+                <X className="h-4 w-4" />
+              </Button>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="title">Title</Label>
+                    <Label htmlFor="title">
+                      Title <span className="text-destructive">*</span>
+                    </Label>
                     <Input
                       id="title"
                       value={formData.title}
-                      onChange={(e) =>
-                        setFormData({ ...formData, title: e.target.value })
-                      }
-                      required
+                      onChange={(e) => {
+                        const title = e.target.value;
+                        setFormData({
+                          ...formData,
+                          title,
+                          slug: formData.slug || generateSlug(title),
+                        });
+                      }}
+                      className={fieldErrors.title ? "border-destructive" : ""}
                     />
+                    {fieldErrors.title && (
+                      <p className="text-xs text-destructive mt-1">{fieldErrors.title}</p>
+                    )}
                   </div>
                   <div>
-                    <Label htmlFor="slug">Slug</Label>
+                    <Label htmlFor="slug">
+                      Slug <span className="text-destructive">*</span>
+                    </Label>
                     <Input
                       id="slug"
                       value={formData.slug}
                       onChange={(e) =>
                         setFormData({ ...formData, slug: e.target.value })
                       }
-                      required
+                      className={fieldErrors.slug ? "border-destructive" : ""}
                     />
+                    {fieldErrors.slug && (
+                      <p className="text-xs text-destructive mt-1">{fieldErrors.slug}</p>
+                    )}
                   </div>
                 </div>
 
@@ -264,12 +324,18 @@ const BlogAdminPage = () => {
                     onChange={(e) =>
                       setFormData({ ...formData, excerpt: e.target.value })
                     }
-                    required
+                    className={fieldErrors.excerpt ? "border-destructive" : ""}
+                    rows={2}
                   />
+                  {fieldErrors.excerpt && (
+                    <p className="text-xs text-destructive mt-1">{fieldErrors.excerpt}</p>
+                  )}
                 </div>
 
                 <div>
-                  <Label htmlFor="content">Content (Markdown)</Label>
+                  <Label htmlFor="content">
+                    Content (Markdown) <span className="text-destructive">*</span>
+                  </Label>
                   <Textarea
                     id="content"
                     value={formData.content}
@@ -277,13 +343,18 @@ const BlogAdminPage = () => {
                       setFormData({ ...formData, content: e.target.value })
                     }
                     rows={10}
-                    required
+                    className={fieldErrors.content ? "border-destructive" : ""}
                   />
+                  {fieldErrors.content && (
+                    <p className="text-xs text-destructive mt-1">{fieldErrors.content}</p>
+                  )}
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="category">Category</Label>
+                    <Label htmlFor="category">
+                      Category <span className="text-destructive">*</span>
+                    </Label>
                     <Input
                       id="category"
                       value={formData.category}
@@ -293,7 +364,6 @@ const BlogAdminPage = () => {
                           category: e.target.value,
                         })
                       }
-                      required
                     />
                   </div>
                   <div>
@@ -319,7 +389,11 @@ const BlogAdminPage = () => {
                         featured_image_url: e.target.value,
                       })
                     }
+                    className={fieldErrors.coverImage ? "border-destructive" : ""}
                   />
+                  {fieldErrors.coverImage && (
+                    <p className="text-xs text-destructive mt-1">{fieldErrors.coverImage}</p>
+                  )}
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
@@ -345,7 +419,7 @@ const BlogAdminPage = () => {
                       onChange={(e) =>
                         setFormData({
                           ...formData,
-                          reading_time: parseInt(e.target.value),
+                          reading_time: parseInt(e.target.value) || 5,
                         })
                       }
                       min="1"
@@ -364,7 +438,7 @@ const BlogAdminPage = () => {
                         meta_description: e.target.value,
                       })
                     }
-                    rows={3}
+                    rows={2}
                   />
                 </div>
 
@@ -417,7 +491,7 @@ const BlogAdminPage = () => {
                         <Badge variant="secondary">Draft</Badge>
                       )}
                     </div>
-                    <p className="mb-2 text-muted-foreground">{post.excerpt}</p>
+                    <p className="mb-2 text-muted-foreground line-clamp-2">{post.excerpt}</p>
                     <div className="flex items-center gap-4 text-sm text-muted-foreground">
                       <div className="flex items-center gap-1">
                         <Calendar className="h-4 w-4" />
@@ -440,7 +514,7 @@ const BlogAdminPage = () => {
                   </div>
                   <div className="flex gap-2">
                     <Button variant="outline" size="sm" asChild>
-                      <Link href={`/blog/${post.slug}`}>
+                      <Link href={`/blog/${post.slug}`} target="_blank">
                         <Eye className="h-4 w-4" />
                       </Link>
                     </Button>
@@ -454,7 +528,10 @@ const BlogAdminPage = () => {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => handleDelete(post.id)}
+                      onClick={() => {
+                        setPostToDelete(post.id);
+                        setDeleteDialogOpen(true);
+                      }}
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
@@ -465,7 +542,7 @@ const BlogAdminPage = () => {
           ))}
         </div>
 
-        {posts.length === 0 && (
+        {posts.length === 0 && !showForm && (
           <div className="py-12 text-center">
             <h3 className="mb-4 text-xl font-semibold">No blog posts yet</h3>
             <p className="mb-6 text-muted-foreground">
@@ -475,6 +552,27 @@ const BlogAdminPage = () => {
           </div>
         )}
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Blog Post</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this blog post? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </AdminLayout>
   );
 };

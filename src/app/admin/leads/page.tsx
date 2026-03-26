@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import AdminLayout from "@/components/admin/layout/AdminLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Card,
   CardContent,
@@ -34,11 +35,23 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
+import { Pagination, PaginationInfo } from "@/components/ui/pagination";
+import { toast } from "@/components/ui/toaster";
+import { exportLeads } from "@/lib/export";
 import {
   Search,
   MoreHorizontal,
-  Eye,
   Trash2,
   Phone,
   Mail,
@@ -46,9 +59,9 @@ import {
   FileText,
   Users,
   UserPlus,
-  CheckCircle,
-  XCircle,
   RefreshCw,
+  Download,
+  CheckSquare,
 } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
 
@@ -80,12 +93,19 @@ const statusLabels = {
   lost: { label: "Lost", color: "bg-red-100 text-red-800" },
 };
 
+const PAGE_SIZE = 10;
+
 export default function LeadsPage() {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [sourceFilter, setSourceFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [bulkDeleteDialogOpen, setBulkDeleteDialogOpen] = useState(false);
+  const [leadToDelete, setLeadToDelete] = useState<string | null>(null);
   const [stats, setStats] = useState({
     total: 0,
     new: 0,
@@ -106,7 +126,6 @@ export default function LeadsPage() {
 
       if (response.ok) {
         setLeads(data.leads || []);
-        // Calculate stats
         const allLeads = data.leads || [];
         setStats({
           total: allLeads.length,
@@ -117,6 +136,7 @@ export default function LeadsPage() {
       }
     } catch (error) {
       console.error("Error fetching leads:", error);
+      toast.error("Failed to fetch leads");
     } finally {
       setLoading(false);
     }
@@ -125,6 +145,11 @@ export default function LeadsPage() {
   useEffect(() => {
     fetchLeads();
   }, [sourceFilter, statusFilter]);
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [sourceFilter, statusFilter, searchQuery]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -140,27 +165,116 @@ export default function LeadsPage() {
       });
 
       if (response.ok) {
+        toast.success(`Lead status updated to "${newStatus}"`);
         fetchLeads();
+      } else {
+        toast.error("Failed to update status");
       }
     } catch (error) {
       console.error("Error updating lead:", error);
+      toast.error("Failed to update lead");
     }
   };
 
-  const handleDelete = async (leadId: string) => {
-    if (!confirm("Are you sure you want to delete this lead?")) return;
+  const handleDelete = async () => {
+    if (!leadToDelete) return;
 
     try {
-      const response = await fetch(`/api/leads/${leadId}`, {
+      const response = await fetch(`/api/leads/${leadToDelete}`, {
         method: "DELETE",
       });
 
       if (response.ok) {
+        toast.success("Lead deleted successfully");
         fetchLeads();
+      } else {
+        toast.error("Failed to delete lead");
       }
     } catch (error) {
       console.error("Error deleting lead:", error);
+      toast.error("Failed to delete lead");
+    } finally {
+      setDeleteDialogOpen(false);
+      setLeadToDelete(null);
     }
+  };
+
+  const handleBulkStatusChange = async (newStatus: string) => {
+    if (selectedIds.size === 0) return;
+
+    try {
+      const response = await fetch("/api/leads/bulk", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ids: Array.from(selectedIds),
+          status: newStatus,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast.success(data.message);
+        setSelectedIds(new Set());
+        fetchLeads();
+      } else {
+        toast.error(data.error || "Failed to update leads");
+      }
+    } catch (error) {
+      console.error("Error bulk updating leads:", error);
+      toast.error("Failed to update leads");
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    if (selectedIds.size === 0) return;
+
+    try {
+      const response = await fetch("/api/leads/bulk", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ids: Array.from(selectedIds) }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast.success(data.message);
+        setSelectedIds(new Set());
+        fetchLeads();
+      } else {
+        toast.error(data.error || "Failed to delete leads");
+      }
+    } catch (error) {
+      console.error("Error bulk deleting leads:", error);
+      toast.error("Failed to delete leads");
+    } finally {
+      setBulkDeleteDialogOpen(false);
+    }
+  };
+
+  const toggleSelect = (id: string) => {
+    const newSelected = new Set(selectedIds);
+    if (newSelected.has(id)) {
+      newSelected.delete(id);
+    } else {
+      newSelected.add(id);
+    }
+    setSelectedIds(newSelected);
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedIds.size === paginatedLeads.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(paginatedLeads.map((l) => l.id)));
+    }
+  };
+
+  const handleExport = (format: "json" | "csv") => {
+    exportLeads(leads, format);
+    toast.success(`Exported ${leads.length} leads as ${format.toUpperCase()}`);
   };
 
   const formatDate = (dateString: string) => {
@@ -173,6 +287,13 @@ export default function LeadsPage() {
     });
   };
 
+  // Pagination
+  const totalPages = Math.ceil(leads.length / PAGE_SIZE);
+  const paginatedLeads = leads.slice(
+    (currentPage - 1) * PAGE_SIZE,
+    currentPage * PAGE_SIZE
+  );
+
   return (
     <AdminLayout>
       <div className="space-y-6">
@@ -184,10 +305,28 @@ export default function LeadsPage() {
               Manage leads from WhatsApp, contact forms, and other sources
             </p>
           </div>
-          <Button onClick={fetchLeads} variant="outline" className="gap-2">
-            <RefreshCw className="h-4 w-4" />
-            Refresh
-          </Button>
+          <div className="flex gap-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="gap-2">
+                  <Download className="h-4 w-4" />
+                  Export
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem onClick={() => handleExport("csv")}>
+                  Export as CSV
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleExport("json")}>
+                  Export as JSON
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <Button onClick={fetchLeads} variant="outline" className="gap-2">
+              <RefreshCw className="h-4 w-4" />
+              Refresh
+            </Button>
+          </div>
         </div>
 
         {/* Stats Cards */}
@@ -281,6 +420,44 @@ export default function LeadsPage() {
           </CardContent>
         </Card>
 
+        {/* Bulk Actions */}
+        {selectedIds.size > 0 && (
+          <Card>
+            <CardContent className="py-4">
+              <div className="flex flex-wrap items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <CheckSquare className="h-4 w-4 text-primary" />
+                  <span className="text-sm font-medium">
+                    {selectedIds.size} selected
+                  </span>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <Select onValueChange={handleBulkStatusChange}>
+                    <SelectTrigger className="h-8 w-[160px]">
+                      <SelectValue placeholder="Change status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="new">Mark as New</SelectItem>
+                      <SelectItem value="contacted">Mark as Contacted</SelectItem>
+                      <SelectItem value="qualified">Mark as Qualified</SelectItem>
+                      <SelectItem value="converted">Mark as Converted</SelectItem>
+                      <SelectItem value="lost">Mark as Lost</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => setBulkDeleteDialogOpen(true)}
+                  >
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    Delete Selected
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Leads Table */}
         <Card>
           <CardHeader>
@@ -303,136 +480,212 @@ export default function LeadsPage() {
                 </p>
               </div>
             ) : (
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Source</TableHead>
-                      <TableHead>Contact</TableHead>
-                      <TableHead>Message</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Date</TableHead>
-                      <TableHead className="w-[100px]">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {leads.map((lead) => {
-                      const source = sourceLabels[lead.source];
-                      const status = statusLabels[lead.status];
-                      const SourceIcon = source.icon;
+              <>
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="w-[50px]">
+                          <Checkbox
+                            checked={selectedIds.size === paginatedLeads.length && paginatedLeads.length > 0}
+                            onCheckedChange={toggleSelectAll}
+                            aria-label="Select all"
+                          />
+                        </TableHead>
+                        <TableHead>Source</TableHead>
+                        <TableHead>Contact</TableHead>
+                        <TableHead>Message</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Date</TableHead>
+                        <TableHead className="w-[100px]">Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {paginatedLeads.map((lead) => {
+                        const source = sourceLabels[lead.source];
+                        const status = statusLabels[lead.status];
+                        const SourceIcon = source.icon;
 
-                      return (
-                        <TableRow key={lead.id}>
-                          <TableCell>
-                            <Badge className={source.color}>
-                              <SourceIcon className="mr-1 h-3 w-3" />
-                              {source.label}
-                            </Badge>
-                          </TableCell>
-                          <TableCell>
-                            <div className="space-y-1">
-                              {lead.name && (
-                                <p className="font-medium">{lead.name}</p>
-                              )}
-                              {lead.email && (
-                                <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                                  <Mail className="h-3 w-3" />
-                                  {lead.email}
-                                </div>
-                              )}
-                              {lead.phone && (
-                                <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                                  <Phone className="h-3 w-3" />
-                                  {lead.phone}
-                                </div>
-                              )}
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <p className="max-w-[300px] truncate text-sm text-muted-foreground">
-                              {lead.message || lead.project_type || "—"}
-                            </p>
-                          </TableCell>
-                          <TableCell>
-                            <Select
-                              value={lead.status}
-                              onValueChange={(value) => handleStatusChange(lead.id, value)}
-                            >
-                              <SelectTrigger className="h-8 w-[130px]">
-                                <Badge className={status.color}>{status.label}</Badge>
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="new">New</SelectItem>
-                                <SelectItem value="contacted">Contacted</SelectItem>
-                                <SelectItem value="qualified">Qualified</SelectItem>
-                                <SelectItem value="converted">Converted</SelectItem>
-                                <SelectItem value="lost">Lost</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </TableCell>
-                          <TableCell className="text-sm text-muted-foreground">
-                            {formatDate(lead.created_at)}
-                          </TableCell>
-                          <TableCell>
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon" className="h-8 w-8">
-                                  <MoreHorizontal className="h-4 w-4" />
-                                </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end">
-                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                <DropdownMenuSeparator />
-                                {lead.phone && (
-                                  <DropdownMenuItem asChild>
-                                    <a
-                                      href={`https://wa.me/${lead.phone.replace(/\D/g, "")}`}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                    >
-                                      <FaWhatsapp className="mr-2 h-4 w-4 text-[#25D366]" />
-                                      Message on WhatsApp
-                                    </a>
-                                  </DropdownMenuItem>
+                        return (
+                          <TableRow key={lead.id}>
+                            <TableCell>
+                              <Checkbox
+                                checked={selectedIds.has(lead.id)}
+                                onCheckedChange={() => toggleSelect(lead.id)}
+                                aria-label={`Select ${lead.name || lead.email || "lead"}`}
+                              />
+                            </TableCell>
+                            <TableCell>
+                              <Badge className={source.color}>
+                                <SourceIcon className="mr-1 h-3 w-3" />
+                                {source.label}
+                              </Badge>
+                            </TableCell>
+                            <TableCell>
+                              <div className="space-y-1">
+                                {lead.name && (
+                                  <p className="font-medium">{lead.name}</p>
                                 )}
                                 {lead.email && (
-                                  <DropdownMenuItem asChild>
-                                    <a href={`mailto:${lead.email}`}>
-                                      <Mail className="mr-2 h-4 w-4" />
-                                      Send Email
-                                    </a>
-                                  </DropdownMenuItem>
+                                  <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                                    <Mail className="h-3 w-3" />
+                                    {lead.email}
+                                  </div>
                                 )}
                                 {lead.phone && (
-                                  <DropdownMenuItem asChild>
-                                    <a href={`tel:${lead.phone}`}>
-                                      <Phone className="mr-2 h-4 w-4" />
-                                      Call
-                                    </a>
-                                  </DropdownMenuItem>
+                                  <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                                    <Phone className="h-3 w-3" />
+                                    {lead.phone}
+                                  </div>
                                 )}
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem
-                                  onClick={() => handleDelete(lead.id)}
-                                  className="text-red-600"
-                                >
-                                  <Trash2 className="mr-2 h-4 w-4" />
-                                  Delete
-                                </DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
-                  </TableBody>
-                </Table>
-              </div>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <p className="max-w-[300px] truncate text-sm text-muted-foreground">
+                                {lead.message || lead.project_type || "—"}
+                              </p>
+                            </TableCell>
+                            <TableCell>
+                              <Select
+                                value={lead.status}
+                                onValueChange={(value) => handleStatusChange(lead.id, value)}
+                              >
+                                <SelectTrigger className="h-8 w-[130px]">
+                                  <Badge className={status.color}>{status.label}</Badge>
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="new">New</SelectItem>
+                                  <SelectItem value="contacted">Contacted</SelectItem>
+                                  <SelectItem value="qualified">Qualified</SelectItem>
+                                  <SelectItem value="converted">Converted</SelectItem>
+                                  <SelectItem value="lost">Lost</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </TableCell>
+                            <TableCell className="text-sm text-muted-foreground">
+                              {formatDate(lead.created_at)}
+                            </TableCell>
+                            <TableCell>
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button variant="ghost" size="icon" className="h-8 w-8">
+                                    <MoreHorizontal className="h-4 w-4" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                  <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                  <DropdownMenuSeparator />
+                                  {lead.phone && (
+                                    <DropdownMenuItem asChild>
+                                      <a
+                                        href={`https://wa.me/${lead.phone.replace(/\D/g, "")}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                      >
+                                        <FaWhatsapp className="mr-2 h-4 w-4 text-[#25D366]" />
+                                        Message on WhatsApp
+                                      </a>
+                                    </DropdownMenuItem>
+                                  )}
+                                  {lead.email && (
+                                    <DropdownMenuItem asChild>
+                                      <a href={`mailto:${lead.email}`}>
+                                        <Mail className="mr-2 h-4 w-4" />
+                                        Send Email
+                                      </a>
+                                    </DropdownMenuItem>
+                                  )}
+                                  {lead.phone && (
+                                    <DropdownMenuItem asChild>
+                                      <a href={`tel:${lead.phone}`}>
+                                        <Phone className="mr-2 h-4 w-4" />
+                                        Call
+                                      </a>
+                                    </DropdownMenuItem>
+                                  )}
+                                  <DropdownMenuSeparator />
+                                  <DropdownMenuItem
+                                    onClick={() => {
+                                      setLeadToDelete(lead.id);
+                                      setDeleteDialogOpen(true);
+                                    }}
+                                    className="text-red-600"
+                                  >
+                                    <Trash2 className="mr-2 h-4 w-4" />
+                                    Delete
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    </TableBody>
+                  </Table>
+                </div>
+
+                {/* Pagination */}
+                {totalPages > 1 && (
+                  <div className="mt-4 flex flex-col items-center justify-between gap-4 sm:flex-row">
+                    <PaginationInfo
+                      currentPage={currentPage}
+                      pageSize={PAGE_SIZE}
+                      totalItems={leads.length}
+                    />
+                    <Pagination
+                      currentPage={currentPage}
+                      totalPages={totalPages}
+                      onPageChange={setCurrentPage}
+                    />
+                  </div>
+                )}
+              </>
             )}
           </CardContent>
         </Card>
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Lead</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this lead? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Bulk Delete Confirmation Dialog */}
+      <AlertDialog open={bulkDeleteDialogOpen} onOpenChange={setBulkDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete {selectedIds.size} Leads</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete {selectedIds.size} selected leads? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleBulkDelete}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete {selectedIds.size} Leads
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </AdminLayout>
   );
 }
-
