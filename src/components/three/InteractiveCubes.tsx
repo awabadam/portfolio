@@ -43,21 +43,21 @@ function Particle({
     meshRef.current.rotation.z += delta * rotationSpeed * 0.05;
 
     // Calculate mouse influence (force field effect)
-    const mouseX = mousePosition.current.x * 5;
-    const mouseY = mousePosition.current.y * 4;
+    const mouseX = mousePosition.current.x * 6;
+    const mouseY = mousePosition.current.y * 5;
 
     const distanceX = position.current.x - mouseX;
     const distanceY = position.current.y - mouseY;
     const distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
 
-    // Softer force field
-    const forceRadius = 2.5;
-    const forceStrength = 0.8;
+    // Strong force field - pushes cubes away from cursor
+    const forceRadius = 4;
+    const forceStrength = 3;
 
     if (distance < forceRadius && distance > 0) {
       const force = (1 - distance / forceRadius) * forceStrength;
-      velocity.current.x += (distanceX / distance) * force * delta * 0.5;
-      velocity.current.y += (distanceY / distance) * force * delta * 0.5;
+      velocity.current.x += (distanceX / distance) * force * delta * 2;
+      velocity.current.y += (distanceY / distance) * force * delta * 2;
     }
 
     // Gradually return to base flow velocity
@@ -104,14 +104,14 @@ function Particle({
   );
 }
 
-function Scene({ cubeCount = 35, isDark = true }: { cubeCount?: number; isDark?: boolean }) {
+function Scene({ cubeCount = 60, isDark = true }: { cubeCount?: number; isDark?: boolean }) {
   const mousePosition = useRef({ x: 0, y: 0 });
   const smoothMouse = useRef({ x: 0, y: 0 });
 
-  // Smooth mouse tracking
+  // Smooth mouse tracking - faster response
   useFrame(() => {
-    smoothMouse.current.x += (mousePosition.current.x - smoothMouse.current.x) * 0.05;
-    smoothMouse.current.y += (mousePosition.current.y - smoothMouse.current.y) * 0.05;
+    smoothMouse.current.x += (mousePosition.current.x - smoothMouse.current.x) * 0.15;
+    smoothMouse.current.y += (mousePosition.current.y - smoothMouse.current.y) * 0.15;
   });
 
   const bounds = {
@@ -212,7 +212,7 @@ interface InteractiveCubesProps {
 
 export default function InteractiveCubes({
   className = "",
-  cubeCount = 35,
+  cubeCount = 60,
   isDark = true,
 }: InteractiveCubesProps) {
   return (

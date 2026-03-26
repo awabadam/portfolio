@@ -60,7 +60,7 @@ const PageHero: React.FC<PageHeroProps> = ({
     "Chef's Burger",
   ],
   useInteractiveCubes = false,
-  cubeCount = 30,
+  cubeCount = 50,
   isDark = true,
 }) => {
   const [email, setEmail] = useState("");
