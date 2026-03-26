@@ -1,9 +1,9 @@
 "use client";
 
-import { motion, useInView, Variants } from "framer-motion";
+import { motion, useInView, useScroll, useTransform, Variants } from "framer-motion";
 import { useRef, ReactNode } from "react";
 
-type AnimationType = "fadeUp" | "fadeDown" | "fadeLeft" | "fadeRight" | "scale" | "fade";
+type AnimationType = "fadeUp" | "fadeDown" | "fadeLeft" | "fadeRight" | "scale" | "fade" | "rotateIn" | "flipUp";
 
 interface ScrollRevealProps {
   children: ReactNode;
@@ -39,6 +39,14 @@ const animations: Record<AnimationType, Variants> = {
   fade: {
     hidden: { opacity: 0 },
     visible: { opacity: 1 },
+  },
+  rotateIn: {
+    hidden: { opacity: 0, rotate: -10, y: 40 },
+    visible: { opacity: 1, rotate: 0, y: 0 },
+  },
+  flipUp: {
+    hidden: { opacity: 0, rotateX: 45, y: 60 },
+    visible: { opacity: 1, rotateX: 0, y: 0 },
   },
 };
 
@@ -194,5 +202,126 @@ export function TextReveal({
         </motion.span>
       ))}
     </motion.span>
+  );
+}
+
+// Parallax effect - moves element based on scroll position
+interface ParallaxProps {
+  children: ReactNode;
+  className?: string;
+  speed?: number; // Positive = moves slower than scroll, Negative = moves faster
+  direction?: "up" | "down";
+}
+
+export function Parallax({
+  children,
+  className = "",
+  speed = 0.5,
+  direction = "up",
+}: ParallaxProps) {
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"],
+  });
+
+  const factor = direction === "up" ? -1 : 1;
+  const y = useTransform(scrollYProgress, [0, 1], [100 * speed * factor, -100 * speed * factor]);
+
+  return (
+    <motion.div ref={ref} style={{ y }} className={className}>
+      {children}
+    </motion.div>
+  );
+}
+
+// Rotate on scroll effect
+interface ScrollRotateProps {
+  children: ReactNode;
+  className?: string;
+  degrees?: number; // Total rotation degrees
+  direction?: "cw" | "ccw"; // clockwise or counter-clockwise
+}
+
+export function ScrollRotate({
+  children,
+  className = "",
+  degrees = 15,
+  direction = "cw",
+}: ScrollRotateProps) {
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"],
+  });
+
+  const factor = direction === "cw" ? 1 : -1;
+  const rotate = useTransform(scrollYProgress, [0, 1], [-degrees * factor, degrees * factor]);
+
+  return (
+    <motion.div ref={ref} style={{ rotate }} className={className}>
+      {children}
+    </motion.div>
+  );
+}
+
+// Scale on scroll effect
+interface ScrollScaleProps {
+  children: ReactNode;
+  className?: string;
+  scaleFrom?: number;
+  scaleTo?: number;
+}
+
+export function ScrollScale({
+  children,
+  className = "",
+  scaleFrom = 0.8,
+  scaleTo = 1,
+}: ScrollScaleProps) {
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "center center"],
+  });
+
+  const scale = useTransform(scrollYProgress, [0, 1], [scaleFrom, scaleTo]);
+  const opacity = useTransform(scrollYProgress, [0, 0.3], [0, 1]);
+
+  return (
+    <motion.div ref={ref} style={{ scale, opacity }} className={className}>
+      {children}
+    </motion.div>
+  );
+}
+
+// Horizontal scroll reveal (slides in from side as you scroll)
+interface HorizontalRevealProps {
+  children: ReactNode;
+  className?: string;
+  from?: "left" | "right";
+  distance?: number;
+}
+
+export function HorizontalReveal({
+  children,
+  className = "",
+  from = "left",
+  distance = 100,
+}: HorizontalRevealProps) {
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "center center"],
+  });
+
+  const factor = from === "left" ? -1 : 1;
+  const x = useTransform(scrollYProgress, [0, 1], [distance * factor, 0]);
+  const opacity = useTransform(scrollYProgress, [0, 0.5], [0, 1]);
+
+  return (
+    <motion.div ref={ref} style={{ x, opacity }} className={className}>
+      {children}
+    </motion.div>
   );
 }

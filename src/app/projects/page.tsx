@@ -2,6 +2,7 @@ import React from "react";
 import { Metadata } from "next";
 import { getAllProjects } from "../../data/projects";
 import ProjectList from "@/components/projects/ProjectList";
+import ProjectsHero from "@/components/projects/ProjectsHero";
 
 export const metadata: Metadata = {
   title: "Portfolio Projects | Awab Elkhalil - Web Designer & Developer",
@@ -31,19 +32,9 @@ const ProjectsPage = async () => {
 
   return (
     <main className="flex min-h-screen w-full flex-col bg-background pt-32">
-      <div className="container mx-auto mb-24 px-4">
-        <h1 className="font-display text-display-1 font-bold leading-none tracking-tighter">
-          SELECTED
-          <br />
-          <span className="text-muted-foreground">WORKS</span>
-          <span className="ml-4 text-lg font-normal tracking-normal text-muted-foreground md:text-xl">
-            ({allProjects.length})
-          </span>
-        </h1>
-      </div>
-
+      <ProjectsHero projectCount={allProjects.length} />
       <ProjectList projects={allProjects} />
-      
+
       <div className="flex h-[40vh] items-center justify-center">
         <p className="text-center text-muted-foreground">
           More projects coming soon...

@@ -31,28 +31,28 @@ export default function PageTransition({
             animate="animate"
             exit="exit"
           >
-            {/* First layer - fast */}
+            {/* First layer - matches current background */}
             <motion.div
-              className="absolute inset-0 bg-foreground origin-left"
+              className="absolute inset-0 bg-neutral-900 dark:bg-neutral-900 origin-left"
               initial={{ scaleX: 0 }}
               animate={{ scaleX: [0, 1, 1, 0] }}
               transition={{
-                duration: 0.8,
+                duration: 0.7,
                 times: [0, 0.4, 0.6, 1],
                 ease: [0.22, 1, 0.36, 1],
               }}
               style={{ transformOrigin: "left" }}
             />
-            {/* Second layer - slightly delayed */}
+            {/* Second layer - accent */}
             <motion.div
-              className="absolute inset-0 bg-primary origin-left"
+              className="absolute inset-0 bg-neutral-800 dark:bg-neutral-800 origin-left"
               initial={{ scaleX: 0 }}
               animate={{ scaleX: [0, 1, 1, 0] }}
               transition={{
-                duration: 0.8,
+                duration: 0.7,
                 times: [0, 0.4, 0.6, 1],
                 ease: [0.22, 1, 0.36, 1],
-                delay: 0.05,
+                delay: 0.04,
               }}
               style={{ transformOrigin: "left" }}
             />

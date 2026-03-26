@@ -2,6 +2,7 @@ import React from "react";
 import { Metadata } from "next";
 import { getAllBlogPosts, getAllBlogCategories } from "../../data/blog";
 import BlogList from "@/components/blog/BlogList";
+import BlogHero from "@/components/blog/BlogHero";
 
 // Revalidate every 60 seconds to show fresh blog content
 export const revalidate = 60;
@@ -39,18 +40,7 @@ const BlogPage = async () => {
 
   return (
     <main className="flex min-h-screen w-full flex-col bg-background pt-32">
-      <div className="container mx-auto mb-24 px-4">
-        <h1 className="font-display text-display-1 font-bold leading-none tracking-tighter">
-          JOURNAL
-          <span className="ml-4 text-lg font-normal tracking-normal text-muted-foreground md:text-xl">
-            ({allPosts.length})
-          </span>
-        </h1>
-        <p className="mt-8 max-w-2xl text-xl leading-relaxed text-muted-foreground">
-          Thoughts on design, development, and the future of digital experiences.
-        </p>
-      </div>
-
+      <BlogHero postCount={allPosts.length} />
       <BlogList posts={allPosts} categories={categories} />
     </main>
   );
