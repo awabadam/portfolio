@@ -117,10 +117,10 @@ function Particle({
         wireframe={wireframe}
         transparent
         opacity={opacity}
-        metalness={wireframe ? 0.1 : 0.4}
-        roughness={wireframe ? 0.8 : 0.2}
-        emissive={wireframe ? color : "#000000"}
-        emissiveIntensity={wireframe ? 0.1 : 0}
+        metalness={0.1}
+        roughness={0.3}
+        emissive={color}
+        emissiveIntensity={wireframe ? 0.3 : 0.15}
       />
     </mesh>
   );
@@ -198,21 +198,21 @@ function Scene({ cubeCount = 60, isDark = true }: { cubeCount?: number; isDark?:
       let speedMultiplier: number;
 
       if (depthRandom < 0.3) {
-        // Far layer - smaller, dimmer, slower
+        // Far layer - smaller, slightly dimmer, slower
         depth = -10 + Math.random() * 4;
-        sizeMultiplier = 0.4;
-        opacityMultiplier = 0.3;
+        sizeMultiplier = 0.5;
+        opacityMultiplier = 0.6;
         speedMultiplier = 0.5;
       } else if (depthRandom < 0.7) {
         // Mid layer - medium
         depth = -6 + Math.random() * 4;
-        sizeMultiplier = 0.7;
-        opacityMultiplier = 0.6;
+        sizeMultiplier = 0.8;
+        opacityMultiplier = 0.85;
         speedMultiplier = 0.8;
       } else {
-        // Close layer - larger, brighter, faster
+        // Close layer - larger, full brightness, faster
         depth = -2 + Math.random() * 4;
-        sizeMultiplier = 1.2;
+        sizeMultiplier = 1.3;
         opacityMultiplier = 1;
         speedMultiplier = 1.2;
       }
@@ -228,8 +228,8 @@ function Scene({ cubeCount = 60, isDark = true }: { cubeCount?: number; isDark?:
         0,
       ];
 
-      const baseSize = 0.15 + Math.random() * 0.35;
-      const baseOpacity = isWireframe ? 0.35 : 0.7;
+      const baseSize = 0.2 + Math.random() * 0.4;
+      const baseOpacity = isWireframe ? 0.6 : 0.9;
 
       configs.push({
         id: i,
@@ -239,10 +239,10 @@ function Scene({ cubeCount = 60, isDark = true }: { cubeCount?: number; isDark?:
         color: isDark
           ? isWireframe
             ? "#ffffff"
-            : `hsl(220, ${5 + Math.random() * 10}%, ${55 + Math.random() * 35}%)`
+            : `hsl(0, 0%, ${70 + Math.random() * 25}%)`
           : isWireframe
             ? "#000000"
-            : `hsl(220, ${3 + Math.random() * 7}%, ${25 + Math.random() * 25}%)`,
+            : `hsl(0, 0%, ${20 + Math.random() * 30}%)`,
         wireframe: isWireframe,
         flowSpeed: (0.4 + Math.random() * 0.5) * speedMultiplier,
         flowDirection,
@@ -268,38 +268,37 @@ function Scene({ cubeCount = 60, isDark = true }: { cubeCount?: number; isDark?:
 
   return (
     <>
-      {/* Atmospheric lighting */}
-      <ambientLight intensity={isDark ? 0.15 : 0.4} />
+      {/* Bright ambient lighting */}
+      <ambientLight intensity={isDark ? 0.5 : 0.6} />
 
-      {/* Key light - dramatic top-right */}
+      {/* Key light - bright top-right */}
       <spotLight
         position={[8, 8, 5]}
-        angle={0.5}
-        penumbra={1}
-        intensity={isDark ? 1.5 : 1}
-        color={isDark ? "#e0e6ff" : "#ffffff"}
-        castShadow
+        angle={0.6}
+        penumbra={0.8}
+        intensity={isDark ? 2.5 : 1.5}
+        color={isDark ? "#ffffff" : "#ffffff"}
       />
 
-      {/* Fill light - softer left side */}
+      {/* Fill light - left side */}
       <pointLight
         position={[-6, 2, 4]}
-        intensity={isDark ? 0.4 : 0.5}
-        color={isDark ? "#a0b0ff" : "#f0f0f0"}
+        intensity={isDark ? 1 : 0.8}
+        color={isDark ? "#ffffff" : "#f0f0f0"}
       />
 
       {/* Rim light - back */}
       <pointLight
         position={[0, -5, -8]}
-        intensity={isDark ? 0.3 : 0.2}
-        color={isDark ? "#6080ff" : "#d0d0d0"}
+        intensity={isDark ? 0.8 : 0.5}
+        color={isDark ? "#ffffff" : "#d0d0d0"}
       />
 
-      {/* Accent light - creates edge highlights */}
-      <directionalLight
-        position={[-5, 5, -3]}
-        intensity={isDark ? 0.3 : 0.4}
-        color={isDark ? "#8090ff" : "#e0e0e0"}
+      {/* Front fill light */}
+      <pointLight
+        position={[0, 0, 8]}
+        intensity={isDark ? 0.6 : 0.4}
+        color="#ffffff"
       />
 
       {/* Atmospheric glow in background */}
