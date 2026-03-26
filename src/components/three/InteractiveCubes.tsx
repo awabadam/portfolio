@@ -14,6 +14,8 @@ interface ParticleProps {
   flowSpeed: number;
   flowDirection: [number, number, number];
   bounds: { minY: number; maxY: number; minX: number; maxX: number };
+  opacity: number;
+  depth: number;
 }
 
 function Particle({
@@ -26,6 +28,8 @@ function Particle({
   flowSpeed,
   flowDirection,
   bounds,
+  opacity,
+  depth,
 }: ParticleProps) {
   const meshRef = useRef<THREE.Mesh>(null);
 
@@ -41,20 +45,19 @@ function Particle({
   useFrame((state, delta) => {
     if (!meshRef.current) return;
 
-    // Smooth rotation
-    meshRef.current.rotation.x += delta * rotationSpeed * 0.2;
-    meshRef.current.rotation.y += delta * rotationSpeed * 0.15;
-    meshRef.current.rotation.z += delta * rotationSpeed * 0.08;
+    // Smooth rotation - slower for far objects, faster for close
+    const depthFactor = (depth + 10) / 15;
+    meshRef.current.rotation.x += delta * rotationSpeed * 0.2 * depthFactor;
+    meshRef.current.rotation.y += delta * rotationSpeed * 0.15 * depthFactor;
+    meshRef.current.rotation.z += delta * rotationSpeed * 0.08 * depthFactor;
 
-    // Move target position along the flow path (this is where the cube WANTS to be)
+    // Move target position along the flow path
     targetPosition.current.add(flowVelocity.current.clone().multiplyScalar(delta));
 
     // Respawn target when out of bounds
     if (targetPosition.current.y > bounds.maxY + 1) {
       targetPosition.current.y = bounds.minY - 1;
       targetPosition.current.x = bounds.minX + Math.random() * (bounds.maxX - bounds.minX);
-      targetPosition.current.z = -4 + Math.random() * 3;
-      // Also reset actual position to prevent large spring jumps
       actualPosition.current.copy(targetPosition.current);
     }
     if (targetPosition.current.y < bounds.minY - 2) {
@@ -71,7 +74,7 @@ function Particle({
       actualPosition.current.x = targetPosition.current.x;
     }
 
-    // Calculate mouse force on actual position
+    // Calculate mouse force - stronger effect on closer objects
     const mouseX = mousePosition.current.x * 6;
     const mouseY = mousePosition.current.y * 5;
 
@@ -79,9 +82,9 @@ function Particle({
     const distanceY = actualPosition.current.y - mouseY;
     const distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
 
-    // Strong force field
-    const forceRadius = 4;
-    const forceStrength = 4;
+    // Force field - stronger for closer cubes
+    const forceRadius = 4 + (depth + 5) * 0.3;
+    const forceStrength = 4 * depthFactor;
 
     let mouseForceX = 0;
     let mouseForceY = 0;
@@ -92,13 +95,13 @@ function Particle({
       mouseForceY = (distanceY / distance) * force;
     }
 
-    // Spring back to target position (where it should be on its path)
+    // Spring back to target position
     const springStrength = 3;
     const springX = (targetPosition.current.x - actualPosition.current.x) * springStrength * delta;
     const springY = (targetPosition.current.y - actualPosition.current.y) * springStrength * delta;
     const springZ = (targetPosition.current.z - actualPosition.current.z) * springStrength * delta;
 
-    // Apply forces to actual position
+    // Apply forces
     actualPosition.current.x += springX + mouseForceX * delta * 3;
     actualPosition.current.y += springY + mouseForceY * delta * 3;
     actualPosition.current.z += springZ;
@@ -113,11 +116,89 @@ function Particle({
         color={color}
         wireframe={wireframe}
         transparent
-        opacity={wireframe ? 0.4 : 0.75}
-        metalness={0.2}
-        roughness={0.3}
+        opacity={opacity}
+        metalness={wireframe ? 0.1 : 0.4}
+        roughness={wireframe ? 0.8 : 0.2}
+        emissive={wireframe ? color : "#000000"}
+        emissiveIntensity={wireframe ? 0.1 : 0}
       />
     </mesh>
+  );
+}
+
+// Light ray component
+function LightRay({
+  position,
+  rotation,
+  scale,
+  opacity
+}: {
+  position: [number, number, number];
+  rotation: [number, number, number];
+  scale: [number, number, number];
+  opacity: number;
+}) {
+  const meshRef = useRef<THREE.Mesh>(null);
+
+  useFrame((state) => {
+    if (!meshRef.current) return;
+    // Subtle pulsing
+    const pulse = Math.sin(state.clock.elapsedTime * 0.5) * 0.1 + 0.9;
+    meshRef.current.material.opacity = opacity * pulse;
+  });
+
+  return (
+    <mesh ref={meshRef} position={position} rotation={rotation}>
+      <planeGeometry args={scale} />
+      <meshBasicMaterial
+        color="#ffffff"
+        transparent
+        opacity={opacity}
+        side={THREE.DoubleSide}
+        blending={THREE.AdditiveBlending}
+        depthWrite={false}
+      />
+    </mesh>
+  );
+}
+
+// Atmospheric glow
+function AtmosphericGlow({ isDark }: { isDark: boolean }) {
+  return (
+    <>
+      {/* Main backlight glow */}
+      <mesh position={[0, 0, -12]}>
+        <circleGeometry args={[8, 32]} />
+        <meshBasicMaterial
+          color={isDark ? "#1a1a2e" : "#e0e0e0"}
+          transparent
+          opacity={0.6}
+          blending={THREE.AdditiveBlending}
+        />
+      </mesh>
+
+      {/* Secondary glow - top right */}
+      <mesh position={[5, 4, -10]}>
+        <circleGeometry args={[4, 32]} />
+        <meshBasicMaterial
+          color={isDark ? "#16213e" : "#d0d0d0"}
+          transparent
+          opacity={0.3}
+          blending={THREE.AdditiveBlending}
+        />
+      </mesh>
+
+      {/* Accent glow - bottom left */}
+      <mesh position={[-4, -3, -11]}>
+        <circleGeometry args={[3, 32]} />
+        <meshBasicMaterial
+          color={isDark ? "#0f3460" : "#c0c0c0"}
+          transparent
+          opacity={0.2}
+          blending={THREE.AdditiveBlending}
+        />
+      </mesh>
+    </>
   );
 }
 
@@ -132,23 +213,49 @@ function Scene({ cubeCount = 60, isDark = true }: { cubeCount?: number; isDark?:
   });
 
   const bounds = {
-    minX: -7,
-    maxX: 7,
-    minY: -6,
-    maxY: 6,
+    minX: -8,
+    maxX: 8,
+    minY: -7,
+    maxY: 7,
   };
 
-  // Generate particle configurations
+  // Generate particle configurations with depth layers
   const particles = useMemo(() => {
     const configs = [];
     for (let i = 0; i < cubeCount; i++) {
-      const isWireframe = Math.random() > 0.6;
-      // Random starting positions spread across the scene
+      const isWireframe = Math.random() > 0.55;
+
+      // Create depth layers: far (-10 to -6), mid (-6 to -2), close (-2 to 2)
+      const depthRandom = Math.random();
+      let depth: number;
+      let sizeMultiplier: number;
+      let opacityMultiplier: number;
+      let speedMultiplier: number;
+
+      if (depthRandom < 0.3) {
+        // Far layer - smaller, dimmer, slower
+        depth = -10 + Math.random() * 4;
+        sizeMultiplier = 0.4;
+        opacityMultiplier = 0.3;
+        speedMultiplier = 0.5;
+      } else if (depthRandom < 0.7) {
+        // Mid layer - medium
+        depth = -6 + Math.random() * 4;
+        sizeMultiplier = 0.7;
+        opacityMultiplier = 0.6;
+        speedMultiplier = 0.8;
+      } else {
+        // Close layer - larger, brighter, faster
+        depth = -2 + Math.random() * 4;
+        sizeMultiplier = 1.2;
+        opacityMultiplier = 1;
+        speedMultiplier = 1.2;
+      }
+
       const startX = bounds.minX + Math.random() * (bounds.maxX - bounds.minX);
       const startY = bounds.minY + Math.random() * (bounds.maxY - bounds.minY);
-      const startZ = -5 + Math.random() * 4;
 
-      // Flow direction - mostly upward with slight variation
+      // Flow direction - mostly upward with variation
       const flowAngle = -Math.PI / 2 + (Math.random() - 0.5) * 0.6;
       const flowDirection: [number, number, number] = [
         Math.cos(flowAngle) * 0.4,
@@ -156,25 +263,38 @@ function Scene({ cubeCount = 60, isDark = true }: { cubeCount?: number; isDark?:
         0,
       ];
 
+      const baseSize = 0.15 + Math.random() * 0.35;
+      const baseOpacity = isWireframe ? 0.35 : 0.7;
+
       configs.push({
         id: i,
-        position: [startX, startY, startZ] as [number, number, number],
-        size: 0.15 + Math.random() * 0.35,
-        rotationSpeed: 0.3 + Math.random() * 0.6,
+        position: [startX, startY, depth] as [number, number, number],
+        size: baseSize * sizeMultiplier,
+        rotationSpeed: (0.3 + Math.random() * 0.6) * speedMultiplier,
         color: isDark
           ? isWireframe
             ? "#ffffff"
-            : `hsl(0, 0%, ${50 + Math.random() * 40}%)`
+            : `hsl(220, ${5 + Math.random() * 10}%, ${55 + Math.random() * 35}%)`
           : isWireframe
             ? "#000000"
-            : `hsl(0, 0%, ${20 + Math.random() * 30}%)`,
+            : `hsl(220, ${3 + Math.random() * 7}%, ${25 + Math.random() * 25}%)`,
         wireframe: isWireframe,
-        flowSpeed: 0.4 + Math.random() * 0.5, // Faster flow
+        flowSpeed: (0.4 + Math.random() * 0.5) * speedMultiplier,
         flowDirection,
+        opacity: baseOpacity * opacityMultiplier,
+        depth,
       });
     }
     return configs;
   }, [cubeCount, isDark]);
+
+  // Light rays configuration
+  const lightRays = useMemo(() => [
+    { position: [3, 5, -8] as [number, number, number], rotation: [0, 0, -0.3] as [number, number, number], scale: [0.3, 12, 1] as [number, number, number], opacity: 0.04 },
+    { position: [5, 3, -9] as [number, number, number], rotation: [0, 0, -0.5] as [number, number, number], scale: [0.2, 14, 1] as [number, number, number], opacity: 0.03 },
+    { position: [-2, 4, -7] as [number, number, number], rotation: [0, 0, 0.2] as [number, number, number], scale: [0.25, 10, 1] as [number, number, number], opacity: 0.035 },
+    { position: [1, 6, -8] as [number, number, number], rotation: [0, 0, -0.1] as [number, number, number], scale: [0.15, 15, 1] as [number, number, number], opacity: 0.025 },
+  ], []);
 
   // Handle mouse movement
   useEffect(() => {
@@ -191,17 +311,56 @@ function Scene({ cubeCount = 60, isDark = true }: { cubeCount?: number; isDark?:
 
   return (
     <>
-      <ambientLight intensity={isDark ? 0.4 : 0.6} />
-      <directionalLight
-        position={[5, 5, 5]}
-        intensity={isDark ? 0.6 : 0.8}
-        color={isDark ? "#ffffff" : "#000000"}
+      {/* Atmospheric lighting */}
+      <ambientLight intensity={isDark ? 0.15 : 0.4} />
+
+      {/* Key light - dramatic top-right */}
+      <spotLight
+        position={[8, 8, 5]}
+        angle={0.5}
+        penumbra={1}
+        intensity={isDark ? 1.5 : 1}
+        color={isDark ? "#e0e6ff" : "#ffffff"}
+        castShadow
       />
+
+      {/* Fill light - softer left side */}
       <pointLight
-        position={[-5, -5, -5]}
-        intensity={isDark ? 0.2 : 0.3}
-        color={isDark ? "#aaaaaa" : "#666666"}
+        position={[-6, 2, 4]}
+        intensity={isDark ? 0.4 : 0.5}
+        color={isDark ? "#a0b0ff" : "#f0f0f0"}
       />
+
+      {/* Rim light - back */}
+      <pointLight
+        position={[0, -5, -8]}
+        intensity={isDark ? 0.3 : 0.2}
+        color={isDark ? "#6080ff" : "#d0d0d0"}
+      />
+
+      {/* Accent light - creates edge highlights */}
+      <directionalLight
+        position={[-5, 5, -3]}
+        intensity={isDark ? 0.3 : 0.4}
+        color={isDark ? "#8090ff" : "#e0e0e0"}
+      />
+
+      {/* Atmospheric glow in background */}
+      <AtmosphericGlow isDark={isDark} />
+
+      {/* Light rays */}
+      {isDark && lightRays.map((ray, i) => (
+        <LightRay
+          key={i}
+          position={ray.position}
+          rotation={ray.rotation}
+          scale={ray.scale}
+          opacity={ray.opacity}
+        />
+      ))}
+
+      {/* Fog for depth */}
+      <fog attach="fog" args={[isDark ? "#0a0a0f" : "#f5f5f5", 5, 18]} />
 
       {particles.map((particle) => (
         <Particle
@@ -215,6 +374,8 @@ function Scene({ cubeCount = 60, isDark = true }: { cubeCount?: number; isDark?:
           flowSpeed={particle.flowSpeed}
           flowDirection={particle.flowDirection}
           bounds={bounds}
+          opacity={particle.opacity}
+          depth={particle.depth}
         />
       ))}
     </>
@@ -235,7 +396,7 @@ export default function InteractiveCubes({
   return (
     <div className={`absolute inset-0 ${className}`}>
       <Canvas
-        camera={{ position: [0, 0, 7], fov: 50 }}
+        camera={{ position: [0, 0, 7], fov: 55 }}
         gl={{ antialias: true, alpha: true }}
         style={{ background: "transparent" }}
         dpr={[1, 1.5]}
