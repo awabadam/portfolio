@@ -360,8 +360,8 @@ function Scene({ cubeCount = 60, isDark = true }: { cubeCount?: number; isDark?:
         />
       ))}
 
-      {/* Fog for depth */}
-      <fog attach="fog" args={[isDark ? "#0a0a0f" : "#f5f5f5", 5, 18]} />
+      {/* Subtle fog for depth - starts far, fades slowly */}
+      <fog attach="fog" args={[isDark ? "#0a0a0f" : "#f5f5f5", 12, 28]} />
 
       {particles.map((particle) => (
         <Particle
