@@ -117,7 +117,6 @@ const Header = () => {
           >
             <div className="relative aspect-square w-full max-w-lg overflow-hidden rounded-2xl bg-black">
               <InteractiveCubes cubeCount={50} isDark={true} />
-              <div className="absolute inset-0 bg-gradient-to-t from-background/10 via-transparent to-transparent pointer-events-none"></div>
             </div>
           </motion.div>
         </div>

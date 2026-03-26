@@ -46,7 +46,6 @@ export default function HomePage() {
         <div className="absolute inset-0 bg-black">
           {/* Interactive 3D Cubes Background */}
           <InteractiveCubes cubeCount={70} isDark={true} />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/60 pointer-events-none" />
         </div>
 
         <div className="absolute inset-0 flex flex-col items-center justify-center p-4">
