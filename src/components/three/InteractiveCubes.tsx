@@ -126,42 +126,6 @@ function Particle({
   );
 }
 
-// Light ray component
-function LightRay({
-  position,
-  rotation,
-  scale,
-  opacity
-}: {
-  position: [number, number, number];
-  rotation: [number, number, number];
-  scale: [number, number, number];
-  opacity: number;
-}) {
-  const meshRef = useRef<THREE.Mesh>(null);
-
-  useFrame((state) => {
-    if (!meshRef.current) return;
-    // Subtle pulsing
-    const pulse = Math.sin(state.clock.elapsedTime * 0.5) * 0.1 + 0.9;
-    const material = meshRef.current.material as THREE.MeshBasicMaterial;
-    material.opacity = opacity * pulse;
-  });
-
-  return (
-    <mesh ref={meshRef} position={position} rotation={rotation}>
-      <planeGeometry args={scale} />
-      <meshBasicMaterial
-        color="#ffffff"
-        transparent
-        opacity={opacity}
-        side={THREE.DoubleSide}
-        blending={THREE.AdditiveBlending}
-        depthWrite={false}
-      />
-    </mesh>
-  );
-}
 
 // Atmospheric glow
 function AtmosphericGlow({ isDark }: { isDark: boolean }) {
@@ -289,14 +253,6 @@ function Scene({ cubeCount = 60, isDark = true }: { cubeCount?: number; isDark?:
     return configs;
   }, [cubeCount, isDark]);
 
-  // Light rays configuration
-  const lightRays = useMemo(() => [
-    { position: [3, 5, -8] as [number, number, number], rotation: [0, 0, -0.3] as [number, number, number], scale: [0.3, 12, 1] as [number, number, number], opacity: 0.04 },
-    { position: [5, 3, -9] as [number, number, number], rotation: [0, 0, -0.5] as [number, number, number], scale: [0.2, 14, 1] as [number, number, number], opacity: 0.03 },
-    { position: [-2, 4, -7] as [number, number, number], rotation: [0, 0, 0.2] as [number, number, number], scale: [0.25, 10, 1] as [number, number, number], opacity: 0.035 },
-    { position: [1, 6, -8] as [number, number, number], rotation: [0, 0, -0.1] as [number, number, number], scale: [0.15, 15, 1] as [number, number, number], opacity: 0.025 },
-  ], []);
-
   // Handle mouse movement
   useEffect(() => {
     const handleMouseMove = (event: MouseEvent) => {
@@ -349,19 +305,6 @@ function Scene({ cubeCount = 60, isDark = true }: { cubeCount?: number; isDark?:
       {/* Atmospheric glow in background */}
       <AtmosphericGlow isDark={isDark} />
 
-      {/* Light rays */}
-      {isDark && lightRays.map((ray, i) => (
-        <LightRay
-          key={i}
-          position={ray.position}
-          rotation={ray.rotation}
-          scale={ray.scale}
-          opacity={ray.opacity}
-        />
-      ))}
-
-      {/* Subtle fog for depth - starts far, fades slowly */}
-      <fog attach="fog" args={[isDark ? "#0a0a0f" : "#f5f5f5", 12, 28]} />
 
       {particles.map((particle) => (
         <Particle
