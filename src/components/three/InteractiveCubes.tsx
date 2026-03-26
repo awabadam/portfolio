@@ -117,10 +117,10 @@ function Particle({
         wireframe={wireframe}
         transparent
         opacity={opacity}
-        metalness={0.1}
-        roughness={0.3}
-        emissive={color}
-        emissiveIntensity={wireframe ? 0.3 : 0.15}
+        metalness={wireframe ? 0 : 0.3}
+        roughness={wireframe ? 1 : 0.4}
+        emissive={wireframe ? color : "#000000"}
+        emissiveIntensity={wireframe ? 0.4 : 0}
       />
     </mesh>
   );
@@ -268,37 +268,42 @@ function Scene({ cubeCount = 60, isDark = true }: { cubeCount?: number; isDark?:
 
   return (
     <>
-      {/* Bright ambient lighting */}
-      <ambientLight intensity={isDark ? 0.5 : 0.6} />
+      {/* Strong ambient for base visibility */}
+      <ambientLight intensity={isDark ? 0.7 : 0.6} />
 
-      {/* Key light - bright top-right */}
-      <spotLight
-        position={[8, 8, 5]}
-        angle={0.6}
-        penumbra={0.8}
-        intensity={isDark ? 2.5 : 1.5}
-        color={isDark ? "#ffffff" : "#ffffff"}
+      {/* Key light - top right */}
+      <directionalLight
+        position={[5, 5, 5]}
+        intensity={isDark ? 1.8 : 1.2}
+        color="#ffffff"
       />
 
       {/* Fill light - left side */}
-      <pointLight
-        position={[-6, 2, 4]}
-        intensity={isDark ? 1 : 0.8}
-        color={isDark ? "#ffffff" : "#f0f0f0"}
-      />
-
-      {/* Rim light - back */}
-      <pointLight
-        position={[0, -5, -8]}
-        intensity={isDark ? 0.8 : 0.5}
-        color={isDark ? "#ffffff" : "#d0d0d0"}
-      />
-
-      {/* Front fill light */}
-      <pointLight
-        position={[0, 0, 8]}
-        intensity={isDark ? 0.6 : 0.4}
+      <directionalLight
+        position={[-5, 3, 3]}
+        intensity={isDark ? 1.2 : 0.8}
         color="#ffffff"
+      />
+
+      {/* Bottom fill - illuminates undersides */}
+      <directionalLight
+        position={[0, -5, 3]}
+        intensity={isDark ? 0.8 : 0.5}
+        color="#ffffff"
+      />
+
+      {/* Front light - ensures faces toward camera are lit */}
+      <pointLight
+        position={[0, 0, 10]}
+        intensity={isDark ? 1.5 : 1}
+        color="#ffffff"
+      />
+
+      {/* Back rim light for depth */}
+      <pointLight
+        position={[0, 0, -10]}
+        intensity={isDark ? 0.5 : 0.3}
+        color="#aaaaaa"
       />
 
       {/* Atmospheric glow in background */}
