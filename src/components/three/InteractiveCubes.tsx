@@ -144,7 +144,8 @@ function LightRay({
     if (!meshRef.current) return;
     // Subtle pulsing
     const pulse = Math.sin(state.clock.elapsedTime * 0.5) * 0.1 + 0.9;
-    meshRef.current.material.opacity = opacity * pulse;
+    const material = meshRef.current.material as THREE.MeshBasicMaterial;
+    material.opacity = opacity * pulse;
   });
 
   return (
