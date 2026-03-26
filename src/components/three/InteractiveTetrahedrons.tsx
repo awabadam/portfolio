@@ -6,6 +6,7 @@ import * as THREE from "three";
 
 interface ParticleProps {
   initialPosition: [number, number, number];
+  initialRotation: [number, number, number];
   size: number;
   rotationSpeed: number;
   mousePosition: React.MutableRefObject<{ x: number; y: number }>;
@@ -20,6 +21,7 @@ interface ParticleProps {
 
 function Particle({
   initialPosition,
+  initialRotation,
   size,
   rotationSpeed,
   mousePosition,
@@ -32,6 +34,7 @@ function Particle({
   depth,
 }: ParticleProps) {
   const meshRef = useRef<THREE.Mesh>(null);
+  const hasInitialized = useRef(false);
 
   // Target position - follows the intended path
   const targetPosition = useRef(new THREE.Vector3(...initialPosition));
@@ -41,6 +44,14 @@ function Particle({
   const flowVelocity = useRef(
     new THREE.Vector3(...flowDirection).multiplyScalar(flowSpeed)
   );
+
+  // Set initial rotation on first frame
+  useFrame(() => {
+    if (!hasInitialized.current && meshRef.current) {
+      meshRef.current.rotation.set(...initialRotation);
+      hasInitialized.current = true;
+    }
+  });
 
   useFrame((state, delta) => {
     if (!meshRef.current) return;
@@ -227,6 +238,13 @@ function Scene({ shapeCount = 60, isDark = true }: { shapeCount?: number; isDark
         0,
       ];
 
+      // Random initial rotation so shapes don't all start aligned
+      const initialRotation: [number, number, number] = [
+        Math.random() * Math.PI * 2,
+        Math.random() * Math.PI * 2,
+        Math.random() * Math.PI * 2,
+      ];
+
       const baseSize = 0.25 + Math.random() * 0.45;
       const baseOpacity = isWireframe ? 0.6 : 0.9;
 
@@ -247,6 +265,7 @@ function Scene({ shapeCount = 60, isDark = true }: { shapeCount?: number; isDark
         flowDirection,
         opacity: baseOpacity * opacityMultiplier,
         depth,
+        initialRotation,
       });
     }
     return configs;
@@ -312,6 +331,7 @@ function Scene({ shapeCount = 60, isDark = true }: { shapeCount?: number; isDark
         <Particle
           key={particle.id}
           initialPosition={particle.position}
+          initialRotation={particle.initialRotation}
           size={particle.size}
           rotationSpeed={particle.rotationSpeed}
           mousePosition={smoothMouse}

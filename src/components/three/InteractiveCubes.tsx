@@ -6,6 +6,7 @@ import * as THREE from "three";
 
 interface ParticleProps {
   initialPosition: [number, number, number];
+  initialRotation: [number, number, number];
   size: number;
   rotationSpeed: number;
   mousePosition: React.MutableRefObject<{ x: number; y: number }>;
@@ -20,6 +21,7 @@ interface ParticleProps {
 
 function Particle({
   initialPosition,
+  initialRotation,
   size,
   rotationSpeed,
   mousePosition,
@@ -32,6 +34,7 @@ function Particle({
   depth,
 }: ParticleProps) {
   const meshRef = useRef<THREE.Mesh>(null);
+  const hasInitialized = useRef(false);
 
   // Target position - follows the intended path
   const targetPosition = useRef(new THREE.Vector3(...initialPosition));
@@ -41,6 +44,14 @@ function Particle({
   const flowVelocity = useRef(
     new THREE.Vector3(...flowDirection).multiplyScalar(flowSpeed)
   );
+
+  // Set initial rotation on first frame
+  useFrame(() => {
+    if (!hasInitialized.current && meshRef.current) {
+      meshRef.current.rotation.set(...initialRotation);
+      hasInitialized.current = true;
+    }
+  });
 
   useFrame((state, delta) => {
     if (!meshRef.current) return;
@@ -217,6 +228,7 @@ function Scene({ cubeCount = 60, isDark = true }: { cubeCount?: number; isDark?:
         speedMultiplier = 1.2;
       }
 
+      // Spread particles across the full bounds as if animation was already running
       const startX = bounds.minX + Math.random() * (bounds.maxX - bounds.minX);
       const startY = bounds.minY + Math.random() * (bounds.maxY - bounds.minY);
 
@@ -226,6 +238,13 @@ function Scene({ cubeCount = 60, isDark = true }: { cubeCount?: number; isDark?:
         Math.cos(flowAngle) * 0.4,
         Math.sin(flowAngle) * -1,
         0,
+      ];
+
+      // Random initial rotation so shapes don't all start aligned
+      const initialRotation: [number, number, number] = [
+        Math.random() * Math.PI * 2,
+        Math.random() * Math.PI * 2,
+        Math.random() * Math.PI * 2,
       ];
 
       const baseSize = 0.2 + Math.random() * 0.4;
@@ -248,6 +267,7 @@ function Scene({ cubeCount = 60, isDark = true }: { cubeCount?: number; isDark?:
         flowDirection,
         opacity: baseOpacity * opacityMultiplier,
         depth,
+        initialRotation,
       });
     }
     return configs;
@@ -314,6 +334,7 @@ function Scene({ cubeCount = 60, isDark = true }: { cubeCount?: number; isDark?:
         <Particle
           key={particle.id}
           initialPosition={particle.position}
+          initialRotation={particle.initialRotation}
           size={particle.size}
           rotationSpeed={particle.rotationSpeed}
           mousePosition={smoothMouse}
