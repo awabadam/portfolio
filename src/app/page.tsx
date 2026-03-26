@@ -53,18 +53,18 @@ export default function HomePage() {
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-            className="text-center font-display text-[12vw] font-bold leading-none tracking-tighter text-white/90 drop-shadow-2xl mix-blend-normal md:text-[10vw]"
+            className="text-center font-display text-[12vw] font-bold leading-none tracking-tighter text-white/70 md:text-[10vw]"
           >
             DIGITAL
             <br />
             ARTISAN
           </motion.h1>
-          
+
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5, duration: 1 }}
-            className="mt-8 max-w-xl text-center text-lg text-white font-medium drop-shadow-lg md:text-xl"
+            className="mt-8 max-w-xl text-center text-lg text-white/60 font-medium md:text-xl"
           >
             Crafting immersive digital experiences that merge art, AI, and strategy.
           </motion.p>
