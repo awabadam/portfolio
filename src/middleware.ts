@@ -3,12 +3,22 @@ import type { NextRequest } from 'next/server';
 import { createMiddlewareSupabaseClient } from '@/lib/supabase/middleware';
 
 export async function middleware(request: NextRequest) {
-  let response = NextResponse.next();
+  const response = NextResponse.next();
 
-  const supabase = createMiddlewareSupabaseClient(request, response);
+  // Skip Supabase session refresh if credentials are not configured
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-  // Refresh session if expired
-  await supabase.auth.getSession();
+  if (supabaseUrl && supabaseKey) {
+    try {
+      const supabase = createMiddlewareSupabaseClient(request, response);
+      // Refresh session if expired
+      await supabase.auth.getSession();
+    } catch (error) {
+      // Log error but don't block the request
+      console.warn('Middleware Supabase error:', error);
+    }
+  }
 
   return response;
 }
