@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import { ArrowDown } from "lucide-react";
-import { fadeInUp, staggerContainer } from "@/lib/animations";
+import { ScrollReveal, StaggerContainer, StaggerItem } from "@/components/effects";
 
 // Dynamic import for Three.js component (no SSR)
 const InteractiveTetrahedrons = dynamic(
@@ -22,6 +22,12 @@ export default function AboutPage() {
 
   const heroScale = useTransform(scrollYProgress, [0, 0.2], [1, 1.1]);
   const heroOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
+
+  const skills = [
+    "React", "Next.js", "TypeScript", "Generative AI", "Motion",
+    "LLMs", "Strategy", "UI/UX", "Development",
+    "Prompt Engineering", "AI Integration", "Tailwind", "Three.js"
+  ];
 
   return (
     <div ref={containerRef} className="relative bg-background">
@@ -63,34 +69,25 @@ export default function AboutPage() {
       {/* The Story - Big Typography */}
       <section className="relative z-10 bg-background py-32 md:py-64">
         <div className="container mx-auto px-4">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-20%" }}
-            variants={staggerContainer}
-            className="space-y-32 md:space-y-64"
-          >
-            <motion.p 
-              variants={fadeInUp}
-              className="font-display text-4xl font-medium leading-tight md:text-7xl lg:text-8xl"
-            >
-              I am Awab Elkhalil.
-            </motion.p>
-            
-            <motion.p 
-              variants={fadeInUp}
-              className="ml-auto max-w-5xl text-right font-display text-4xl font-medium leading-tight md:text-7xl lg:text-8xl"
-            >
-              I craft digital experiences that merge art with engineering.
-            </motion.p>
-            
-            <motion.p 
-              variants={fadeInUp}
-              className="font-display text-4xl font-medium leading-tight md:text-7xl lg:text-8xl"
-            >
-              Based in Istanbul, working with brands worldwide.
-            </motion.p>
-          </motion.div>
+          <StaggerContainer className="space-y-32 md:space-y-64" staggerDelay={0.3}>
+            <StaggerItem animation="fadeUp">
+              <p className="font-display text-4xl font-medium leading-tight md:text-7xl lg:text-8xl">
+                I am Awab Elkhalil.
+              </p>
+            </StaggerItem>
+
+            <StaggerItem animation="fadeUp">
+              <p className="ml-auto max-w-5xl text-right font-display text-4xl font-medium leading-tight md:text-7xl lg:text-8xl">
+                I craft digital experiences that merge art with engineering.
+              </p>
+            </StaggerItem>
+
+            <StaggerItem animation="fadeUp">
+              <p className="font-display text-4xl font-medium leading-tight md:text-7xl lg:text-8xl">
+                Based in Istanbul, working with brands worldwide.
+              </p>
+            </StaggerItem>
+          </StaggerContainer>
         </div>
       </section>
 
@@ -102,11 +99,7 @@ export default function AboutPage() {
             transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
             className="flex gap-16 pr-16 font-display text-6xl font-bold uppercase tracking-tight md:text-9xl"
           >
-            {[
-              "React", "Next.js", "TypeScript", "Generative AI", "Motion", 
-              "LLMs", "Strategy", "UI/UX", "Development", 
-              "Prompt Engineering", "Next.js", "AI Integration", "Tailwind", "Motion"
-            ].map((skill, i) => (
+            {[...skills, ...skills].map((skill, i) => (
               <span key={i} className="flex items-center gap-16">
                 {skill} <span className="text-primary">•</span>
               </span>
@@ -119,22 +112,25 @@ export default function AboutPage() {
       <section className="py-32 md:py-48">
         <div className="container mx-auto px-4">
           <div className="grid gap-16 lg:grid-cols-2">
-            <div>
+            <ScrollReveal animation="fadeUp">
               <h2 className="mb-8 font-mono text-sm uppercase text-muted-foreground">Philosophy</h2>
               <p className="text-2xl leading-relaxed md:text-4xl">
-                I believe that good design is invisible. I leverage AI to amplify creativity and precision, ensuring every project is cutting-edge. It&apos;s about creating intuitive 
-                pathways that guide users effortlessly to their destination. Every pixel, 
+                I believe that good design is invisible. I leverage AI to amplify creativity and precision, ensuring every project is cutting-edge. It&apos;s about creating intuitive
+                pathways that guide users effortlessly to their destination. Every pixel,
                 every interaction, and every line of code serves a purpose.
               </p>
-            </div>
-            <div className="relative aspect-square w-full overflow-hidden grayscale transition-all duration-500 hover:grayscale-0">
-              <Image
-                src="/img/hero-image.jpg"
-                alt="Portrait"
-                fill
-                className="object-cover"
-              />
-            </div>
+            </ScrollReveal>
+
+            <ScrollReveal animation="scale" delay={0.2}>
+              <div className="relative aspect-square w-full overflow-hidden rounded-2xl grayscale transition-all duration-500 hover:grayscale-0">
+                <Image
+                  src="/img/hero-image.jpg"
+                  alt="Portrait"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+            </ScrollReveal>
           </div>
         </div>
       </section>
