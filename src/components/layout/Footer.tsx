@@ -10,6 +10,7 @@ import {
   trackContactClick,
   trackNavigationClick,
 } from "@/lib/analytics/gtm";
+import { MagneticElement } from "@/components/effects";
 
 const Footer = () => {
   const t = useTranslations('footer');
@@ -37,25 +38,27 @@ const Footer = () => {
         <div className="grid gap-16 lg:grid-cols-2">
           {/* Brand & CTA */}
           <div className="flex flex-col justify-between space-y-12">
-            <div>
+            <MagneticElement strength={30}>
               <h2 className="font-display text-[12vw] leading-none tracking-tighter md:text-[8vw]">
                 {t('brandName')}
               </h2>
-            </div>
+            </MagneticElement>
             
             <div className="max-w-md space-y-6">
               <p className="text-xl opacity-80">
                 {t('tagline')}
               </p>
-              <Button 
-                className="h-14 rounded-full bg-primary px-8 text-lg text-primary-foreground hover:bg-primary/90"
-                onClick={() => {
-                  trackContactClick("whatsapp", "footer");
-                  openWhatsApp();
-                }}
-              >
-                {t('startProject')}
-              </Button>
+              <MagneticElement strength={20}>
+                <Button
+                  className="h-14 rounded-full bg-primary px-8 text-lg text-primary-foreground hover:bg-primary/90"
+                  onClick={() => {
+                    trackContactClick("whatsapp", "footer");
+                    openWhatsApp();
+                  }}
+                >
+                  {t('startProject')}
+                </Button>
+              </MagneticElement>
             </div>
           </div>
 
@@ -66,13 +69,15 @@ const Footer = () => {
               <ul className="space-y-4">
                 {footerLinks.map((link) => (
                   <li key={link.name}>
-                    <Link 
-                      href={link.href}
-                      className="group flex items-center gap-2 text-lg transition-colors hover:opacity-70"
-                      onClick={() => trackNavigationClick(link.name.toLowerCase(), "footer")}
-                    >
-                      {link.name}
-                    </Link>
+                    <MagneticElement strength={10}>
+                      <Link
+                        href={link.href}
+                        className="group flex items-center gap-2 text-lg transition-colors hover:opacity-70"
+                        onClick={() => trackNavigationClick(link.name.toLowerCase(), "footer")}
+                      >
+                        {link.name}
+                      </Link>
+                    </MagneticElement>
                   </li>
                 ))}
               </ul>
@@ -83,15 +88,17 @@ const Footer = () => {
               <ul className="space-y-4">
                 {socialLinks.map((link) => (
                   <li key={link.name}>
-                    <Link 
-                      href={link.href}
-                      target="_blank"
-                      className="group flex items-center gap-2 text-lg transition-colors hover:opacity-70"
-                      onClick={() => trackSocialClick(link.name.toLowerCase(), "footer")}
-                    >
-                      {link.name}
-                      <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-1 group-hover:translate-x-1 rtl:group-hover:-translate-x-1" />
-                    </Link>
+                    <MagneticElement strength={10}>
+                      <Link
+                        href={link.href}
+                        target="_blank"
+                        className="group flex items-center gap-2 text-lg transition-colors hover:opacity-70"
+                        onClick={() => trackSocialClick(link.name.toLowerCase(), "footer")}
+                      >
+                        {link.name}
+                        <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-1 group-hover:translate-x-1 rtl:group-hover:-translate-x-1" />
+                      </Link>
+                    </MagneticElement>
                   </li>
                 ))}
               </ul>

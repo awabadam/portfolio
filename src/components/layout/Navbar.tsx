@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { trackNavigationClick, trackContactClick } from "@/lib/analytics/gtm";
 import { useWhatsApp } from "@/components/chat/WhatsAppContext";
 import { fadeIn, staggerContainer } from "@/lib/animations";
+import { MagneticElement } from "@/components/effects";
 
 // Pages with dark hero sections where white text is needed
 const DARK_HERO_PAGES = ["/", "/about"];
@@ -55,37 +56,40 @@ const Navbar = () => {
         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
       >
         <div className="container mx-auto flex h-24 items-center justify-between px-6">
-          <Link
-            href="/"
-            className={`group relative z-50 font-display text-2xl font-bold tracking-tighter transition-colors duration-300 ${
-              isScrolled || !hasDarkHero ? "text-foreground" : "text-white"
-            }`}
-            onClick={() => handleNavClick("home")}
-          >
-            <span className="relative inline-block overflow-hidden">
-              <span className="inline-block transition-transform duration-500 group-hover:-translate-y-full">{t('logo')}</span>
-              <span className="absolute start-0 top-0 inline-block translate-y-full transition-transform duration-500 group-hover:translate-y-0">{t('logo')}</span>
-            </span>
-          </Link>
+          <MagneticElement strength={10}>
+            <Link
+              href="/"
+              className={`group relative z-50 font-display text-2xl font-bold tracking-tighter transition-colors duration-300 ${
+                isScrolled || !hasDarkHero ? "text-foreground" : "text-white"
+              }`}
+              onClick={() => handleNavClick("home")}
+            >
+              <span className="relative inline-block overflow-hidden">
+                <span className="inline-block transition-transform duration-500 group-hover:-translate-y-full">{t('logo')}</span>
+                <span className="absolute start-0 top-0 inline-block translate-y-full transition-transform duration-500 group-hover:translate-y-0">{t('logo')}</span>
+              </span>
+            </Link>
+          </MagneticElement>
 
           {/* Desktop Navigation */}
           <div className="hidden items-center gap-12 md:flex">
             {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`group relative text-sm font-medium uppercase tracking-widest transition-colors duration-300 ${
-                  isScrolled || !hasDarkHero
-                    ? "text-muted-foreground hover:text-foreground"
-                    : "text-white/80 hover:text-white"
-                }`}
-                onClick={() => handleNavClick(item.label)}
-              >
-                {item.label}
-                <span className={`absolute -bottom-1 start-0 h-px w-0 transition-all duration-300 group-hover:w-full ${
-                  isScrolled || !hasDarkHero ? "bg-foreground" : "bg-white"
-                }`} />
-              </Link>
+              <MagneticElement key={item.href} strength={12}>
+                <Link
+                  href={item.href}
+                  className={`group relative text-sm font-medium uppercase tracking-widest transition-colors duration-300 ${
+                    isScrolled || !hasDarkHero
+                      ? "text-muted-foreground hover:text-foreground"
+                      : "text-white/80 hover:text-white"
+                  }`}
+                  onClick={() => handleNavClick(item.label)}
+                >
+                  {item.label}
+                  <span className={`absolute -bottom-1 start-0 h-px w-0 transition-all duration-300 group-hover:w-full ${
+                    isScrolled || !hasDarkHero ? "bg-foreground" : "bg-white"
+                  }`} />
+                </Link>
+              </MagneticElement>
             ))}
             
             <div className={`flex items-center gap-4 border-s ps-8 transition-colors duration-300 ${
@@ -93,20 +97,22 @@ const Navbar = () => {
             }`}>
               <LanguageSwitcher />
               <ModeToggle />
-              <Button
-                variant="outline"
-                className={`rounded-full px-6 transition-all ${
-                  isScrolled || !hasDarkHero
-                    ? "hover:bg-foreground hover:text-background"
-                    : "border-white/50 bg-transparent text-white hover:bg-white hover:text-black"
-                }`}
-                onClick={() => {
-                  trackContactClick("whatsapp", "navbar");
-                  openWhatsApp();
-                }}
-              >
-                {t('cta')}
-              </Button>
+              <MagneticElement strength={15}>
+                <Button
+                  variant="outline"
+                  className={`rounded-full px-6 transition-all ${
+                    isScrolled || !hasDarkHero
+                      ? "hover:bg-foreground hover:text-background"
+                      : "border-white/50 bg-transparent text-white hover:bg-white hover:text-black"
+                  }`}
+                  onClick={() => {
+                    trackContactClick("whatsapp", "navbar");
+                    openWhatsApp();
+                  }}
+                >
+                  {t('cta')}
+                </Button>
+              </MagneticElement>
             </div>
           </div>
 
