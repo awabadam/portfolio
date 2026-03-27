@@ -26,10 +26,8 @@ const Footer = () => {
   ];
 
   const socialLinks = [
-    { name: t('linkedin'), href: "https://linkedin.com/in/awabelkhalil" },
-    { name: t('github'), href: "https://github.com/awabelkhalil" },
-    { name: t('instagram'), href: "https://instagram.com/awabelkhalil" },
-    { name: t('twitter'), href: "https://twitter.com/awabelkhalil" },
+    { name: t('linkedin'), href: "https://www.linkedin.com/in/awab-adam/" },
+    { name: t('instagram'), href: "https://www.instagram.com/awabeladam/" },
   ];
 
   return (

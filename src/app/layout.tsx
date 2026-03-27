@@ -82,7 +82,7 @@ export const metadata: Metadata = {
     description:
       "Professional web design and development services that help businesses stand out online and convert visitors into customers.",
     images: ["/img/hero-image.jpg"],
-    creator: "@awabelkhalil",
+    creator: "@awabeladam",
   },
   robots: {
     index: true,
@@ -110,9 +110,8 @@ export const metadata: Metadata = {
         "Professional web designer and developer specializing in modern, conversion-focused websites",
       url: "https://awab.design",
       sameAs: [
-        "https://linkedin.com/in/awabelkhalil",
-        "https://github.com/awabelkhalil",
-        "https://twitter.com/awabelkhalil",
+        "https://www.linkedin.com/in/awab-adam/",
+        "https://www.instagram.com/awabeladam/",
       ],
       worksFor: {
         "@type": "Organization",

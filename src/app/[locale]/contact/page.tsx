@@ -20,10 +20,8 @@ export default function ContactPage() {
   };
 
   const socials = [
-    { name: "LinkedIn", href: "https://linkedin.com/in/awabelkhalil" },
-    { name: "GitHub", href: "https://github.com/awabelkhalil" },
-    { name: "Instagram", href: "https://instagram.com/awabelkhalil" },
-    { name: "Twitter", href: "https://twitter.com/awabelkhalil" },
+    { name: "LinkedIn", href: "https://www.linkedin.com/in/awab-adam/" },
+    { name: "Instagram", href: "https://www.instagram.com/awabeladam/" },
   ];
 
   return (

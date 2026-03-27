@@ -53,7 +53,7 @@ export default function SEOHead({
       <meta property="og:locale" content="en_US" />
 
       {/* Additional Twitter tags */}
-      <meta name="twitter:site" content="@awabelkhalil" />
+      <meta name="twitter:site" content="@awabeladam" />
 
       {/* Keywords meta tag */}
       {keywords.length > 0 && (
