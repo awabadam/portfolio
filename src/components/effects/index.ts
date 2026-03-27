@@ -1,3 +1,5 @@
+export { default as MagneticElement } from './MagneticElement';
+export { default as TiltCard } from './TiltCard';
 export { default as NoiseOverlay } from './NoiseOverlay';
 export { default as SmoothScroll } from './SmoothScroll';
 export { default as ScrollProgress } from './ScrollProgress';

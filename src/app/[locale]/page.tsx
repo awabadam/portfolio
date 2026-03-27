@@ -3,20 +3,40 @@
 import { useRef, useState, useEffect } from "react";
 import { Link } from "@/i18n/routing";
 import dynamic from "next/dynamic";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, useMotionValue, useSpring } from "framer-motion";
 import { ArrowDown, ArrowRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Project } from "@/types";
 import { getFeaturedProjects } from "@/data/projects";
 import ProjectCard from "@/components/cards/ProjectCard";
-import { ScrollReveal, StaggerContainer, StaggerItem } from "@/components/effects";
+import { ScrollReveal, StaggerContainer, StaggerItem, MagneticElement, TiltCard } from "@/components/effects";
 
 // Dynamic import for Three.js component (no SSR)
 const InteractiveCubes = dynamic(
   () => import("@/components/three/InteractiveCubes"),
   { ssr: false }
 );
+
+function useParallaxMouse(strength = 20) {
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const springX = useSpring(x, { stiffness: 150, damping: 15, mass: 0.1 });
+  const springY = useSpring(y, { stiffness: 150, damping: 15, mass: 0.1 });
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      const nx = (e.clientX / window.innerWidth - 0.5) * 2;
+      const ny = (e.clientY / window.innerHeight - 0.5) * 2;
+      x.set(-nx * strength);
+      y.set(-ny * strength);
+    };
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, [strength, x, y]);
+
+  return { x: springX, y: springY };
+}
 
 export default function HomePage() {
   const t = useTranslations('home');
@@ -28,6 +48,11 @@ export default function HomePage() {
 
   const heroOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
   const heroScale = useTransform(scrollYProgress, [0, 0.2], [1, 0.95]);
+
+  // Parallax layers for hero text — move opposite to mouse for depth
+  const headingParallax = useParallaxMouse(15);
+  const subtitleParallax = useParallaxMouse(8);
+  const scrollIndicatorParallax = useParallaxMouse(4);
 
   const [projects, setProjects] = useState<Project[]>([]);
 
@@ -49,7 +74,7 @@ export default function HomePage() {
     <div ref={containerRef} className="relative bg-background">
       {/* Cinematic Hero */}
       <motion.section
-        className="relative h-screen w-full overflow-hidden"
+        className="fixed inset-0 h-screen w-full overflow-hidden"
         style={{ opacity: heroOpacity, scale: heroScale }}
       >
         <div className="absolute inset-0 bg-black">
@@ -57,10 +82,12 @@ export default function HomePage() {
         </div>
 
         <div className="absolute inset-0 flex flex-col items-center justify-center p-4">
+          {/* Heading moves opposite to mouse — creates parallax depth with cubes */}
           <motion.h1
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+            style={{ x: headingParallax.x, y: headingParallax.y }}
             className="text-center font-display text-[12vw] font-bold leading-none tracking-tighter text-white/70 md:text-[10vw]"
           >
             {t('heroLine1')}
@@ -68,10 +95,12 @@ export default function HomePage() {
             {t('heroLine2')}
           </motion.h1>
 
+          {/* Subtitle moves less — different parallax layer */}
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5, duration: 1 }}
+            style={{ x: subtitleParallax.x, y: subtitleParallax.y }}
             className="mt-8 max-w-xl text-center text-lg text-white/60 font-medium md:text-xl"
           >
             {t('heroSubtitle')}
@@ -82,6 +111,7 @@ export default function HomePage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1, duration: 1 }}
+          style={{ x: scrollIndicatorParallax.x, y: scrollIndicatorParallax.y }}
           className="absolute bottom-12 left-1/2 -translate-x-1/2 text-white/50"
         >
           <div className="flex flex-col items-center gap-2">
@@ -90,6 +120,9 @@ export default function HomePage() {
           </div>
         </motion.div>
       </motion.section>
+
+      {/* Spacer for fixed hero */}
+      <div className="h-screen" />
 
       {/* Services Reveal */}
       <section className="relative z-10 bg-background py-32 md:py-48">
@@ -104,18 +137,20 @@ export default function HomePage() {
           <StaggerContainer className="divide-y divide-border border-y border-border" staggerDelay={0.15}>
             {services.map((service, i) => (
               <StaggerItem key={i} animation="fadeUp">
-                <Link
-                  href={service.link}
-                  className="group flex flex-col justify-between gap-4 py-12 transition-colors hover:bg-muted/30 md:flex-row md:items-center md:py-16"
-                >
-                  <h3 className="font-display text-3xl font-bold transition-transform duration-500 group-hover:translate-x-4 rtl:group-hover:-translate-x-4 md:text-5xl">
-                    {service.title}
-                  </h3>
-                  <div className="flex items-center gap-8 md:gap-16">
-                    <p className="max-w-xs text-muted-foreground">{service.desc}</p>
-                    <ArrowRight className="hidden h-6 w-6 -rotate-45 transition-transform duration-500 group-hover:rotate-0 rtl:rotate-45 rtl:group-hover:rotate-0 md:block" />
-                  </div>
-                </Link>
+                <MagneticElement strength={20}>
+                  <Link
+                    href={service.link}
+                    className="group flex flex-col justify-between gap-4 py-12 transition-colors hover:bg-muted/30 md:flex-row md:items-center md:py-16"
+                  >
+                    <h3 className="font-display text-3xl font-bold transition-transform duration-500 group-hover:translate-x-4 rtl:group-hover:-translate-x-4 md:text-5xl">
+                      {service.title}
+                    </h3>
+                    <div className="flex items-center gap-8 md:gap-16">
+                      <p className="max-w-xs text-muted-foreground">{service.desc}</p>
+                      <ArrowRight className="hidden h-6 w-6 -rotate-45 transition-transform duration-500 group-hover:rotate-0 rtl:rotate-45 rtl:group-hover:rotate-0 md:block" />
+                    </div>
+                  </Link>
+                </MagneticElement>
               </StaggerItem>
             ))}
           </StaggerContainer>
@@ -123,7 +158,7 @@ export default function HomePage() {
       </section>
 
       {/* Selected Work Preview */}
-      <section className="bg-background py-32 text-foreground md:py-48">
+      <section className="relative z-10 bg-background py-32 text-foreground md:py-48">
         <div className="container mx-auto px-4">
           <ScrollReveal animation="fadeUp" className="mb-16 flex items-end justify-between md:mb-32">
             <h2 className="font-display text-[10vw] font-bold leading-none tracking-tighter opacity-10 md:text-[8vw]">
@@ -138,7 +173,9 @@ export default function HomePage() {
             {projects.length > 0 ? (
               projects.map((project, index) => (
                 <StaggerItem key={project.id} animation="fadeUp" className="w-full flex-1">
-                  <ProjectCard project={project} index={index} inverse />
+                  <TiltCard className="relative overflow-hidden rounded-2xl" tiltStrength={8}>
+                    <ProjectCard project={project} index={index} inverse />
+                  </TiltCard>
                 </StaggerItem>
               ))
             ) : (
@@ -162,19 +199,21 @@ export default function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="flex min-h-[80vh] items-center justify-center py-32 text-center">
+      <section className="relative z-10 bg-background flex min-h-[80vh] items-center justify-center py-32 text-center">
         <div className="container mx-auto px-4">
           <ScrollReveal animation="fadeUp">
             <p className="mb-8 font-mono text-sm uppercase text-muted-foreground">{t('readyToStart')}</p>
-            <Link
-              href="/contact"
-              className="group relative inline-block"
-            >
-              <h2 className="font-display text-[12vw] font-bold leading-none tracking-tighter transition-colors hover:text-primary md:text-[10vw]">
-                {t('letsTalk')}
-              </h2>
-              <div className="absolute bottom-4 right-0 h-4 w-0 bg-primary transition-all duration-500 group-hover:w-full" />
-            </Link>
+            <MagneticElement strength={40}>
+              <Link
+                href="/contact"
+                className="group relative inline-block"
+              >
+                <h2 className="font-display text-[12vw] font-bold leading-none tracking-tighter transition-colors hover:text-primary md:text-[10vw]">
+                  {t('letsTalk')}
+                </h2>
+                <div className="absolute bottom-4 right-0 h-4 w-0 bg-primary transition-all duration-500 group-hover:w-full" />
+              </Link>
+            </MagneticElement>
           </ScrollReveal>
         </div>
       </section>
