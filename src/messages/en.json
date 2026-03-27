@@ -62,7 +62,7 @@
   },
   "services": {
     "heading": "SERVICES",
-    "description": "Professional web design, graphic design, and AI chatbot integration services tailored to help your business stand out in Istanbul's competitive market and achieve measurable results.",
+    "description": "Professional web design and AI chatbot integration services tailored to help your business stand out in Istanbul's competitive market and achieve measurable results.",
     "ctaHeading": "Ready to Get Started?",
     "ctaDescription": "Let's discuss your project and create something amazing together.",
     "getQuote": "Get Instant Quote",
@@ -561,7 +561,7 @@
     },
     "services": {
       "title": "Services | Awab Elkhalil",
-      "description": "Professional web design, graphic design, and AI chatbot integration services tailored to help your business stand out."
+      "description": "Professional web design and AI chatbot integration services tailored to help your business stand out."
     },
     "webdesign": {
       "title": "Webdesign Istanbul - Website Design & Development Services | Awab Elkhalil",
@@ -597,7 +597,7 @@
     },
     "rateCalculator": {
       "title": "Service Cost Calculator | Awab Elkhalil",
-      "description": "Get an instant estimate for web design, graphic design, and AI chatbot services."
+      "description": "Get an instant estimate for web design and AI chatbot services."
     },
     "notFound": {
       "title": "404 - Page Not Found",

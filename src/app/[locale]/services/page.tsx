@@ -9,7 +9,6 @@ import { ScrollReveal, StaggerContainer, StaggerItem, ScrollRotate } from "@/com
 
 const serviceKeys = [
   { id: "webdesign-istanbul", key: "webdesign", slug: "webdesign-istanbul" },
-  { id: "graphic-design-istanbul", key: "graphicDesign", slug: "graphic-design-istanbul" },
   { id: "ai-chatbot-integration", key: "aiChatbot", slug: "ai-chatbot-integration" },
 ] as const;
 

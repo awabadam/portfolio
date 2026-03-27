@@ -48,13 +48,6 @@ const servicesMeta = [
     slug: "webdesign-istanbul",
   },
   {
-    id: "graphic-design",
-    nameKey: "graphicDesignName" as const,
-    descKey: "graphicDesignDesc" as const,
-    icon: <Palette className="h-8 w-8" />,
-    slug: "graphic-design-istanbul",
-  },
-  {
     id: "ai-chatbot",
     nameKey: "aiChatbotName" as const,
     descKey: "aiChatbotDesc" as const,
@@ -69,13 +62,6 @@ const getProjectTypesMeta = (serviceType: string) => {
       { id: "landing", nameKey: "landingPage" as const, descKey: "landingPageDesc" as const, basePrice: 800, icon: <Globe className="h-6 w-6" /> },
       { id: "business", nameKey: "businessWebsite" as const, descKey: "businessWebsiteDesc" as const, basePrice: 1200, icon: <Code className="h-6 w-6" />, popular: true },
       { id: "custom", nameKey: "customWebsite" as const, descKey: "customWebsiteDesc" as const, basePrice: 3000, icon: <Code className="h-6 w-6" /> },
-    ];
-  } else if (serviceType === "graphic-design") {
-    return [
-      { id: "logo", nameKey: "logoDesign" as const, descKey: "logoDesignDesc" as const, basePrice: 100, icon: <Palette className="h-6 w-6" /> },
-      { id: "ui-ux", nameKey: "uiuxDesign" as const, descKey: "uiuxDesignDesc" as const, basePrice: 400, icon: <Layout className="h-6 w-6" />, popular: true },
-      { id: "brand-identity", nameKey: "brandIdentity" as const, descKey: "brandIdentityDesc" as const, basePrice: 800, icon: <Palette className="h-6 w-6" /> },
-      { id: "custom-design", nameKey: "customDesign" as const, descKey: "customDesignDesc" as const, basePrice: 2000, icon: <Zap className="h-6 w-6" /> },
     ];
   } else if (serviceType === "ai-chatbot") {
     return [
@@ -94,13 +80,6 @@ const getAddOnsMeta = (serviceType: string) => {
       { id: "blog", nameKey: "blogSystem" as const, price: 300, icon: <Mail className="h-4 w-4" /> },
       { id: "mobile", nameKey: "mobileApp" as const, price: 1500, icon: <Smartphone className="h-4 w-4" /> },
       { id: "cms", nameKey: "contentManagement" as const, price: 400, icon: <Code className="h-4 w-4" /> },
-    ];
-  } else if (serviceType === "graphic-design") {
-    return [
-      { id: "social", nameKey: "socialMediaGraphics" as const, price: 150, icon: <Globe className="h-4 w-4" /> },
-      { id: "print", nameKey: "printMaterials" as const, price: 200, icon: <Mail className="h-4 w-4" /> },
-      { id: "animation", nameKey: "animationMotion" as const, price: 500, icon: <Zap className="h-4 w-4" /> },
-      { id: "illustration", nameKey: "customIllustrations" as const, price: 300, icon: <Palette className="h-4 w-4" /> },
     ];
   } else if (serviceType === "ai-chatbot") {
     return [

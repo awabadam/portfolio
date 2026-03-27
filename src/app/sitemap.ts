@@ -28,8 +28,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages = [
     ...withAlternates('', { changeFrequency: 'weekly', priority: 1.0 }),
     ...withAlternates('/webdesign-istanbul', { changeFrequency: 'weekly', priority: 0.9 }),
-    ...withAlternates('/graphic-design-istanbul', { changeFrequency: 'weekly', priority: 0.9 }),
-    ...withAlternates('/about', { changeFrequency: 'monthly', priority: 0.8 }),
+...withAlternates('/about', { changeFrequency: 'monthly', priority: 0.8 }),
     ...withAlternates('/projects', { changeFrequency: 'weekly', priority: 0.8 }),
     ...withAlternates('/services', { changeFrequency: 'monthly', priority: 0.8 }),
     ...withAlternates('/contact', { changeFrequency: 'monthly', priority: 0.7 }),

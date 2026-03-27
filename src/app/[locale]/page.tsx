@@ -66,7 +66,6 @@ export default function HomePage() {
 
   const services = [
     { title: t('webDesignTitle'), desc: t('webDesignDesc'), link: "/services/webdesign-istanbul" },
-    { title: t('graphicDesignTitle'), desc: t('graphicDesignDesc'), link: "/services/graphic-design-istanbul" },
     { title: t('aiChatbotTitle'), desc: t('aiChatbotDesc'), link: "/services/ai-chatbot-integration" },
   ];
 

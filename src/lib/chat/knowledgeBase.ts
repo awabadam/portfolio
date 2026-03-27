@@ -20,16 +20,6 @@ export const services: Service[] = [
     link: "/rate-calculator",
   },
   {
-    name: "Graphic Design",
-    description:
-      "Logo design and brand identity development. Marketing materials (brochures, business cards, social media graphics). Digital advertising creatives and brand guideline development. Starting at $100 for logo design.",
-  },
-  {
-    name: "UI/UX Design",
-    description:
-      "User experience research and design. Wireframing and prototyping. Interface design for web and mobile applications. Usability testing and optimization. Starting at $400.",
-  },
-  {
     name: "AI Chatbot Integration",
     description:
       "Intelligent chatbots for customer support and lead generation. AI-powered automation with natural language processing. Basic chatbot starting at $300, advanced solutions from $800.",
@@ -69,7 +59,7 @@ export const faqs: FAQ[] = [
   {
     question: "What services do you offer?",
     answer:
-      "I offer four main services: Web Design & Development, Graphic Design, UI/UX Design, and AI Chatbot Integration. Would you like to know more about any specific service?",
+      "I offer two main services: Web Design & Development and AI Chatbot Integration. Would you like to know more about either service?",
     keywords: ["services", "what do you do", "offer", "provide"],
   },
   {
@@ -98,7 +88,7 @@ export const faqs: FAQ[] = [
   {
     question: "Can I see your portfolio?",
     answer:
-      "Absolutely! You can view my portfolio at /projects. I've worked on various projects including web design, graphic design, and UI/UX projects.",
+      "Absolutely! You can view my portfolio at /projects. I've worked on various web design and development projects.",
     keywords: ["portfolio", "work", "projects", "examples", "showcase"],
   },
   {
@@ -117,7 +107,7 @@ export const faqs: FAQ[] = [
 
 export const greetings = [
   "Hello! I'm here to help you learn about Awab's web design services. How can I assist you today?",
-  "Hi there! Welcome! I can help you with information about web design, graphic design, and UI/UX services. What would you like to know?",
+  "Hi there! Welcome! I can help you with information about web design and AI chatbot services. What would you like to know?",
   "Hey! I'm here to answer your questions about Awab's design services. How can I help you today?",
 ];
 

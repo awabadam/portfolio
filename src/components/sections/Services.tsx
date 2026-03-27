@@ -59,23 +59,6 @@ const services: Service[] = [
     slug: "webdesign-istanbul",
   },
   {
-    icon: <Palette className="h-10 w-10 text-primary" />,
-    title: "Graphic Design",
-    description:
-      "Expert graphic design Istanbul services. User-centered design that creates intuitive experiences and drives engagement. From wireframes to final designs.",
-    benefits: [
-      "Professional graphic design Istanbul",
-      "User research & personas",
-      "Wireframes & prototypes",
-      "Interactive mockups",
-      "Design system creation",
-    ],
-    timeframe: "1-3 weeks",
-    priceRange: "Starting from $400",
-    link: "#contact",
-    slug: "graphic-design-istanbul",
-  },
-  {
     icon: <Bot className="h-10 w-10 text-primary" />,
     title: "AI Chatbot Integration",
     description:
@@ -119,13 +102,13 @@ const Services = () => {
             className="font-display text-display-3 leading-none tracking-tight"
             variants={fadeInUp}
           >
-            Web Design, Graphic Design & AI Chatbot Services
+            Web Design & AI Chatbot Services
           </motion.h2>
           <motion.p
             className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground"
             variants={fadeInUp}
           >
-            Professional web design, graphic design, and AI chatbot integration services
+            Professional web design and AI chatbot integration services
             tailored to help your business stand out in Istanbul's competitive
             market and achieve measurable results.
           </motion.p>
