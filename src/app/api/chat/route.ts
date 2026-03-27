@@ -20,7 +20,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const { message, sessionId, conversationId } = await request.json();
+    const { message, sessionId, conversationId, locale } = await request.json();
 
     if (!message || !sessionId) {
       return NextResponse.json(
@@ -167,7 +167,7 @@ export async function POST(request: Request) {
     if (hasOpenRouterKey) {
       try {
         // Use OpenRouter AI
-        response = await getOpenRouterResponse(sanitizedMessage, updatedContext);
+        response = await getOpenRouterResponse(sanitizedMessage, updatedContext, locale);
 
         // Update conversation history for next request
         updatedContext.conversationHistory = [

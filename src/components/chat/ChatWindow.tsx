@@ -10,7 +10,7 @@ import MessageBubble from "./MessageBubble";
 import QuickActions from "./QuickActions";
 import { useWhatsApp } from "./WhatsAppContext";
 import type { ChatMessage } from "@/lib/chat/chatBot";
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 
 interface ChatWindowProps {
   isOpen: boolean;
@@ -35,6 +35,7 @@ export default function ChatWindow({
   onEndConversation,
 }: ChatWindowProps) {
   const t = useTranslations('chat');
+  const locale = useLocale();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -254,6 +255,7 @@ export default function ChatWindow({
           message: userMessage,
           sessionId,
           conversationId: currentConversationId,
+          locale,
         }),
       });
 

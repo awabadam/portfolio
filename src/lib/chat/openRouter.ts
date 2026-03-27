@@ -25,7 +25,7 @@ const PRIORITY_MESSAGE_COUNT = 4; // Always keep the last N messages
 /**
  * Builds a system prompt with knowledge base information
  */
-function buildSystemPrompt(context: ChatContext): string {
+function buildSystemPrompt(context: ChatContext, locale?: string): string {
   const servicesList = services
     .map((s, i) => `${i + 1}. ${s.name}: ${s.description}`)
     .join("\n");
@@ -87,7 +87,8 @@ GUIDELINES:
 - If asked about contact, start collecting their information (name, email, phone)
 - Always maintain a positive, helpful tone
 - Don't make up information that's not in the knowledge base
-- If asked about portfolio or work, mention they can view it at ${businessInfo.portfolio}`;
+- If asked about portfolio or work, mention they can view it at ${businessInfo.portfolio}
+${locale && locale !== 'en' ? `\nLANGUAGE REQUIREMENT:\nYou MUST respond in ${locale === 'ar' ? 'Arabic (العربية)' : locale === 'tr' ? 'Turkish (Türkçe)' : locale}. The visitor is browsing the ${locale === 'ar' ? 'Arabic' : locale === 'tr' ? 'Turkish' : locale} version of the website. Always reply in their language, even if they write in English. Keep brand names (Awab Elkhalil) and technical terms in English.` : ''}`;
 }
 
 /**
@@ -161,7 +162,8 @@ function getOptimizedHistory(history: ChatMessage[]): ChatMessage[] {
  */
 export async function getOpenRouterResponse(
   userMessage: string,
-  context: ChatContext
+  context: ChatContext,
+  locale?: string
 ): Promise<string> {
   const apiKey = process.env.OPENROUTER_KEY;
 
@@ -173,7 +175,7 @@ export async function getOpenRouterResponse(
   const messages: Array<{ role: string; content: string }> = [
     {
       role: "system",
-      content: buildSystemPrompt(context),
+      content: buildSystemPrompt(context, locale),
     },
   ];
 
