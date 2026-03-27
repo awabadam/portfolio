@@ -3,7 +3,6 @@ import { createAnonClientWithSession } from "@/lib/supabase";
 import { processMessage, ChatContext, ChatMessage } from "@/lib/chat/chatBot";
 import { getOpenRouterResponse } from "@/lib/chat/openRouter";
 import { checkRateLimit, getIdentifier, getRateLimitHeaders, rateLimiters } from "@/lib/rateLimit";
-import { sanitizeChatMessage } from "@/lib/sanitize";
 
 export async function POST(request: Request) {
   try {
@@ -30,8 +29,8 @@ export async function POST(request: Request) {
       );
     }
 
-    // Sanitize the message
-    const sanitizedMessage = sanitizeChatMessage(message);
+    // Basic sanitization — strip HTML tags
+    const sanitizedMessage = message.replace(/<[^>]*>/g, '').trim().slice(0, 1000);
 
     // Initialize context - will be populated from DB if available
     let context: ChatContext = {
