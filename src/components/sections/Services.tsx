@@ -71,7 +71,7 @@ const services: Service[] = [
       "Design system creation",
     ],
     timeframe: "1-3 weeks",
-    priceRange: "Starting from $700",
+    priceRange: "Starting from $400",
     link: "#contact",
     slug: "graphic-design-istanbul",
   },
