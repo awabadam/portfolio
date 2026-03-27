@@ -46,6 +46,11 @@ export async function POST(request: Request) {
 
     // Try to use database, but gracefully handle if unavailable
     try {
+      // Skip DB if Supabase is not configured
+      if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+        throw new Error('Supabase not configured');
+      }
+
       // Use anon client with session ID for RLS
       // RLS policies allow anonymous users to create/update their own conversations
       const supabase = createAnonClientWithSession(sessionId);
@@ -193,9 +198,8 @@ export async function POST(request: Request) {
     }
 
     // Try to save to database if available
-    if (dbAvailable && currentConversationId) {
+    if (dbAvailable && currentConversationId && process.env.NEXT_PUBLIC_SUPABASE_URL) {
       try {
-        // Use anon client with session ID for RLS
         const supabase = createAnonClientWithSession(sessionId);
 
         // Save user message
