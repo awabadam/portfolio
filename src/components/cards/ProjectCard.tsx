@@ -1,8 +1,9 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import Image from "next/image";
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 import { Project } from "@/types";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight } from "lucide-react";
@@ -27,6 +28,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   inverse = false,
   className 
 }) => {
+  const t = useTranslations('projects');
   const handleProjectClick = () => {
     trackProjectView(project.id, project.title);
     trackProjectClick(project.title, "project_card");
@@ -114,8 +116,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
               "mt-4 flex items-center gap-2 text-sm font-medium opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0 translate-y-2",
               "text-primary"
             )}>
-              View Case Study
-              <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-2" />
+              {t('viewCaseStudy')}
+              <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-2 rtl:group-hover:-translate-x-2" />
             </div>
           </div>
         </div>

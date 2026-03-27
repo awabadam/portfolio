@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
+import { useTranslations, useLocale } from "next-intl";
 import { BlogPost, BlogCategory } from "@/types";
 import { ArrowRight, Clock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -13,6 +14,8 @@ interface BlogListProps {
 }
 
 export default function BlogList({ posts, categories }: BlogListProps) {
+  const t = useTranslations('blog');
+  const locale = useLocale();
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
 
   const filteredPosts =
@@ -34,7 +37,7 @@ export default function BlogList({ posts, categories }: BlogListProps) {
                   : "border border-border bg-background hover:border-primary"
               }`}
             >
-              All
+              {t('all')}
             </button>
             {categories.map((category) => (
               <button
@@ -65,7 +68,7 @@ export default function BlogList({ posts, categories }: BlogListProps) {
                 <div className="grid gap-8 md:grid-cols-12 md:items-center">
                   <div className="font-mono text-sm text-muted-foreground md:col-span-2">
                     {new Date(post.published_at || post.created_at).toLocaleDateString(
-                      "en-US",
+                      locale,
                       {
                         month: "long",
                         day: "numeric",
@@ -90,10 +93,10 @@ export default function BlogList({ posts, categories }: BlogListProps) {
                     {post.reading_time && (
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <Clock className="h-4 w-4" />
-                        <span>{post.reading_time} min</span>
+                        <span>{post.reading_time} {t('minRead')}</span>
                       </div>
                     )}
-                    <ArrowRight className="hidden h-6 w-6 -rotate-45 transition-transform duration-500 group-hover:rotate-0 md:block" />
+                    <ArrowRight className="hidden h-6 w-6 -rotate-45 transition-transform duration-500 group-hover:rotate-0 rtl:rotate-[135deg] rtl:group-hover:rotate-180 md:block" />
                   </div>
                 </div>
               </div>

@@ -32,7 +32,7 @@ async function getAdminClient(request: Request) {
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { authorized, client: adminSupabase } = await getAdminClient(request);
@@ -44,7 +44,7 @@ export async function GET(
       );
     }
     
-    const conversationId = params.id;
+    const { id: conversationId } = await params;
 
     // Get conversation
     const { data: conversation, error: convError } = await adminSupabase
@@ -121,7 +121,7 @@ export async function GET(
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { authorized, client: adminSupabase } = await getAdminClient(request);
@@ -133,7 +133,7 @@ export async function PATCH(
       );
     }
     
-    const conversationId = params.id;
+    const { id: conversationId } = await params;
     const body = await request.json();
 
     const { data, error } = await adminSupabase
@@ -163,7 +163,7 @@ export async function PATCH(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { authorized, client: adminSupabase } = await getAdminClient(request);
@@ -175,7 +175,7 @@ export async function DELETE(
       );
     }
     
-    const conversationId = params.id;
+    const { id: conversationId } = await params;
 
     const { error } = await adminSupabase
       .from("chat_conversations")

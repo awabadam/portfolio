@@ -3,8 +3,9 @@
 import { Button } from "@/components/ui/button";
 import { Calculator, Mail, Briefcase, DollarSign } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
-import { useRouter } from "next/navigation";
+import { useRouter } from '@/i18n/routing';
 import { useWhatsApp } from "./WhatsAppContext";
+import { useTranslations } from 'next-intl';
 
 interface QuickActionsProps {
   onActionClick?: (action: string) => void;
@@ -13,6 +14,7 @@ interface QuickActionsProps {
 export default function QuickActions({ onActionClick }: QuickActionsProps) {
   const router = useRouter();
   const { openWhatsApp } = useWhatsApp();
+  const t = useTranslations('chat');
 
   const handleAction = (action: string, path: string) => {
     if (onActionClick) {
@@ -39,50 +41,50 @@ export default function QuickActions({ onActionClick }: QuickActionsProps) {
         size="sm"
         className="gap-2 text-xs border-[#25D366]/30 hover:bg-[#25D366]/10 hover:border-[#25D366]"
         onClick={handleWhatsApp}
-        aria-label="Chat on WhatsApp"
+        aria-label={t('openWhatsApp')}
       >
         <FaWhatsapp className="h-3.5 w-3.5 text-[#25D366]" aria-hidden="true" />
-        WhatsApp
+        {t('whatsapp')}
       </Button>
       <Button
         variant="outline"
         size="sm"
         className="gap-2 text-xs"
         onClick={() => handleAction("get_quote", "/rate-calculator")}
-        aria-label="Get a quote using the rate calculator"
+        aria-label={t('getQuote')}
       >
         <Calculator className="h-3.5 w-3.5" aria-hidden="true" />
-        Get Quote
+        {t('getQuote')}
       </Button>
       <Button
         variant="outline"
         size="sm"
         className="gap-2 text-xs"
         onClick={() => handleAction("view_portfolio", "/projects")}
-        aria-label="View portfolio projects"
+        aria-label={t('portfolio')}
       >
         <Briefcase className="h-3.5 w-3.5" aria-hidden="true" />
-        Portfolio
+        {t('portfolio')}
       </Button>
       <Button
         variant="outline"
         size="sm"
         className="gap-2 text-xs"
         onClick={() => handleAction("contact", "/#contact")}
-        aria-label="Go to contact section"
+        aria-label={t('contactAction')}
       >
         <Mail className="h-3.5 w-3.5" aria-hidden="true" />
-        Contact
+        {t('contactAction')}
       </Button>
       <Button
         variant="outline"
         size="sm"
         className="gap-2 text-xs"
         onClick={() => handleAction("pricing", "/rate-calculator")}
-        aria-label="View pricing information"
+        aria-label={t('pricingAction')}
       >
         <DollarSign className="h-3.5 w-3.5" aria-hidden="true" />
-        Pricing
+        {t('pricingAction')}
       </Button>
     </nav>
   );

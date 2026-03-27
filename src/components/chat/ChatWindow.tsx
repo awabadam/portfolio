@@ -10,6 +10,7 @@ import MessageBubble from "./MessageBubble";
 import QuickActions from "./QuickActions";
 import { useWhatsApp } from "./WhatsAppContext";
 import type { ChatMessage } from "@/lib/chat/chatBot";
+import { useTranslations } from 'next-intl';
 
 interface ChatWindowProps {
   isOpen: boolean;
@@ -28,6 +29,7 @@ export default function ChatWindow({
   conversationId: initialConversationId,
   onEndConversation,
 }: ChatWindowProps) {
+  const t = useTranslations('chat');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -171,8 +173,7 @@ export default function ChatWindow({
       setMessages([
         {
           role: "assistant",
-          content:
-            "Hello! I'm here to help you learn about Awab's web design services. How can I assist you today?",
+          content: t('greeting'),
         },
       ]);
       setIsInitialized(true);
@@ -250,7 +251,7 @@ export default function ChatWindow({
       if (response.status === 429) {
         const errorMessage: ChatMessage = {
           role: "assistant",
-          content: "You're sending messages too quickly. Please wait a moment before trying again.",
+          content: t('errorTooFast'),
         };
         setMessages((prev) => [...prev, errorMessage]);
         return;
@@ -281,8 +282,7 @@ export default function ChatWindow({
       } else {
         const errorMessage: ChatMessage = {
           role: "assistant",
-          content:
-            "I'm sorry, I encountered an error. Please try again or contact us directly.",
+          content: t('errorGeneral'),
         };
         setMessages((prev) => [...prev, errorMessage]);
       }
@@ -291,8 +291,7 @@ export default function ChatWindow({
       setIsTyping(false);
       const errorMessage: ChatMessage = {
         role: "assistant",
-        content:
-          "I'm sorry, I encountered an error. Please try again or contact us directly.",
+        content: t('errorGeneral'),
       };
       setMessages((prev) => [...prev, errorMessage]);
     } finally {
@@ -306,8 +305,7 @@ export default function ChatWindow({
     setMessages([
       {
         role: "assistant",
-        content:
-          "Thank you for chatting! I've started a new conversation. How can I help you today?",
+        content: t('newConversation'),
       },
     ]);
     setCurrentConversationId(undefined);
@@ -334,7 +332,7 @@ export default function ChatWindow({
       className="fixed bottom-20 right-2 z-50 flex h-[550px] w-[calc(100vw-1rem)] max-w-[400px] flex-col shadow-xl sm:right-4 sm:h-[600px] sm:w-[400px] md:h-[650px] md:w-[450px]"
       role="dialog"
       aria-modal="true"
-      aria-label="Chat with us"
+      aria-label={t('dialogTitle')}
     >
       {/* Header */}
       <div className="flex items-center justify-between border-b bg-card p-4">
@@ -343,11 +341,11 @@ export default function ChatWindow({
             <MessageCircle className="h-5 w-5 text-primary" aria-hidden="true" />
           </div>
           <div>
-            <h2 className="font-semibold text-foreground" id="chat-title">Chat with us</h2>
+            <h2 className="font-semibold text-foreground" id="chat-title">{t('title')}</h2>
             <p className="text-xs text-muted-foreground">
-              {connectionStatus === "connected" && "Online"}
-              {connectionStatus === "connecting" && "Connecting..."}
-              {connectionStatus === "disconnected" && "Offline - Using backup"}
+              {connectionStatus === "connected" && t('online')}
+              {connectionStatus === "connecting" && t('connecting')}
+              {connectionStatus === "disconnected" && t('offline')}
             </p>
           </div>
         </div>
@@ -359,8 +357,8 @@ export default function ChatWindow({
               size="icon"
               className="h-8 w-8 hover:bg-muted"
               onClick={handleEndConversation}
-              aria-label="End conversation and start new"
-              title="End conversation"
+              aria-label={t('endConversation')}
+              title={t('endConversation')}
             >
               <Trash2 className="h-4 w-4" aria-hidden="true" />
             </Button>
@@ -371,8 +369,8 @@ export default function ChatWindow({
             size="icon"
             className="h-9 w-9 hover:bg-[#25D366]/10"
             onClick={handleWhatsAppClick}
-            aria-label="Open WhatsApp"
-            title="Chat on WhatsApp"
+            aria-label={t('openWhatsApp')}
+            title={t('whatsapp')}
           >
             <FaWhatsapp className="h-5 w-5 text-[#25D366]" aria-hidden="true" />
           </Button>
@@ -382,7 +380,7 @@ export default function ChatWindow({
             size="icon"
             className="h-8 w-8 hover:bg-muted"
             onClick={onClose}
-            aria-label="Close chat"
+            aria-label={t('closeChat')}
           >
             <X className="h-4 w-4" aria-hidden="true" />
           </Button>
@@ -398,7 +396,7 @@ export default function ChatWindow({
         >
           <div className="flex items-center gap-2 text-yellow-600 dark:text-yellow-400">
             <WifiOff className="h-4 w-4" aria-hidden="true" />
-            <span>Connection lost</span>
+            <span>{t('connectionLost')}</span>
           </div>
           <Button
             variant="ghost"
@@ -407,7 +405,7 @@ export default function ChatWindow({
             onClick={handleManualReconnect}
           >
             <RotateCcw className="h-3 w-3" aria-hidden="true" />
-            Reconnect
+            {t('reconnect')}
           </Button>
         </div>
       )}
@@ -426,10 +424,10 @@ export default function ChatWindow({
               <MessageCircle className="h-8 w-8 text-muted-foreground" aria-hidden="true" />
             </div>
             <p className="mb-2 text-sm font-medium text-foreground">
-              Start a conversation!
+              {t('startConversation')}
             </p>
             <p className="mb-6 text-xs text-muted-foreground">
-              Ask me anything about our services
+              {t('askAnything')}
             </p>
             <QuickActions />
           </div>
@@ -446,10 +444,10 @@ export default function ChatWindow({
           <div
             className="flex items-center gap-2 text-muted-foreground"
             role="status"
-            aria-label="Assistant is typing"
+            aria-label={t('typing')}
           >
             <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-            <span className="text-sm">Thinking...</span>
+            <span className="text-sm">{t('thinking')}</span>
           </div>
         )}
         <div ref={messagesEndRef} />
@@ -466,18 +464,18 @@ export default function ChatWindow({
       <form
         onSubmit={handleSend}
         className="border-t bg-card p-4"
-        aria-label="Send a message"
+        aria-label={t('sendAriaLabel')}
       >
         <div className="flex gap-2">
           <label htmlFor="chat-input" className="sr-only">
-            Type your message
+            {t('messageLabel')}
           </label>
           <Input
             id="chat-input"
             ref={inputRef}
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Type your message..."
+            placeholder={t('placeholder')}
             disabled={isLoading}
             className="flex-1"
             aria-describedby="chat-title"
@@ -487,7 +485,7 @@ export default function ChatWindow({
             disabled={isLoading || !input.trim()}
             size="icon"
             className="shrink-0"
-            aria-label="Send message"
+            aria-label={t('sendAriaLabel')}
           >
             {isLoading ? (
               <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />

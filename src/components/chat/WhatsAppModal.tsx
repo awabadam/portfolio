@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { X, Send } from "lucide-react";
@@ -15,6 +16,7 @@ interface WhatsAppModalProps {
 const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "905541759945";
 
 export default function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
+  const t = useTranslations('chat.whatsappModal');
   const [phoneNumber, setPhoneNumber] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -139,13 +141,13 @@ export default function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
                   id="whatsapp-modal-title"
                   className="text-xl font-semibold text-foreground"
                 >
-                  Chat on WhatsApp
+                  {t('title')}
                 </h2>
                 <p
                   id="whatsapp-modal-description"
                   className="text-sm text-muted-foreground"
                 >
-                  Get a quick response via WhatsApp
+                  {t('description')}
                 </p>
               </div>
             </div>
@@ -165,13 +167,13 @@ export default function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
                 htmlFor="whatsapp-phone"
                 className="mb-2 block text-sm font-medium text-foreground"
               >
-                Your Phone Number
+                {t('phoneLabel')}
               </label>
               <Input
                 id="whatsapp-phone"
                 ref={inputRef}
                 type="tel"
-                placeholder="+90 5XX XXX XX XX"
+                placeholder={t('phonePlaceholder')}
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
                 className="h-12 text-base"
@@ -180,7 +182,7 @@ export default function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
                 aria-describedby="phone-hint"
               />
               <p id="phone-hint" className="mt-2 text-xs text-muted-foreground">
-                Enter your number so I know how to reach you back
+                {t('phoneHint')}
               </p>
             </div>
 
@@ -191,7 +193,7 @@ export default function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
                 onClick={onClose}
                 className="flex-1"
               >
-                Cancel
+                {t('cancel')}
               </Button>
               <Button
                 type="submit"
@@ -200,11 +202,11 @@ export default function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
                 aria-busy={isSubmitting}
               >
                 {isSubmitting ? (
-                  "Opening..."
+                  t('opening')
                 ) : (
                   <>
-                    <Send className="mr-2 h-4 w-4" aria-hidden="true" />
-                    Open WhatsApp
+                    <Send className="me-2 h-4 w-4" aria-hidden="true" />
+                    {t('openWhatsApp')}
                   </>
                 )}
               </Button>
@@ -221,7 +223,7 @@ export default function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
                 rel="noopener noreferrer"
                 className="font-medium text-[#25D366] underline-offset-4 hover:underline"
               >
-                chat directly without sharing your number
+                {t('chatDirectly')}
               </a>
             </p>
           </div>

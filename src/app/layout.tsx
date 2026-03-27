@@ -1,26 +1,24 @@
 import type { Metadata } from "next";
-import { Inter as FontSans, Space_Grotesk as FontDisplay } from "next/font/google";
+import { Inter as FontSans, Space_Grotesk as FontDisplay, Tajawal as FontArabic } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
-import { ThemeProvider } from "../components";
-import { ConditionalLayout, ConditionalFooter } from "@/components/layout/ConditionalLayout";
 import { cn } from "@/lib/utils";
-import GoogleAnalytics from "@/components/GoogleAnalytics";
-import PageTracking from "@/components/PageTracking";
-import { WhatsAppProvider } from "@/components/chat/WhatsAppContext";
-import { ScrollProgress, SmoothScroll, NoiseOverlay, PageTransition } from "@/components/effects";
-import { AnimatePresence } from "framer-motion";
-import { Toaster } from "@/components/ui/toaster";
 
 const fontSans = FontSans({
-  subsets: ["latin"],
+  subsets: ["latin", "latin-ext"],
   variable: "--font-sans",
 });
 
 const fontDisplay = FontDisplay({
-  subsets: ["latin"],
+  subsets: ["latin", "latin-ext"],
   variable: "--font-display",
   weight: ["300", "400", "500", "600", "700"],
+});
+
+const fontArabic = FontArabic({
+  subsets: ["arabic"],
+  variable: "--font-arabic",
+  weight: ["300", "400", "500", "700", "800"],
 });
 
 export const metadata: Metadata = {
@@ -55,6 +53,11 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://awab.design"),
   alternates: {
     canonical: "/",
+    languages: {
+      en: "/",
+      ar: "/ar",
+      tr: "/tr",
+    },
   },
   openGraph: {
     title: "Awab Elkhalil | Web Designer & Developer | Istanbul",
@@ -146,6 +149,7 @@ export default function RootLayout({
           "h-full w-screen overflow-x-clip bg-background font-sans antialiased",
           fontSans.variable,
           fontDisplay.variable,
+          fontArabic.variable,
         )}
       >
         {/* Google Tag Manager (noscript) */}
@@ -189,24 +193,7 @@ export default function RootLayout({
           `}
         </Script>
 
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <WhatsAppProvider>
-            <GoogleAnalytics />
-            <PageTracking />
-            <ScrollProgress />
-            <SmoothScroll />
-            <NoiseOverlay />
-            <ConditionalLayout />
-            <PageTransition>{children}</PageTransition>
-            <ConditionalFooter />
-            <Toaster position="top-right" richColors closeButton />
-          </WhatsAppProvider>
-        </ThemeProvider>
+        {children}
       </body>
     </html>
   );

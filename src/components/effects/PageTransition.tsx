@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 // Cinematic page transition with reveal effect
 export default function PageTransition({
@@ -11,12 +11,17 @@ export default function PageTransition({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const prevPathname = useRef(pathname);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
   useEffect(() => {
-    setIsTransitioning(true);
-    const timer = setTimeout(() => setIsTransitioning(false), 800);
-    return () => clearTimeout(timer);
+    // Only trigger transition on actual route changes, not initial load
+    if (prevPathname.current !== pathname) {
+      prevPathname.current = pathname;
+      setIsTransitioning(true);
+      const timer = setTimeout(() => setIsTransitioning(false), 800);
+      return () => clearTimeout(timer);
+    }
   }, [pathname]);
 
   return (
@@ -60,16 +65,10 @@ export default function PageTransition({
         )}
       </AnimatePresence>
 
-      {/* Page content with fade */}
-      <motion.div
-        key={pathname}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.4, delay: 0.3, ease: "easeOut" }}
-        className="flex min-h-screen w-full flex-col"
-      >
+      {/* Page content */}
+      <div className="flex min-h-screen w-full flex-col">
         {children}
-      </motion.div>
+      </div>
     </>
   );
 }

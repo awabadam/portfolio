@@ -4,15 +4,16 @@ import { createAppServerClient } from "@/lib/supabase";
 // GET - Fetch a single lead
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const supabase = createAppServerClient();
 
     const { data, error } = await supabase
       .from("leads")
       .select("*")
-      .eq("id", params.id)
+      .eq("id", id)
       .single();
 
     if (error) {
@@ -30,9 +31,10 @@ export async function GET(
 // PATCH - Update a lead
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const body = await request.json();
     const { status, notes, name, email, phone } = body;
 
@@ -48,7 +50,7 @@ export async function PATCH(
     const { data, error } = await supabase
       .from("leads")
       .update(updateData)
-      .eq("id", params.id)
+      .eq("id", id)
       .select()
       .single();
 
@@ -67,15 +69,16 @@ export async function PATCH(
 // DELETE - Delete a lead
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const supabase = createAppServerClient();
 
     const { error } = await supabase
       .from("leads")
       .delete()
-      .eq("id", params.id);
+      .eq("id", id);
 
     if (error) {
       console.error("Error deleting lead:", error);

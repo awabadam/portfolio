@@ -1,10 +1,11 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { Link, usePathname } from '@/i18n/routing';
+import { useTranslations } from 'next-intl';
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence, useScroll } from "framer-motion";
 import { ModeToggle } from "@/components/ui/mode-toggle";
+import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import { Button } from "@/components/ui/button";
 import { trackNavigationClick, trackContactClick } from "@/lib/analytics/gtm";
 import { useWhatsApp } from "@/components/chat/WhatsAppContext";
@@ -14,6 +15,7 @@ import { fadeIn, staggerContainer } from "@/lib/animations";
 const DARK_HERO_PAGES = ["/", "/about"];
 
 const Navbar = () => {
+  const t = useTranslations('nav');
   const { openWhatsApp } = useWhatsApp();
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -30,12 +32,12 @@ const Navbar = () => {
   }, [scrollY]);
 
   const navItems = [
-    { href: "/about", label: "About" },
-    { href: "/projects", label: "Work" },
-    { href: "/services", label: "Services" },
-    { href: "/blog", label: "Journal" },
-    { href: "/contact", label: "Contact" },
-  ];
+    { href: "/about", label: t('about') },
+    { href: "/projects", label: t('work') },
+    { href: "/services", label: t('services') },
+    { href: "/blog", label: t('journal') },
+    { href: "/contact", label: t('contact') },
+  ] as const;
 
   const handleNavClick = (label: string) => {
     trackNavigationClick(label.toLowerCase(), "navbar");
@@ -61,8 +63,8 @@ const Navbar = () => {
             onClick={() => handleNavClick("home")}
           >
             <span className="relative inline-block overflow-hidden">
-              <span className="inline-block transition-transform duration-500 group-hover:-translate-y-full">AWAB</span>
-              <span className="absolute left-0 top-0 inline-block translate-y-full transition-transform duration-500 group-hover:translate-y-0">AWAB</span>
+              <span className="inline-block transition-transform duration-500 group-hover:-translate-y-full">{t('logo')}</span>
+              <span className="absolute start-0 top-0 inline-block translate-y-full transition-transform duration-500 group-hover:translate-y-0">{t('logo')}</span>
             </span>
           </Link>
 
@@ -80,15 +82,16 @@ const Navbar = () => {
                 onClick={() => handleNavClick(item.label)}
               >
                 {item.label}
-                <span className={`absolute -bottom-1 left-0 h-px w-0 transition-all duration-300 group-hover:w-full ${
+                <span className={`absolute -bottom-1 start-0 h-px w-0 transition-all duration-300 group-hover:w-full ${
                   isScrolled || !hasDarkHero ? "bg-foreground" : "bg-white"
                 }`} />
               </Link>
             ))}
             
-            <div className={`flex items-center gap-4 border-l pl-8 transition-colors duration-300 ${
+            <div className={`flex items-center gap-4 border-s ps-8 transition-colors duration-300 ${
               isScrolled || !hasDarkHero ? "border-border/20" : "border-white/20"
             }`}>
+              <LanguageSwitcher />
               <ModeToggle />
               <Button
                 variant="outline"
@@ -102,18 +105,19 @@ const Navbar = () => {
                   openWhatsApp();
                 }}
               >
-                Let's Talk
+                {t('cta')}
               </Button>
             </div>
           </div>
 
           {/* Mobile Menu Button */}
           <div className="flex items-center gap-4 md:hidden">
+            <LanguageSwitcher />
             <ModeToggle />
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="group z-50 flex h-10 w-10 flex-col items-center justify-center gap-1.5"
-              aria-label="Toggle menu"
+              aria-label={t('toggleMenu')}
             >
               <span className={`h-0.5 w-6 transition-all duration-300 ${isMenuOpen ? "rotate-45 translate-y-2" : ""} ${
                 isScrolled || !hasDarkHero ? "bg-foreground" : "bg-white"
@@ -161,8 +165,8 @@ const Navbar = () => {
               <motion.div variants={fadeIn} className="mt-12 h-px w-full bg-border" />
               
               <motion.div variants={fadeIn} className="flex flex-col gap-4">
-                <span className="font-mono text-sm uppercase text-muted-foreground">Get in touch</span>
-                <a href="mailto:hello@awab.design" className="text-xl">hello@awab.design</a>
+                <span className="font-mono text-sm uppercase text-muted-foreground">{t('getInTouch')}</span>
+                <a href={`mailto:${t('email')}`} className="text-xl">{t('email')}</a>
                 <Button
                   size="lg"
                   className="mt-4 w-full rounded-full"
@@ -172,7 +176,7 @@ const Navbar = () => {
                     setIsMenuOpen(false);
                   }}
                 >
-                  Start a Project
+                  {t('startProject')}
                 </Button>
               </motion.div>
             </motion.div>

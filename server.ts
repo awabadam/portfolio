@@ -1,5 +1,4 @@
 import { createServer } from 'http';
-import { parse } from 'url';
 import next from 'next';
 import { WebSocketServer } from 'ws';
 import { handleWebSocketConnection } from './src/lib/chat/websocketHandler';
@@ -14,8 +13,7 @@ const handle = app.getRequestHandler();
 app.prepare().then(() => {
   const server = createServer(async (req, res) => {
     try {
-      const parsedUrl = parse(req.url || '', true);
-      await handle(req, res, parsedUrl);
+      await handle(req, res);
     } catch (err) {
       console.error('Error occurred handling', req.url, err);
       res.statusCode = 500;
@@ -23,14 +21,21 @@ app.prepare().then(() => {
     }
   });
 
-  // Create WebSocket server
-  const wss = new WebSocketServer({ 
-    server,
-    path: '/api/chat/ws'
-  });
+  // Create WebSocket server (noServer mode to manually handle upgrades)
+  const wss = new WebSocketServer({ noServer: true });
 
   wss.on('connection', (ws, req) => {
     handleWebSocketConnection(ws, req);
+  });
+
+  // Handle chat WebSocket before Next.js registers its own upgrade handler
+  server.on('upgrade', (req, socket, head) => {
+    if (req.url?.startsWith('/api/chat/ws')) {
+      wss.handleUpgrade(req, socket, head, (ws) => {
+        wss.emit('connection', ws, req);
+      });
+    }
+    // Non-matching requests fall through to Next.js's own upgrade handler
   });
 
   server

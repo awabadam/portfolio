@@ -1,6 +1,7 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from '@/i18n/routing';
+import { useTranslations } from 'next-intl';
 import { Button } from "@/components/ui/button";
 import { ArrowUpRight } from "lucide-react";
 import { useWhatsApp } from "@/components/chat/WhatsAppContext";
@@ -11,22 +12,23 @@ import {
 } from "@/lib/analytics/gtm";
 
 const Footer = () => {
+  const t = useTranslations('footer');
   const { openWhatsApp } = useWhatsApp();
   const currentYear = new Date().getFullYear();
 
   const footerLinks = [
-    { name: "About", href: "/about" },
-    { name: "Work", href: "/projects" },
-    { name: "Services", href: "/#services" },
-    { name: "Pricing", href: "/rate-calculator" },
-    { name: "Blog", href: "/blog" },
+    { name: t('about'), href: "/about" },
+    { name: t('work'), href: "/projects" },
+    { name: t('services'), href: "/#services" },
+    { name: t('pricing'), href: "/rate-calculator" },
+    { name: t('blog'), href: "/blog" },
   ];
 
   const socialLinks = [
-    { name: "LinkedIn", href: "https://linkedin.com/in/awabelkhalil" },
-    { name: "GitHub", href: "https://github.com/awabelkhalil" },
-    { name: "Instagram", href: "https://instagram.com/awabelkhalil" },
-    { name: "Twitter", href: "https://twitter.com/awabelkhalil" },
+    { name: t('linkedin'), href: "https://linkedin.com/in/awabelkhalil" },
+    { name: t('github'), href: "https://github.com/awabelkhalil" },
+    { name: t('instagram'), href: "https://instagram.com/awabelkhalil" },
+    { name: t('twitter'), href: "https://twitter.com/awabelkhalil" },
   ];
 
   return (
@@ -37,13 +39,13 @@ const Footer = () => {
           <div className="flex flex-col justify-between space-y-12">
             <div>
               <h2 className="font-display text-[12vw] leading-none tracking-tighter md:text-[8vw]">
-                AWAB.
+                {t('brandName')}
               </h2>
             </div>
             
             <div className="max-w-md space-y-6">
               <p className="text-xl opacity-80">
-                Crafting digital experiences that merge art, technology, and strategy for forward-thinking brands.
+                {t('tagline')}
               </p>
               <Button 
                 className="h-14 rounded-full bg-primary px-8 text-lg text-primary-foreground hover:bg-primary/90"
@@ -52,15 +54,15 @@ const Footer = () => {
                   openWhatsApp();
                 }}
               >
-                Start a Project
+                {t('startProject')}
               </Button>
             </div>
           </div>
 
           {/* Navigation Links */}
-          <div className="grid grid-cols-2 gap-12 md:grid-cols-2 lg:pl-24">
+          <div className="grid grid-cols-2 gap-12 md:grid-cols-2 lg:ps-24">
             <div className="space-y-6">
-              <h3 className="font-mono text-sm uppercase opacity-50">Sitemap</h3>
+              <h3 className="font-mono text-sm uppercase opacity-50">{t('sitemapHeading')}</h3>
               <ul className="space-y-4">
                 {footerLinks.map((link) => (
                   <li key={link.name}>
@@ -77,7 +79,7 @@ const Footer = () => {
             </div>
 
             <div className="space-y-6">
-              <h3 className="font-mono text-sm uppercase opacity-50">Socials</h3>
+              <h3 className="font-mono text-sm uppercase opacity-50">{t('socialsHeading')}</h3>
               <ul className="space-y-4">
                 {socialLinks.map((link) => (
                   <li key={link.name}>
@@ -88,7 +90,7 @@ const Footer = () => {
                       onClick={() => trackSocialClick(link.name.toLowerCase(), "footer")}
                     >
                       {link.name}
-                      <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-1 group-hover:translate-x-1" />
+                      <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-1 group-hover:translate-x-1 rtl:group-hover:-translate-x-1" />
                     </Link>
                   </li>
                 ))}
@@ -99,10 +101,10 @@ const Footer = () => {
 
         {/* Bottom Bar */}
         <div className="mt-24 flex flex-col items-center justify-between gap-6 border-t border-current/10 pt-8 text-sm opacity-40 md:flex-row">
-          <p>© {currentYear} Awab Elkhalil. All rights reserved.</p>
+          <p>{t('copyright', { year: currentYear })}</p>
           <div className="flex gap-8">
-            <span className="hidden md:inline">Istanbul, Turkey</span>
-            <span>(GMT+3)</span>
+            <span className="hidden md:inline">{t('location')}</span>
+            <span>{t('timezone')}</span>
           </div>
         </div>
       </div>
