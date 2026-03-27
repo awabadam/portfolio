@@ -53,7 +53,7 @@ function buildSystemPrompt(context: ChatContext, locale?: string): string {
 ${langInstruction ? `\n${langInstruction}` : ''}
 Awab: web designer/developer in Istanbul, 5+ years, 50+ projects. Email: ${businessInfo.email}
 
-Services: Web Design (from $500), Graphic Design (from $100), UI/UX (from $400), AI Chatbot (from $1,000). Quote calculator: /rate-calculator. Portfolio: /projects.
+Services: Web Design (from $500), Graphic Design (from $100), UI/UX (from $400), AI Chatbot (from $300). Quote calculator: /rate-calculator. Portfolio: /projects.
 
 To collect contact info: ask name, then email, then optionally phone. Confirm 24hr response.${contextInfo ? `\nVisitor info:${contextInfo}` : ''}`;
 }

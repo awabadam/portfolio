@@ -79,9 +79,9 @@ const getProjectTypesMeta = (serviceType: string) => {
     ];
   } else if (serviceType === "ai-chatbot") {
     return [
-      { id: "basic", nameKey: "basicChatbot" as const, descKey: "basicChatbotDesc" as const, basePrice: 600, icon: <Bot className="h-6 w-6" /> },
-      { id: "advanced", nameKey: "advancedChatbot" as const, descKey: "advancedChatbotDesc" as const, basePrice: 1500, icon: <Bot className="h-6 w-6" />, popular: true },
-      { id: "enterprise", nameKey: "enterpriseSolution" as const, descKey: "enterpriseSolutionDesc" as const, basePrice: 4000, icon: <Zap className="h-6 w-6" /> },
+      { id: "basic", nameKey: "basicChatbot" as const, descKey: "basicChatbotDesc" as const, basePrice: 300, icon: <Bot className="h-6 w-6" /> },
+      { id: "advanced", nameKey: "advancedChatbot" as const, descKey: "advancedChatbotDesc" as const, basePrice: 800, icon: <Bot className="h-6 w-6" />, popular: true },
+      { id: "enterprise", nameKey: "enterpriseSolution" as const, descKey: "enterpriseSolutionDesc" as const, basePrice: 2000, icon: <Zap className="h-6 w-6" /> },
     ];
   }
   return [];

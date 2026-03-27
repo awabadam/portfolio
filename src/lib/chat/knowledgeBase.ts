@@ -32,7 +32,7 @@ export const services: Service[] = [
   {
     name: "AI Chatbot Integration",
     description:
-      "Intelligent chatbots for customer support and lead generation. AI-powered automation with natural language processing. Basic chatbot starting at $1,000, advanced solutions from $3,000.",
+      "Intelligent chatbots for customer support and lead generation. AI-powered automation with natural language processing. Basic chatbot starting at $300, advanced solutions from $800.",
     link: "/rate-calculator",
   },
 ];

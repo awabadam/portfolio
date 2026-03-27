@@ -88,7 +88,7 @@ const services: Service[] = [
       "Analytics & insights",
     ],
     timeframe: "1-2 weeks",
-    priceRange: "Starting from $600",
+    priceRange: "Starting from $300",
     link: "#contact",
     slug: "ai-chatbot-integration",
   },
