@@ -21,6 +21,11 @@ interface ChatWindowProps {
 }
 
 const MAX_RECONNECT_ATTEMPTS = 5;
+const IS_VERCEL = typeof window !== 'undefined' && (
+  window.location.hostname.includes('vercel.app') ||
+  window.location.hostname.includes('awab.design') ||
+  process.env.NEXT_PUBLIC_VERCEL === '1'
+);
 
 export default function ChatWindow({
   isOpen,
@@ -181,6 +186,12 @@ export default function ChatWindow({
     } else if (!isInitialized) {
       setIsInitialized(true);
       inputRef.current?.focus();
+    }
+
+    // Skip WebSocket on Vercel/production — use HTTP-only mode
+    if (IS_VERCEL) {
+      setConnectionStatus("connected");
+      return;
     }
 
     connectWebSocket();

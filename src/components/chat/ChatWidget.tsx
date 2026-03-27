@@ -12,13 +12,13 @@ export default function ChatWidget() {
   const t = useTranslations('chat');
 
   useEffect(() => {
-    // Generate or retrieve session ID
-    const storedSessionId = sessionStorage.getItem("chat_session_id");
+    // Generate or retrieve session ID from localStorage for persistence across visits
+    const storedSessionId = localStorage.getItem("chat_session_id");
     if (storedSessionId) {
       setSessionId(storedSessionId);
     } else {
       const newSessionId = generateSessionId();
-      sessionStorage.setItem("chat_session_id", newSessionId);
+      localStorage.setItem("chat_session_id", newSessionId);
       setSessionId(newSessionId);
     }
   }, []);
