@@ -1,12 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
-import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { Project } from "@/types";
-import { ArrowRight } from "lucide-react";
-import { ScrollReveal, StaggerContainer, StaggerItem } from "@/components/effects";
+import { ArrowRight, ExternalLink } from "lucide-react";
+import { StaggerContainer, StaggerItem } from "@/components/effects";
 
 interface ProjectListProps {
   projects: Project[];
@@ -25,8 +23,10 @@ export default function ProjectList({ projects }: ProjectListProps) {
       <StaggerContainer className="divide-y divide-border border-y border-border" staggerDelay={0.1}>
         {projects.map((project, index) => (
           <StaggerItem key={project.id} animation="fadeUp">
-            <Link
-              href={`/projects/${project.id}`}
+            <a
+              href={project.live_url}
+              target="_blank"
+              rel="noopener noreferrer"
               className="group relative flex w-full items-center justify-between py-12 transition-colors hover:bg-muted/30 md:py-16"
               onMouseEnter={() => setHoveredProject(project)}
               onMouseLeave={() => setHoveredProject(null)}
@@ -45,34 +45,35 @@ export default function ProjectList({ projects }: ProjectListProps) {
                   <span className="text-sm font-medium uppercase tracking-wider text-muted-foreground">
                     {project.category}
                   </span>
-                  <ArrowRight className="h-6 w-6 -rotate-45 transition-transform duration-500 group-hover:rotate-0" />
+                  <ExternalLink className="h-6 w-6 transition-transform duration-500 group-hover:scale-110" />
                 </div>
               </div>
-            </Link>
+            </a>
           </StaggerItem>
         ))}
       </StaggerContainer>
 
-      {/* Floating Image Preview */}
+      {/* Floating Iframe Preview */}
       <AnimatePresence>
-        {hoveredProject && hoveredProject.thumbnail_url && (
+        {hoveredProject && hoveredProject.live_url && (
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{
               opacity: 1,
               scale: 1,
               x: mousePosition.x - 200,
-              y: mousePosition.y - 150
+              y: mousePosition.y - 150,
             }}
             exit={{ opacity: 0, scale: 0.8 }}
             transition={{ type: "spring", stiffness: 150, damping: 15, mass: 0.1 }}
-            className="pointer-events-none fixed left-0 top-0 z-50 hidden h-[300px] w-[400px] overflow-hidden rounded-lg md:block"
+            className="pointer-events-none fixed left-0 top-0 z-50 hidden h-[300px] w-[400px] overflow-hidden rounded-lg border border-border/50 shadow-2xl md:block"
           >
-            <Image
-              src={hoveredProject.thumbnail_url}
-              alt={hoveredProject.title}
-              fill
-              className="object-cover"
+            <iframe
+              src={hoveredProject.live_url}
+              title={hoveredProject.title}
+              className="h-[900px] w-[1200px] origin-top-left scale-[0.333] border-0"
+              sandbox="allow-scripts allow-same-origin"
+              loading="lazy"
             />
           </motion.div>
         )}
