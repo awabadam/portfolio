@@ -179,12 +179,11 @@ export default function HomePage() {
               ))
             ) : (
               <>
-                <StaggerItem animation="fadeUp" className="w-full flex-1">
-                  <div className="group relative aspect-[4/3] w-full animate-pulse overflow-hidden rounded-2xl border border-border bg-muted" />
-                </StaggerItem>
-                <StaggerItem animation="fadeUp" className="w-full flex-1">
-                  <div className="group relative aspect-[4/3] w-full animate-pulse overflow-hidden rounded-2xl border border-border bg-muted" />
-                </StaggerItem>
+                {[1, 2, 3].map((i) => (
+                  <StaggerItem key={i} animation="fadeUp" className="w-full flex-1">
+                    <div className="group relative aspect-[4/3] w-full animate-pulse overflow-hidden rounded-2xl border border-border bg-muted" />
+                  </StaggerItem>
+                ))}
               </>
             )}
           </StaggerContainer>

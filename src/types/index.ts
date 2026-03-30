@@ -5,6 +5,7 @@ export interface Project {
   description: string;
   thumbnail_url?: string;
   live_url?: string;
+  iframe_url?: string; // Use proxy URL for sites that block iframes
   github_url?: string;
   technologies: string[];
   featured?: boolean;

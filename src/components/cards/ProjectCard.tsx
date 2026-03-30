@@ -90,7 +90,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
             {/* Iframe rendered at 1440×1080 and scaled to fill container */}
             {project.live_url && (
               <iframe
-                src={project.live_url}
+                src={project.iframe_url || project.live_url}
                 title={project.title}
                 className="absolute top-0 left-0 border-0 pointer-events-none z-[1] origin-top-left"
                 style={{

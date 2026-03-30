@@ -77,7 +77,7 @@ export default function ProjectList({ projects }: ProjectListProps) {
             />
             {/* Iframe overlay — covers screenshot if it loads */}
             <iframe
-              src={hoveredProject.live_url}
+              src={hoveredProject.iframe_url || hoveredProject.live_url}
               title={hoveredProject.title}
               className="relative z-[1] h-[900px] w-[1200px] origin-top-left scale-[0.333] border-0"
               sandbox="allow-scripts allow-same-origin"
