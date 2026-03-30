@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Project } from "@/types";
-import { ArrowRight, ExternalLink } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import { StaggerContainer, StaggerItem } from "@/components/effects";
 
 interface ProjectListProps {
@@ -53,7 +53,7 @@ export default function ProjectList({ projects }: ProjectListProps) {
         ))}
       </StaggerContainer>
 
-      {/* Floating Iframe Preview */}
+      {/* Floating Preview */}
       <AnimatePresence>
         {hoveredProject && hoveredProject.live_url && (
           <motion.div
@@ -68,12 +68,20 @@ export default function ProjectList({ projects }: ProjectListProps) {
             transition={{ type: "spring", stiffness: 150, damping: 15, mass: 0.1 }}
             className="pointer-events-none fixed left-0 top-0 z-50 hidden h-[300px] w-[400px] overflow-hidden rounded-lg border border-border/50 shadow-2xl md:block"
           >
+            {/* Screenshot fallback behind iframe */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={`https://image.thum.io/get/width/800/crop/600/${hoveredProject.live_url}`}
+              alt={hoveredProject.title}
+              className="absolute inset-0 h-full w-full object-cover object-top"
+            />
+            {/* Iframe overlay — covers screenshot if it loads */}
             <iframe
               src={hoveredProject.live_url}
               title={hoveredProject.title}
-              className="h-[900px] w-[1200px] origin-top-left scale-[0.333] border-0"
+              className="relative z-[1] h-[900px] w-[1200px] origin-top-left scale-[0.333] border-0"
               sandbox="allow-scripts allow-same-origin"
-              loading="lazy"
+              loading="eager"
             />
           </motion.div>
         )}

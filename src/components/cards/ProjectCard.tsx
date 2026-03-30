@@ -1,12 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { Project } from "@/types";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, ExternalLink } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   trackProjectView,
@@ -61,22 +60,19 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
             ? "border-border/40 bg-card/50 group-hover:border-primary/50"
             : "border-border/40 bg-card group-hover:border-primary/50"
         )}>
-          {/* Project Thumbnail / Iframe Preview */}
-          <div className="relative aspect-[4/3] w-full overflow-hidden">
-            {project.thumbnail_url && (
-              <Image
-                src={project.thumbnail_url}
+          {/* Project Preview */}
+          <div className="relative aspect-[4/3] w-full overflow-hidden bg-muted">
+            {/* Screenshot fallback (always rendered behind iframe) */}
+            {project.live_url && (
+              /* eslint-disable-next-line @next/next/no-img-element */
+              <img
+                src={`https://image.thum.io/get/width/1200/crop/900/${project.live_url}`}
                 alt={project.title}
-                fill
-                className={cn(
-                  "object-cover transition-all duration-700",
-                  isHovered ? "opacity-0" : "opacity-100 group-hover:scale-110"
-                )}
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                className="absolute inset-0 h-full w-full object-cover object-top"
               />
             )}
 
-            {/* Iframe shown on hover */}
+            {/* Iframe overlay on hover — covers screenshot if it loads */}
             <AnimatePresence>
               {isHovered && project.live_url && (
                 <motion.div
@@ -84,7 +80,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.3 }}
-                  className="absolute inset-0"
+                  className="absolute inset-0 z-[1]"
                 >
                   <iframe
                     src={project.live_url}
@@ -92,7 +88,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                     className="h-[900px] w-[1200px] origin-top-left border-0"
                     style={{ transform: "scale(0.333)" }}
                     sandbox="allow-scripts allow-same-origin"
-                    loading="lazy"
+                    loading="eager"
                   />
                 </motion.div>
               )}
