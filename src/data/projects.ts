@@ -37,7 +37,7 @@ export const projects: Project[] = [
     category: "Web Design",
     description: "Modern dental clinic website with a clean, professional aesthetic.",
     live_url: "https://saphiredent.com",
-    iframe_url: "/api/proxy?url=https://saphiredent.com",
+    iframe_blocked: true,
     thumbnail_url: "/img/projects/january-campaign.png",
     featured: false,
     technologies: ["Web Design", "UI/UX"],

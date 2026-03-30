@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Project } from "@/types";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, Globe } from "lucide-react";
 import { StaggerContainer, StaggerItem } from "@/components/effects";
 
 interface ProjectListProps {
@@ -13,9 +13,14 @@ interface ProjectListProps {
 export default function ProjectList({ projects }: ProjectListProps) {
   const [hoveredProject, setHoveredProject] = useState<Project | null>(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [screenshotErrors, setScreenshotErrors] = useState<Set<string>>(new Set());
 
   const handleMouseMove = (e: React.MouseEvent) => {
     setMousePosition({ x: e.clientX, y: e.clientY });
+  };
+
+  const handleScreenshotError = (id: string) => {
+    setScreenshotErrors(prev => new Set(prev).add(id));
   };
 
   return (
@@ -68,21 +73,35 @@ export default function ProjectList({ projects }: ProjectListProps) {
             transition={{ type: "spring", stiffness: 150, damping: 15, mass: 0.1 }}
             className="pointer-events-none fixed left-0 top-0 z-50 hidden h-[300px] w-[400px] overflow-hidden rounded-lg border border-border/50 shadow-2xl md:block"
           >
-            {/* Screenshot fallback behind iframe */}
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={`https://image.thum.io/get/width/800/crop/600/${hoveredProject.live_url}`}
-              alt={hoveredProject.title}
-              className="absolute inset-0 h-full w-full object-cover object-top"
-            />
-            {/* Iframe overlay — covers screenshot if it loads */}
-            <iframe
-              src={hoveredProject.iframe_url || hoveredProject.live_url}
-              title={hoveredProject.title}
-              className="relative z-[1] h-[900px] w-[1200px] origin-top-left scale-[0.333] border-0"
-              sandbox="allow-scripts allow-same-origin"
-              loading="eager"
-            />
+            {/* Layer 1: Gradient placeholder */}
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-gradient-to-br from-muted via-muted/80 to-muted/60">
+              <Globe className="h-8 w-8 text-muted-foreground/40" />
+              <span className="text-sm font-medium text-muted-foreground/60">
+                {hoveredProject.title}
+              </span>
+            </div>
+
+            {/* Layer 2: Screenshot */}
+            {!screenshotErrors.has(hoveredProject.id) && (
+              /* eslint-disable-next-line @next/next/no-img-element */
+              <img
+                src={`/api/screenshot?url=${encodeURIComponent(hoveredProject.live_url!)}`}
+                alt={hoveredProject.title}
+                className="absolute inset-0 z-[1] h-full w-full object-cover object-top"
+                onError={() => handleScreenshotError(hoveredProject.id)}
+              />
+            )}
+
+            {/* Layer 3: Iframe (only for non-blocked sites) */}
+            {!hoveredProject.iframe_blocked && (
+              <iframe
+                src={hoveredProject.live_url}
+                title={hoveredProject.title}
+                className="relative z-[2] h-[900px] w-[1200px] origin-top-left scale-[0.333] border-0"
+                sandbox="allow-scripts allow-same-origin"
+                loading="eager"
+              />
+            )}
           </motion.div>
         )}
       </AnimatePresence>

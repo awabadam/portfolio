@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { Project } from "@/types";
 import { Badge } from "@/components/ui/badge";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, Globe } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   trackProjectView,
@@ -33,11 +33,12 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   const t = useTranslations('projects');
   const containerRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(0.3);
+  const [screenshotError, setScreenshotError] = useState(false);
+  const useIframe = project.live_url && !project.iframe_blocked;
 
   const updateScale = useCallback(() => {
     if (containerRef.current) {
-      const containerWidth = containerRef.current.offsetWidth;
-      setScale(containerWidth / IFRAME_WIDTH);
+      setScale(containerRef.current.offsetWidth / IFRAME_WIDTH);
     }
   }, []);
 
@@ -75,24 +76,38 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
             ? "border-border/40 bg-card/50 group-hover:border-primary/50"
             : "border-border/40 bg-card group-hover:border-primary/50"
         )}>
-          {/* Project Preview */}
           <div ref={containerRef} className="relative aspect-[4/3] w-full overflow-hidden bg-muted">
-            {/* Screenshot fallback behind iframe (for sites that block iframes) */}
-            {project.live_url && (
+
+            {/* Layer 1: Gradient placeholder (always present as final fallback) */}
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-gradient-to-br from-muted via-muted/80 to-muted/60">
+              <Globe className="h-10 w-10 text-muted-foreground/40" />
+              <span className="text-sm font-medium text-muted-foreground/60">
+                {project.title}
+              </span>
+              {project.live_url && (
+                <span className="text-xs text-muted-foreground/40">
+                  {new URL(project.live_url).hostname}
+                </span>
+              )}
+            </div>
+
+            {/* Layer 2: Screenshot from thum.io (covers placeholder if it loads) */}
+            {project.live_url && !screenshotError && (
               /* eslint-disable-next-line @next/next/no-img-element */
               <img
-                src={`https://image.thum.io/get/width/1200/crop/900/${project.live_url}`}
+                src={`/api/screenshot?url=${encodeURIComponent(project.live_url)}`}
                 alt={project.title}
-                className="absolute inset-0 h-full w-full object-cover object-top"
+                className="absolute inset-0 z-[1] h-full w-full object-cover object-top"
+                onError={() => setScreenshotError(true)}
               />
             )}
 
-            {/* Iframe rendered at 1440×1080 and scaled to fill container */}
-            {project.live_url && (
+            {/* Layer 3: Iframe (covers screenshot if allowed and loads) */}
+            {useIframe && (
               <iframe
-                src={project.iframe_url || project.live_url}
+                src={project.live_url}
                 title={project.title}
-                className="absolute top-0 left-0 border-0 pointer-events-none z-[1] origin-top-left"
+                className="absolute top-0 left-0 z-[2] border-0 pointer-events-none origin-top-left"
                 style={{
                   width: `${IFRAME_WIDTH}px`,
                   height: `${IFRAME_HEIGHT}px`,
