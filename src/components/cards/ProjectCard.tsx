@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef, useEffect, useState, useCallback } from "react";
 import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { Project } from "@/types";
@@ -12,6 +13,9 @@ import {
   trackProjectClick,
 } from "@/lib/analytics/gtm";
 import { fadeInUp } from "@/lib/animations";
+
+const IFRAME_WIDTH = 1440;
+const IFRAME_HEIGHT = 1080;
 
 interface ProjectCardProps {
   project: Project;
@@ -27,6 +31,21 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   className
 }) => {
   const t = useTranslations('projects');
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(0.3);
+
+  const updateScale = useCallback(() => {
+    if (containerRef.current) {
+      const containerWidth = containerRef.current.offsetWidth;
+      setScale(containerWidth / IFRAME_WIDTH);
+    }
+  }, []);
+
+  useEffect(() => {
+    updateScale();
+    window.addEventListener("resize", updateScale);
+    return () => window.removeEventListener("resize", updateScale);
+  }, [updateScale]);
 
   const handleProjectClick = () => {
     trackProjectView(project.id, project.title);
@@ -56,8 +75,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
             ? "border-border/40 bg-card/50 group-hover:border-primary/50"
             : "border-border/40 bg-card group-hover:border-primary/50"
         )}>
-          {/* Project Preview — always shows iframe */}
-          <div className="relative aspect-[4/3] w-full overflow-hidden bg-muted">
+          {/* Project Preview */}
+          <div ref={containerRef} className="relative aspect-[4/3] w-full overflow-hidden bg-muted">
             {/* Screenshot fallback behind iframe (for sites that block iframes) */}
             {project.live_url && (
               /* eslint-disable-next-line @next/next/no-img-element */
@@ -68,17 +87,20 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
               />
             )}
 
-            {/* Always-visible iframe */}
+            {/* Iframe rendered at 1440×1080 and scaled to fill container */}
             {project.live_url && (
-              <div className="absolute inset-0 z-[1]">
-                <iframe
-                  src={project.live_url}
-                  title={project.title}
-                  className="absolute inset-0 h-full w-full border-0 pointer-events-none"
-                  sandbox="allow-scripts allow-same-origin"
-                  loading="lazy"
-                />
-              </div>
+              <iframe
+                src={project.live_url}
+                title={project.title}
+                className="absolute top-0 left-0 border-0 pointer-events-none z-[1] origin-top-left"
+                style={{
+                  width: `${IFRAME_WIDTH}px`,
+                  height: `${IFRAME_HEIGHT}px`,
+                  transform: `scale(${scale})`,
+                }}
+                sandbox="allow-scripts allow-same-origin"
+                loading="eager"
+              />
             )}
 
             <div className={cn(
