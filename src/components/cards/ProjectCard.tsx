@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { Project } from "@/types";
 import { Badge } from "@/components/ui/badge";
@@ -28,7 +27,6 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   className
 }) => {
   const t = useTranslations('projects');
-  const [isHovered, setIsHovered] = useState(false);
 
   const handleProjectClick = () => {
     trackProjectView(project.id, project.title);
@@ -51,8 +49,6 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
         rel="noopener noreferrer"
         className="group block w-full"
         onClick={handleProjectClick}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
       >
         <div className={cn(
           "relative overflow-hidden rounded-2xl border transition-all duration-500 group-hover:shadow-2xl group-hover:-translate-y-1",
@@ -60,9 +56,9 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
             ? "border-border/40 bg-card/50 group-hover:border-primary/50"
             : "border-border/40 bg-card group-hover:border-primary/50"
         )}>
-          {/* Project Preview */}
+          {/* Project Preview — always shows iframe */}
           <div className="relative aspect-[4/3] w-full overflow-hidden bg-muted">
-            {/* Screenshot fallback (always rendered behind iframe) */}
+            {/* Screenshot fallback behind iframe (for sites that block iframes) */}
             {project.live_url && (
               /* eslint-disable-next-line @next/next/no-img-element */
               <img
@@ -72,27 +68,18 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
               />
             )}
 
-            {/* Iframe overlay on hover — covers screenshot if it loads */}
-            <AnimatePresence>
-              {isHovered && project.live_url && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.3 }}
-                  className="absolute inset-0 z-[1]"
-                >
-                  <iframe
-                    src={project.live_url}
-                    title={project.title}
-                    className="h-[900px] w-[1200px] origin-top-left border-0"
-                    style={{ transform: "scale(0.333)" }}
-                    sandbox="allow-scripts allow-same-origin"
-                    loading="eager"
-                  />
-                </motion.div>
-              )}
-            </AnimatePresence>
+            {/* Always-visible iframe */}
+            {project.live_url && (
+              <div className="absolute inset-0 z-[1]">
+                <iframe
+                  src={project.live_url}
+                  title={project.title}
+                  className="absolute inset-0 h-full w-full border-0 pointer-events-none"
+                  sandbox="allow-scripts allow-same-origin"
+                  loading="lazy"
+                />
+              </div>
+            )}
 
             <div className={cn(
               "absolute inset-0 bg-gradient-to-t to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100 z-10",
