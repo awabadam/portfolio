@@ -58,7 +58,7 @@ export default function HomePage() {
 
   useEffect(() => {
     const fetchProjects = async () => {
-      const data = await getFeaturedProjects(2);
+      const data = await getFeaturedProjects(3);
       setProjects(data);
     };
     fetchProjects();
