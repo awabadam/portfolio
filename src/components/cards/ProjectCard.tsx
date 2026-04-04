@@ -76,7 +76,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
             ? "border-border/40 bg-card/50 group-hover:border-primary/50"
             : "border-border/40 bg-card group-hover:border-primary/50"
         )}>
-          <div ref={containerRef} className="relative aspect-[4/3] w-full overflow-hidden bg-muted">
+          <div ref={containerRef} className="relative aspect-[4/3] w-full overflow-hidden bg-muted [clip-path:inset(0_round_1rem_1rem_0_0)]">
 
             {/* Layer 1: Gradient placeholder (always present as final fallback) */}
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-gradient-to-br from-muted via-muted/80 to-muted/60">

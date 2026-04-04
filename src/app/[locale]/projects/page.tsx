@@ -43,8 +43,8 @@ const ProjectsPage = async () => {
       <ProjectsHero projectCount={allProjects.length} />
       <ProjectList projects={allProjects} />
 
-      <div className="flex h-[40vh] items-center justify-center">
-        <p className="text-center text-muted-foreground">
+      <div className="flex h-[20vh] items-center justify-center">
+        <p className="text-center text-sm text-muted-foreground">
           {t('moreComingSoon')}
         </p>
       </div>

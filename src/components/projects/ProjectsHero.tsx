@@ -8,19 +8,22 @@ interface ProjectsHeroProps {
 }
 
 export default function ProjectsHero({ projectCount }: ProjectsHeroProps) {
-  const t = useTranslations('projects');
+  const t = useTranslations("projects");
   return (
-    <div className="container mx-auto mb-24 px-4">
+    <div className="container mx-auto mb-16 px-4 md:mb-24">
       <ScrollReveal animation="fadeUp">
         <Parallax speed={0.2}>
-          <h1 className="font-display text-display-1 font-bold leading-none tracking-tighter">
-            {t('selectedWorks')}
-            <br />
-            <span className="text-muted-foreground">{t('worksLabel')}</span>
-            <span className="ms-4 text-lg font-normal tracking-normal text-muted-foreground md:text-xl">
-              ({projectCount})
+          <div className="flex items-end justify-between gap-8">
+            <h1 className="font-display text-display-1 font-bold leading-none tracking-tighter">
+              {t("selectedWorks")}
+              <br />
+              <span className="text-muted-foreground">{t("worksLabel")}</span>
+            </h1>
+            <span className="mb-2 hidden font-mono text-lg text-muted-foreground md:block">
+              {projectCount} {projectCount === 1 ? "project" : "projects"}
             </span>
-          </h1>
+          </div>
+          <div className="mt-6 h-px w-full bg-border" />
         </Parallax>
       </ScrollReveal>
     </div>
