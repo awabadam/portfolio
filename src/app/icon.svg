@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <defs>
+    <linearGradient id="silver-light" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#e8e8e8"/>
+      <stop offset="50%" stop-color="#c0c0c0"/>
+      <stop offset="100%" stop-color="#a0a0a0"/>
+    </linearGradient>
+    <linearGradient id="silver-dark" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#4a4a4a"/>
+      <stop offset="50%" stop-color="#2a2a2a"/>
+      <stop offset="100%" stop-color="#1a1a1a"/>
+    </linearGradient>
+  </defs>
+  <style>
+    @media (prefers-color-scheme: light) {
+      .bg { fill: url(#silver-light); }
+      .letter { fill: #000000; }
+      .line { stroke: #000000; }
+    }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: url(#silver-dark); }
+      .letter { fill: #fafafa; }
+      .line { stroke: #fafafa; }
+    }
+  </style>
+  <rect class="bg" width="32" height="32" rx="6"/>
+  <text class="letter" x="16" y="23" text-anchor="middle" font-family="'Space Grotesk', system-ui, sans-serif" font-weight="700" font-size="24" letter-spacing="-1.5">A</text>
+  <line class="line" x1="8" y1="26" x2="24" y2="26" stroke-width="2" stroke-linecap="round"/>
+</svg>
