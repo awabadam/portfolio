@@ -8,7 +8,7 @@ export const projects: Project[] = [
     description: "Personal design portfolio showcasing creative work and web design projects.",
     live_url: "https://awab.design",
     thumbnail_url: "/img/projects/omega-implants.png",
-    featured: true,
+    featured: false,
     technologies: ["Next.js", "React", "Tailwind CSS"],
   },
   {
@@ -30,6 +30,15 @@ export const projects: Project[] = [
     thumbnail_url: "/img/projects/brand-identity.jpg",
     featured: true,
     technologies: ["Web Design", "UI/UX"],
+  },
+  {
+    id: "omar-marketing",
+    title: "Omar Marketing",
+    category: "Web Design",
+    description: "ROI-driven marketing agency website with a bold dark theme, multilingual support, and animated scroll interactions.",
+    live_url: "https://omar.marketing",
+    featured: true,
+    technologies: ["Next.js", "React", "Tailwind CSS"],
   },
   {
     id: "saphiredent",
