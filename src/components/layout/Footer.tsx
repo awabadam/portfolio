@@ -109,6 +109,7 @@ const Footer = () => {
           <p>{t('copyright', { year: currentYear })}</p>
           <div className="flex gap-8">
             <span className="hidden md:inline">{t('location')}</span>
+            <span className="hidden md:inline">+90 554 175 9945</span>
             <span>{t('timezone')}</span>
           </div>
         </div>

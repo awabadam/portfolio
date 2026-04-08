@@ -31,7 +31,7 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     alternates: {
       canonical: "/services/ai-chatbot-integration",
-      languages: { en: '/services/ai-chatbot-integration', ar: '/ar/services/ai-chatbot-integration', tr: '/tr/services/ai-chatbot-integration' },
+      languages: { en: '/services/ai-chatbot-integration', ar: '/ar/services/ai-chatbot-integration', tr: '/tr/services/ai-chatbot-integration', fr: '/fr/services/ai-chatbot-integration' },
     },
   };
 }
@@ -40,7 +40,24 @@ const AIChatbotIntegrationPage = async () => {
   const t = await getTranslations('services');
   const inclusions = t.raw('aiChatbot.inclusions') as string[];
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name: t('aiChatbot.title'),
+    description: t('aiChatbot.lead'),
+    provider: { "@type": "Person", name: "Awab Design", url: "https://awab.design" },
+    areaServed: "Worldwide",
+    offers: {
+      "@type": "Offer",
+      price: "500",
+      priceCurrency: "USD",
+      priceSpecification: { "@type": "UnitPriceSpecification", price: "500", priceCurrency: "USD", unitText: "project" },
+    },
+  };
+
   return (
+    <>
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
     <main className="min-h-screen bg-background pt-32">
       <div className="container mx-auto px-4 py-16">
         <Link
@@ -122,6 +139,7 @@ const AIChatbotIntegrationPage = async () => {
         </section>
       </div>
     </main>
+    </>
   );
 };
 

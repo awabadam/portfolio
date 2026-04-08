@@ -7,6 +7,7 @@ import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/routing";
 import { ScrollReveal, StaggerContainer, StaggerItem, Parallax } from "@/components/effects";
+import Contact from "@/components/sections/Contact";
 
 export default function ContactPage() {
   const t = useTranslations('contact');
@@ -102,6 +103,8 @@ export default function ContactPage() {
             </ScrollReveal>
           </div>
         </div>
+
+        <Contact />
       </div>
     </div>
   );

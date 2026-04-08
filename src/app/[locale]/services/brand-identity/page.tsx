@@ -31,7 +31,7 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     alternates: {
       canonical: "/services/brand-identity",
-      languages: { en: '/services/brand-identity', ar: '/ar/services/brand-identity', tr: '/tr/services/brand-identity' },
+      languages: { en: '/services/brand-identity', ar: '/ar/services/brand-identity', tr: '/tr/services/brand-identity', fr: '/fr/services/brand-identity' },
     },
   };
 }
@@ -40,7 +40,24 @@ const BrandIdentityPage = async () => {
   const t = await getTranslations('services');
   const inclusions = t.raw('brandIdentity.inclusions') as string[];
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name: t('brandIdentity.title'),
+    description: t('brandIdentity.lead'),
+    provider: { "@type": "Person", name: "Awab Design", url: "https://awab.design" },
+    areaServed: "Worldwide",
+    offers: {
+      "@type": "Offer",
+      price: "800",
+      priceCurrency: "USD",
+      priceSpecification: { "@type": "UnitPriceSpecification", price: "800", priceCurrency: "USD", unitText: "project" },
+    },
+  };
+
   return (
+    <>
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
     <main className="min-h-screen bg-background pt-32">
       <div className="container mx-auto px-4 py-16">
         <Link
@@ -122,6 +139,7 @@ const BrandIdentityPage = async () => {
         </section>
       </div>
     </main>
+    </>
   );
 };
 

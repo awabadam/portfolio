@@ -30,7 +30,7 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     alternates: {
       canonical: "/services/webdesign-istanbul",
-      languages: { en: '/services/webdesign-istanbul', ar: '/ar/services/webdesign-istanbul', tr: '/tr/services/webdesign-istanbul' },
+      languages: { en: '/services/webdesign-istanbul', ar: '/ar/services/webdesign-istanbul', tr: '/tr/services/webdesign-istanbul', fr: '/fr/services/webdesign-istanbul' },
     },
   };
 }
@@ -39,7 +39,33 @@ const WebdesignIstanbulPage = async () => {
   const t = await getTranslations('services');
   const inclusions = t.raw('webdesign.inclusions') as string[];
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name: t('webdesign.title'),
+    description: t('webdesign.lead'),
+    provider: {
+      "@type": "Person",
+      name: "Awab Design",
+      url: "https://awab.design",
+    },
+    areaServed: "Worldwide",
+    offers: {
+      "@type": "Offer",
+      price: "150",
+      priceCurrency: "USD",
+      priceSpecification: {
+        "@type": "UnitPriceSpecification",
+        price: "150",
+        priceCurrency: "USD",
+        unitText: "project",
+      },
+    },
+  };
+
   return (
+    <>
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
     <main className="min-h-screen bg-background pt-32">
       <div className="container mx-auto px-4 py-16">
         <Link
@@ -125,6 +151,7 @@ const WebdesignIstanbulPage = async () => {
         </section>
       </div>
     </main>
+    </>
   );
 };
 

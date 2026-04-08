@@ -10,7 +10,9 @@ import { Button } from "@/components/ui/button";
 import { Project } from "@/types";
 import { getFeaturedProjects } from "@/data/projects";
 import ProjectCard from "@/components/cards/ProjectCard";
+import StickyMobileCTA from "@/components/ui/StickyMobileCTA";
 import { ScrollReveal, StaggerContainer, StaggerItem, MagneticElement, TiltCard } from "@/components/effects";
+import { trackCTAClick } from "@/lib/analytics/gtm";
 
 // Dynamic import for Three.js component (no SSR)
 const InteractiveCubes = dynamic(
@@ -104,6 +106,24 @@ export default function HomePage() {
           >
             {t('heroSubtitle')}
           </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.7, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+            className="mt-10 flex flex-col items-center gap-4 sm:flex-row"
+          >
+            <Button asChild size="lg" className="h-14 rounded-full bg-white px-8 text-base font-semibold text-black hover:bg-white/90">
+              <Link href="/rate-calculator" onClick={() => trackCTAClick("free_quote", "hero")}>
+                {t('heroCTAPrimary')}
+              </Link>
+            </Button>
+            <Button asChild variant="outline" size="lg" className="h-14 rounded-full border-white/30 bg-transparent px-8 text-base font-semibold text-white hover:bg-white/10 hover:text-white">
+              <a href="#work" onClick={() => trackCTAClick("view_work", "hero")}>
+                {t('heroCTASecondary')}
+              </a>
+            </Button>
+          </motion.div>
         </div>
 
         <motion.div
@@ -121,7 +141,7 @@ export default function HomePage() {
       </motion.section>
 
       {/* Spacer for fixed hero */}
-      <div className="h-screen" />
+      <div data-hero-spacer className="h-screen" />
 
       {/* Services Reveal */}
       <section className="relative z-10 bg-background py-32 md:py-48">
@@ -157,7 +177,7 @@ export default function HomePage() {
       </section>
 
       {/* Selected Work Preview */}
-      <section className="relative z-10 bg-background py-32 text-foreground md:py-48">
+      <section id="work" className="relative z-10 bg-background py-32 text-foreground md:py-48">
         <div className="container mx-auto px-4">
           <ScrollReveal animation="fadeUp" className="mb-16 flex items-end justify-between md:mb-32">
             <h2 className="font-display text-[10vw] font-bold leading-none tracking-tighter opacity-10 md:text-[8vw]">
@@ -203,10 +223,11 @@ export default function HomePage() {
             <p className="mb-8 font-mono text-sm uppercase text-muted-foreground">{t('readyToStart')}</p>
             <MagneticElement strength={40}>
               <Link
-                href="/contact"
+                href="/rate-calculator"
                 className="group relative inline-block"
+                onClick={() => trackCTAClick("free_quote", "bottom_cta")}
               >
-                <h2 className="font-display text-[12vw] font-bold leading-none tracking-tighter transition-colors hover:text-primary md:text-[10vw]">
+                <h2 className="font-display text-[10vw] font-bold leading-none tracking-tighter transition-colors hover:text-primary md:text-[8vw]">
                   {t('letsTalk')}
                 </h2>
                 <div className="absolute bottom-4 right-0 h-4 w-0 bg-primary transition-all duration-500 group-hover:w-full" />
@@ -215,6 +236,8 @@ export default function HomePage() {
           </ScrollReveal>
         </div>
       </section>
+
+      <StickyMobileCTA label={t('stickyGetQuote')} />
     </div>
   );
 }

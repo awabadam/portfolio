@@ -63,7 +63,7 @@ export async function generateMetadata({
     },
     alternates: {
       canonical: `/blog/category/${category.slug}`,
-      languages: { en: `/blog/category/${category.slug}`, ar: `/ar/blog/category/${category.slug}`, tr: `/tr/blog/category/${category.slug}` },
+      languages: { en: `/blog/category/${category.slug}`, ar: `/ar/blog/category/${category.slug}`, tr: `/tr/blog/category/${category.slug}`, fr: `/fr/blog/category/${category.slug}` },
     },
   };
 }

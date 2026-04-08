@@ -284,6 +284,21 @@ export default function ProjectDetail({
         </section>
       )}
 
+      {/* CTA */}
+      <section className="border-t border-border py-24 md:py-32">
+        <div className="container mx-auto px-4 text-center">
+          <p className="font-mono text-sm uppercase tracking-widest text-muted-foreground">
+            {t("ctaHeading")}
+          </p>
+          <Link
+            href="/rate-calculator"
+            className="mt-6 inline-block rounded-full bg-foreground px-10 py-4 text-base font-medium text-background transition-opacity hover:opacity-90"
+          >
+            {t("ctaButton")}
+          </Link>
+        </div>
+      </section>
+
       {/* Next Project */}
       <section className="border-t border-border">
         <Link

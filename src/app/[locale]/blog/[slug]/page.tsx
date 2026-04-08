@@ -8,6 +8,8 @@ import { Link } from '@/i18n/routing';
 import Image from "next/image";
 import { Calendar, Clock, ArrowLeft, Share2 } from "lucide-react";
 import BlogContent from "@/components/blog/BlogContent";
+import BlogCTA from "@/components/blog/BlogCTA";
+import Breadcrumbs from "@/components/seo/Breadcrumbs";
 import { getTranslations, getLocale } from 'next-intl/server';
 
 // Revalidate every 60 seconds to show fresh blog content
@@ -66,7 +68,7 @@ export async function generateMetadata({
     },
     alternates: {
       canonical: `/blog/${post.slug}`,
-      languages: { en: `/blog/${post.slug}`, ar: `/ar/blog/${post.slug}`, tr: `/tr/blog/${post.slug}` },
+      languages: { en: `/blog/${post.slug}`, ar: `/ar/blog/${post.slug}`, tr: `/tr/blog/${post.slug}`, fr: `/fr/blog/${post.slug}` },
     },
   };
 }
@@ -98,6 +100,12 @@ const BlogPostPage = async ({ params }: BlogPostPageProps) => {
   };
 
   return (
+    <>
+    <Breadcrumbs items={[
+      { name: "Home", url: "/" },
+      { name: "Blog", url: "/blog" },
+      { name: post.title, url: `/blog/${post.slug}` },
+    ]} />
     <main className="min-h-screen bg-background">
       {/* Immersive Hero */}
       <div className="relative h-[80vh] w-full overflow-hidden">
@@ -171,9 +179,12 @@ const BlogPostPage = async ({ params }: BlogPostPageProps) => {
               {t('shareArticle')}
             </Button>
           </div>
+
+          <BlogCTA />
         </div>
       </div>
     </main>
+    </>
   );
 };
 

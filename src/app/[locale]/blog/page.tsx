@@ -34,7 +34,7 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     alternates: {
       canonical: "/blog",
-      languages: { en: '/blog', ar: '/ar/blog', tr: '/tr/blog' },
+      languages: { en: '/blog', ar: '/ar/blog', tr: '/tr/blog', fr: '/fr/blog' },
     },
   };
 }

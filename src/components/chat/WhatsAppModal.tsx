@@ -70,8 +70,6 @@ export default function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!phoneNumber.trim()) return;
-
     setIsSubmitting(true);
 
     // Save lead to database
@@ -81,7 +79,7 @@ export default function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           source: "whatsapp",
-          phone: phoneNumber,
+          phone: phoneNumber || undefined,
           message: "Initiated WhatsApp contact",
         }),
       });
@@ -89,9 +87,11 @@ export default function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
       console.error("Error saving lead:", error);
     }
 
-    // Create message with visitor's phone number
+    // Create message, include phone only if provided
     const message = encodeURIComponent(
-      `Hi! I'm interested in your web design services. My phone number is: ${phoneNumber}`
+      phoneNumber.trim()
+        ? `Hi! I'm interested in your web design services. My phone number is: ${phoneNumber}`
+        : `Hi! I'm interested in your web design services.`
     );
 
     // Open WhatsApp with configured number and pre-filled message
@@ -177,8 +177,6 @@ export default function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
                 className="h-12 text-base"
-                required
-                aria-required="true"
                 aria-describedby="phone-hint"
               />
               <p id="phone-hint" className="mt-2 text-xs text-muted-foreground">
@@ -197,7 +195,7 @@ export default function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
               </Button>
               <Button
                 type="submit"
-                disabled={isSubmitting || !phoneNumber.trim()}
+                disabled={isSubmitting}
                 className="flex-1 bg-[#25D366] hover:bg-[#128C7E]"
                 aria-busy={isSubmitting}
               >

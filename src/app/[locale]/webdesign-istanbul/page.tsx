@@ -41,7 +41,7 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     alternates: {
       canonical: "/webdesign-istanbul",
-      languages: { en: '/webdesign-istanbul', ar: '/ar/webdesign-istanbul', tr: '/tr/webdesign-istanbul' },
+      languages: { en: '/webdesign-istanbul', ar: '/ar/webdesign-istanbul', tr: '/tr/webdesign-istanbul', fr: '/fr/webdesign-istanbul' },
     },
   };
 }

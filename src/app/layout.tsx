@@ -23,8 +23,8 @@ const fontArabic = FontArabic({
 
 export const metadata: Metadata = {
   title: {
-    default: "Awab Elkhalil | Web Designer & Developer | Istanbul",
-    template: "%s | Awab Elkhalil",
+    default: "Awab Design | Web Designer & Developer | Istanbul",
+    template: "%s | Awab Design",
   },
   description:
     "Professional web designer and developer in Istanbul. Specializing in modern, conversion-focused websites using Next.js, React, and Tailwind CSS. View portfolio and get in touch.",
@@ -42,7 +42,7 @@ export const metadata: Metadata = {
     "portfolio",
     "freelance web designer",
   ],
-  authors: [{ name: "Awab Elkhalil" }],
+  authors: [{ name: "Awab Design" }],
   creator: "Awab Elkhalil",
   publisher: "Awab Elkhalil",
   formatDetection: {
@@ -57,14 +57,15 @@ export const metadata: Metadata = {
       en: "/",
       ar: "/ar",
       tr: "/tr",
+      fr: "/fr",
     },
   },
   openGraph: {
-    title: "Awab Elkhalil | Web Designer & Developer | Istanbul",
+    title: "Awab Design | Web Designer & Developer | Istanbul",
     description:
       "Professional web design and development services that help businesses stand out online and convert visitors into customers.",
     url: "https://awab.design",
-    siteName: "Awab Elkhalil Portfolio",
+    siteName: "Awab Design",
     locale: "en_US",
     type: "website",
     images: [
@@ -72,13 +73,13 @@ export const metadata: Metadata = {
         url: "/img/hero-image.jpg",
         width: 1200,
         height: 630,
-        alt: "Awab Elkhalil - Web Designer & Developer",
+        alt: "Awab Design - Web Designer & Developer",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Awab Elkhalil | Web Designer & Developer | Istanbul",
+    title: "Awab Design | Web Designer & Developer | Istanbul",
     description:
       "Professional web design and development services that help businesses stand out online and convert visitors into customers.",
     images: ["/img/hero-image.jpg"],
@@ -103,35 +104,92 @@ export const metadata: Metadata = {
   other: {
     "application/ld+json": JSON.stringify({
       "@context": "https://schema.org",
-      "@type": "Person",
-      name: "Awab Elkhalil",
+      "@type": ["Person", "ProfessionalService"],
+      "@id": "https://awab.design/#person",
+      name: "Awab Design",
       jobTitle: "Web Designer & Developer",
       description:
-        "Professional web designer and developer specializing in modern, conversion-focused websites",
+        "Professional web designer and developer in Istanbul specializing in modern, conversion-focused websites, UI/UX design, SEO, and AI chatbot integration.",
       url: "https://awab.design",
+      email: "hello@awab.design",
+      telephone: "+905541759945",
+      image: "https://awab.design/img/hero-image.jpg",
       sameAs: [
         "https://www.linkedin.com/in/awab-adam/",
         "https://www.instagram.com/awabeladam/",
       ],
-      worksFor: {
-        "@type": "Organization",
-        name: "Freelance",
-      },
       address: {
         "@type": "PostalAddress",
         addressLocality: "Istanbul",
         addressCountry: "TR",
       },
+      areaServed: ["Worldwide", "Turkey", "France", "Middle East"],
+      knowsLanguage: ["en", "ar", "tr", "fr"],
       knowsAbout: [
         "Web Design",
         "Web Development",
         "UI/UX Design",
+        "SEO",
+        "AI Chatbot Integration",
+        "Brand Identity",
         "Next.js",
         "React",
-        "Tailwind CSS",
-        "JavaScript",
         "TypeScript",
       ],
+      priceRange: "$150 - $1500+",
+      makesOffer: [
+        {
+          "@type": "Offer",
+          itemOffered: { "@type": "Service", name: "Landing Page Design" },
+          priceSpecification: { "@type": "UnitPriceSpecification", price: "150", priceCurrency: "USD" },
+        },
+        {
+          "@type": "Offer",
+          itemOffered: { "@type": "Service", name: "Business Website Design & Development" },
+          priceSpecification: { "@type": "UnitPriceSpecification", price: "500", priceCurrency: "USD" },
+        },
+        {
+          "@type": "Offer",
+          itemOffered: { "@type": "Service", name: "Custom Website Development" },
+          priceSpecification: { "@type": "UnitPriceSpecification", price: "1500", priceCurrency: "USD" },
+        },
+      ],
+      aggregateRating: {
+        "@type": "AggregateRating",
+        ratingValue: "5.0",
+        reviewCount: "4",
+        bestRating: "5",
+      },
+      review: [
+        {
+          "@type": "Review",
+          author: { "@type": "Person", name: "Dr. Ahmed Hassan" },
+          reviewRating: { "@type": "Rating", ratingValue: "5" },
+          reviewBody: "Awab transformed our clinic's online presence completely. Our new website has increased our patient inquiries by 40%.",
+        },
+        {
+          "@type": "Review",
+          author: { "@type": "Person", name: "Sarah Johnson" },
+          reviewRating: { "@type": "Rating", ratingValue: "5" },
+          reviewBody: "Working with Awab was a game-changer for our aesthetic clinic. The SEO optimization has significantly improved our search rankings.",
+        },
+        {
+          "@type": "Review",
+          author: { "@type": "Person", name: "Mehmet Yılmaz" },
+          reviewRating: { "@type": "Rating", ratingValue: "5" },
+          reviewBody: "Awab created a stunning website for our restaurant. The online ordering integration was seamless.",
+        },
+        {
+          "@type": "Review",
+          author: { "@type": "Person", name: "Fatima Al-Zahra" },
+          reviewRating: { "@type": "Rating", ratingValue: "5" },
+          reviewBody: "Awab's expertise helped us establish a strong online presence. His attention to detail made all the difference.",
+        },
+      ],
+      speakable: {
+        "@type": "SpeakableSpecification",
+        cssSelector: [".hero-subtitle", ".services-description"],
+      },
     }),
   },
 };

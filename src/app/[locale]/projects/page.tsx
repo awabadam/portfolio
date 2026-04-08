@@ -4,6 +4,7 @@ import { getAllProjects } from "@/data/projects";
 import ProjectList from "@/components/projects/ProjectList";
 import ProjectsHero from "@/components/projects/ProjectsHero";
 import { getTranslations, getLocale } from 'next-intl/server';
+import Link from "next/link";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('metadata.projects');
@@ -29,7 +30,7 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     alternates: {
       canonical: "/projects",
-      languages: { en: '/projects', ar: '/ar/projects', tr: '/tr/projects' },
+      languages: { en: '/projects', ar: '/ar/projects', tr: '/tr/projects', fr: '/fr/projects' },
     },
   };
 }
@@ -43,11 +44,22 @@ const ProjectsPage = async () => {
       <ProjectsHero projectCount={allProjects.length} />
       <ProjectList projects={allProjects} />
 
-      <div className="flex h-[20vh] items-center justify-center">
-        <p className="text-center text-sm text-muted-foreground">
-          {t('moreComingSoon')}
-        </p>
-      </div>
+      <section className="border-t border-border py-32">
+        <div className="container mx-auto px-4 text-center">
+          <p className="font-mono text-sm uppercase tracking-widest text-muted-foreground">
+            {t('moreComingSoon')}
+          </p>
+          <h2 className="mx-auto mt-4 max-w-lg font-display text-3xl font-bold leading-tight md:text-4xl">
+            {t('ctaHeading')}
+          </h2>
+          <Link
+            href="/rate-calculator"
+            className="mt-8 inline-block rounded-full bg-primary px-10 py-4 text-base font-semibold text-primary-foreground transition-opacity hover:opacity-90"
+          >
+            {t('ctaButton')}
+          </Link>
+        </div>
+      </section>
     </main>
   );
 };

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { CheckCircle, ArrowLeft, Mail, Clock, Phone } from "lucide-react";
+import { CheckCircle, ArrowLeft, Mail, Clock, Phone, Briefcase, MessageCircle } from "lucide-react";
 import { Link } from '@/i18n/routing';
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from 'next-intl';
@@ -149,6 +149,46 @@ export default function ThankYouPage() {
             >
               <Link href="/projects">{t('viewWork')}</Link>
             </Button>
+          </div>
+
+          {/* Upsell Section */}
+          <div className="mb-8 mt-10">
+            <h3 className="mb-4 text-lg font-semibold text-black dark:text-white">
+              {t('exploreMore')}
+            </h3>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Card className="border-gray-200 bg-white transition-colors hover:border-primary/30 dark:border-gray-700 dark:bg-gray-800">
+                <CardContent className="p-5">
+                  <Link href="/projects" className="flex items-center gap-4">
+                    <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-primary/10">
+                      <Briefcase className="h-5 w-5 text-primary" />
+                    </div>
+                    <div className="text-left rtl:text-right">
+                      <p className="font-medium text-black dark:text-white">{t('viewProjects')}</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">{t('viewProjectsDesc')}</p>
+                    </div>
+                  </Link>
+                </CardContent>
+              </Card>
+              <Card className="border-gray-200 bg-white transition-colors hover:border-primary/30 dark:border-gray-700 dark:bg-gray-800">
+                <CardContent className="p-5">
+                  <a
+                    href={`https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "905541759945"}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-4"
+                  >
+                    <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-[#25D366]/10">
+                      <MessageCircle className="h-5 w-5 text-[#25D366]" />
+                    </div>
+                    <div className="text-left rtl:text-right">
+                      <p className="font-medium text-black dark:text-white">{t('chatWhatsApp')}</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">{t('chatWhatsAppDesc')}</p>
+                    </div>
+                  </a>
+                </CardContent>
+              </Card>
+            </div>
           </div>
 
           {/* Additional Note */}

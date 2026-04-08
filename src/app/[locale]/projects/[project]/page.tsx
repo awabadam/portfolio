@@ -3,6 +3,7 @@ import { Metadata } from "next";
 import { getProjectById, getAllProjects } from "@/data/projects";
 import { getTranslations, getLocale } from "next-intl/server";
 import ProjectDetail from "@/components/projects/ProjectDetail";
+import Breadcrumbs from "@/components/seo/Breadcrumbs";
 
 interface ProjectPageProps {
   params: Promise<{
@@ -42,6 +43,7 @@ export async function generateMetadata({
         en: `/projects/${project.id}`,
         ar: `/ar/projects/${project.id}`,
         tr: `/tr/projects/${project.id}`,
+        fr: `/fr/projects/${project.id}`,
       },
     },
   };
@@ -59,5 +61,14 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
   const currentIndex = allProjects.findIndex((p) => p.id === project.id);
   const nextProject = allProjects[(currentIndex + 1) % allProjects.length];
 
-  return <ProjectDetail project={project} nextProject={nextProject} />;
+  return (
+    <>
+      <Breadcrumbs items={[
+        { name: "Home", url: "/" },
+        { name: "Projects", url: "/projects" },
+        { name: project.title, url: `/projects/${project.id}` },
+      ]} />
+      <ProjectDetail project={project} nextProject={nextProject} />
+    </>
+  );
 }

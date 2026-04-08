@@ -31,7 +31,7 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     alternates: {
       canonical: "/services/website-maintenance",
-      languages: { en: '/services/website-maintenance', ar: '/ar/services/website-maintenance', tr: '/tr/services/website-maintenance' },
+      languages: { en: '/services/website-maintenance', ar: '/ar/services/website-maintenance', tr: '/tr/services/website-maintenance', fr: '/fr/services/website-maintenance' },
     },
   };
 }
@@ -49,7 +49,24 @@ const WebsiteMaintenancePage = async () => {
     { name: t('websiteMaintenance.enterprisePlan'), price: t('websiteMaintenance.enterprisePrice'), features: enterpriseFeatures },
   ];
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name: t('websiteMaintenance.title'),
+    description: t('websiteMaintenance.lead'),
+    provider: { "@type": "Person", name: "Awab Design", url: "https://awab.design" },
+    areaServed: "Worldwide",
+    offers: {
+      "@type": "Offer",
+      price: "150",
+      priceCurrency: "USD",
+      priceSpecification: { "@type": "UnitPriceSpecification", price: "150", priceCurrency: "USD", unitText: "month" },
+    },
+  };
+
   return (
+    <>
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
     <main className="min-h-screen bg-background pt-32">
       <div className="container mx-auto px-4 py-16">
         <Link
@@ -133,6 +150,7 @@ const WebsiteMaintenancePage = async () => {
         </section>
       </div>
     </main>
+    </>
   );
 };
 
