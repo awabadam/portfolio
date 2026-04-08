@@ -85,23 +85,23 @@ RESPOND IN THIS EXACT JSON FORMAT (no markdown wrapping):
 
   const parsed = JSON.parse(cleaned);
 
-  // Fetch cover image from Unsplash
+  // Fetch cover image from Pexels (allows automated use)
   let featured_image_url: string | undefined;
-  const unsplashKey = process.env.UNSPLASH_ACCESS_KEY;
-  if (unsplashKey) {
+  const pexelsKey = process.env.PEXELS_API_KEY;
+  if (pexelsKey) {
     try {
       const imgRes = await fetch(
-        `https://api.unsplash.com/search/photos?query=${encodeURIComponent(topic.keywords[0])}&per_page=1&orientation=landscape`,
-        { headers: { Authorization: `Client-ID ${unsplashKey}` } }
+        `https://api.pexels.com/v1/search?query=${encodeURIComponent(topic.keywords[0])}&per_page=1&orientation=landscape`,
+        { headers: { Authorization: pexelsKey } }
       );
       if (imgRes.ok) {
         const imgData = await imgRes.json();
-        if (imgData.results?.[0]?.urls?.regular) {
-          featured_image_url = imgData.results[0].urls.regular;
+        if (imgData.photos?.[0]?.src?.large2x) {
+          featured_image_url = imgData.photos[0].src.large2x;
         }
       }
     } catch {
-      // Skip image if Unsplash fails
+      // Skip image if Pexels fails
     }
   }
 
