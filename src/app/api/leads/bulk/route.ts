@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createAppServerClient } from "@/lib/supabase";
+import { createServiceRoleClient } from "@/lib/supabase";
 import { bulkLeadUpdateSchema, bulkDeleteSchema } from "@/lib/validation/schemas";
 
 // PATCH - Bulk update lead status
@@ -16,7 +16,7 @@ export async function PATCH(request: Request) {
     }
 
     const { ids, status } = validation.data;
-    const supabase = createAppServerClient();
+    const supabase = createServiceRoleClient();
 
     const { data, error } = await supabase
       .from("leads")
@@ -60,7 +60,7 @@ export async function DELETE(request: Request) {
     }
 
     const { ids } = validation.data;
-    const supabase = createAppServerClient();
+    const supabase = createServiceRoleClient();
 
     const { error, count } = await supabase
       .from("leads")

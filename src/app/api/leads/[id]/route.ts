@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createAppServerClient } from "@/lib/supabase";
+import { createServiceRoleClient } from "@/lib/supabase";
 
 // GET - Fetch a single lead
 export async function GET(
@@ -8,7 +8,7 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    const supabase = createAppServerClient();
+    const supabase = createServiceRoleClient();
 
     const { data, error } = await supabase
       .from("leads")
@@ -38,7 +38,7 @@ export async function PATCH(
     const body = await request.json();
     const { status, notes, name, email, phone } = body;
 
-    const supabase = createAppServerClient();
+    const supabase = createServiceRoleClient();
 
     const updateData: Record<string, any> = {};
     if (status !== undefined) updateData.status = status;
@@ -73,7 +73,7 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
-    const supabase = createAppServerClient();
+    const supabase = createServiceRoleClient();
 
     const { error } = await supabase
       .from("leads")

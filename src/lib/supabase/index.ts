@@ -8,6 +8,7 @@ export {
   createAnonClient,
   createAnonClientWithSession,
   createAuthenticatedClient,
+  createServiceRoleClient,
   createStaticSupabaseClient,
   createServerSupabaseClient,
 } from './server';

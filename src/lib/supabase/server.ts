@@ -2,6 +2,28 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 
 /**
+ * Service role client for admin/server-side operations that need to bypass RLS.
+ * Requires SUPABASE_SERVICE_ROLE_KEY (not prefixed with NEXT_PUBLIC_).
+ */
+export function createServiceRoleClient(): SupabaseClient {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!supabaseUrl || !serviceRoleKey) {
+    throw new Error(
+      'SUPABASE_SERVICE_ROLE_KEY is not set. Add it to .env.local for admin operations.'
+    );
+  }
+
+  return createClient(supabaseUrl, serviceRoleKey, {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false,
+    },
+  });
+}
+
+/**
  * Simple supabase client for API routes.
  * For verifying auth, extract the token from request headers.
  */

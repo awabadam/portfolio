@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createAppServerClient } from "@/lib/supabase";
+import { createAppServerClient, createServiceRoleClient } from "@/lib/supabase";
 import { checkRateLimit, getIdentifier, getRateLimitHeaders, rateLimiters } from "@/lib/rateLimit";
 import { sanitizeText } from "@/lib/sanitize";
 
@@ -35,7 +35,7 @@ export async function GET(request: Request) {
     const limit = parseInt(searchParams.get("limit") || "50");
     const offset = parseInt(searchParams.get("offset") || "0");
 
-    const supabase = createAppServerClient();
+    const supabase = createServiceRoleClient();
 
     let query = supabase
       .from("leads")
