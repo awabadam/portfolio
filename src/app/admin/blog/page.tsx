@@ -29,6 +29,7 @@ import Link from "next/link";
 import AdminLayout from "@/components/admin/layout/AdminLayout";
 import { useSupabaseAuth } from "@/hooks/useSupabase";
 import { z } from "zod";
+import { Home, ChevronRight } from "lucide-react";
 
 type FilterTab = "all" | "published" | "drafts";
 const localeLabels: Record<string, string> = {
@@ -429,6 +430,15 @@ const BlogAdminPage = () => {
   return (
     <AdminLayout>
       <div className="space-y-6">
+        {/* Breadcrumbs */}
+        <nav className="flex items-center gap-1.5 text-sm text-muted-foreground">
+          <Link href="/admin" className="flex items-center gap-1 hover:text-foreground transition-colors">
+            <Home className="h-3.5 w-3.5" /> Dashboard
+          </Link>
+          <ChevronRight className="h-3.5 w-3.5" />
+          <span className="text-foreground font-medium">Blog</span>
+        </nav>
+
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>

@@ -30,6 +30,8 @@ import {
   Search,
   FolderKanban,
   Globe,
+  ChevronRight,
+  Home,
 } from "lucide-react";
 
 export default function AdminProjectsPage() {
@@ -90,6 +92,15 @@ export default function AdminProjectsPage() {
   return (
     <AdminLayout>
       <div className="space-y-6">
+        {/* Breadcrumbs */}
+        <nav className="flex items-center gap-1.5 text-sm text-muted-foreground">
+          <Link href="/admin" className="flex items-center gap-1 hover:text-foreground transition-colors">
+            <Home className="h-3.5 w-3.5" /> Dashboard
+          </Link>
+          <ChevronRight className="h-3.5 w-3.5" />
+          <span className="text-foreground font-medium">Projects</span>
+        </nav>
+
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Projects</h1>
@@ -129,34 +140,50 @@ export default function AdminProjectsPage() {
             )}
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {filteredProjects.map((project) => (
-              <Card key={project.id} className="transition-colors hover:border-primary/20">
-                <CardContent className="flex items-center gap-4 p-4">
-                  <div className="min-w-0 flex-1">
-                    <div className="mb-1 flex items-center gap-2">
-                      {project.featured && (
-                        <Badge className="gap-1 bg-yellow-500 text-yellow-50 text-[11px]">
-                          <Star className="h-3 w-3" /> Featured
-                        </Badge>
-                      )}
-                      <Badge variant="outline" className="text-[11px]">{project.category}</Badge>
-                    </div>
-                    <h3 className="font-semibold">{project.title}</h3>
-                    <p className="mt-0.5 line-clamp-1 text-sm text-muted-foreground">{project.description}</p>
-                    <div className="mt-2 flex flex-wrap gap-1">
-                      {(project.technologies || []).map((tech) => (
-                        <Badge key={tech} variant="secondary" className="text-[10px]">{tech}</Badge>
-                      ))}
-                    </div>
-                    {project.results && project.results.length > 0 && (
-                      <p className="mt-1 text-xs text-green-600 dark:text-green-400">
-                        {project.results[0]}
-                      </p>
+              <Card key={project.id} className="flex flex-col transition-colors hover:border-primary/20">
+                <CardContent className="flex flex-1 flex-col p-4">
+                  {/* Header badges */}
+                  <div className="mb-2 flex items-center gap-2">
+                    {project.featured && (
+                      <Badge className="gap-1 bg-yellow-500 text-yellow-50 text-[11px]">
+                        <Star className="h-3 w-3" /> Featured
+                      </Badge>
                     )}
+                    <Badge variant="outline" className="text-[11px]">{project.category}</Badge>
                   </div>
 
-                  <div className="flex shrink-0 gap-1">
+                  {/* Title + description */}
+                  <h3 className="font-semibold leading-tight">{project.title}</h3>
+                  <p className="mt-1 line-clamp-2 text-sm text-muted-foreground flex-1">{project.description}</p>
+
+                  {/* Technologies */}
+                  {(project.technologies || []).length > 0 && (
+                    <div className="mt-3 flex flex-wrap gap-1">
+                      {project.technologies!.slice(0, 4).map((tech) => (
+                        <Badge key={tech} variant="secondary" className="text-[10px]">{tech}</Badge>
+                      ))}
+                      {project.technologies!.length > 4 && (
+                        <Badge variant="secondary" className="text-[10px]">+{project.technologies!.length - 4}</Badge>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Result preview */}
+                  {project.results && project.results.length > 0 && (
+                    <p className="mt-2 text-xs text-green-600 dark:text-green-400 line-clamp-1">
+                      {project.results[0]}
+                    </p>
+                  )}
+
+                  {/* Actions */}
+                  <div className="mt-3 flex gap-1 border-t pt-3">
+                    <Button variant="outline" size="sm" className="flex-1 text-xs" asChild>
+                      <Link href={`/admin/projects/${project.id}`}>
+                        <Edit className="mr-1 h-3 w-3" /> Edit
+                      </Link>
+                    </Button>
                     {project.live_url && (
                       <Button variant="ghost" size="icon" className="h-8 w-8" asChild>
                         <a href={project.live_url} target="_blank" rel="noopener noreferrer">
@@ -167,11 +194,6 @@ export default function AdminProjectsPage() {
                     <Button variant="ghost" size="icon" className="h-8 w-8" asChild>
                       <Link href={`/projects/${project.id}`} target="_blank">
                         <ExternalLink className="h-3.5 w-3.5" />
-                      </Link>
-                    </Button>
-                    <Button variant="ghost" size="icon" className="h-8 w-8" asChild>
-                      <Link href={`/admin/projects/${project.id}`}>
-                        <Edit className="h-3.5 w-3.5" />
                       </Link>
                     </Button>
                     <Button

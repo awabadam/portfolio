@@ -6,6 +6,8 @@ import AdminLayout from "@/components/admin/layout/AdminLayout";
 import ProjectForm from "@/components/admin/forms/ProjectForm";
 import { Project } from "@/types";
 import { createBrowserSupabaseClient } from "@/lib/supabase";
+import Link from "next/link";
+import { Home, ChevronRight } from "lucide-react";
 
 export default function EditProjectPage() {
   const params = useParams();
@@ -70,11 +72,18 @@ export default function EditProjectPage() {
   return (
     <AdminLayout>
       <div className="space-y-6">
+        <nav className="flex items-center gap-1.5 text-sm text-muted-foreground">
+          <Link href="/admin" className="flex items-center gap-1 hover:text-foreground transition-colors">
+            <Home className="h-3.5 w-3.5" /> Dashboard
+          </Link>
+          <ChevronRight className="h-3.5 w-3.5" />
+          <Link href="/admin/projects" className="hover:text-foreground transition-colors">Projects</Link>
+          <ChevronRight className="h-3.5 w-3.5" />
+          <span className="text-foreground font-medium">{project?.title || "Edit"}</span>
+        </nav>
+
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Edit Project</h1>
-          <p className="text-muted-foreground">
-            Update the details of your project
-          </p>
         </div>
 
         {error && (
