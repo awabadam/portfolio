@@ -38,6 +38,7 @@ export interface BlogPost {
     avatar: string;
   };
   author_id?: string;
+  locale?: string;
   tags: string[];
   meta_title?: string;
   meta_description?: string;

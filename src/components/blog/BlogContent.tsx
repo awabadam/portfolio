@@ -27,6 +27,7 @@ export default function BlogContent({ content }: { content: string }) {
       )
       .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-foreground">$1</strong>')
       .replace(/\*(.*?)\*/g, '<em class="italic">$1</em>')
+      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-primary underline underline-offset-4 hover:text-primary/80 transition-colors">$1</a>')
       .replace(/^- (.*$)/gim, '<li class="ml-4 mb-2 relative pl-6 before:content-[\'•\'] before:absolute before:left-0 before:text-primary">$1</li>')
       .replace(/\n\n/g, '</p><p class="mb-8 leading-relaxed text-lg text-muted-foreground">')
       .replace(/^<p/, '<p class="mb-8 leading-relaxed text-lg text-muted-foreground"')

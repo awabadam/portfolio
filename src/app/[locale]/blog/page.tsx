@@ -40,8 +40,9 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 const BlogPage = async () => {
+  const locale = await getLocale();
   const [allPosts, categories] = await Promise.all([
-    getAllBlogPosts(),
+    getAllBlogPosts(locale),
     getAllBlogCategories(),
   ]);
 

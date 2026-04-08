@@ -294,16 +294,28 @@ export const fallbackBlogCategories: BlogCategory[] = [
   }
 ];
 
-export const getBlogPostBySlug = async (slug: string): Promise<BlogPost | undefined> => {
+export const getBlogPostBySlug = async (slug: string, locale: string = 'en'): Promise<BlogPost | undefined> => {
   try {
-    console.log(`🔍 Fetching blog post with slug: ${slug}`);
     const supabase = createStaticSupabaseClient();
-    const { data, error } = await supabase
+    // Try locale-specific version first, fall back to English
+    let { data, error } = await supabase
       .from('blog_posts')
       .select('*')
       .eq('slug', slug)
+      .eq('locale', locale)
       .eq('published', true)
       .single();
+
+    if ((error || !data) && locale !== 'en') {
+      // Fall back to English version
+      ({ data, error } = await supabase
+        .from('blog_posts')
+        .select('*')
+        .eq('slug', slug)
+        .eq('locale', 'en')
+        .eq('published', true)
+        .single());
+    }
     
     if (error) {
       console.error(`❌ Error fetching blog post for slug "${slug}":`, error);
@@ -325,15 +337,26 @@ export const getBlogPostBySlug = async (slug: string): Promise<BlogPost | undefi
   }
 };
 
-export const getAllBlogPosts = async (): Promise<BlogPost[]> => {
+export const getAllBlogPosts = async (locale: string = 'en'): Promise<BlogPost[]> => {
   try {
-    console.log('🔍 Fetching all blog posts from Supabase...');
     const supabase = createStaticSupabaseClient();
-    const { data, error } = await supabase
+    // Get posts for locale, fall back to English posts that don't have a translation
+    let { data, error } = await supabase
       .from('blog_posts')
       .select('*')
       .eq('published', true)
+      .eq('locale', locale)
       .order('published_at', { ascending: false });
+
+    if ((!data || data.length === 0) && locale !== 'en') {
+      // Fall back to English posts
+      ({ data, error } = await supabase
+        .from('blog_posts')
+        .select('*')
+        .eq('published', true)
+        .eq('locale', 'en')
+        .order('published_at', { ascending: false }));
+    }
     
     if (error) {
       console.error('❌ Error fetching blog posts:', error);

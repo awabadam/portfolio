@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { pickTopic } from "@/lib/blog/topics";
-import { generateBlogPost, saveBlogPost } from "@/lib/blog/generator";
+import { generateAndSaveAllLocales } from "@/lib/blog/generator";
 import nodemailer from "nodemailer";
 
 export async function GET(request: NextRequest) {
@@ -17,19 +17,15 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ message: "No unused topics available" }, { status: 200 });
     }
 
-    // 2. Generate the blog post via AI
-    const post = await generateBlogPost(topic);
+    // 2. Generate English + translate to all locales, save as drafts
+    const saved = await generateAndSaveAllLocales(topic);
 
-    // 3. Save to Supabase as draft
-    await saveBlogPost(post);
-
-    // 4. Send email notification
-    await sendNotification(post.title, post.slug);
+    // 3. Send email notification
+    await sendNotification(topic.title, topic.slug);
 
     return NextResponse.json({
-      message: "Draft created",
-      title: post.title,
-      slug: post.slug,
+      message: "Drafts created in all locales",
+      posts: saved,
     });
   } catch (error) {
     console.error("Blog draft cron error:", error);

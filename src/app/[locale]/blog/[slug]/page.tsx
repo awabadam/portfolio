@@ -83,9 +83,9 @@ export async function generateStaticParams() {
 
 const BlogPostPage = async ({ params }: BlogPostPageProps) => {
   const { slug } = await params;
-  const post = await getBlogPostBySlug(slug);
   const t = await getTranslations('blog');
   const locale = await getLocale();
+  const post = await getBlogPostBySlug(slug, locale);
 
   if (!post) {
     notFound();
