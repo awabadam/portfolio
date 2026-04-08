@@ -78,11 +78,12 @@ export async function generateStaticParams() {
 
 const CategoryPage = async ({ params }: CategoryPageProps) => {
   const { slug } = await params;
+  const t = await getTranslations('blog');
+  const locale = await getLocale();
   const [posts, categories] = await Promise.all([
-    getBlogPostsByCategory(slug),
+    getBlogPostsByCategory(slug, locale),
     getAllBlogCategories(),
   ]);
-  const t = await getTranslations('blog');
 
   const currentCategory = categories.find((cat) => cat.slug === slug);
 

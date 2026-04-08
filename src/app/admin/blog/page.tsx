@@ -31,6 +31,14 @@ import { useSupabaseAuth } from "@/hooks/useSupabase";
 import { z } from "zod";
 
 type FilterTab = "all" | "published" | "drafts";
+type LocaleFilter = "all" | "en" | "tr" | "ar" | "fr";
+
+const localeLabels: Record<string, string> = {
+  en: "EN", tr: "TR", ar: "AR", fr: "FR",
+};
+const localeFlags: Record<string, string> = {
+  en: "\u{1F1EC}\u{1F1E7}", tr: "\u{1F1F9}\u{1F1F7}", ar: "\u{1F1F8}\u{1F1E6}", fr: "\u{1F1EB}\u{1F1F7}",
+};
 
 const BlogAdminPage = () => {
   const { user, supabase } = useSupabaseAuth();
@@ -42,6 +50,7 @@ const BlogAdminPage = () => {
   const [postToDelete, setPostToDelete] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [filter, setFilter] = useState<FilterTab>("all");
+  const [localeFilter, setLocaleFilter] = useState<LocaleFilter>("en");
   const [searchQuery, setSearchQuery] = useState("");
   const [formData, setFormData] = useState({
     title: "",
@@ -78,16 +87,18 @@ const BlogAdminPage = () => {
   };
 
   const filteredPosts = posts.filter((post) => {
-    const matchesFilter =
+    const matchesStatus =
       filter === "all" ||
       (filter === "published" && post.published) ||
       (filter === "drafts" && !post.published);
+    const matchesLocale =
+      localeFilter === "all" || (post.locale || "en") === localeFilter;
     const matchesSearch =
       !searchQuery ||
       post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       post.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
       post.tags.some((t) => t.toLowerCase().includes(searchQuery.toLowerCase()));
-    return matchesFilter && matchesSearch;
+    return matchesStatus && matchesLocale && matchesSearch;
   });
 
   const publishedCount = posts.filter((p) => p.published).length;
@@ -425,6 +436,19 @@ const BlogAdminPage = () => {
               </button>
             ))}
           </div>
+          <div className="flex rounded-lg border bg-muted/30 p-1">
+            {(["all", "en", "tr", "ar", "fr"] as LocaleFilter[]).map((loc) => (
+              <button
+                key={loc}
+                onClick={() => setLocaleFilter(loc)}
+                className={`rounded-md px-2.5 py-1.5 text-sm font-medium transition-colors ${
+                  localeFilter === loc ? "bg-background shadow-sm" : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {loc === "all" ? "All" : `${localeFlags[loc]} ${localeLabels[loc]}`}
+              </button>
+            ))}
+          </div>
           <div className="relative flex-1 sm:max-w-xs">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
@@ -460,6 +484,9 @@ const BlogAdminPage = () => {
                   <div className="flex flex-1 items-start justify-between gap-4 p-4">
                     <div className="min-w-0 flex-1">
                       <div className="mb-1 flex items-center gap-2">
+                        <Badge variant="outline" className="text-[11px]">
+                          {localeFlags[post.locale || "en"]} {localeLabels[post.locale || "en"]}
+                        </Badge>
                         {post.published ? (
                           <Badge variant="default" className="gap-1 bg-green-600 text-[11px]">
                             <CheckCircle className="h-3 w-3" /> Published

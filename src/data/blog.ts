@@ -378,14 +378,14 @@ export const getAllBlogPosts = async (locale: string = 'en'): Promise<BlogPost[]
   }
 };
 
-export const getFeaturedBlogPosts = async (count: number = 3): Promise<BlogPost[]> => {
+export const getFeaturedBlogPosts = async (count: number = 3, locale: string = 'en'): Promise<BlogPost[]> => {
   try {
-    console.log(`🔍 Fetching ${count} featured blog posts from Supabase...`);
     const supabase = createStaticSupabaseClient();
     const { data, error } = await supabase
       .from('blog_posts')
       .select('*')
       .eq('published', true)
+      .eq('locale', locale)
       .order('view_count', { ascending: false })
       .limit(count);
     
@@ -409,21 +409,32 @@ export const getFeaturedBlogPosts = async (count: number = 3): Promise<BlogPost[
   }
 };
 
-export const getBlogPostsByCategory = async (category: string): Promise<BlogPost[]> => {
+export const getBlogPostsByCategory = async (category: string, locale: string = 'en'): Promise<BlogPost[]> => {
   try {
     const supabase = createStaticSupabaseClient();
-    const { data, error } = await supabase
+    let { data, error } = await supabase
       .from('blog_posts')
       .select('*')
       .eq('published', true)
       .eq('category', category)
+      .eq('locale', locale)
       .order('published_at', { ascending: false });
-    
+
+    if ((!data || data.length === 0) && locale !== 'en') {
+      ({ data, error } = await supabase
+        .from('blog_posts')
+        .select('*')
+        .eq('published', true)
+        .eq('category', category)
+        .eq('locale', 'en')
+        .order('published_at', { ascending: false }));
+    }
+
     if (error) {
       console.error('Error fetching blog posts by category:', error);
       return fallbackBlogPosts.filter(post => post.category === category);
     }
-    
+
     return data as BlogPost[];
   } catch (error) {
     console.error('Error in getBlogPostsByCategory:', error);
@@ -451,13 +462,14 @@ export const getAllBlogCategories = async (): Promise<BlogCategory[]> => {
   }
 };
 
-export const searchBlogPosts = async (query: string): Promise<BlogPost[]> => {
+export const searchBlogPosts = async (query: string, locale: string = 'en'): Promise<BlogPost[]> => {
   try {
     const supabase = createStaticSupabaseClient();
     const { data, error } = await supabase
       .from('blog_posts')
       .select('*')
       .eq('published', true)
+      .eq('locale', locale)
       .or(`title.ilike.%${query}%,content.ilike.%${query}%,tags.cs.{${query}}`)
       .order('published_at', { ascending: false });
     
