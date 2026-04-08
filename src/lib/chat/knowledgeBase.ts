@@ -5,6 +5,14 @@ export interface Service {
   link?: string;
 }
 
+export interface ProjectInfo {
+  name: string;
+  category: string;
+  description: string;
+  results?: string[];
+  link: string;
+}
+
 export interface FAQ {
   question: string;
   answer: string;
@@ -15,43 +23,126 @@ export const services: Service[] = [
   {
     name: "Web Design & Development",
     description:
-      "Custom website design using Next.js, React, and Tailwind CSS. Responsive, mobile-first design approach. Landing page optimization for conversions.",
-    pricing: "Starting at $500. Landing pages from $800, business websites from $1,200",
+      "Modern, responsive websites built with Next.js, React, and Tailwind CSS. Mobile-first, SEO-optimized, conversion-focused.",
+    pricing: "Landing pages from $150, business websites from $500, custom builds from $1,500",
+    link: "/services",
+  },
+  {
+    name: "UI/UX Design",
+    description:
+      "User-centered interfaces that feel intuitive. Research, wireframes, prototypes, and design systems.",
+    link: "/services",
+  },
+  {
+    name: "SEO Setup",
+    description:
+      "Optimized site structure, meta tags, fast loading, and sitemaps to rank higher on search engines.",
+    pricing: "From $120 as an add-on",
     link: "/rate-calculator",
   },
   {
     name: "AI Chatbot Integration",
     description:
-      "Intelligent chatbots for customer support and lead generation. AI-powered automation with natural language processing. Basic chatbot starting at $300, advanced solutions from $800.",
+      "24/7 automated support for visitors. AI-powered conversation flows, lead qualification, and CRM integration.",
+    pricing: "From $500 as an add-on",
     link: "/rate-calculator",
+  },
+  {
+    name: "Brand Identity",
+    description:
+      "Logos, color palettes, typography, guidelines, business cards, and social media templates.",
+    pricing: "Starting from $800",
+    link: "/services/brand-identity",
+  },
+  {
+    name: "Domain & Hosting Management",
+    description:
+      "Domain registration, SSL certificates, and reliable hosting setup and management.",
+    link: "/services",
+  },
+  {
+    name: "Website Maintenance",
+    description:
+      "Ongoing security updates, performance optimization, content changes, and monitoring.",
+    pricing: "From $150/month",
+    link: "/services/website-maintenance",
+  },
+];
+
+export const projects: ProjectInfo[] = [
+  {
+    name: "Jouvence",
+    category: "Healthcare / Aesthetics",
+    description: "Luxury aesthetics clinic website with multilingual support (EN, TR, AR).",
+    results: ["Multilingual site serving 3 markets", "Luxury brand positioning", "Mobile-first patient experience"],
+    link: "/projects/jouvence",
+  },
+  {
+    name: "EsteExpert Clinic",
+    category: "Healthcare / Medical Aesthetics",
+    description: "Medical aesthetics clinic website designed for trust and conversions.",
+    results: ["SEO-optimized for medical keywords", "Trust-building with doctor profiles", "Booking-focused design"],
+    link: "/projects/esteexpert",
+  },
+  {
+    name: "Omar Marketing",
+    category: "Marketing Agency",
+    description: "ROI-driven marketing agency website with bold dark theme and scroll animations.",
+    results: ["ROI-driven with conversion tracking", "Bilingual (EN/AR)", "95+ Lighthouse score"],
+    link: "/projects/omar-marketing",
+  },
+  {
+    name: "SaphireDent",
+    category: "Healthcare / Dental",
+    description: "Modern dental clinic website with a clean, professional aesthetic.",
+    results: ["40% increase in patient inquiries", "Optimized for Istanbul dental search terms"],
+    link: "/projects/saphiredent",
+  },
+  {
+    name: "Awab.Design",
+    category: "Portfolio",
+    description: "Personal portfolio showcasing creative work and web design projects.",
+    link: "/projects/awab-design",
   },
 ];
 
 export const pricingInfo = {
   landing: {
-    base: 800,
-    description: "Landing Page - Perfect for single-page websites",
+    base: 150,
+    description: "Landing Page — one focused page to showcase your product or service",
   },
   business: {
-    base: 1200,
-    description: "Business Website - Multi-page professional sites (3-5 pages)",
+    base: 500,
+    description: "Business Website — 3 to 5 pages, mobile-ready, complete site",
   },
   custom: {
-    base: 3000,
-    description: "Custom Website - Complex website with custom features and integrations",
+    base: 1500,
+    description: "Custom Website — tailored build with custom features and integrations",
   },
+  addOns: [
+    { name: "SEO Setup", price: 120 },
+    { name: "Blog", price: 120 },
+    { name: "CMS", price: 250 },
+    { name: "AI Chatbot", price: 500 },
+    { name: "Multi-language", price: 150 },
+  ],
   calculator: "/rate-calculator",
 };
 
 export const businessInfo = {
-  name: "Awab Elkhalil",
+  name: "Awab Design",
+  owner: "Awab Elkhalil",
   location: "Istanbul, Turkey",
   experience: "5+ years",
-  projects: "50+ projects completed",
+  projectCount: "50+ projects completed",
   responseTime: "24 hours",
-  email: "awabe.adam@gmail.com",
+  email: "hello@awab.design",
+  phone: "+90 554 175 9945",
+  whatsapp: "+90 554 175 9945",
+  languages: "English, Arabic, Turkish, French",
   portfolio: "/projects",
-  contact: "/#contact",
+  services: "/services",
+  contact: "/contact",
   rateCalculator: "/rate-calculator",
 };
 
@@ -59,62 +150,93 @@ export const faqs: FAQ[] = [
   {
     question: "What services do you offer?",
     answer:
-      "I offer two main services: Web Design & Development and AI Chatbot Integration. Would you like to know more about either service?",
-    keywords: ["services", "what do you do", "offer", "provide"],
+      "I offer web design & development, UI/UX design, SEO, AI chatbot integration, brand identity, domain & hosting management, and website maintenance. Check /services for details or /rate-calculator for an instant quote.",
+    keywords: ["services", "what do you do", "offer", "provide", "help"],
   },
   {
     question: "How much does a website cost?",
     answer:
-      "Website pricing depends on the type: Landing Page starting at $800, Business Website starting at $1,200, and Custom Website starting at $3,000. You can use our rate calculator at /rate-calculator for a detailed quote based on your specific needs.",
-    keywords: ["price", "cost", "pricing", "how much", "fee"],
+      "Pricing depends on the type of website and add-ons you need. Use /rate-calculator for an instant, personalized estimate — it shows prices based on your region automatically.",
+    keywords: ["price", "cost", "pricing", "how much", "fee", "budget", "rate", "quote"],
   },
   {
     question: "Where are you located?",
-    answer: "I'm based in Istanbul, Turkey, but I work with clients worldwide remotely.",
-    keywords: ["location", "where", "based", "istanbul", "turkey"],
+    answer:
+      "Based in Istanbul, Turkey, but I work with clients worldwide. I speak English, Arabic, Turkish, and French.",
+    keywords: ["location", "where", "based", "istanbul", "turkey", "country"],
   },
   {
     question: "What's your experience?",
     answer:
-      "I have 5+ years of experience and have completed 50+ projects. I specialize in modern, conversion-focused websites.",
-    keywords: ["experience", "years", "projects", "portfolio"],
+      "5+ years of experience, 50+ projects completed. I've worked with clinics, marketing agencies, restaurants, and startups. Check out my portfolio at /projects.",
+    keywords: ["experience", "years", "projects", "portfolio", "background", "work"],
   },
   {
     question: "How can I contact you?",
     answer:
-      "You can contact me through the contact form on the website, or I can help you get in touch right now. What's your email address?",
-    keywords: ["contact", "get in touch", "reach", "email", "phone"],
+      "Email me at hello@awab.design, call/WhatsApp +90 554 175 9945, or use the contact form at /contact. I respond within 24 hours.",
+    keywords: ["contact", "get in touch", "reach", "email", "phone", "whatsapp", "call"],
   },
   {
     question: "Can I see your portfolio?",
     answer:
-      "Absolutely! You can view my portfolio at /projects. I've worked on various web design and development projects.",
-    keywords: ["portfolio", "work", "projects", "examples", "showcase"],
+      "Yes! Visit /projects to see my work. Featured projects include Jouvence (aesthetics clinic), EsteExpert (medical aesthetics), Omar Marketing (agency), and SaphireDent (dental clinic, 40% more inquiries).",
+    keywords: ["portfolio", "work", "projects", "examples", "showcase", "case study"],
   },
   {
     question: "How long does a project take?",
     answer:
-      "Project timelines vary based on complexity. Typically, a landing page takes 1-2 weeks, a business website takes 2-4 weeks, and custom projects take 4-8 weeks. We can discuss your specific timeline needs.",
-    keywords: ["timeline", "how long", "duration", "time", "deadline"],
+      "Landing pages take about 1 week, business websites 2-4 weeks, custom projects 4-8 weeks depending on complexity.",
+    keywords: ["timeline", "how long", "duration", "time", "deadline", "delivery"],
+  },
+  {
+    question: "Do you handle domain and hosting?",
+    answer:
+      "Yes! I register domain names, set up SSL certificates, and manage hosting on reliable providers. You don't have to worry about the technical side.",
+    keywords: ["domain", "hosting", "ssl", "server", "register"],
+  },
+  {
+    question: "Do you offer SEO?",
+    answer:
+      "Every website includes basic SEO — optimized structure, meta tags, fast loading, sitemap. Advanced SEO optimization is also available as an add-on. Check /rate-calculator for pricing.",
+    keywords: ["seo", "search engine", "google", "ranking", "search"],
+  },
+  {
+    question: "Can you add a chatbot to my site?",
+    answer:
+      "Yes! AI chatbot integration is available as an add-on for any website. It provides 24/7 automated support, lead qualification, and CRM integration. See /rate-calculator for pricing.",
+    keywords: ["chatbot", "bot", "ai", "automation", "support", "chat"],
   },
   {
     question: "Do you work with international clients?",
     answer:
-      "Yes! While I'm based in Istanbul, Turkey, I work with clients worldwide remotely. I'm fluent in English and Arabic.",
-    keywords: ["international", "remote", "worldwide", "global", "clients"],
+      "Absolutely! I'm based in Istanbul but work with clients worldwide. I'm fluent in English, Arabic, Turkish, and French.",
+    keywords: ["international", "remote", "worldwide", "global", "clients", "abroad"],
+  },
+  {
+    question: "Can my website be in multiple languages?",
+    answer:
+      "Yes! Multi-language support is available as an add-on. I can build your site in English, Turkish, Arabic, French, or any language your audience needs. See /rate-calculator for pricing.",
+    keywords: ["language", "multilingual", "translation", "bilingual", "multi-language"],
+  },
+  {
+    question: "What happens after launch?",
+    answer:
+      "I offer ongoing maintenance plans covering security updates, performance optimization, and content changes. You're never left on your own. Check /services/website-maintenance for plan details.",
+    keywords: ["after", "launch", "maintenance", "support", "updates", "ongoing"],
   },
 ];
 
 export const greetings = [
-  "Hello! I'm here to help you learn about Awab's web design services. How can I assist you today?",
-  "Hi there! Welcome! I can help you with information about web design and AI chatbot services. What would you like to know?",
-  "Hey! I'm here to answer your questions about Awab's design services. How can I help you today?",
+  "Hello! I'm here to help you with web design services. What are you looking for?",
+  "Hi there! Need a website, quote, or want to see our work? I can help!",
+  "Hey! I can tell you about pricing, show portfolio examples, or help you get a quote. What would you like?",
 ];
 
 export const farewells = [
-  "Thank you for visiting! Feel free to reach out if you have any more questions. Have a great day!",
-  "It was great chatting with you! Don't hesitate to contact us if you need anything else. Goodbye!",
-  "Thanks for stopping by! If you have more questions, just ask. Take care!",
+  "Thanks for visiting! Feel free to reach out anytime. Have a great day!",
+  "Great chatting! If you need anything else, just ask. Take care!",
+  "Thanks for stopping by! Get your instant quote at /rate-calculator anytime.",
 ];
 
 export function findMatchingFAQ(query: string): FAQ | null {
@@ -130,3 +252,12 @@ export function findMatchingFAQ(query: string): FAQ | null {
   return null;
 }
 
+export function findRelevantProjects(query: string): ProjectInfo[] {
+  const lowerQuery = query.toLowerCase();
+  return projects.filter(
+    (p) =>
+      lowerQuery.includes(p.category.toLowerCase()) ||
+      lowerQuery.includes(p.name.toLowerCase()) ||
+      p.description.toLowerCase().split(" ").some((word) => lowerQuery.includes(word) && word.length > 4)
+  );
+}

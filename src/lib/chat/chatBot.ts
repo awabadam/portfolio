@@ -182,7 +182,7 @@ export function processMessage(
     lowerMessage.includes("years") ||
     lowerMessage.includes("how long")
   ) {
-    response = `I have ${businessInfo.experience} of experience and have completed ${businessInfo.projects}. I specialize in modern, conversion-focused websites that help businesses stand out online.`;
+    response = `I have ${businessInfo.experience} of experience and have completed ${businessInfo.projectCount}. I specialize in modern, conversion-focused websites that help businesses stand out online.`;
     return { response, context: newContext };
   }
 

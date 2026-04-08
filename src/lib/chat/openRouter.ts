@@ -1,5 +1,6 @@
 import { ChatMessage, ChatContext } from "./chatBot";
-import { services, pricingInfo, businessInfo, faqs } from "./knowledgeBase";
+import { services, projects, pricingInfo, businessInfo, faqs } from "./knowledgeBase";
+import { projectTiers, getPrice, formatPrice, FALLBACK_TRY_RATE } from "@/lib/pricing";
 
 export interface OpenRouterResponse {
   id: string;
@@ -26,36 +27,59 @@ const PRIORITY_MESSAGE_COUNT = 4; // Always keep the last N messages
  * Builds a system prompt with knowledge base information
  */
 function buildSystemPrompt(context: ChatContext, locale?: string): string {
-  const servicesList = services
-    .map((s, i) => `${i + 1}. ${s.name}: ${s.description}`)
-    .join("\n");
+  const loc = locale || "en";
+  const tryRate = FALLBACK_TRY_RATE;
 
-  const faqsList = faqs
-    .map((faq) => `Q: ${faq.question}\nA: ${faq.answer}`)
-    .join("\n\n");
+  // Build locale-aware pricing
+  const tierPrices = projectTiers.map((t) => {
+    const price = getPrice(t.id, t.basePrice, loc);
+    return `${t.nameKey === "landingPage" ? "Landing Page" : t.nameKey === "businessWebsite" ? "Business Website" : "Custom Website"}: from ${formatPrice(price, loc, tryRate)}`;
+  }).join(", ");
+
+  const addOnPrices = pricingInfo.addOns.map((a) => {
+    const id = a.name.toLowerCase().replace(/ /g, "").replace("aichatbot", "chatbot");
+    const price = getPrice(id, a.price, loc);
+    return `${a.name} (+${formatPrice(price, loc, tryRate)})`;
+  }).join(", ");
+
+  // Build project showcase
+  const projectList = projects
+    .map((p) => `${p.name} (${p.category})${p.results ? " — " + p.results[0] : ""}`)
+    .join("; ");
 
   let contextInfo = "";
-  if (context.visitorName) {
-    contextInfo += `\nVisitor's name: ${context.visitorName}`;
-  }
-  if (context.visitorEmail) {
-    contextInfo += `\nVisitor's email: ${context.visitorEmail}`;
-  }
-  if (context.visitorPhone) {
-    contextInfo += `\nVisitor's phone: ${context.visitorPhone}`;
-  }
+  if (context.visitorName) contextInfo += `\nVisitor's name: ${context.visitorName}`;
+  if (context.visitorEmail) contextInfo += `\nVisitor's email: ${context.visitorEmail}`;
+  if (context.visitorPhone) contextInfo += `\nVisitor's phone: ${context.visitorPhone}`;
 
-  const langInstruction = locale && locale !== 'en'
-    ? `Reply in ${locale === 'ar' ? 'Arabic' : locale === 'tr' ? 'Turkish' : locale}. Keep brand names and tech terms in English.`
-    : '';
+  const langMap: Record<string, string> = { ar: "Arabic", tr: "Turkish", fr: "French" };
+  const langInstruction = loc !== "en" && langMap[loc]
+    ? `Reply in ${langMap[loc]}. Keep brand names and tech terms in English.`
+    : "";
 
-  return `You are Awab Elkhalil's portfolio assistant. Be brief, friendly, and helpful. 2-3 sentences max per reply. Plain text only — no markdown, no bullets, no formatting.
-${langInstruction ? `\n${langInstruction}` : ''}
-Awab: web designer/developer in Istanbul, 5+ years, 50+ projects. Email: ${businessInfo.email}
+  return `You are Awab Design's assistant. Brief, friendly, helpful. 2-3 sentences max. Plain text only.
+${langInstruction ? `\n${langInstruction}` : ""}
+About: Web designer/developer in Istanbul. 5+ years, 50+ projects. Speaks English, Arabic, Turkish, French.
+Email: ${businessInfo.email} | WhatsApp: ${businessInfo.phone}
 
-Services: Web Design (from $500), AI Chatbot Integration (from $300). Quote calculator: /rate-calculator. Portfolio: /projects.
+PRICING (${loc.toUpperCase()} locale):
+${tierPrices}
+Add-ons: ${addOnPrices}
+Instant quote: /rate-calculator
 
-To collect contact info: ask name, then email, then optionally phone. Confirm 24hr response.${contextInfo ? `\nVisitor info:${contextInfo}` : ''}`;
+SERVICES: Web Design, UI/UX, SEO, Blog, CMS, AI Chatbot, Multi-language, Brand Identity, Domain & Hosting, Maintenance (from $150/mo).
+Details: /services
+
+PORTFOLIO: ${projectList}
+All projects: /projects
+
+BEHAVIOR:
+- When asked about pricing, give locale-specific prices above and link to /rate-calculator.
+- When asked about portfolio or examples, recommend relevant projects from the list above based on their industry.
+- For healthcare/clinic inquiries, recommend Jouvence, EsteExpert, or SaphireDent.
+- For marketing/agency inquiries, recommend Omar Marketing.
+- To collect leads: ask name → email → phone (optional). Confirm 24hr response.
+- Always suggest /rate-calculator for detailed quotes.${contextInfo ? `\nVisitor info:${contextInfo}` : ""}`;
 }
 
 /**
