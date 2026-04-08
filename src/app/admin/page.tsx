@@ -69,20 +69,20 @@ export default function AdminDashboardPage() {
 
   useEffect(() => {
     const fetchStats = async () => {
+      if (!supabase) { setLoading(false); return; }
       try {
-        // Fetch leads stats
-        const leadsRes = await fetch("/api/leads");
-        if (leadsRes.ok) {
-          const leadsData = await leadsRes.json();
-          const leads = leadsData.leads || [];
-          setStats({
-            totalLeads: leads.length,
-            newLeads: leads.filter((l: any) => l.status === "new").length,
-            whatsappLeads: leads.filter((l: any) => l.source === "whatsapp").length,
-            contactFormLeads: leads.filter((l: any) => l.source === "contact_form").length,
-            chatConversations: 0, // Will be fetched separately if needed
-          });
-        }
+        const { data: leads } = await supabase
+          .from("leads")
+          .select("source, status");
+
+        const all = leads || [];
+        setStats({
+          totalLeads: all.length,
+          newLeads: all.filter((l) => l.status === "new").length,
+          whatsappLeads: all.filter((l) => l.source === "whatsapp").length,
+          contactFormLeads: all.filter((l) => l.source === "contact_form").length,
+          chatConversations: 0,
+        });
       } catch (error) {
         console.error("Error fetching stats:", error);
       } finally {

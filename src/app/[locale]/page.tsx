@@ -4,7 +4,7 @@ import { useRef, useState, useEffect } from "react";
 import { Link } from "@/i18n/routing";
 import dynamic from "next/dynamic";
 import { motion, useScroll, useTransform, useMotionValue, useSpring } from "framer-motion";
-import { ArrowDown, ArrowRight } from "lucide-react";
+import { ArrowDown, ArrowRight, Layout, Search, Code, Bot, Globe, Shield, Server, FileText } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Project } from "@/types";
@@ -67,9 +67,16 @@ export default function HomePage() {
     fetchProjects();
   }, []);
 
-  const services = [
-    { title: t('webDesignTitle'), desc: t('webDesignDesc'), link: "/services/webdesign-istanbul" },
-    { title: t('aiChatbotTitle'), desc: t('aiChatbotDesc'), link: "/services/ai-chatbot-integration" },
+  const tServices = useTranslations('services');
+  const capabilities = [
+    { icon: <Layout className="h-5 w-5" />, title: tServices('capWebDesign'), desc: tServices('capWebDesignDesc') },
+    { icon: <Search className="h-5 w-5" />, title: tServices('capSeo'), desc: tServices('capSeoDesc') },
+    { icon: <Code className="h-5 w-5" />, title: tServices('capCms'), desc: tServices('capCmsDesc') },
+    { icon: <Bot className="h-5 w-5" />, title: tServices('capChatbot'), desc: tServices('capChatbotDesc') },
+    { icon: <Globe className="h-5 w-5" />, title: tServices('capMultilang'), desc: tServices('capMultilangDesc') },
+    { icon: <FileText className="h-5 w-5" />, title: tServices('capBlog'), desc: tServices('capBlogDesc') },
+    { icon: <Shield className="h-5 w-5" />, title: tServices('capDomain'), desc: tServices('capDomainDesc') },
+    { icon: <Server className="h-5 w-5" />, title: tServices('capHosting'), desc: tServices('capHostingDesc') },
   ];
 
   return (
@@ -154,23 +161,14 @@ export default function HomePage() {
             </p>
           </ScrollReveal>
 
-          <StaggerContainer className="divide-y divide-border border-y border-border" staggerDelay={0.15}>
-            {services.map((service, i) => (
+          <StaggerContainer className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4" staggerDelay={0.05}>
+            {capabilities.map((cap, i) => (
               <StaggerItem key={i} animation="fadeUp">
-                <MagneticElement strength={20}>
-                  <Link
-                    href={service.link}
-                    className="group flex flex-col justify-between gap-4 py-12 transition-colors hover:bg-muted/30 md:flex-row md:items-center md:py-16"
-                  >
-                    <h3 className="font-display text-3xl font-bold transition-transform duration-500 group-hover:translate-x-4 rtl:group-hover:-translate-x-4 md:text-5xl">
-                      {service.title}
-                    </h3>
-                    <div className="flex items-center gap-8 md:gap-16">
-                      <p className="max-w-xs text-muted-foreground">{service.desc}</p>
-                      <ArrowRight className="hidden h-6 w-6 -rotate-45 transition-transform duration-500 group-hover:rotate-0 rtl:rotate-45 rtl:group-hover:rotate-0 md:block" />
-                    </div>
-                  </Link>
-                </MagneticElement>
+                <div className="rounded-xl border border-border/40 bg-card p-5 transition-all duration-300 hover:border-primary/30 hover:shadow-md">
+                  <div className="mb-3 text-primary">{cap.icon}</div>
+                  <h3 className="font-semibold">{cap.title}</h3>
+                  <p className="mt-1 text-xs text-muted-foreground">{cap.desc}</p>
+                </div>
               </StaggerItem>
             ))}
           </StaggerContainer>
