@@ -40,23 +40,19 @@ export default function EditProjectPage() {
           throw new Error("Project not found");
         }
 
-        // Map database fields to our Project type
         setProject({
           id: data.id,
           title: data.title,
+          category: data.category,
+          description: data.description,
+          live_url: data.live_url,
+          featured: data.featured,
+          iframe_blocked: data.iframe_blocked,
+          technologies: data.technologies || [],
+          results: data.results || [],
           role: data.role,
           overview: data.overview,
           objectives: data.objectives,
-          approach: data.approach,
-          designConcept: data.design_concept,
-          finalThoughts: data.final_thoughts,
-          images: data.images,
-          category: data.category,
-          description: data.description,
-          behance_url: data.behance_url,
-          thumbnail_url: data.thumbnail_url,
-          featured: data.featured,
-          technologies: data.technologies || [],
         });
       } catch (err) {
         console.error("Error fetching project:", err);
