@@ -37,7 +37,7 @@ const localeLabels: Record<string, string> = {
   en: "EN", tr: "TR", ar: "AR", fr: "FR",
 };
 const localeFlags: Record<string, string> = {
-  en: "\u{1F1EC}\u{1F1E7}", tr: "\u{1F1F9}\u{1F1F7}", ar: "\u{1F1F8}\u{1F1E6}", fr: "\u{1F1EB}\u{1F1F7}",
+  en: "🇬🇧", tr: "🇹🇷", ar: "🇸🇦", fr: "🇫🇷",
 };
 
 const BlogAdminPage = () => {

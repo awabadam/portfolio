@@ -13,7 +13,13 @@ const nextConfig = {
       },
       {
         protocol: "https",
-        hostname: "xvnzxbtldhydyeimhdgz.supabase.co",
+        hostname: "images.pexels.com",
+        port: "",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "ixpsdumronjzsegxscdt.supabase.co",
         port: "",
         pathname: "/storage/v1/object/public/**",
       },
