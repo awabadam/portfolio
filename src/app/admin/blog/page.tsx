@@ -31,8 +31,6 @@ import { useSupabaseAuth } from "@/hooks/useSupabase";
 import { z } from "zod";
 
 type FilterTab = "all" | "published" | "drafts";
-type LocaleFilter = "all" | "en" | "tr" | "ar" | "fr";
-
 const localeLabels: Record<string, string> = {
   en: "EN", tr: "TR", ar: "AR", fr: "FR",
 };
@@ -50,8 +48,8 @@ const BlogAdminPage = () => {
   const [postToDelete, setPostToDelete] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [filter, setFilter] = useState<FilterTab>("all");
-  const [localeFilter, setLocaleFilter] = useState<LocaleFilter>("en");
   const [searchQuery, setSearchQuery] = useState("");
+  const [activeLocales, setActiveLocales] = useState<Record<string, string>>({});
   const [formData, setFormData] = useState({
     title: "",
     slug: "",
@@ -86,23 +84,46 @@ const BlogAdminPage = () => {
     }
   };
 
-  const filteredPosts = posts.filter((post) => {
-    const matchesStatus =
-      filter === "all" ||
-      (filter === "published" && post.published) ||
-      (filter === "drafts" && !post.published);
-    const matchesLocale =
-      localeFilter === "all" || (post.locale || "en") === localeFilter;
-    const matchesSearch =
-      !searchQuery ||
-      post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      post.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      post.tags.some((t) => t.toLowerCase().includes(searchQuery.toLowerCase()));
-    return matchesStatus && matchesLocale && matchesSearch;
+  // Group posts by slug
+  const groupedBySlug = posts.reduce<Record<string, BlogPost[]>>((acc, post) => {
+    const key = post.slug;
+    if (!acc[key]) acc[key] = [];
+    acc[key].push(post);
+    return acc;
+  }, {});
+
+  // For each group, get the "active" post (selected locale tab, default EN)
+  const articleGroups = Object.entries(groupedBySlug).map(([slug, variants]) => {
+    const activeLoc = activeLocales[slug] || "en";
+    const activePost = variants.find((p) => (p.locale || "en") === activeLoc) || variants[0];
+    return { slug, variants, activePost };
   });
 
-  const publishedCount = posts.filter((p) => p.published).length;
-  const draftCount = posts.filter((p) => !p.published).length;
+  // Filter groups
+  const filteredGroups = articleGroups.filter(({ activePost, variants }) => {
+    const matchesStatus =
+      filter === "all" ||
+      (filter === "published" && variants.some((p) => p.published)) ||
+      (filter === "drafts" && variants.some((p) => !p.published));
+    const matchesSearch =
+      !searchQuery ||
+      variants.some(
+        (p) =>
+          p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          p.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          p.tags.some((t) => t.toLowerCase().includes(searchQuery.toLowerCase()))
+      );
+    return matchesStatus && matchesSearch;
+  });
+
+  // Sort by newest first (using EN post date or first variant)
+  filteredGroups.sort((a, b) =>
+    new Date(b.activePost.created_at).getTime() - new Date(a.activePost.created_at).getTime()
+  );
+
+  const uniqueSlugs = Object.keys(groupedBySlug).length;
+  const publishedSlugs = articleGroups.filter((g) => g.variants.some((p) => p.published)).length;
+  const draftSlugs = articleGroups.filter((g) => g.variants.every((p) => !p.published)).length;
 
   const validateForm = () => {
     try {
@@ -413,7 +434,7 @@ const BlogAdminPage = () => {
           <div>
             <h1 className="text-3xl font-bold">Blog</h1>
             <p className="text-sm text-muted-foreground">
-              {posts.length} posts — {publishedCount} published, {draftCount} drafts
+              {uniqueSlugs} articles — {publishedSlugs} published, {draftSlugs} drafts ({posts.length} total with translations)
             </p>
           </div>
           <Button onClick={() => setShowForm(true)} className="gap-2">
@@ -432,20 +453,7 @@ const BlogAdminPage = () => {
                   filter === tab ? "bg-background shadow-sm" : "text-muted-foreground hover:text-foreground"
                 }`}
               >
-                {tab === "all" ? `All (${posts.length})` : tab === "published" ? `Published (${publishedCount})` : `Drafts (${draftCount})`}
-              </button>
-            ))}
-          </div>
-          <div className="flex rounded-lg border bg-muted/30 p-1">
-            {(["all", "en", "tr", "ar", "fr"] as LocaleFilter[]).map((loc) => (
-              <button
-                key={loc}
-                onClick={() => setLocaleFilter(loc)}
-                className={`rounded-md px-2.5 py-1.5 text-sm font-medium transition-colors ${
-                  localeFilter === loc ? "bg-background shadow-sm" : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {loc === "all" ? "All" : `${localeFlags[loc]} ${localeLabels[loc]}`}
+                {tab === "all" ? `All (${uniqueSlugs})` : tab === "published" ? `Published (${publishedSlugs})` : `Drafts (${draftSlugs})`}
               </button>
             ))}
           </div>
@@ -460,99 +468,133 @@ const BlogAdminPage = () => {
           </div>
         </div>
 
-        {/* Posts list */}
+        {/* Posts list — grouped by slug */}
         <div className="space-y-3">
-          {filteredPosts.map((post) => (
-            <Card key={post.id} className="overflow-hidden transition-colors hover:border-primary/20">
-              <CardContent className="p-0">
-                <div className="flex">
-                  {/* Thumbnail */}
-                  {post.featured_image_url ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={post.featured_image_url}
-                      alt=""
-                      className="hidden h-32 w-40 shrink-0 object-cover sm:block"
-                    />
-                  ) : (
-                    <div className="hidden h-32 w-40 shrink-0 items-center justify-center bg-muted sm:flex">
-                      <Image className="h-8 w-8 text-muted-foreground/30" />
-                    </div>
-                  )}
-
-                  {/* Content */}
-                  <div className="flex flex-1 items-start justify-between gap-4 p-4">
-                    <div className="min-w-0 flex-1">
-                      <div className="mb-1 flex items-center gap-2">
-                        <Badge variant="outline" className="text-[11px]">
-                          {localeFlags[post.locale || "en"]} {localeLabels[post.locale || "en"]}
-                        </Badge>
-                        {post.published ? (
-                          <Badge variant="default" className="gap-1 bg-green-600 text-[11px]">
-                            <CheckCircle className="h-3 w-3" /> Published
-                          </Badge>
-                        ) : (
-                          <Badge variant="secondary" className="gap-1 text-[11px]">
-                            <AlertCircle className="h-3 w-3" /> Draft
-                          </Badge>
-                        )}
-                        <Badge variant="outline" className="text-[11px]">{post.category}</Badge>
+          {filteredGroups.map(({ slug, variants, activePost }) => {
+            const post = activePost;
+            const currentLocale = activeLocales[slug] || "en";
+            return (
+              <Card key={slug} className="overflow-hidden transition-colors hover:border-primary/20">
+                <CardContent className="p-0">
+                  <div className="flex">
+                    {/* Thumbnail */}
+                    {post.featured_image_url ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={post.featured_image_url}
+                        alt=""
+                        className="hidden h-auto w-40 shrink-0 object-cover sm:block"
+                      />
+                    ) : (
+                      <div className="hidden w-40 shrink-0 items-center justify-center bg-muted sm:flex">
+                        <Image className="h-8 w-8 text-muted-foreground/30" />
                       </div>
-                      <h3 className="font-semibold leading-tight">{post.title}</h3>
-                      <p className="mt-1 line-clamp-1 text-sm text-muted-foreground">{post.excerpt}</p>
-                      <div className="mt-2 flex items-center gap-3 text-xs text-muted-foreground">
-                        <span className="flex items-center gap-1">
-                          <Calendar className="h-3 w-3" />
-                          {new Date(post.created_at).toLocaleDateString()}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Clock className="h-3 w-3" />
-                          {post.reading_time} min
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Eye className="h-3 w-3" />
-                          {post.view_count} views
+                    )}
+
+                    <div className="flex-1">
+                      {/* Locale tabs */}
+                      <div className="flex items-center gap-1 border-b bg-muted/20 px-4 py-2">
+                        {(["en", "tr", "ar", "fr"] as const).map((loc) => {
+                          const variant = variants.find((v) => (v.locale || "en") === loc);
+                          const isActive = currentLocale === loc;
+                          return (
+                            <button
+                              key={loc}
+                              onClick={() => variant && setActiveLocales((prev) => ({ ...prev, [slug]: loc }))}
+                              disabled={!variant}
+                              className={`flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium transition-colors ${
+                                isActive
+                                  ? "bg-background shadow-sm"
+                                  : variant
+                                  ? "text-muted-foreground hover:text-foreground"
+                                  : "text-muted-foreground/30 cursor-not-allowed"
+                              }`}
+                            >
+                              {localeFlags[loc]}
+                              {localeLabels[loc]}
+                              {variant && (
+                                <span className={`ml-0.5 h-1.5 w-1.5 rounded-full ${variant.published ? "bg-green-500" : "bg-amber-500"}`} />
+                              )}
+                            </button>
+                          );
+                        })}
+                        <span className="ml-auto text-[10px] text-muted-foreground">
+                          {variants.filter((v) => v.published).length}/{variants.length} published
                         </span>
                       </div>
-                    </div>
 
-                    {/* Actions */}
-                    <div className="flex shrink-0 flex-col gap-1">
-                      <Button
-                        variant={post.published ? "outline" : "default"}
-                        size="sm"
-                        className="text-xs"
-                        onClick={() => handleQuickPublish(post)}
-                      >
-                        {post.published ? "Unpublish" : "Publish"}
-                      </Button>
-                      <div className="flex gap-1">
-                        <Button variant="ghost" size="icon" className="h-8 w-8" asChild>
-                          <Link href={`/blog/${post.slug}`} target="_blank">
-                            <Eye className="h-3.5 w-3.5" />
-                          </Link>
-                        </Button>
-                        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleEdit(post)}>
-                          <Edit className="h-3.5 w-3.5" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 text-destructive hover:text-destructive"
-                          onClick={() => { setPostToDelete(post.id); setDeleteDialogOpen(true); }}
-                        >
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </Button>
+                      {/* Content */}
+                      <div className="flex items-start justify-between gap-4 p-4">
+                        <div className="min-w-0 flex-1">
+                          <div className="mb-1 flex items-center gap-2">
+                            {post.published ? (
+                              <Badge variant="default" className="gap-1 bg-green-600 text-[11px]">
+                                <CheckCircle className="h-3 w-3" /> Published
+                              </Badge>
+                            ) : (
+                              <Badge variant="secondary" className="gap-1 text-[11px]">
+                                <AlertCircle className="h-3 w-3" /> Draft
+                              </Badge>
+                            )}
+                            <Badge variant="outline" className="text-[11px]">{post.category}</Badge>
+                          </div>
+                          <h3 className="font-semibold leading-tight">{post.title}</h3>
+                          <p className="mt-1 line-clamp-1 text-sm text-muted-foreground">{post.excerpt}</p>
+                          <div className="mt-2 flex items-center gap-3 text-xs text-muted-foreground">
+                            <span className="flex items-center gap-1">
+                              <Calendar className="h-3 w-3" />
+                              {new Date(post.created_at).toLocaleDateString()}
+                            </span>
+                            <span className="flex items-center gap-1">
+                              <Clock className="h-3 w-3" />
+                              {post.reading_time} min
+                            </span>
+                            <span className="flex items-center gap-1">
+                              <Eye className="h-3 w-3" />
+                              {post.view_count} views
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Actions */}
+                        <div className="flex shrink-0 flex-col gap-1">
+                          <Button
+                            variant={post.published ? "outline" : "default"}
+                            size="sm"
+                            className="text-xs"
+                            onClick={() => handleQuickPublish(post)}
+                          >
+                            {post.published ? "Unpublish" : "Publish"}
+                          </Button>
+                          <div className="flex gap-1">
+                            <Button variant="ghost" size="icon" className="h-8 w-8" asChild>
+                              <Link href={`/blog/${post.slug}`} target="_blank">
+                                <Eye className="h-3.5 w-3.5" />
+                              </Link>
+                            </Button>
+                            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleEdit(post)}>
+                              <Edit className="h-3.5 w-3.5" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 text-destructive hover:text-destructive"
+                              onClick={() => { setPostToDelete(post.id); setDeleteDialogOpen(true); }}
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </Button>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
 
-        {filteredPosts.length === 0 && (
+        {filteredGroups.length === 0 && (
           <div className="py-12 text-center">
             <FileText className="mx-auto mb-4 h-12 w-12 text-muted-foreground/30" />
             <h3 className="font-semibold">
