@@ -48,7 +48,10 @@
     "letsTalk": "DEMANDEZ VOTRE DEVIS",
     "heroCTAPrimary": "Demander un Devis",
     "heroCTASecondary": "Voir mes Projets",
-    "stickyGetQuote": "Demander un Devis Gratuit"
+    "stickyGetQuote": "Demander un Devis Gratuit",
+    "viewAllServices": "Voir tous les services",
+    "learnMore": "En savoir plus sur moi",
+    "orGetInTouch": "ou contactez-moi directement"
   },
   "about": {
     "heroLine1": "DÉVELOPPEUR",
@@ -391,6 +394,7 @@
     "viewCode": "Voir le Code",
     "challenge": "Le Défi",
     "solution": "La Solution",
+    "resultsHeading": "Résultats",
     "nextCaseStudy": "Projet Suivant",
     "viewAllWork": "TOUS LES PROJETS",
     "viewCaseStudy": "Voir l'Étude de Cas",

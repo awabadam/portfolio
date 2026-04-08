@@ -48,7 +48,10 @@
     "letsTalk": "GET YOUR FREE QUOTE",
     "heroCTAPrimary": "Get a Free Quote",
     "heroCTASecondary": "View My Work",
-    "stickyGetQuote": "Get Your Free Quote"
+    "stickyGetQuote": "Get Your Free Quote",
+    "viewAllServices": "See all services",
+    "learnMore": "Learn more about me",
+    "orGetInTouch": "or get in touch directly"
   },
   "about": {
     "heroLine1": "CREATIVE",
@@ -391,6 +394,7 @@
     "viewCode": "View Code",
     "challenge": "The Challenge",
     "solution": "The Solution",
+    "resultsHeading": "Results",
     "nextCaseStudy": "Next Case Study",
     "viewAllWork": "VIEW ALL WORK",
     "viewCaseStudy": "View Case Study",

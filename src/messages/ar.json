@@ -48,7 +48,10 @@
     "letsTalk": "احصل على عرض سعر مجاني",
     "heroCTAPrimary": "احصل على عرض سعر مجاني",
     "heroCTASecondary": "شاهد أعمالي",
-    "stickyGetQuote": "احصل على عرض سعر مجاني"
+    "stickyGetQuote": "احصل على عرض سعر مجاني",
+    "viewAllServices": "جميع الخدمات",
+    "learnMore": "تعرّف عليّ أكثر",
+    "orGetInTouch": "أو تواصل معي مباشرة"
   },
   "about": {
     "heroLine1": "مُطَوِّرٌ",
@@ -392,6 +395,7 @@
     "viewCode": "عرض الكود",
     "challenge": "التحدّي",
     "solution": "الحل",
+    "resultsHeading": "النتائج",
     "nextCaseStudy": "دراسة الحالة التالية",
     "viewAllWork": "عرض جميع الأعمال",
     "viewCaseStudy": "عرض دراسة الحالة",

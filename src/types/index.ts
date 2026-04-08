@@ -19,6 +19,7 @@ export interface Project {
   finalThoughts?: string;
   behance_url?: string;
   images?: string[];
+  results?: string[];
 }
 
 export interface BlogPost {

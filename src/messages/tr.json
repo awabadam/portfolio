@@ -48,7 +48,10 @@
     "letsTalk": "ÜCRETSİZ TEKLİF ALIN",
     "heroCTAPrimary": "Ücretsiz Teklif Alın",
     "heroCTASecondary": "Çalışmalarımı Görün",
-    "stickyGetQuote": "Ücretsiz Teklif Alın"
+    "stickyGetQuote": "Ücretsiz Teklif Alın",
+    "viewAllServices": "Tüm hizmetleri gör",
+    "learnMore": "Hakkımda daha fazla",
+    "orGetInTouch": "veya doğrudan iletişime geçin"
   },
   "about": {
     "heroLine1": "YARATICI",
@@ -392,6 +395,7 @@
     "viewCode": "Kodu Görüntüle",
     "challenge": "Zorluk",
     "solution": "Çözüm",
+    "resultsHeading": "Sonuçlar",
     "nextCaseStudy": "Sonraki Vaka Çalışması",
     "viewAllWork": "TÜM ÇALIŞMALARI GÖRÜNTÜLE",
     "viewCaseStudy": "Vaka Çalışmasını Görüntüle",

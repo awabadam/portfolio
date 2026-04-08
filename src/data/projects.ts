@@ -20,6 +20,11 @@ export const projects: Project[] = [
     thumbnail_url: "/img/projects/january-campaign.png",
     featured: true,
     technologies: ["Web Design", "UI/UX"],
+    results: [
+      "Multilingual site serving 3 markets (EN, TR, AR)",
+      "Luxury brand positioning with high-end visual design",
+      "Mobile-first experience optimized for patient conversions",
+    ],
   },
   {
     id: "esteexpert",
@@ -30,6 +35,11 @@ export const projects: Project[] = [
     thumbnail_url: "/img/projects/brand-identity.jpg",
     featured: true,
     technologies: ["Web Design", "UI/UX"],
+    results: [
+      "Modern booking-focused patient experience",
+      "SEO-optimized structure for medical aesthetics keywords",
+      "Trust-building design with doctor profiles and certifications",
+    ],
   },
   {
     id: "omar-marketing",
@@ -39,6 +49,11 @@ export const projects: Project[] = [
     live_url: "https://omar.marketing",
     featured: true,
     technologies: ["Next.js", "React", "Tailwind CSS"],
+    results: [
+      "ROI-driven design with built-in conversion tracking",
+      "Bilingual site (EN/AR) with animated scroll interactions",
+      "Performance-optimized dark theme with 95+ Lighthouse score",
+    ],
   },
   {
     id: "awab-cv",
@@ -68,6 +83,11 @@ export const projects: Project[] = [
     thumbnail_url: "/img/projects/january-campaign.png",
     featured: false,
     technologies: ["Web Design", "UI/UX"],
+    results: [
+      "40% increase in patient inquiries",
+      "Professional online presence replacing outdated site",
+      "Optimized for local Istanbul dental search terms",
+    ],
   },
 ];
 

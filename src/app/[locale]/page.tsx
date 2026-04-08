@@ -42,6 +42,7 @@ function useParallaxMouse(strength = 20) {
 
 export default function HomePage() {
   const t = useTranslations('home');
+  const tAbout = useTranslations('about');
   const containerRef = useRef<HTMLDivElement>(null!);
   const { scrollYProgress } = useScroll({
     target: containerRef as any,
@@ -173,6 +174,16 @@ export default function HomePage() {
               </StaggerItem>
             ))}
           </StaggerContainer>
+
+          <ScrollReveal animation="fadeUp" delay={0.2} className="mt-12 text-center">
+            <Link
+              href="/services"
+              className="inline-flex items-center gap-2 font-mono text-sm text-muted-foreground transition-colors hover:text-primary"
+            >
+              {t('viewAllServices')}
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </ScrollReveal>
         </div>
       </section>
 
@@ -216,6 +227,24 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* About Snippet */}
+      <section className="relative z-10 bg-background py-24">
+        <div className="container mx-auto px-4 text-center">
+          <ScrollReveal animation="fadeUp">
+            <p className="mx-auto max-w-2xl text-lg leading-relaxed text-muted-foreground">
+              {tAbout('storyLine1')} {tAbout('storyLine2')} {tAbout('storyLine3')}
+            </p>
+            <Link
+              href="/about"
+              className="mt-4 inline-flex items-center gap-2 font-mono text-sm text-muted-foreground transition-colors hover:text-primary"
+            >
+              {t('learnMore')}
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </ScrollReveal>
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="relative z-10 bg-background flex min-h-[80vh] items-center justify-center py-32 text-center">
         <div className="container mx-auto px-4">
@@ -233,6 +262,14 @@ export default function HomePage() {
                 <div className="absolute bottom-4 right-0 h-4 w-0 bg-primary transition-all duration-500 group-hover:w-full" />
               </Link>
             </MagneticElement>
+            <p className="mt-8">
+              <Link
+                href="/contact"
+                className="font-mono text-sm text-muted-foreground transition-colors hover:text-primary"
+              >
+                {t('orGetInTouch')}
+              </Link>
+            </p>
           </ScrollReveal>
         </div>
       </section>

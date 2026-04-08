@@ -5,7 +5,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { Project } from "@/types";
 import { Link } from "@/i18n/routing";
 import { useTranslations } from "next-intl";
-import { ArrowUpRight, ArrowLeft, Globe, ArrowRight } from "lucide-react";
+import { ArrowUpRight, ArrowLeft, Globe, ArrowRight, CheckCircle } from "lucide-react";
 
 const IFRAME_WIDTH = 1440;
 const IFRAME_HEIGHT = 900;
@@ -280,6 +280,32 @@ export default function ProjectDetail({
                 </motion.div>
               )}
             </div>
+          </div>
+        </section>
+      )}
+
+      {/* Results */}
+      {project.results && project.results.length > 0 && (
+        <section className="px-4 py-16 md:py-24">
+          <div className="container mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <h2 className="mb-6 font-mono text-xs uppercase tracking-wider text-muted-foreground">
+                {t("resultsHeading")}
+              </h2>
+              <ul className="space-y-4">
+                {project.results.map((result, i) => (
+                  <li key={i} className="flex items-start gap-3 text-lg leading-relaxed">
+                    <CheckCircle className="mt-1 h-5 w-5 shrink-0 text-primary" />
+                    {result}
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
           </div>
         </section>
       )}
