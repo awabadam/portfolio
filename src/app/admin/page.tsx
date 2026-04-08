@@ -21,8 +21,12 @@ import {
   UserPlus,
   ArrowRight,
   Activity,
+  Mail,
+  Bot,
+  Clock,
 } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
+import { useSupabaseAuth } from "@/hooks/useSupabase";
 
 interface Stats {
   totalLeads: number;
@@ -32,7 +36,28 @@ interface Stats {
   chatConversations: number;
 }
 
+function timeAgo(dateStr: string): string {
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return "just now";
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  const days = Math.floor(hrs / 24);
+  if (days < 7) return `${days}d ago`;
+  return new Date(dateStr).toLocaleDateString();
+}
+
+interface ActivityItem {
+  type: "lead" | "blog";
+  title: string;
+  detail: string;
+  time: string;
+}
+
 export default function AdminDashboardPage() {
+  const { supabase } = useSupabaseAuth();
+  const [activity, setActivity] = useState<ActivityItem[]>([]);
   const [stats, setStats] = useState<Stats>({
     totalLeads: 0,
     newLeads: 0,
@@ -65,8 +90,56 @@ export default function AdminDashboardPage() {
       }
     };
 
+    const fetchActivity = async () => {
+      if (!supabase) return;
+      const items: ActivityItem[] = [];
+
+      try {
+        const { data: leads } = await supabase
+          .from("leads")
+          .select("name, source, created_at")
+          .order("created_at", { ascending: false })
+          .limit(5);
+
+        if (leads) {
+          for (const lead of leads) {
+            items.push({
+              type: "lead",
+              title: lead.name || "Anonymous",
+              detail: lead.source === "whatsapp" ? "WhatsApp inquiry" : lead.source === "rate_calculator" ? "Quote request" : "Contact form",
+              time: lead.created_at,
+            });
+          }
+        }
+      } catch {}
+
+      try {
+        const { data: drafts } = await supabase
+          .from("blog_posts")
+          .select("title, created_at, published, locale")
+          .eq("locale", "en")
+          .order("created_at", { ascending: false })
+          .limit(5);
+
+        if (drafts) {
+          for (const d of drafts) {
+            items.push({
+              type: "blog",
+              title: d.title,
+              detail: d.published ? "Published" : "Draft awaiting review",
+              time: d.created_at,
+            });
+          }
+        }
+      } catch {}
+
+      items.sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime());
+      setActivity(items.slice(0, 8));
+    };
+
     fetchStats();
-  }, []);
+    fetchActivity();
+  }, [supabase]);
 
   return (
     <AdminLayout>
@@ -260,27 +333,39 @@ export default function AdminDashboardPage() {
           </div>
         </div>
 
-        {/* Recent Activity Placeholder */}
+        {/* Recent Activity */}
         <Card>
           <CardHeader>
             <div className="flex items-center gap-2">
               <Activity className="h-5 w-5 text-muted-foreground" />
               <CardTitle>Recent Activity</CardTitle>
             </div>
-            <CardDescription>
-              Latest leads and interactions
-            </CardDescription>
+            <CardDescription>Latest leads and blog drafts</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="flex flex-col items-center justify-center py-8 text-center">
-              <TrendingUp className="mb-4 h-12 w-12 text-muted-foreground/50" />
-              <p className="text-sm text-muted-foreground">
-                Activity feed coming soon. Check the Leads page for recent submissions.
-              </p>
-              <Button asChild variant="outline" className="mt-4">
-                <Link href="/admin/leads">View All Leads</Link>
-              </Button>
-            </div>
+            {activity.length > 0 ? (
+              <div className="space-y-4">
+                {activity.map((item, i) => (
+                  <div key={i} className="flex items-start gap-3">
+                    <div className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${
+                      item.type === "lead" ? "bg-blue-100 text-blue-600 dark:bg-blue-900/20" : "bg-green-100 text-green-600 dark:bg-green-900/20"
+                    }`}>
+                      {item.type === "lead" ? <Mail className="h-4 w-4" /> : <FileText className="h-4 w-4" />}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium truncate">{item.title}</p>
+                      <p className="text-xs text-muted-foreground">{item.detail}</p>
+                    </div>
+                    <div className="flex items-center gap-1 text-xs text-muted-foreground shrink-0">
+                      <Clock className="h-3 w-3" />
+                      {timeAgo(item.time)}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="py-8 text-center text-sm text-muted-foreground">No recent activity</p>
+            )}
           </CardContent>
         </Card>
       </div>

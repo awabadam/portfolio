@@ -3,6 +3,7 @@ import { Inter as FontSans, Space_Grotesk as FontDisplay, Tajawal as FontArabic 
 import Script from "next/script";
 import "./globals.css";
 import { cn } from "@/lib/utils";
+import CookieConsent from "@/components/ui/CookieConsent";
 
 const fontSans = FontSans({
   subsets: ["latin", "latin-ext"],
@@ -95,11 +96,6 @@ export const metadata: Metadata = {
       "max-image-preview": "large",
       "max-snippet": -1,
     },
-  },
-  verification: {
-    google: "your-google-verification-code",
-    yandex: "your-yandex-verification-code",
-    yahoo: "your-yahoo-verification-code",
   },
   other: {
     "application/ld+json": JSON.stringify({
@@ -251,6 +247,7 @@ export default function RootLayout({
         </Script>
 
         {children}
+        <CookieConsent />
       </body>
     </html>
   );
