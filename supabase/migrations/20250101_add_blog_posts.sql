@@ -1,6 +1,6 @@
 -- Create blog_posts table
 CREATE TABLE IF NOT EXISTS blog_posts (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   title TEXT NOT NULL,
   slug TEXT UNIQUE NOT NULL,
   excerpt TEXT NOT NULL,
@@ -59,7 +59,7 @@ EXECUTE FUNCTION update_updated_at_column();
 
 -- Create blog_categories table for better organization
 CREATE TABLE IF NOT EXISTS blog_categories (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name TEXT NOT NULL,
   slug TEXT UNIQUE NOT NULL,
   description TEXT,

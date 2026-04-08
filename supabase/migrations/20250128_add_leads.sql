@@ -1,6 +1,6 @@
 -- Leads Table for WhatsApp and Contact Form submissions
 CREATE TABLE IF NOT EXISTS leads (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   source TEXT NOT NULL CHECK (source IN ('whatsapp', 'contact_form', 'newsletter', 'chat')),
   name TEXT,
   email TEXT,
