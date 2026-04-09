@@ -8,18 +8,21 @@ import CookieConsent from "@/components/ui/CookieConsent";
 const fontSans = FontSans({
   subsets: ["latin", "latin-ext"],
   variable: "--font-sans",
+  display: "swap",
 });
 
 const fontDisplay = FontDisplay({
   subsets: ["latin", "latin-ext"],
   variable: "--font-display",
   weight: ["300", "400", "500", "600", "700"],
+  display: "swap",
 });
 
 const fontArabic = FontArabic({
   subsets: ["arabic"],
   variable: "--font-arabic",
   weight: ["300", "400", "500", "700", "800"],
+  display: "swap",
 });
 
 // Explicit viewport + theme-color. Next.js auto-generates a default

@@ -35,9 +35,25 @@ const nextConfig = {
   compress: true,
   poweredByHeader: false,
   generateEtags: false,
-  // Disable experimental features that cause build issues
   experimental: {
-    // optimizeCss: true, // Removed due to critters dependency issues
+    // Tree-shake barrel imports from heavy libraries so only what's
+    // actually used ends up in the client bundle. Saves ~50-100 KB
+    // of JS across the site.
+    optimizePackageImports: [
+      "lucide-react",
+      "framer-motion",
+      "react-icons",
+      "@radix-ui/react-alert-dialog",
+      "@radix-ui/react-avatar",
+      "@radix-ui/react-checkbox",
+      "@radix-ui/react-dialog",
+      "@radix-ui/react-dropdown-menu",
+      "@radix-ui/react-label",
+      "@radix-ui/react-navigation-menu",
+      "@radix-ui/react-select",
+      "@radix-ui/react-separator",
+      "@radix-ui/react-slot",
+    ],
   },
 };
 
