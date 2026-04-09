@@ -19,6 +19,7 @@ import { getTranslations, getLocale } from "next-intl/server";
 import Breadcrumbs from "@/components/seo/Breadcrumbs";
 import FAQSchema from "@/components/seo/FAQSchema";
 import { getAllProjects } from "@/data/projects";
+import ClinicProjectCard from "@/components/clinic/ClinicProjectCard";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("metadata.clinicWebsites");
@@ -262,43 +263,11 @@ export default async function ClinicWebsitesPage() {
               </div>
               <div className="grid gap-8 md:grid-cols-2">
                 {clinicProjects.map((project) => (
-                  <Link
+                  <ClinicProjectCard
                     key={project.id}
-                    href={`/projects/${project.id}`}
-                    className="group relative block overflow-hidden rounded-2xl border border-border bg-card transition-all hover:border-primary/30 hover:shadow-lg"
-                  >
-                    <div className="relative aspect-[4/3] overflow-hidden bg-muted">
-                      {project.live_url && (
-                        /* eslint-disable-next-line @next/next/no-img-element */
-                        <img
-                          src={`/api/screenshot?url=${encodeURIComponent(project.live_url)}`}
-                          alt={project.title}
-                          width={800}
-                          height={600}
-                          loading="lazy"
-                          decoding="async"
-                          className="absolute inset-0 h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
-                        />
-                      )}
-                    </div>
-                    <div className="p-6">
-                      <div className="mb-3 flex items-center gap-2">
-                        <span className="rounded-full border border-border bg-background px-3 py-1 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                          {project.category}
-                        </span>
-                      </div>
-                      <h3 className="mb-2 font-display text-2xl font-bold">
-                        {project.title}
-                      </h3>
-                      <p className="mb-4 text-sm text-muted-foreground">
-                        {project.description}
-                      </p>
-                      <span className="inline-flex items-center gap-2 text-sm font-medium text-primary transition-all group-hover:gap-3">
-                        {t("viewCaseStudy")}
-                        <ArrowRight className="h-4 w-4 rtl:rotate-180" />
-                      </span>
-                    </div>
-                  </Link>
+                    project={project}
+                    viewCaseStudyLabel={t("viewCaseStudy")}
+                  />
                 ))}
               </div>
             </div>
