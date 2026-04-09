@@ -1,5 +1,7 @@
 import { ChatMessage, ChatContext } from "./chatBot";
 import { services, projects, businessInfo, faqs } from "./knowledgeBase";
+// 💰 Pricing source of truth: edit prices in src/lib/pricing.ts
+// The chat assistant's pricing answers are generated from this data.
 import { projectTiers, addOns, getPrice, formatPrice, FALLBACK_TRY_RATE } from "@/lib/pricing";
 
 export interface OpenRouterResponse {

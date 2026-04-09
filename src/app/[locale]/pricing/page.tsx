@@ -19,6 +19,9 @@ import {
 import { useTranslations, useLocale } from "next-intl";
 import { ScrollReveal, StaggerContainer, StaggerItem } from "@/components/effects";
 import FAQSchema from "@/components/seo/FAQSchema";
+// 💰 Pricing source of truth: edit prices in src/lib/pricing.ts
+// This page only defines feature lists + icons; all prices and tier
+// names/descriptions come from lib/pricing + the rateCalculator namespace.
 import {
   projectTiers,
   addOns,

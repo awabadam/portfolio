@@ -6,6 +6,7 @@ import {
   farewells,
   findMatchingFAQ,
 } from "./knowledgeBase";
+// 💰 Pricing source of truth: edit prices in src/lib/pricing.ts
 import { getPrice } from "@/lib/pricing";
 
 export interface ChatMessage {

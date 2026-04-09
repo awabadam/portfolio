@@ -1,13 +1,31 @@
-export const FALLBACK_TRY_RATE = 38;
-
-// Single source of truth for all pricing across the app:
-// - /rate-calculator (interactive builder)
-// - /pricing (SEO landing page)
-// - /services (tier cards)
-// - Chat AI assistant (openRouter.ts)
+// ============================================================================
+// 💰 PRICING — SINGLE SOURCE OF TRUTH
+// ============================================================================
 //
-// Base prices are for the AR/TR local market. International prices (EN/FR)
-// are overridden via intlPriceMap below.
+// This file is the ONLY place prices should be edited. Every consumer below
+// reads from projectTiers / addOns / intlPriceMap and computes prices via
+// getPrice() + formatPrice() for locale-aware display.
+//
+// Consumers (anywhere that shows or references prices):
+//   • src/app/[locale]/rate-calculator/page.tsx   — interactive calculator
+//   • src/app/[locale]/rate-calculator/layout.tsx — OfferCatalog JSON-LD
+//   • src/app/[locale]/pricing/page.tsx           — SEO pricing landing page
+//   • src/app/[locale]/pricing/layout.tsx         — OfferCatalog JSON-LD
+//   • src/app/[locale]/services/page.tsx          — services tier cards
+//   • src/lib/chat/openRouter.ts                  — chat assistant system prompt
+//   • src/lib/chat/chatBot.ts                     — fallback pricing reply
+//
+// Translation labels (tier names, descriptions, add-on labels) live in the
+// `rateCalculator` namespace of src/messages/{en,tr,ar,fr}.json.
+//
+// Pricing model:
+//   • Base prices = AR/TR local market rates
+//   • intlPriceMap overrides for EN/FR (international / higher tier)
+//   • formatPrice() converts USD → TRY on the fly using FALLBACK_TRY_RATE
+//     (or a live rate from /api/exchange-rate when available)
+// ============================================================================
+
+export const FALLBACK_TRY_RATE = 38;
 
 export const projectTiers = [
   { id: "landing", nameKey: "landingPage" as const, descKey: "landingPageDesc" as const, basePrice: 100 },

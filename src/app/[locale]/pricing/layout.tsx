@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { getTranslations, getLocale } from "next-intl/server";
 import Breadcrumbs from "@/components/seo/Breadcrumbs";
+// 💰 Pricing source of truth: edit prices in src/lib/pricing.ts
+// The OfferCatalog JSON-LD below is generated from projectTiers + addOns.
 import { projectTiers, addOns, intlPriceMap } from "@/lib/pricing";
 
 export async function generateMetadata(): Promise<Metadata> {

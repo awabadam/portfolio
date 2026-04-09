@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
 import { ScrollReveal, StaggerContainer, StaggerItem } from "@/components/effects";
+// 💰 Pricing source of truth: edit prices in src/lib/pricing.ts
 import { projectTiers, getPrice, formatPrice, FALLBACK_TRY_RATE } from "@/lib/pricing";
 import FAQSchema from "@/components/seo/FAQSchema";
 

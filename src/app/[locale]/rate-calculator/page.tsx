@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { useRouter } from "@/i18n/routing";
 import { useTranslations, useLocale } from "next-intl";
+// 💰 Pricing source of truth: edit prices in src/lib/pricing.ts
 import { FALLBACK_TRY_RATE, projectTiers, addOns, getPrice, formatPrice } from "@/lib/pricing";
 
 interface CalculatorData {
