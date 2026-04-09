@@ -220,6 +220,18 @@ export default function RootLayout({
   // inconsistency Googlebot mobile was seeing.
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        {/*
+          Preconnect to third-party origins we load AFTER hydration
+          (GTM, GA, font files). Opening these TCP + TLS connections
+          early saves ~200-300ms of connection setup when the scripts
+          actually fire. These are only hints — browsers may ignore
+          them if they'd hurt critical rendering.
+        */}
+        <link rel="preconnect" href="https://www.googletagmanager.com" />
+        <link rel="preconnect" href="https://www.google-analytics.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+      </head>
       <body
         className={cn(
           "h-full w-screen overflow-x-clip bg-background font-sans antialiased",

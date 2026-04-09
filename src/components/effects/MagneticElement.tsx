@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useCallback, useState } from "react";
+import { useRef, useCallback, useState, useEffect, createElement } from "react";
 import { motion, useMotionValue, useSpring } from "framer-motion";
 
 interface MagneticElementProps {
@@ -13,6 +13,11 @@ interface MagneticElementProps {
 /**
  * Wraps any element to give it a magnetic cursor-follow effect on hover.
  * The element subtly pulls toward the mouse when hovered.
+ *
+ * On touch-only devices (phones/tablets) this is a no-op passthrough —
+ * a magnetic cursor effect obviously makes no sense without a cursor
+ * and attaching mousemove listeners on mobile just wastes battery and
+ * adds TBT.
  */
 export default function MagneticElement({
   children,
@@ -20,8 +25,16 @@ export default function MagneticElement({
   strength = 30,
   as = "div",
 }: MagneticElementProps) {
+  const [isTouchOnly, setIsTouchOnly] = useState(false);
+
+  useEffect(() => {
+    setIsTouchOnly(
+      window.matchMedia("(hover: none) and (pointer: coarse)").matches
+    );
+  }, []);
+
   const ref = useRef<HTMLDivElement>(null);
-  const [isHovered, setIsHovered] = useState(false);
+  const [, setIsHovered] = useState(false);
 
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -50,6 +63,11 @@ export default function MagneticElement({
     x.set(0);
     y.set(0);
   }, [x, y]);
+
+  // Touch-only short-circuit: skip framer-motion, listeners, springs.
+  if (isTouchOnly) {
+    return createElement(as, { className }, children);
+  }
 
   const Component = motion[as] as typeof motion.div;
 

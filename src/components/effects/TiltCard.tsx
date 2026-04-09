@@ -1,7 +1,7 @@
 "use client";
 
-import { useRef, useCallback, useState } from "react";
-import { motion, useMotionValue, useSpring, useTransform, useMotionTemplate } from "framer-motion";
+import { useRef, useCallback, useEffect, useState } from "react";
+import { motion, useMotionValue, useSpring, useMotionTemplate } from "framer-motion";
 
 interface TiltCardProps {
   children: React.ReactNode;
@@ -12,6 +12,10 @@ interface TiltCardProps {
 
 /**
  * Wraps content in a 3D tilt effect that follows cursor on hover.
+ *
+ * On touch-only devices (phones/tablets) this is a no-op passthrough —
+ * there's no cursor to follow, and the mouse event listeners would
+ * just add pointless TBT on mobile.
  */
 export default function TiltCard({
   children,
@@ -19,6 +23,14 @@ export default function TiltCard({
   tiltStrength = 10,
   glare = true,
 }: TiltCardProps) {
+  const [isTouchOnly, setIsTouchOnly] = useState(false);
+
+  useEffect(() => {
+    setIsTouchOnly(
+      window.matchMedia("(hover: none) and (pointer: coarse)").matches
+    );
+  }, []);
+
   const ref = useRef<HTMLDivElement>(null);
 
   const rotateX = useMotionValue(0);
@@ -57,6 +69,12 @@ export default function TiltCard({
     rotateY.set(0);
     glareOpacity.set(0);
   }, [rotateX, rotateY, glareOpacity]);
+
+  // Touch-only short-circuit: render children in a plain div so no
+  // framer-motion values, listeners, or GPU transforms run on mobile.
+  if (isTouchOnly) {
+    return <div className={className}>{children}</div>;
+  }
 
   return (
     <motion.div

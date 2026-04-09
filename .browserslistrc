@@ -1,0 +1,13 @@
+# Drop legacy polyfills. Target only browsers that natively support
+# Baseline features (Array.prototype.at, Object.fromEntries, etc.)
+# so SWC stops emitting ~14 KB of unnecessary transforms.
+#
+# These targets match ~97% global browser usage and exclude IE11,
+# old Safari <16, and old Android WebView that still need polyfills.
+chrome >= 111
+edge >= 111
+firefox >= 111
+safari >= 16.4
+ios_saf >= 16.4
+not dead
+not op_mini all

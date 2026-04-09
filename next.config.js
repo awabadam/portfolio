@@ -53,6 +53,10 @@ const nextConfig = {
       "@radix-ui/react-separator",
       "@radix-ui/react-slot",
     ],
+    // Inline critical CSS into the HTML head so the render-blocking
+    // stylesheet request doesn't delay first paint. Saves ~300ms of
+    // LCP time per the PageSpeed audit.
+    optimizeCss: true,
   },
 };
 
