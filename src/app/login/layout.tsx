@@ -1,4 +1,4 @@
-import { ThemeProvider } from "@/components";
+import { ThemeProvider } from "@/components/theme-provider";
 
 export default function LoginLayout({
   children,

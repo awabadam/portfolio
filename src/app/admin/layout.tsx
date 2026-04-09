@@ -1,4 +1,4 @@
-import { ThemeProvider } from "@/components";
+import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 
 export default function AdminLayout({

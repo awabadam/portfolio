@@ -1,5 +1,9 @@
-// Re-export from new locations for backwards compatibility
-export { PageHero, BackgroundHero, SectionContainer, GridLayout } from "@/components/layout";
+// Re-export from new locations for backwards compatibility.
+// NOTE: PageHero / BackgroundHero intentionally excluded — they pull
+// in three.js and must be imported directly from their files to keep
+// three.js out of the main app bundle. See @/components/layout/index.ts
+// for the full explanation.
+export { SectionContainer, GridLayout } from "@/components/layout";
 export { ContentCard, ProjectCard, BlogCard } from "@/components/cards";
 export { VisualElement } from "@/components/effects";
 export { ImageGallery } from "@/components/media";

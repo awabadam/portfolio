@@ -8,7 +8,6 @@ import { ArrowDown, ArrowRight, Layout, Search, Code, Bot, Globe, Shield, Server
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Project } from "@/types";
-import { getFeaturedProjects } from "@/data/projects";
 import ProjectCard from "@/components/cards/ProjectCard";
 import StickyMobileCTA from "@/components/ui/StickyMobileCTA";
 import { ScrollReveal, StaggerContainer, StaggerItem, MagneticElement, TiltCard } from "@/components/effects";
@@ -62,11 +61,18 @@ export default function HomePageContent() {
   const [cubesReady, setCubesReady] = useState(false);
 
   useEffect(() => {
-    const fetchProjects = async () => {
-      const data = await getFeaturedProjects(3);
-      setProjects(data);
-    };
-    fetchProjects();
+    // Fetch via the API route instead of importing getFeaturedProjects
+    // directly — calling it here would pull the entire Supabase client
+    // (~176 KB) into the homepage bundle. The API route runs
+    // server-side, so Supabase stays off the client.
+    const controller = new AbortController();
+    fetch("/api/projects?featured=true&limit=3", { signal: controller.signal })
+      .then((r) => (r.ok ? r.json() : { projects: [] }))
+      .then((data) => setProjects(data.projects ?? []))
+      .catch(() => {
+        /* silent — fallback is empty state with placeholder cards */
+      });
+    return () => controller.abort();
   }, []);
 
   // Defer loading the heavy Three.js cubes until the browser is idle so

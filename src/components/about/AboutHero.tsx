@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { BackgroundHero } from "@/components/ui";
+import BackgroundHero from "@/components/layout/BackgroundHero";
 
 const AboutHero = () => {
   return (

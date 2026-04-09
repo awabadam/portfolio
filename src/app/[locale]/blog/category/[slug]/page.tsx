@@ -6,12 +6,12 @@ import {
   getAllBlogCategories,
 } from "@/data/blog";
 import {
-  BackgroundHero,
   SectionContainer,
   BlogCard,
   GridLayout,
   VisualElement,
 } from "@/components/ui";
+import BackgroundHero from "@/components/layout/BackgroundHero";
 import { Button } from "@/components/ui/button";
 import { Link } from '@/i18n/routing';
 import { ArrowLeft } from "lucide-react";

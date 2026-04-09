@@ -1,21 +1,36 @@
 import { NextResponse } from 'next/server';
 import { createAppServerClient } from '@/lib/supabase';
 
-export async function GET() {
+// Cache featured projects aggressively — they change rarely and are
+// used on the homepage which needs to avoid loading Supabase client-side.
+const CACHE_CONTROL = 'public, max-age=300, s-maxage=3600, stale-while-revalidate=86400';
+
+export async function GET(request: Request) {
   try {
+    const { searchParams } = new URL(request.url);
+    const featured = searchParams.get('featured') === 'true';
+    const limit = parseInt(searchParams.get('limit') || '0', 10);
+
     const supabase = createAppServerClient();
-    
-    // Fetch projects from Supabase
-    const { data: projects, error } = await supabase
+
+    let query = supabase
       .from('projects')
       .select('*')
       .order('created_at', { ascending: false });
-    
+
+    if (featured) query = query.eq('featured', true);
+    if (limit > 0) query = query.limit(limit);
+
+    const { data: projects, error } = await query;
+
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
-    
-    return NextResponse.json({ projects });
+
+    return NextResponse.json(
+      { projects },
+      { headers: { 'Cache-Control': CACHE_CONTROL } }
+    );
   } catch (error) {
     console.error('Error fetching projects:', error);
     return NextResponse.json(
