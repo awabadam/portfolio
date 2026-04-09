@@ -17,7 +17,12 @@ const countryLocaleMap: Record<string, string> = {
 
 const intlMiddleware = createIntlMiddleware(routing);
 
-export async function middleware(request: NextRequest) {
+// Block indexing on preview/development deploys so Vercel preview URLs
+// (and any non-production hostnames) never leak into Google's index.
+// VERCEL_ENV is one of: "production" | "preview" | "development".
+const isProduction = process.env.VERCEL_ENV === "production";
+
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Skip i18n for admin, api, login, and static assets
@@ -62,6 +67,12 @@ export async function middleware(request: NextRequest) {
     } catch (error) {
       console.warn('Middleware Supabase error:', error);
     }
+  }
+
+  // Block search engines on any non-production deploy (preview/development).
+  // This is the strongest layer — Google respects X-Robots-Tag immediately.
+  if (!isProduction) {
+    response.headers.set("X-Robots-Tag", "noindex, nofollow");
   }
 
   return response;
