@@ -63,7 +63,7 @@ import {
   Download,
   CheckSquare,
 } from "lucide-react";
-import { FaWhatsapp } from "react-icons/fa";
+import { WhatsAppIcon } from "@/components/icons/WhatsAppIcon";
 
 interface Lead {
   id: string;
@@ -79,7 +79,7 @@ interface Lead {
 }
 
 const sourceLabels = {
-  whatsapp: { label: "WhatsApp", icon: FaWhatsapp, color: "bg-[#25D366] text-white" },
+  whatsapp: { label: "WhatsApp", icon: WhatsAppIcon, color: "bg-[#25D366] text-white" },
   contact_form: { label: "Contact Form", icon: FileText, color: "bg-blue-500 text-white" },
   newsletter: { label: "Newsletter", icon: Mail, color: "bg-purple-500 text-white" },
   chat: { label: "Chat", icon: MessageSquare, color: "bg-orange-500 text-white" },
@@ -352,7 +352,7 @@ export default function LeadsPage() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">WhatsApp</CardTitle>
-              <FaWhatsapp className="h-4 w-4 text-[#25D366]" />
+              <WhatsAppIcon className="h-4 w-4 text-[#25D366]" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-[#25D366]">{stats.whatsapp}</div>
@@ -582,7 +582,7 @@ export default function LeadsPage() {
                                         target="_blank"
                                         rel="noopener noreferrer"
                                       >
-                                        <FaWhatsapp className="mr-2 h-4 w-4 text-[#25D366]" />
+                                        <WhatsAppIcon className="mr-2 h-4 w-4 text-[#25D366]" />
                                         Message on WhatsApp
                                       </a>
                                     </DropdownMenuItem>

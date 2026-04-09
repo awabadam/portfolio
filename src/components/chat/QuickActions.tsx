@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Calculator, Mail, Briefcase, DollarSign } from "lucide-react";
-import { FaWhatsapp } from "react-icons/fa";
+import { WhatsAppIcon } from "@/components/icons/WhatsAppIcon";
 import { useRouter } from '@/i18n/routing';
 import { useWhatsApp } from "./WhatsAppContext";
 import { useTranslations } from 'next-intl';
@@ -43,7 +43,7 @@ export default function QuickActions({ onActionClick }: QuickActionsProps) {
         onClick={handleWhatsApp}
         aria-label={t('openWhatsApp')}
       >
-        <FaWhatsapp className="h-3.5 w-3.5 text-[#25D366]" aria-hidden="true" />
+        <WhatsAppIcon className="h-3.5 w-3.5 text-[#25D366]" aria-hidden="true" />
         {t('whatsapp')}
       </Button>
       <Button

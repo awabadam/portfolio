@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { X, Send } from "lucide-react";
-import { FaWhatsapp } from "react-icons/fa";
+import { WhatsAppIcon } from "@/components/icons/WhatsAppIcon";
 
 interface WhatsAppModalProps {
   isOpen: boolean;
@@ -134,7 +134,7 @@ export default function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
                 className="flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366]"
                 aria-hidden="true"
               >
-                <FaWhatsapp className="h-8 w-8 text-white" />
+                <WhatsAppIcon className="h-8 w-8 text-white" />
               </div>
               <div>
                 <h2

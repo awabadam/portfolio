@@ -97,6 +97,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
               <img
                 src={`/api/screenshot?url=${encodeURIComponent(project.live_url)}`}
                 alt={project.title}
+                width={800}
+                height={600}
+                loading="lazy"
+                decoding="async"
                 className="absolute inset-0 z-[1] h-full w-full object-cover object-top"
                 onError={() => setScreenshotError(true)}
               />

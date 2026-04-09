@@ -9,9 +9,5 @@ export {
   default as ScrollReveal,
   StaggerContainer,
   StaggerItem,
-  TextReveal,
   Parallax,
-  ScrollRotate,
-  ScrollScale,
-  HorizontalReveal,
 } from './ScrollReveal';

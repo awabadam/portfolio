@@ -42,7 +42,6 @@ const nextConfig = {
     optimizePackageImports: [
       "lucide-react",
       "framer-motion",
-      "react-icons",
       "@radix-ui/react-alert-dialog",
       "@radix-ui/react-avatar",
       "@radix-ui/react-checkbox",

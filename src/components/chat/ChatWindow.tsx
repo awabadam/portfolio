@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { X, Send, Loader2, MessageCircle, RotateCcw, Trash2, WifiOff } from "lucide-react";
-import { FaWhatsapp } from "react-icons/fa";
+import { WhatsAppIcon } from "@/components/icons/WhatsAppIcon";
 import MessageBubble from "./MessageBubble";
 import QuickActions from "./QuickActions";
 import { useWhatsApp } from "./WhatsAppContext";
@@ -385,7 +385,7 @@ export default function ChatWindow({
             aria-label={t('openWhatsApp')}
             title={t('whatsapp')}
           >
-            <FaWhatsapp className="h-5 w-5 text-[#25D366]" aria-hidden="true" />
+            <WhatsAppIcon className="h-5 w-5 text-[#25D366]" aria-hidden="true" />
           </Button>
           {/* Close Button */}
           <Button
