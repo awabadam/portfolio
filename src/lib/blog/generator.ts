@@ -35,7 +35,7 @@ async function callAI(system: string, user: string, maxTokens = 4000): Promise<s
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${apiKey}`,
-      "HTTP-Referer": "https://awab.design",
+      "HTTP-Referer": "https://www.awab.design",
       "X-Title": "Awab Design Blog Generator",
     },
     body: JSON.stringify({

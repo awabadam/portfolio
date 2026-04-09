@@ -14,10 +14,11 @@ import StickyMobileCTA from "@/components/ui/StickyMobileCTA";
 import { ScrollReveal, StaggerContainer, StaggerItem, MagneticElement, TiltCard } from "@/components/effects";
 import { trackCTAClick } from "@/lib/analytics/gtm";
 
-// Dynamic import for Three.js component (no SSR)
+// Dynamic import for Three.js component (no SSR). We additionally defer
+// mounting until after first paint to keep it out of the LCP / TBT window.
 const InteractiveCubes = dynamic(
   () => import("@/components/three/InteractiveCubes"),
-  { ssr: false }
+  { ssr: false, loading: () => null }
 );
 
 function useParallaxMouse(strength = 20) {
@@ -58,6 +59,7 @@ export default function HomePageContent() {
   const scrollIndicatorParallax = useParallaxMouse(4);
 
   const [projects, setProjects] = useState<Project[]>([]);
+  const [cubesReady, setCubesReady] = useState(false);
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -65,6 +67,25 @@ export default function HomePageContent() {
       setProjects(data);
     };
     fetchProjects();
+  }, []);
+
+  // Defer loading the heavy Three.js cubes until the browser is idle so
+  // they don't block LCP / TBT on the initial page load. Falls back to a
+  // setTimeout on browsers without requestIdleCallback (Safari).
+  useEffect(() => {
+    const schedule = (cb: () => void) => {
+      if (typeof window === "undefined") return 0;
+      const ric = (window as unknown as { requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number }).requestIdleCallback;
+      if (ric) return ric(cb, { timeout: 2000 });
+      return window.setTimeout(cb, 1000);
+    };
+    const handle = schedule(() => setCubesReady(true));
+    return () => {
+      if (typeof window === "undefined") return;
+      const cic = (window as unknown as { cancelIdleCallback?: (id: number) => void }).cancelIdleCallback;
+      if (cic) cic(handle);
+      else window.clearTimeout(handle);
+    };
   }, []);
 
   const tServices = useTranslations('services');
@@ -87,15 +108,17 @@ export default function HomePageContent() {
         style={{ opacity: heroOpacity, scale: heroScale }}
       >
         <div className="absolute inset-0 bg-black">
-          <InteractiveCubes cubeCount={70} isDark={true} />
+          {cubesReady && <InteractiveCubes cubeCount={70} isDark={true} />}
         </div>
 
         <div className="absolute inset-0 flex flex-col items-center justify-center p-4">
-          {/* Heading moves opposite to mouse — creates parallax depth with cubes */}
+          {/*
+            Heading renders at final state on first paint — no initial
+            opacity:0 animation — so it becomes the LCP element
+            immediately. The mouse parallax still applies via style once
+            framer-motion hydrates.
+          */}
           <motion.h1
-            initial={{ y: 100, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
             style={{ x: headingParallax.x, y: headingParallax.y }}
             className="text-center font-display text-[12vw] font-bold leading-none tracking-tighter text-white/70 md:text-[10vw]"
           >

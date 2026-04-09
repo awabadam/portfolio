@@ -34,7 +34,7 @@ export async function generateMetadata({
     openGraph: {
       title: `${project.title} | Awab Elkhalil`,
       description: project.description,
-      url: `https://awab.design/projects/${project.id}`,
+      url: `https://www.awab.design/projects/${project.id}`,
       locale: ogLocale,
     },
     alternates: {

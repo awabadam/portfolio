@@ -51,7 +51,7 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL("https://awab.design"),
+  metadataBase: new URL("https://www.awab.design"),
   alternates: {
     canonical: "/",
     languages: {
@@ -65,7 +65,7 @@ export const metadata: Metadata = {
     title: "Awab Design | Web Designer & Developer | Istanbul",
     description:
       "Professional web design and development services that help businesses stand out online and convert visitors into customers.",
-    url: "https://awab.design",
+    url: "https://www.awab.design",
     siteName: "Awab Design",
     locale: "en_US",
     type: "website",
@@ -101,15 +101,15 @@ export const metadata: Metadata = {
     "application/ld+json": JSON.stringify({
       "@context": "https://schema.org",
       "@type": ["Person", "ProfessionalService"],
-      "@id": "https://awab.design/#person",
+      "@id": "https://www.awab.design/#person",
       name: "Awab Design",
       jobTitle: "Web Designer & Developer",
       description:
         "Professional web designer and developer in Istanbul specializing in modern, conversion-focused websites, UI/UX design, SEO, and AI chatbot integration.",
-      url: "https://awab.design",
+      url: "https://www.awab.design",
       email: "awabe.adam@gmail.com",
       telephone: "+905541759945",
-      image: "https://awab.design/img/hero-image.jpg",
+      image: "https://www.awab.design/img/hero-image.jpg",
       sameAs: [
         "https://www.linkedin.com/in/awab-adam/",
         "https://www.instagram.com/awabeladam/",

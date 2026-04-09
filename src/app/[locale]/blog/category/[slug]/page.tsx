@@ -58,7 +58,7 @@ export async function generateMetadata({
       description:
         category.description ||
         `Browse ${category.name} articles and insights from a professional web designer in Istanbul.`,
-      url: `https://awab.design/blog/category/${category.slug}`,
+      url: `https://www.awab.design/blog/category/${category.slug}`,
       locale: ogLocale,
     },
     alternates: {

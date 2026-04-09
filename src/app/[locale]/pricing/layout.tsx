@@ -27,7 +27,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       title: t("title"),
       description: t("description"),
-      url: "https://awab.design/pricing",
+      url: "https://www.awab.design/pricing",
       locale: ogLocale,
       type: "website",
     },
@@ -120,7 +120,7 @@ export default function PricingLayout({ children }: { children: React.ReactNode 
     provider: {
       "@type": "Person",
       name: "Awab Design",
-      url: "https://awab.design",
+      url: "https://www.awab.design",
       address: {
         "@type": "PostalAddress",
         addressLocality: "Istanbul",

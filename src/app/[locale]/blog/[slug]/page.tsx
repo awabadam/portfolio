@@ -42,7 +42,7 @@ export async function generateMetadata({
     openGraph: {
       title: post.meta_title || post.title,
       description: post.meta_description || post.excerpt,
-      url: `https://awab.design/blog/${post.slug}`,
+      url: `https://www.awab.design/blog/${post.slug}`,
       type: "article",
       locale: ogLocale,
       publishedTime: post.published_at,

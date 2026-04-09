@@ -4,7 +4,7 @@ import { getAllBlogPosts } from '@/data/blog'
 import { locales, defaultLocale } from '@/i18n/config'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://awab.design'
+  const baseUrl = 'https://www.awab.design'
 
   function localeUrl(path: string, locale: string) {
     if (locale === defaultLocale) return `${baseUrl}${path}`

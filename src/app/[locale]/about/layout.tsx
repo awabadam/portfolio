@@ -13,7 +13,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       title: t("title"),
       description: t("description"),
-      url: "https://awab.design/about",
+      url: "https://www.awab.design/about",
       locale: ogLocale,
       type: "profile",
     },

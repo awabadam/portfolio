@@ -62,7 +62,7 @@ async function sendNotification(title: string, slug: string) {
       <h2>New Blog Draft Ready for Review</h2>
       <p><strong>${title}</strong></p>
       <p>A new AI-generated blog draft has been saved to your admin panel.</p>
-      <p><a href="https://awab.design/admin/blog">Review and publish →</a></p>
+      <p><a href="https://www.awab.design/admin/blog">Review and publish →</a></p>
       <hr>
       <p style="color: #666; font-size: 12px;">This draft was auto-generated. Review, edit, and publish when ready.</p>
     `,

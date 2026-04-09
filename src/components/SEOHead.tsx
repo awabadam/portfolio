@@ -23,7 +23,7 @@ export default function SEOHead({
   const siteDescription =
     description ||
     "Professional web designer and developer in Istanbul. Specializing in modern, conversion-focused websites using Next.js, React, and Tailwind CSS.";
-  const siteUrl = url || "https://awab.design";
+  const siteUrl = url || "https://www.awab.design";
 
   return (
     <Head>

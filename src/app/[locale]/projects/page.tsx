@@ -25,7 +25,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       title: t('title'),
       description: t('description'),
-      url: "https://awab.design/projects",
+      url: "https://www.awab.design/projects",
       locale: ogLocale,
     },
     alternates: {

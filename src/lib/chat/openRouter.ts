@@ -203,7 +203,7 @@ export async function getOpenRouterResponse(
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${apiKey}`,
-        "HTTP-Referer": process.env.NEXT_PUBLIC_SITE_URL || "https://awab.design",
+        "HTTP-Referer": process.env.NEXT_PUBLIC_SITE_URL || "https://www.awab.design",
         "X-Title": "Awab Portfolio Chat",
       },
       body: JSON.stringify({

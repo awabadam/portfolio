@@ -25,7 +25,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       title: t('title'),
       description: t('description'),
-      url: "https://awab.design/services/webdesign-istanbul",
+      url: "https://www.awab.design/services/webdesign-istanbul",
       locale: ogLocale,
     },
     alternates: {
@@ -47,7 +47,7 @@ const WebdesignIstanbulPage = async () => {
     provider: {
       "@type": "Person",
       name: "Awab Design",
-      url: "https://awab.design",
+      url: "https://www.awab.design",
     },
     areaServed: "Worldwide",
     offers: {

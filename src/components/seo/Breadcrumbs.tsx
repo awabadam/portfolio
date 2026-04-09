@@ -15,7 +15,7 @@ export default function Breadcrumbs({ items }: BreadcrumbsProps) {
       "@type": "ListItem",
       position: index + 1,
       name: item.name,
-      item: `https://awab.design${item.url}`,
+      item: `https://www.awab.design${item.url}`,
     })),
   };
 

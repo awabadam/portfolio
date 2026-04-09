@@ -27,7 +27,7 @@ export default function robots(): MetadataRoute.Robots {
         ],
       },
     ],
-    sitemap: "https://awab.design/sitemap.xml",
-    host: "https://awab.design",
+    sitemap: "https://www.awab.design/sitemap.xml",
+    host: "https://www.awab.design",
   };
 }

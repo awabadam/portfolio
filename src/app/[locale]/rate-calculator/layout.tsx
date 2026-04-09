@@ -88,7 +88,7 @@ export default function RateCalculatorLayout({
     provider: {
       "@type": "Person",
       name: "Awab Design",
-      url: "https://awab.design",
+      url: "https://www.awab.design",
       address: {
         "@type": "PostalAddress",
         addressLocality: "Istanbul",
