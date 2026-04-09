@@ -1,12 +1,12 @@
 import {
   services,
-  pricingInfo,
   businessInfo,
   faqs,
   greetings,
   farewells,
   findMatchingFAQ,
 } from "./knowledgeBase";
+import { getPrice } from "@/lib/pricing";
 
 export interface ChatMessage {
   role: "user" | "assistant" | "system";
@@ -142,7 +142,10 @@ export function processMessage(
     lowerMessage.includes("cost") ||
     lowerMessage.includes("how much")
   ) {
-    response = `Here's our pricing structure:\n\n• Landing Page: Starting at $${pricingInfo.landing.base.toLocaleString()}\n• Business Website: Starting at $${pricingInfo.business.base.toLocaleString()}\n• Custom Website: Starting at $${pricingInfo.custom.base.toLocaleString()}\n\nYou can use our rate calculator at ${pricingInfo.calculator} for a detailed quote based on your specific needs, including add-ons and complexity adjustments.`;
+    const landing = getPrice("landing", 100, "en");
+    const business = getPrice("business", 300, "en");
+    const custom = getPrice("custom", 800, "en");
+    response = `Here's our pricing structure:\n\n• Landing Page: Starting at $${landing.toLocaleString()}\n• Business Website: Starting at $${business.toLocaleString()}\n• Custom Website: Starting at $${custom.toLocaleString()}\n\nYou can use our rate calculator at /rate-calculator for a detailed quote based on your specific needs, including add-ons and complexity adjustments.`;
     return { response, context: newContext, action: "show_pricing" };
   }
 

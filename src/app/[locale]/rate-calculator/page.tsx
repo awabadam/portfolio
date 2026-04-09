@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 import { useRouter } from "@/i18n/routing";
 import { useTranslations, useLocale } from "next-intl";
-import { FALLBACK_TRY_RATE, intlPriceMap, getPrice, formatPrice } from "@/lib/pricing";
+import { FALLBACK_TRY_RATE, projectTiers, addOns, getPrice, formatPrice } from "@/lib/pricing";
 
 interface CalculatorData {
   projectType: string;
@@ -33,19 +33,21 @@ interface CalculatorData {
   description?: string;
 }
 
-const projectTypesMeta = [
-  { id: "landing", nameKey: "landingPage" as const, descKey: "landingPageDesc" as const, basePrice: 100, icon: <Globe className="h-5 w-5" /> },
-  { id: "business", nameKey: "businessWebsite" as const, descKey: "businessWebsiteDesc" as const, basePrice: 300, icon: <Code className="h-5 w-5" />, popular: true },
-  { id: "custom", nameKey: "customWebsite" as const, descKey: "customWebsiteDesc" as const, basePrice: 800, icon: <Layout className="h-5 w-5" /> },
-];
+// Icons for the shared projectTiers from lib/pricing (keyed by tier id)
+const projectTypeIcons: Record<string, React.ReactNode> = {
+  landing: <Globe className="h-5 w-5" />,
+  business: <Code className="h-5 w-5" />,
+  custom: <Layout className="h-5 w-5" />,
+};
 
-const addOnsMeta = [
-  { id: "seo", nameKey: "seoSetup" as const, price: 80, icon: <Zap className="h-4 w-4" /> },
-  { id: "blog", nameKey: "blogSystem" as const, price: 80, icon: <Mail className="h-4 w-4" /> },
-  { id: "cms", nameKey: "contentManagement" as const, price: 150, icon: <Code className="h-4 w-4" /> },
-  { id: "chatbot", nameKey: "aiChatbotAddon" as const, price: 300, icon: <Bot className="h-4 w-4" /> },
-  { id: "multilang", nameKey: "multiLanguage" as const, price: 100, icon: <Globe className="h-4 w-4" /> },
-];
+// Icons for the shared addOns from lib/pricing (keyed by add-on id)
+const addOnIcons: Record<string, React.ReactNode> = {
+  seo: <Zap className="h-4 w-4" />,
+  blog: <Mail className="h-4 w-4" />,
+  cms: <Code className="h-4 w-4" />,
+  chatbot: <Bot className="h-4 w-4" />,
+  multilang: <Globe className="h-4 w-4" />,
+};
 
 
 export default function RateCalculator() {
@@ -71,11 +73,11 @@ export default function RateCalculator() {
     }
   }, [locale]);
 
-  const selectedProject = projectTypesMeta.find((p) => p.id === calculatorData.projectType);
+  const selectedProject = projectTiers.find((p) => p.id === calculatorData.projectType);
 
   const basePrice = selectedProject ? getPrice(selectedProject.id, selectedProject.basePrice, locale) : 0;
   const addOnsCost = calculatorData.addOns.reduce((sum, addOnId) => {
-    const addOn = addOnsMeta.find((a) => a.id === addOnId);
+    const addOn = addOns.find((a) => a.id === addOnId);
     return sum + (addOn ? getPrice(addOn.id, addOn.price, locale) : 0);
   }, 0);
   const total = basePrice + addOnsCost;
@@ -97,7 +99,7 @@ export default function RateCalculator() {
 
     try {
       const selectedAddOns = calculatorData.addOns
-        .map((id) => addOnsMeta.find((a) => a.id === id))
+        .map((id) => addOns.find((a) => a.id === id))
         .filter(Boolean)
         .map((a) => t(a!.nameKey));
 
@@ -160,7 +162,7 @@ export default function RateCalculator() {
                   {t("step1Title")}
                 </h2>
                 <div className="grid gap-3 sm:grid-cols-3">
-                  {projectTypesMeta.map((type) => (
+                  {projectTiers.map((type) => (
                     <button
                       key={type.id}
                       type="button"
@@ -178,7 +180,7 @@ export default function RateCalculator() {
                           {t("popular")}
                         </span>
                       )}
-                      <div className="mb-2 text-primary">{type.icon}</div>
+                      <div className="mb-2 text-primary">{projectTypeIcons[type.id]}</div>
                       <h3 className="font-semibold">{t(type.nameKey)}</h3>
                       <p className="mt-1 text-xs text-muted-foreground">{t(type.descKey)}</p>
                       <div className="mt-3 border-t border-border pt-2 text-sm font-bold text-primary">
@@ -195,7 +197,7 @@ export default function RateCalculator() {
                   {t("addOnsHeading")}
                 </h2>
                 <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                  {addOnsMeta.map((addOn) => (
+                  {addOns.map((addOn) => (
                     <button
                       key={addOn.id}
                       type="button"
@@ -206,7 +208,7 @@ export default function RateCalculator() {
                           : "border-border"
                       }`}
                     >
-                      <div className="text-primary">{addOn.icon}</div>
+                      <div className="text-primary">{addOnIcons[addOn.id]}</div>
                       <div className="flex-1">
                         <div className="text-sm font-medium">{t(addOn.nameKey)}</div>
                         <div className="text-xs font-semibold text-primary">
@@ -315,7 +317,7 @@ export default function RateCalculator() {
                         <>
                           <div className="my-2 border-t border-border" />
                           {calculatorData.addOns.map((addOnId) => {
-                            const addOn = addOnsMeta.find((a) => a.id === addOnId);
+                            const addOn = addOns.find((a) => a.id === addOnId);
                             return (
                               <div key={addOnId} className="flex justify-between text-muted-foreground">
                                 <span>{addOn ? t(addOn.nameKey) : ""}</span>

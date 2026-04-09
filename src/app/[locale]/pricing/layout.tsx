@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations, getLocale } from "next-intl/server";
 import Breadcrumbs from "@/components/seo/Breadcrumbs";
+import { projectTiers, addOns, intlPriceMap } from "@/lib/pricing";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("metadata.pricing");
@@ -45,7 +46,71 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
+// Human-readable labels for schema (keyed by pricing.ts tier and add-on ids).
+// These intentionally mirror the English `rateCalculator` namespace so the
+// JSON-LD stays stable across locales while the UI itself is localized.
+const tierSchemaLabels: Record<string, { name: string; description: string }> = {
+  landing: {
+    name: "Landing Page",
+    description: "One focused page to showcase your product or service",
+  },
+  business: {
+    name: "Business Website",
+    description: "A complete 3-5 page site for your business, mobile-ready and SEO-optimized",
+  },
+  custom: {
+    name: "Custom Website",
+    description: "Tailored Next.js build with custom features, integrations, and advanced SEO",
+  },
+};
+
+const addOnSchemaLabels: Record<string, string> = {
+  seo: "SEO Setup",
+  blog: "Blog System",
+  cms: "Content Management",
+  chatbot: "AI Chatbot Integration",
+  multilang: "Multi-Language Support",
+};
+
 export default function PricingLayout({ children }: { children: React.ReactNode }) {
+  // Build the OfferCatalog from the shared pricing source of truth so the
+  // schema can never drift from what the calculator shows.
+  const tierOffers = projectTiers.map((tier) => {
+    const labels = tierSchemaLabels[tier.id];
+    const price = intlPriceMap[tier.id] ?? tier.basePrice;
+    return {
+      "@type": "Offer",
+      itemOffered: {
+        "@type": "Service",
+        name: labels?.name ?? tier.id,
+        description: labels?.description,
+      },
+      priceSpecification: {
+        "@type": "UnitPriceSpecification",
+        price: String(price),
+        priceCurrency: "USD",
+        unitText: "project",
+      },
+    };
+  });
+
+  const addOnOffers = addOns.map((addOn) => {
+    const price = intlPriceMap[addOn.id] ?? addOn.price;
+    return {
+      "@type": "Offer",
+      itemOffered: {
+        "@type": "Service",
+        name: addOnSchemaLabels[addOn.id] ?? addOn.id,
+      },
+      priceSpecification: {
+        "@type": "UnitPriceSpecification",
+        price: String(price),
+        priceCurrency: "USD",
+        unitText: "project",
+      },
+    };
+  });
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Service",
@@ -64,50 +129,7 @@ export default function PricingLayout({ children }: { children: React.ReactNode 
     hasOfferCatalog: {
       "@type": "OfferCatalog",
       name: "Web Design Packages",
-      itemListElement: [
-        {
-          "@type": "Offer",
-          itemOffered: {
-            "@type": "Service",
-            name: "Starter Package",
-            description: "Single landing page with basic SEO and mobile-responsive design",
-          },
-          priceSpecification: {
-            "@type": "UnitPriceSpecification",
-            price: "500",
-            priceCurrency: "USD",
-            unitText: "project",
-          },
-        },
-        {
-          "@type": "Offer",
-          itemOffered: {
-            "@type": "Service",
-            name: "Business Package",
-            description: "5-page website with full SEO, 2 languages, and CMS",
-          },
-          priceSpecification: {
-            "@type": "UnitPriceSpecification",
-            price: "1500",
-            priceCurrency: "USD",
-            unitText: "project",
-          },
-        },
-        {
-          "@type": "Offer",
-          itemOffered: {
-            "@type": "Service",
-            name: "Premium Package",
-            description: "Custom Next.js build with 4 languages, AI chatbot, and advanced SEO",
-          },
-          priceSpecification: {
-            "@type": "UnitPriceSpecification",
-            price: "3000",
-            priceCurrency: "USD",
-            unitText: "project",
-          },
-        },
-      ],
+      itemListElement: [...tierOffers, ...addOnOffers],
     },
   };
 

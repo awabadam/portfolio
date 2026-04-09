@@ -106,29 +106,6 @@ export const projects: ProjectInfo[] = [
   },
 ];
 
-export const pricingInfo = {
-  landing: {
-    base: 150,
-    description: "Landing Page — one focused page to showcase your product or service",
-  },
-  business: {
-    base: 500,
-    description: "Business Website — 3 to 5 pages, mobile-ready, complete site",
-  },
-  custom: {
-    base: 1500,
-    description: "Custom Website — tailored build with custom features and integrations",
-  },
-  addOns: [
-    { name: "SEO Setup", price: 120 },
-    { name: "Blog", price: 120 },
-    { name: "CMS", price: 250 },
-    { name: "AI Chatbot", price: 500 },
-    { name: "Multi-language", price: 150 },
-  ],
-  calculator: "/rate-calculator",
-};
-
 export const businessInfo = {
   name: "Awab Design",
   owner: "Awab Elkhalil",

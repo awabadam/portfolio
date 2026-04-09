@@ -1,5 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { Metadata } from "next";
+import { projectTiers, addOns, intlPriceMap } from "@/lib/pricing";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("metadata.rateCalculator");
@@ -9,11 +10,75 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
+// Human-readable labels for schema (keyed by pricing.ts tier/add-on ids).
+// Mirrors the English `rateCalculator` namespace so JSON-LD stays stable
+// across locales while the UI itself is localized.
+const tierSchemaLabels: Record<string, { name: string; description: string }> = {
+  landing: {
+    name: "Landing Page",
+    description: "One focused page to showcase your product or service",
+  },
+  business: {
+    name: "Business Website",
+    description: "A complete site for your business — 3 to 5 pages, mobile-ready",
+  },
+  custom: {
+    name: "Custom Website",
+    description: "Tailored build with custom features and integrations",
+  },
+};
+
+const addOnSchemaLabels: Record<string, string> = {
+  seo: "SEO Setup",
+  blog: "Blog System",
+  cms: "Content Management",
+  chatbot: "AI Chatbot Integration",
+  multilang: "Multi-Language Support",
+};
+
 export default function RateCalculatorLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  // Build offers from the shared pricing source so the schema tracks the
+  // calculator UI automatically.
+  const tierOffers = projectTiers.map((tier) => {
+    const labels = tierSchemaLabels[tier.id];
+    const price = intlPriceMap[tier.id] ?? tier.basePrice;
+    return {
+      "@type": "Offer",
+      itemOffered: {
+        "@type": "Service",
+        name: labels?.name ?? tier.id,
+        description: labels?.description,
+      },
+      priceSpecification: {
+        "@type": "UnitPriceSpecification",
+        price: String(price),
+        priceCurrency: "USD",
+        unitText: "project",
+      },
+    };
+  });
+
+  const addOnOffers = addOns.map((addOn) => {
+    const price = intlPriceMap[addOn.id] ?? addOn.price;
+    return {
+      "@type": "Offer",
+      itemOffered: {
+        "@type": "Service",
+        name: addOnSchemaLabels[addOn.id] ?? addOn.id,
+      },
+      priceSpecification: {
+        "@type": "UnitPriceSpecification",
+        price: String(price),
+        priceCurrency: "USD",
+        unitText: "project",
+      },
+    };
+  });
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Service",
@@ -32,79 +97,7 @@ export default function RateCalculatorLayout({
     hasOfferCatalog: {
       "@type": "OfferCatalog",
       name: "Web Design Services",
-      itemListElement: [
-        {
-          "@type": "Offer",
-          itemOffered: {
-            "@type": "Service",
-            name: "Landing Page",
-            description:
-              "One focused page to showcase your product or service",
-          },
-          priceSpecification: {
-            "@type": "UnitPriceSpecification",
-            price: "150",
-            priceCurrency: "USD",
-            unitText: "project",
-          },
-        },
-        {
-          "@type": "Offer",
-          itemOffered: {
-            "@type": "Service",
-            name: "Business Website",
-            description:
-              "A complete site for your business — 3 to 5 pages, mobile-ready",
-          },
-          priceSpecification: {
-            "@type": "UnitPriceSpecification",
-            price: "500",
-            priceCurrency: "USD",
-            unitText: "project",
-          },
-        },
-        {
-          "@type": "Offer",
-          itemOffered: {
-            "@type": "Service",
-            name: "Custom Website",
-            description:
-              "Tailored build with custom features and integrations",
-          },
-          priceSpecification: {
-            "@type": "UnitPriceSpecification",
-            price: "1500",
-            priceCurrency: "USD",
-            unitText: "project",
-          },
-        },
-        {
-          "@type": "Offer",
-          itemOffered: {
-            "@type": "Service",
-            name: "SEO Setup",
-          },
-          priceSpecification: {
-            "@type": "UnitPriceSpecification",
-            price: "120",
-            priceCurrency: "USD",
-            unitText: "project",
-          },
-        },
-        {
-          "@type": "Offer",
-          itemOffered: {
-            "@type": "Service",
-            name: "AI Chatbot Integration",
-          },
-          priceSpecification: {
-            "@type": "UnitPriceSpecification",
-            price: "500",
-            priceCurrency: "USD",
-            unitText: "project",
-          },
-        },
-      ],
+      itemListElement: [...tierOffers, ...addOnOffers],
     },
   };
 

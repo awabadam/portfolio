@@ -1,6 +1,6 @@
 import { ChatMessage, ChatContext } from "./chatBot";
-import { services, projects, pricingInfo, businessInfo, faqs } from "./knowledgeBase";
-import { projectTiers, getPrice, formatPrice, FALLBACK_TRY_RATE } from "@/lib/pricing";
+import { services, projects, businessInfo, faqs } from "./knowledgeBase";
+import { projectTiers, addOns, getPrice, formatPrice, FALLBACK_TRY_RATE } from "@/lib/pricing";
 
 export interface OpenRouterResponse {
   id: string;
@@ -36,10 +36,16 @@ function buildSystemPrompt(context: ChatContext, locale?: string): string {
     return `${t.nameKey === "landingPage" ? "Landing Page" : t.nameKey === "businessWebsite" ? "Business Website" : "Custom Website"}: from ${formatPrice(price, loc, tryRate)}`;
   }).join(", ");
 
-  const addOnPrices = pricingInfo.addOns.map((a) => {
-    const id = a.name.toLowerCase().replace(/ /g, "").replace("aichatbot", "chatbot");
-    const price = getPrice(id, a.price, loc);
-    return `${a.name} (+${formatPrice(price, loc, tryRate)})`;
+  const addOnLabels: Record<string, string> = {
+    seo: "SEO Setup",
+    blog: "Blog",
+    cms: "CMS",
+    chatbot: "AI Chatbot",
+    multilang: "Multi-language",
+  };
+  const addOnPrices = addOns.map((a) => {
+    const price = getPrice(a.id, a.price, loc);
+    return `${addOnLabels[a.id] ?? a.id} (+${formatPrice(price, loc, tryRate)})`;
   }).join(", ");
 
   // Build project showcase
