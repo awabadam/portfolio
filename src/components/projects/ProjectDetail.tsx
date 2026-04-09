@@ -231,7 +231,7 @@ export default function ProjectDetail({
       </section>
 
       {/* Project Info Grid */}
-      {(project.overview || project.objectives || project.approach) && (
+      {(project.overview || project.objectives) && (
         <section className="px-4 py-16 md:py-24">
           <div className="container mx-auto">
             <div className="grid gap-16 md:grid-cols-2">
@@ -280,6 +280,35 @@ export default function ProjectDetail({
                 </motion.div>
               )}
             </div>
+          </div>
+        </section>
+      )}
+
+      {/* Approach */}
+      {project.approach && project.approach.length > 0 && (
+        <section className="border-t border-border px-4 py-16 md:py-24">
+          <div className="container mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+              className="mx-auto max-w-3xl"
+            >
+              <h2 className="mb-8 font-mono text-xs uppercase tracking-wider text-muted-foreground">
+                Approach
+              </h2>
+              <ul className="space-y-6">
+                {project.approach.map((step, i) => (
+                  <li key={i} className="flex items-start gap-4 text-lg leading-relaxed">
+                    <span className="mt-1 font-mono text-sm text-muted-foreground">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <span>{step}</span>
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
           </div>
         </section>
       )}

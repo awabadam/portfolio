@@ -127,6 +127,34 @@ export default function ServicesPage() {
         </div>
       </section>
 
+      {/* Specialist / Clinic Websites callout */}
+      <section className="border-t border-border py-24">
+        <div className="container mx-auto px-4">
+          <ScrollReveal animation="fadeUp">
+            <div className="mx-auto max-w-5xl overflow-hidden rounded-3xl border-2 border-primary/30 bg-gradient-to-br from-primary/5 via-background to-background p-10 md:p-14">
+              <p className="mb-3 font-mono text-xs uppercase tracking-widest text-primary">
+                {t("specialistHeading")}
+              </p>
+              <h2 className="mb-4 font-display text-3xl font-bold md:text-5xl">
+                {t("specialistTitle")}
+              </h2>
+              <p className="mb-6 text-lg font-medium text-muted-foreground md:text-xl">
+                {t("specialistTagline")}
+              </p>
+              <p className="mb-8 max-w-3xl leading-relaxed text-muted-foreground">
+                {t("specialistDescription")}
+              </p>
+              <Button asChild size="lg" className="rounded-full">
+                <Link href="/services/clinic-websites">
+                  {t("specialistCTA")}
+                  <ArrowRight className="ml-2 rtl:ml-0 rtl:mr-2 rtl:rotate-180 h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
+          </ScrollReveal>
+        </div>
+      </section>
+
       {/* Pricing */}
       <section className="border-t border-border py-24">
         <div className="container mx-auto px-4">
