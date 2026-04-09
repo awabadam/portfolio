@@ -107,7 +107,7 @@ export const metadata: Metadata = {
       description:
         "Professional web designer and developer in Istanbul specializing in modern, conversion-focused websites, UI/UX design, SEO, and AI chatbot integration.",
       url: "https://awab.design",
-      email: "hello@awab.design",
+      email: "awabe.adam@gmail.com",
       telephone: "+905541759945",
       image: "https://awab.design/img/hero-image.jpg",
       sameAs: [

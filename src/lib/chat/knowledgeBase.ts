@@ -136,7 +136,7 @@ export const businessInfo = {
   experience: "5+ years",
   projectCount: "50+ projects completed",
   responseTime: "24 hours",
-  email: "hello@awab.design",
+  email: "awabe.adam@gmail.com",
   phone: "+90 554 175 9945",
   whatsapp: "+90 554 175 9945",
   languages: "English, Arabic, Turkish, French",
@@ -174,7 +174,7 @@ export const faqs: FAQ[] = [
   {
     question: "How can I contact you?",
     answer:
-      "Email me at hello@awab.design, call/WhatsApp +90 554 175 9945, or use the contact form at /contact. I respond within 24 hours.",
+      "Email me at awabe.adam@gmail.com, call/WhatsApp +90 554 175 9945, or use the contact form at /contact. I respond within 24 hours.",
     keywords: ["contact", "get in touch", "reach", "email", "phone", "whatsapp", "call"],
   },
   {

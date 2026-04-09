@@ -12,7 +12,7 @@ import Contact from "@/components/sections/Contact";
 export default function ContactPage() {
   const t = useTranslations('contact');
   const [copied, setCopied] = useState(false);
-  const email = "hello@awab.design";
+  const email = "awabe.adam@gmail.com";
 
   const handleCopy = () => {
     navigator.clipboard.writeText(email);
