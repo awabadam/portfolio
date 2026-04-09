@@ -2,7 +2,7 @@
 ## Awab Design | Istanbul Web Designer
 
 **Created:** April 2026
-**Last updated:** 2026-04-09 (Phase 1 shipped, moving into Phase 2)
+**Last updated:** 2026-04-09 (Phases 1 + 2 both shipped)
 **Goal:** Improve CTR and impressions on Google Search
 **Approach:** Go narrow first (medical clinic niche), then expand
 
@@ -17,8 +17,8 @@ The biggest opportunity isn't competing for "web design Istanbul" (too competiti
 | Phase | Timeframe | Focus | Status |
 |-------|-----------|-------|--------|
 | **1. Foundation Fixes** | Week 1 | Quick wins on existing pages | ✅ **SHIPPED** |
-| **2. Clinic Niche Domination** | Week 2-3 | New landing page + case studies | ⏳ **IN PROGRESS** |
-| **3. Turkish Expansion** | Week 4-6 | Localize for the local market | 🔲 Pending |
+| **2. Clinic Niche Domination** | Week 2-3 | New landing page + case studies | ✅ **SHIPPED** |
+| **3. Turkish Expansion** | Week 4-6 | Localize for the local market | 🔲 **NEXT** |
 | **4. Content Engine** | Month 2-3 | Blog + ongoing publishing | 🔲 Pending |
 
 ---
@@ -83,7 +83,37 @@ These are NOT blockers for Phase 2 but should be done in parallel:
 
 ---
 
-## Phase 2 — Medical Clinic Niche Domination (Week 2-3) ⏳ NEXT
+## Phase 2 — Medical Clinic Niche Domination ✅ COMPLETE
+
+**Status:** Shipped across commits `1dcc38c` → `c197dee` on 2026-04-09
+**Duration:** ~2 hours (originally planned 2 weeks)
+
+### What we shipped
+
+#### Code (shipped commits)
+- ✅ **`/services/clinic-websites` SSG landing page** in all 4 locales (`1dcc38c`) — Hero, problem statement, 8 feature cards, featured projects grid, 4-step process, 10-question FAQ, CTA. Includes Service + FAQPage + Breadcrumbs JSON-LD with `areaServed` and `BusinessAudience` targeting
+- ✅ **`clinicWebsites` namespace in 4 locales** — Full English + hand-translated Turkish / Arabic / French copy for hero, problem, features, process, 10 FAQs, and CTAs
+- ✅ **Enriched Jouvence case study** (`1dcc38c`) — Role, overview, 4-step approach, objectives, results populated in `src/data/projects.ts`. Visual-story approach (no invented metrics)
+- ✅ **Enriched EsteExpert case study** (`1dcc38c`) — Same structure, trust-focused narrative
+- ✅ **ProjectDetail approach rendering fix** (`1dcc38c`) — Bug fix: the `approach` field was being checked in a conditional but never rendered. Now every case study with approach steps gets a numbered walkthrough section
+- ✅ **Pillar blog post** (`1dcc38c`) — "Why Your Istanbul Clinic Is Losing International Patients to Outdated Websites" — 14-minute read, 11,584 characters, 7 practical sections, internal links to clinic services page + both case studies + pricing + contact. Targets `medical clinic website istanbul`, `clinic website design turkey`, `health tourism website` keywords
+- ✅ **Blog post live in Supabase** (`d599597`) — `scripts/insert-clinic-blog-post.mjs` reads the fallback post and upserts it via the service role key. Already ran; post is published at `/blog/medical-clinic-website-istanbul` (id `a0d6a903-1827-4cd7-8457-9f3210fa9370`)
+- ✅ **Services page "Specialist Service" callout** (`1dcc38c`) — Prominent bordered card on `/services` featuring clinic websites, translated in all 4 locales
+- ✅ **Live iframe previews for clinic projects** (`c197dee`) — New `ClinicProjectCard` component uses the same 3-layer preview pattern as the homepage (placeholder → screenshot → live iframe), but links to internal `/projects/[id]` instead of the external URL
+
+### Verified live
+- `curl https://www.awab.design/blog/medical-clinic-website-istanbul` returns 200 with correct title
+- `/services/clinic-websites` builds as SSG for all 4 locales
+- Case studies render with full case study content (overview + approach + results)
+
+### Phase 2 Manual tasks remaining (user-side)
+- 🔲 Submit `/services/clinic-websites` + `/blog/medical-clinic-website-istanbul` + refreshed `/projects/jouvence` + `/projects/esteexpert` to GSC → URL Inspection → Request Indexing
+- 🔲 Share the blog post once (LinkedIn, any medical tourism groups, past clinic clients) to seed initial traffic
+- 🔲 Monitor `docs/gsc-baseline-2026-04.md` "+14 day snapshot" for new clinic keyword impressions
+
+---
+
+## Phase 2 — Original Plan (reference, now completed)
 
 **Goal:** Own the medical clinic / health tourism keyword space before competitors notice.
 
