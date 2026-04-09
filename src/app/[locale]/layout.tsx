@@ -9,7 +9,6 @@ import PageTracking from "@/components/PageTracking";
 import { WhatsAppProvider } from "@/components/chat/WhatsAppContext";
 import { ScrollProgress, SmoothScroll, NoiseOverlay, PageTransition } from "@/components/effects";
 import { Toaster } from "@/components/ui/toaster";
-import LocaleHtmlAttributes from "@/components/LocaleHtmlAttributes";
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -33,7 +32,6 @@ export default async function LocaleLayout({
 
   return (
     <NextIntlClientProvider messages={messages}>
-      <LocaleHtmlAttributes />
       <ThemeProvider
         attribute="class"
         defaultTheme="system"

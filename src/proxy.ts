@@ -45,7 +45,9 @@ export async function proxy(request: NextRequest) {
       if (geoLocale && geoLocale !== 'en') {
         const url = request.nextUrl.clone();
         url.pathname = `/${geoLocale}${pathname}`;
-        const response = NextResponse.redirect(url);
+        // 308 (permanent) instead of 307 (temporary) so Google updates
+        // the canonical URL instead of re-crawling the old one every time.
+        const response = NextResponse.redirect(url, 308);
         response.cookies.set('NEXT_LOCALE', geoLocale, { maxAge: 60 * 60 * 24 * 365 });
         return response;
       }
@@ -56,11 +58,17 @@ export async function proxy(request: NextRequest) {
     ? NextResponse.next()
     : intlMiddleware(request);
 
-  // Supabase session refresh
+  // Supabase session refresh — skipped for crawlers and API routes.
+  // Crawlers don't need sessions, and running this on every Googlebot
+  // request was slowing down mobile indexing (tight crawler timeouts).
+  // API routes handle their own auth.
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const userAgent = request.headers.get('user-agent') || '';
+  const isBot = /bot|crawl|spider|slurp|bingpreview|googlebot|bingbot|yandex|baidu|duckduckbot|facebookexternalhit|applebot/i.test(userAgent);
+  const isApiRoute = pathname.startsWith('/api');
 
-  if (supabaseUrl && supabaseKey) {
+  if (supabaseUrl && supabaseKey && !isBot && !isApiRoute) {
     try {
       const supabase = createMiddlewareSupabaseClient(request, response);
       await supabase.auth.getSession();

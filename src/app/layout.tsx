@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter as FontSans, Space_Grotesk as FontDisplay, Tajawal as FontArabic } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
@@ -21,6 +21,19 @@ const fontArabic = FontArabic({
   variable: "--font-arabic",
   weight: ["300", "400", "500", "700", "800"],
 });
+
+// Explicit viewport + theme-color. Next.js auto-generates a default
+// viewport but being explicit ensures viewport-fit=cover for iPhone
+// notches and gives Google a clear mobile-optimized signal.
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#000000" },
+  ],
+};
 
 export const metadata: Metadata = {
   title: {
@@ -195,6 +208,13 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Root layout stays fully static with lang="en" so that Next.js can
+  // still SSG every [locale] page. Per-locale signals are delivered via
+  // the hreflang alternate links in metadata — Google uses hreflang as
+  // the primary locale signal. The critical fix is that we NO LONGER
+  // mutate <html lang> client-side after hydration (we deleted
+  // LocaleHtmlAttributes), which was causing the hreflang/lang
+  // inconsistency Googlebot mobile was seeing.
   return (
     <html lang="en" suppressHydrationWarning>
       <body
