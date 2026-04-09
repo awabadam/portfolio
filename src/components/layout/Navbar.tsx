@@ -36,6 +36,7 @@ const Navbar = () => {
     { href: "/about", label: t('about') },
     { href: "/projects", label: t('work') },
     { href: "/services", label: t('services') },
+    { href: "/pricing", label: t('pricing') },
     { href: "/blog", label: t('journal') },
     { href: "/contact", label: t('contact') },
   ] as const;

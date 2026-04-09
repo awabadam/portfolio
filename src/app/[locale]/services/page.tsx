@@ -10,6 +10,7 @@ import {
 import { useTranslations, useLocale } from "next-intl";
 import { ScrollReveal, StaggerContainer, StaggerItem } from "@/components/effects";
 import { projectTiers, getPrice, formatPrice, FALLBACK_TRY_RATE } from "@/lib/pricing";
+import FAQSchema from "@/components/seo/FAQSchema";
 
 const processSteps = [
   { num: "01", key: "process1" },
@@ -31,7 +32,10 @@ const capabilities = [
   { key: "capHosting", icon: <Server className="h-5 w-5" /> },
 ];
 
-const faqKeys = ["faq1", "faq2", "faq3", "faq4", "faq5", "faq6", "faq7", "faq8"];
+const faqKeys = [
+  "faq1", "faq2", "faq3", "faq4", "faq5", "faq6", "faq7", "faq8",
+  "faq9", "faq10", "faq11", "faq12", "faq13", "faq14", "faq15",
+];
 
 const tierIcons = [
   <Globe key="landing" className="h-6 w-6" />,
@@ -199,22 +203,11 @@ export default function ServicesPage() {
       </section>
 
       {/* FAQPage JSON-LD */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "FAQPage",
-            mainEntity: faqKeys.map((key) => ({
-              "@type": "Question",
-              name: t(`${key}Q`),
-              acceptedAnswer: {
-                "@type": "Answer",
-                text: t(`${key}A`),
-              },
-            })),
-          }),
-        }}
+      <FAQSchema
+        items={faqKeys.map((key) => ({
+          question: t(`${key}Q`),
+          answer: t(`${key}A`),
+        }))}
       />
 
       {/* CTA */}

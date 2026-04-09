@@ -20,8 +20,8 @@ const Footer = () => {
   const footerLinks = [
     { name: t('about'), href: "/about" },
     { name: t('work'), href: "/projects" },
-    { name: t('services'), href: "/#services" },
-    { name: t('pricing'), href: "/rate-calculator" },
+    { name: t('services'), href: "/services" },
+    { name: t('pricing'), href: "/pricing" },
     { name: t('blog'), href: "/blog" },
   ];
 
