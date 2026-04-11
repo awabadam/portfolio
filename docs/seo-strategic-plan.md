@@ -21,6 +21,15 @@ The biggest opportunity isn't competing for "web design Istanbul" (too competiti
 | **3. Turkish Expansion** | Week 4-6 | Localize for the local market | 🔲 **NEXT** |
 | **4. Content Engine** | Month 2-3 | Blog + ongoing publishing | 🔲 Pending |
 
+### Parallel workstream — Traffic Engine v1 (non-SEO)
+
+Social + outbound + directories are tracked separately in a dedicated spec and implementation plan:
+- **Spec:** `docs/superpowers/specs/2026-04-11-traffic-strategy-design.md`
+- **Plan:** `docs/superpowers/plans/2026-04-11-traffic-strategy.md`
+- **Operational artifacts:** `docs/traffic/` (bio copy, templates, logs, metrics)
+
+The traffic engine complements but does not replace the 4-phase SEO plan above. SEO is the compounding moat; traffic engine is the faster-feedback pipeline for direct leads.
+
 ---
 
 ## Phase 1 — Foundation Fixes ✅ COMPLETE
