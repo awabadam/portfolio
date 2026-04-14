@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { pickTopic } from "@/lib/blog/topics";
 import { generateAndSaveAllLocales } from "@/lib/blog/generator";
-import nodemailer from "nodemailer";
 
 export async function GET(request: NextRequest) {
   // Verify cron secret (Vercel sends this automatically)
@@ -47,6 +46,7 @@ async function sendNotification(title: string, slug: string) {
     return;
   }
 
+  const nodemailer = (await import("nodemailer")).default;
   const transporter = nodemailer.createTransport({
     host,
     port: Number(process.env.EMAIL_PORT) || 587,

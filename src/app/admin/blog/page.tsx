@@ -23,7 +23,7 @@ import { toast } from "@/components/ui/toaster";
 import { blogPostSchema, getValidationErrors } from "@/lib/validation/schemas";
 import {
   Plus, Edit, Trash2, Eye, Calendar, Clock, X, Search,
-  FileText, CheckCircle, AlertCircle, ArrowLeft, Image,
+  FileText, CheckCircle, AlertCircle, ArrowLeft, Image, Sparkles, Loader2,
 } from "lucide-react";
 import Link from "next/link";
 import AdminLayout from "@/components/admin/layout/AdminLayout";
@@ -51,6 +51,9 @@ const BlogAdminPage = () => {
   const [filter, setFilter] = useState<FilterTab>("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [activeLocales, setActiveLocales] = useState<Record<string, string>>({});
+  const [aiGenerating, setAiGenerating] = useState(false);
+  const [aiTopicInput, setAiTopicInput] = useState("");
+  const [showAiDialog, setShowAiDialog] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     slug: "",
@@ -234,6 +237,27 @@ const BlogAdminPage = () => {
       featured_image_url: "", meta_title: "", meta_description: "", reading_time: 5, published: false,
     });
     setFieldErrors({});
+  };
+
+  const handleAiGenerate = async () => {
+    setAiGenerating(true);
+    try {
+      const res = await fetch("/api/admin/blog/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(aiTopicInput ? { customTopic: aiTopicInput } : {}),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      toast.success("AI article generated as draft!");
+      setShowAiDialog(false);
+      setAiTopicInput("");
+      fetchPosts();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Generation failed");
+    } finally {
+      setAiGenerating(false);
+    }
   };
 
   const generateSlug = (title: string) =>
@@ -447,9 +471,14 @@ const BlogAdminPage = () => {
               {uniqueSlugs} articles — {publishedSlugs} published, {draftSlugs} drafts ({posts.length} total with translations)
             </p>
           </div>
-          <Button onClick={() => setShowForm(true)} className="gap-2">
-            <Plus className="h-4 w-4" /> New Post
-          </Button>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={() => setShowAiDialog(true)} className="gap-2">
+              <Sparkles className="h-4 w-4" /> Generate with AI
+            </Button>
+            <Button onClick={() => setShowForm(true)} className="gap-2">
+              <Plus className="h-4 w-4" /> New Post
+            </Button>
+          </div>
         </div>
 
         {/* Filters + Search */}
@@ -636,6 +665,44 @@ const BlogAdminPage = () => {
             >
               Delete
             </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* AI Generate Dialog */}
+      <AlertDialog open={showAiDialog} onOpenChange={setShowAiDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <Sparkles className="h-5 w-5" /> Generate AI Article
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              Generate an SEO-optimized blog post. Leave the topic empty to auto-pick from predefined topics, or enter a custom one.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="py-2">
+            <Label className="text-xs">Custom Topic (optional)</Label>
+            <Input
+              placeholder="e.g. How to Choose a Web Designer in 2026"
+              value={aiTopicInput}
+              onChange={(e) => setAiTopicInput(e.target.value)}
+              className="mt-1"
+              disabled={aiGenerating}
+            />
+          </div>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={aiGenerating}>Cancel</AlertDialogCancel>
+            <Button onClick={handleAiGenerate} disabled={aiGenerating} className="gap-2">
+              {aiGenerating ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" /> Generating...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="h-4 w-4" /> Generate
+                </>
+              )}
+            </Button>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

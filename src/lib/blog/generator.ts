@@ -177,11 +177,9 @@ RESPOND IN THIS EXACT JSON FORMAT (no markdown wrapping):
 }
 
 function getSupabaseClient() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    { auth: { persistSession: false } }
-  );
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+  return createClient(url, key, { auth: { persistSession: false } });
 }
 
 export async function saveBlogPost(post: GeneratedPost, locale: string = "en"): Promise<void> {
