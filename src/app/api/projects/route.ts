@@ -3,7 +3,7 @@ import { createAppServerClient } from '@/lib/supabase';
 
 // Cache featured projects aggressively — they change rarely and are
 // used on the homepage which needs to avoid loading Supabase client-side.
-const CACHE_CONTROL = 'public, max-age=300, s-maxage=3600, stale-while-revalidate=86400';
+const CACHE_CONTROL = 'public, max-age=30, s-maxage=60, stale-while-revalidate=300';
 
 export async function GET(request: Request) {
   try {

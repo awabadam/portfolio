@@ -21,6 +21,8 @@ import FAQSchema from "@/components/seo/FAQSchema";
 import { getAllProjects } from "@/data/projects";
 import ClinicProjectCard from "@/components/clinic/ClinicProjectCard";
 
+export const revalidate = 60;
+
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("metadata.clinicWebsites");
   const locale = await getLocale();

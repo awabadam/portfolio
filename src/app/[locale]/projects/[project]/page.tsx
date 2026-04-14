@@ -5,6 +5,8 @@ import { getTranslations, getLocale } from "next-intl/server";
 import ProjectDetail from "@/components/projects/ProjectDetail";
 import Breadcrumbs from "@/components/seo/Breadcrumbs";
 
+export const revalidate = 60;
+
 interface ProjectPageProps {
   params: Promise<{
     project: string;

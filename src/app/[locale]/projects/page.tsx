@@ -6,6 +6,8 @@ import ProjectsHero from "@/components/projects/ProjectsHero";
 import { getTranslations, getLocale } from 'next-intl/server';
 import Link from "next/link";
 
+export const revalidate = 60;
+
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('metadata.projects');
   const locale = await getLocale();
