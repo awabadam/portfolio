@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { createAppServerClient, createServiceRoleClient } from "@/lib/supabase";
 import { checkRateLimit, getIdentifier, getRateLimitHeaders, rateLimiters } from "@/lib/rateLimit";
-import { sanitizeText } from "@/lib/sanitize";
 
 // Check if Supabase is properly configured
 function isSupabaseConfigured() {
@@ -17,16 +16,6 @@ function isSupabaseConfigured() {
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-
-    // Temporary debug endpoint — remove after verifying
-    if (searchParams.get("debug") === "1") {
-      return NextResponse.json({
-        NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL ? "Set" : "Missing",
-        NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? "Set" : "Missing",
-        SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY ? "Set" : "Missing",
-        isConfigured: !!isSupabaseConfigured(),
-      });
-    }
 
     // Check if Supabase is configured
     if (!isSupabaseConfigured()) {
@@ -129,7 +118,8 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { source, name, email, phone, message, project_type, metadata } = body;
 
-    // Sanitize text inputs
+    // Lazy-import to avoid isomorphic-dompurify crashing module load on Vercel
+    const { sanitizeText } = await import("@/lib/sanitize");
     const sanitizedName = name ? sanitizeText(name) : undefined;
     const sanitizedMessage = message ? sanitizeText(message) : undefined;
 
