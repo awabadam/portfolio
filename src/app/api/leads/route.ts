@@ -16,6 +16,18 @@ function isSupabaseConfigured() {
 // GET - Fetch all leads with filtering
 export async function GET(request: Request) {
   try {
+    const { searchParams } = new URL(request.url);
+
+    // Temporary debug endpoint — remove after verifying
+    if (searchParams.get("debug") === "1") {
+      return NextResponse.json({
+        NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL ? "Set" : "Missing",
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? "Set" : "Missing",
+        SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY ? "Set" : "Missing",
+        isConfigured: !!isSupabaseConfigured(),
+      });
+    }
+
     // Check if Supabase is configured
     if (!isSupabaseConfigured()) {
       console.warn("Supabase not configured, returning empty leads");
@@ -27,8 +39,6 @@ export async function GET(request: Request) {
         message: "Database not configured",
       });
     }
-
-    const { searchParams } = new URL(request.url);
     const source = searchParams.get("source");
     const status = searchParams.get("status");
     const search = searchParams.get("search");
