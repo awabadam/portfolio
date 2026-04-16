@@ -8,7 +8,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const ogLocale = locale === "ar" ? "ar_SA" : locale === "tr" ? "tr_TR" : locale === "fr" ? "fr_FR" : "en_US";
 
   return {
-    title: t("title"),
+    title: { absolute: t("title") },
     description: t("description"),
     keywords: [
       "web designer istanbul",
@@ -28,11 +28,20 @@ export async function generateMetadata(): Promise<Metadata> {
       url: "https://www.awab.design",
       locale: ogLocale,
       type: "website",
+      images: [
+        {
+          url: "/img/hero-image.jpg",
+          width: 1200,
+          height: 630,
+          alt: "Awab Design - Web Designer & Developer in Istanbul",
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image",
       title: t("title"),
       description: t("description"),
+      images: ["/img/hero-image.jpg"],
     },
     alternates: {
       canonical: "/",

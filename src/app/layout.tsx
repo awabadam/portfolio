@@ -113,97 +113,6 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
-  other: {
-    "application/ld+json": JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": ["Person", "ProfessionalService"],
-      "@id": "https://www.awab.design/#person",
-      name: "Awab Design",
-      jobTitle: "Web Designer & Developer",
-      description:
-        "Professional web designer and developer in Istanbul specializing in modern, conversion-focused websites, UI/UX design, SEO, and AI chatbot integration.",
-      url: "https://www.awab.design",
-      email: "awabe.adam@gmail.com",
-      telephone: "+905541759945",
-      image: "https://www.awab.design/img/hero-image.jpg",
-      sameAs: [
-        "https://www.linkedin.com/in/awab-adam/",
-        "https://www.instagram.com/awabeladam/",
-      ],
-      address: {
-        "@type": "PostalAddress",
-        addressLocality: "Istanbul",
-        addressCountry: "TR",
-      },
-      areaServed: ["Worldwide", "Turkey", "France", "Middle East"],
-      knowsLanguage: ["en", "ar", "tr", "fr"],
-      knowsAbout: [
-        "Web Design",
-        "Web Development",
-        "UI/UX Design",
-        "SEO",
-        "AI Chatbot Integration",
-        "Brand Identity",
-        "Next.js",
-        "React",
-        "TypeScript",
-      ],
-      priceRange: "$150 - $1500+",
-      makesOffer: [
-        {
-          "@type": "Offer",
-          itemOffered: { "@type": "Service", name: "Landing Page Design" },
-          priceSpecification: { "@type": "UnitPriceSpecification", price: "150", priceCurrency: "USD" },
-        },
-        {
-          "@type": "Offer",
-          itemOffered: { "@type": "Service", name: "Business Website Design & Development" },
-          priceSpecification: { "@type": "UnitPriceSpecification", price: "500", priceCurrency: "USD" },
-        },
-        {
-          "@type": "Offer",
-          itemOffered: { "@type": "Service", name: "Custom Website Development" },
-          priceSpecification: { "@type": "UnitPriceSpecification", price: "1500", priceCurrency: "USD" },
-        },
-      ],
-      aggregateRating: {
-        "@type": "AggregateRating",
-        ratingValue: "5.0",
-        reviewCount: "4",
-        bestRating: "5",
-      },
-      review: [
-        {
-          "@type": "Review",
-          author: { "@type": "Person", name: "Dr. Ahmed Hassan" },
-          reviewRating: { "@type": "Rating", ratingValue: "5" },
-          reviewBody: "Awab transformed our clinic's online presence completely. Our new website has increased our patient inquiries by 40%.",
-        },
-        {
-          "@type": "Review",
-          author: { "@type": "Person", name: "Sarah Johnson" },
-          reviewRating: { "@type": "Rating", ratingValue: "5" },
-          reviewBody: "Working with Awab was a game-changer for our aesthetic clinic. The SEO optimization has significantly improved our search rankings.",
-        },
-        {
-          "@type": "Review",
-          author: { "@type": "Person", name: "Mehmet Yılmaz" },
-          reviewRating: { "@type": "Rating", ratingValue: "5" },
-          reviewBody: "Awab created a stunning website for our restaurant. The online ordering integration was seamless.",
-        },
-        {
-          "@type": "Review",
-          author: { "@type": "Person", name: "Fatima Al-Zahra" },
-          reviewRating: { "@type": "Rating", ratingValue: "5" },
-          reviewBody: "Awab's expertise helped us establish a strong online presence. His attention to detail made all the difference.",
-        },
-      ],
-      speakable: {
-        "@type": "SpeakableSpecification",
-        cssSelector: [".hero-subtitle", ".services-description"],
-      },
-    }),
-  },
 };
 
 export default function RootLayout({
@@ -281,7 +190,94 @@ export default function RootLayout({
           `}
         </Script>
 
-        {/* WebSite + SiteNavigationElement JSON-LD — influences Google Sitelinks */}
+        {/* All JSON-LD structured data — must be <script> tags, not <meta> */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": ["Person", "ProfessionalService"],
+              "@id": "https://www.awab.design/#person",
+              name: "Awab Design",
+              jobTitle: "Web Designer & Developer",
+              description:
+                "Professional web designer and developer in Istanbul specializing in modern, conversion-focused websites, UI/UX design, SEO, and AI chatbot integration.",
+              url: "https://www.awab.design",
+              email: "awabe.adam@gmail.com",
+              telephone: "+905541759945",
+              image: "https://www.awab.design/img/hero-image.jpg",
+              sameAs: [
+                "https://www.linkedin.com/in/awab-adam/",
+                "https://www.instagram.com/awabeladam/",
+              ],
+              address: {
+                "@type": "PostalAddress",
+                addressLocality: "Istanbul",
+                addressCountry: "TR",
+              },
+              areaServed: ["Worldwide", "Turkey", "France", "Middle East"],
+              knowsLanguage: ["en", "ar", "tr", "fr"],
+              knowsAbout: [
+                "Web Design", "Web Development", "UI/UX Design", "SEO",
+                "AI Chatbot Integration", "Brand Identity", "Next.js", "React", "TypeScript",
+              ],
+              priceRange: "$150 - $1500+",
+              makesOffer: [
+                {
+                  "@type": "Offer",
+                  itemOffered: { "@type": "Service", name: "Landing Page Design" },
+                  priceSpecification: { "@type": "UnitPriceSpecification", price: "150", priceCurrency: "USD" },
+                },
+                {
+                  "@type": "Offer",
+                  itemOffered: { "@type": "Service", name: "Business Website Design & Development" },
+                  priceSpecification: { "@type": "UnitPriceSpecification", price: "500", priceCurrency: "USD" },
+                },
+                {
+                  "@type": "Offer",
+                  itemOffered: { "@type": "Service", name: "Custom Website Development" },
+                  priceSpecification: { "@type": "UnitPriceSpecification", price: "1500", priceCurrency: "USD" },
+                },
+              ],
+              aggregateRating: {
+                "@type": "AggregateRating",
+                ratingValue: "5.0",
+                reviewCount: "4",
+                bestRating: "5",
+              },
+              review: [
+                {
+                  "@type": "Review",
+                  author: { "@type": "Person", name: "Dr. Ahmed Hassan" },
+                  reviewRating: { "@type": "Rating", ratingValue: "5" },
+                  reviewBody: "Awab transformed our clinic's online presence completely. Our new website has increased our patient inquiries by 40%.",
+                },
+                {
+                  "@type": "Review",
+                  author: { "@type": "Person", name: "Sarah Johnson" },
+                  reviewRating: { "@type": "Rating", ratingValue: "5" },
+                  reviewBody: "Working with Awab was a game-changer for our aesthetic clinic. The SEO optimization has significantly improved our search rankings.",
+                },
+                {
+                  "@type": "Review",
+                  author: { "@type": "Person", name: "Mehmet Yılmaz" },
+                  reviewRating: { "@type": "Rating", ratingValue: "5" },
+                  reviewBody: "Awab created a stunning website for our restaurant. The online ordering integration was seamless.",
+                },
+                {
+                  "@type": "Review",
+                  author: { "@type": "Person", name: "Fatima Al-Zahra" },
+                  reviewRating: { "@type": "Rating", ratingValue: "5" },
+                  reviewBody: "Awab's expertise helped us establish a strong online presence. His attention to detail made all the difference.",
+                },
+              ],
+              speakable: {
+                "@type": "SpeakableSpecification",
+                cssSelector: [".hero-subtitle", ".services-description"],
+              },
+            }),
+          }}
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
