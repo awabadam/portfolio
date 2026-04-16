@@ -662,6 +662,36 @@ export const getAllBlogCategories = async (): Promise<BlogCategory[]> => {
   }
 };
 
+export async function getRelatedPosts(
+  currentSlug: string,
+  category: string,
+  limit: number = 3
+): Promise<BlogPost[]> {
+  const supabase = createStaticSupabaseClient();
+  if (!supabase) {
+    return fallbackBlogPosts
+      .filter((p) => p.slug !== currentSlug && p.category === category)
+      .slice(0, limit);
+  }
+
+  const { data, error } = await supabase
+    .from("blog_posts")
+    .select("*")
+    .neq("slug", currentSlug)
+    .eq("category", category)
+    .eq("status", "published")
+    .order("published_at", { ascending: false })
+    .limit(limit);
+
+  if (error || !data) {
+    return fallbackBlogPosts
+      .filter((p) => p.slug !== currentSlug && p.category === category)
+      .slice(0, limit);
+  }
+
+  return data;
+}
+
 export const searchBlogPosts = async (query: string, locale: string = 'en'): Promise<BlogPost[]> => {
   try {
     const supabase = createStaticSupabaseClient();

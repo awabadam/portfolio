@@ -1,7 +1,7 @@
 import React from "react";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getBlogPostBySlug, getAllBlogPosts } from "@/data/blog";
+import { getBlogPostBySlug, getAllBlogPosts, getRelatedPosts } from "@/data/blog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Link } from '@/i18n/routing';
@@ -9,6 +9,7 @@ import Image from "next/image";
 import { Calendar, Clock, ArrowLeft, Share2 } from "lucide-react";
 import BlogContent from "@/components/blog/BlogContent";
 import BlogCTA from "@/components/blog/BlogCTA";
+import RelatedPosts from "@/components/blog/RelatedPosts";
 import Breadcrumbs from "@/components/seo/Breadcrumbs";
 import ArticleSchema from "@/components/seo/ArticleSchema";
 import { getTranslations, getLocale } from 'next-intl/server';
@@ -91,6 +92,8 @@ const BlogPostPage = async ({ params }: BlogPostPageProps) => {
   if (!post) {
     notFound();
   }
+
+  const relatedPosts = await getRelatedPosts(post.slug, post.category, 3);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString(locale, {
@@ -192,6 +195,7 @@ const BlogPostPage = async ({ params }: BlogPostPageProps) => {
           </div>
 
           <BlogCTA />
+          <RelatedPosts posts={relatedPosts} heading={t('relatedPosts')} />
         </div>
       </div>
     </main>
