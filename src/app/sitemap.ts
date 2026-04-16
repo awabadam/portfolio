@@ -11,10 +11,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     return `${baseUrl}/${locale}${path}`
   }
 
-  function withAlternates(path: string, opts: { changeFrequency: 'weekly' | 'monthly' | 'daily'; priority: number }) {
+  function withAlternates(path: string, opts: { changeFrequency: 'weekly' | 'monthly' | 'daily'; priority: number; lastModified?: Date }) {
     return locales.map((locale) => ({
       url: localeUrl(path, locale),
-      lastModified: new Date(),
+      lastModified: opts.lastModified ?? new Date('2026-04-16'),
       changeFrequency: opts.changeFrequency,
       priority: opts.priority,
       alternates: {
@@ -33,7 +33,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...withAlternates('/contact', { changeFrequency: 'monthly', priority: 0.7 }),
     ...withAlternates('/rate-calculator', { changeFrequency: 'weekly', priority: 0.8 }),
     ...withAlternates('/blog', { changeFrequency: 'weekly', priority: 0.8 }),
-    ...['webdesign-istanbul', 'ai-chatbot-integration', 'brand-identity', 'website-maintenance'].flatMap(
+    ...['webdesign-istanbul', 'ai-chatbot-integration', 'brand-identity', 'website-maintenance', 'clinic-websites'].flatMap(
       slug => withAlternates(`/services/${slug}`, { changeFrequency: 'monthly', priority: 0.8 })
     ),
   ]
