@@ -679,7 +679,7 @@ export async function getRelatedPosts(
     .select("*")
     .neq("slug", currentSlug)
     .eq("category", category)
-    .eq("status", "published")
+    .eq("published", true)
     .order("published_at", { ascending: false })
     .limit(limit);
 
