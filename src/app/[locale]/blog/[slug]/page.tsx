@@ -10,6 +10,7 @@ import { Calendar, Clock, ArrowLeft, Share2 } from "lucide-react";
 import BlogContent from "@/components/blog/BlogContent";
 import BlogCTA from "@/components/blog/BlogCTA";
 import Breadcrumbs from "@/components/seo/Breadcrumbs";
+import ArticleSchema from "@/components/seo/ArticleSchema";
 import { getTranslations, getLocale } from 'next-intl/server';
 
 // Revalidate every 60 seconds to show fresh blog content
@@ -106,6 +107,16 @@ const BlogPostPage = async ({ params }: BlogPostPageProps) => {
       { name: "Blog", url: "/blog" },
       { name: post.title, url: `/blog/${post.slug}` },
     ]} />
+    <ArticleSchema
+      title={post.title}
+      description={post.meta_description || post.excerpt}
+      url={`/blog/${post.slug}`}
+      imageUrl={post.featured_image_url}
+      publishedTime={post.published_at || post.created_at}
+      modifiedTime={post.updated_at}
+      authorName="Awab Elkhalil"
+      tags={post.tags}
+    />
     <main className="min-h-screen bg-background">
       {/* Immersive Hero */}
       <div className="relative h-[80vh] w-full overflow-hidden">
