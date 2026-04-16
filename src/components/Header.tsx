@@ -34,7 +34,7 @@ const Header = () => {
         <Image
           className="md:w-[450px]"
           src="/img/hero-image.jpg"
-          alt="hero-img"
+          alt="Awab Elkhalil — Web Designer & Developer"
           width={300}
           height={30}
         />

@@ -218,7 +218,7 @@ const PageHero: React.FC<PageHeroProps> = ({
               <div className="relative z-10 aspect-square w-full max-w-xl overflow-hidden">
                 <Image
                   src={imageSrc}
-                  alt="Hero Image"
+                  alt={`${title} — Awab Design`}
                   fill
                   sizes="(max-width: 768px) 100vw, 50vw"
                   className="object-contain"

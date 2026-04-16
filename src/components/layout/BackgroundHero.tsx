@@ -45,7 +45,7 @@ const BackgroundHero: React.FC<BackgroundHeroProps> = ({
         ) : backgroundSrc ? (
           <Image
             src={backgroundSrc}
-            alt="Background"
+            alt={`Background for ${title}`}
             fill
             className="object-cover brightness-[0.85]"
             priority
