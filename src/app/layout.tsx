@@ -281,6 +281,38 @@ export default function RootLayout({
           `}
         </Script>
 
+        {/* WebSite + SiteNavigationElement JSON-LD — influences Google Sitelinks */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify([
+              {
+                "@context": "https://schema.org",
+                "@type": "WebSite",
+                "@id": "https://www.awab.design/#website",
+                name: "Awab Design",
+                url: "https://www.awab.design",
+                publisher: { "@id": "https://www.awab.design/#person" },
+                inLanguage: ["en", "ar", "tr", "fr"],
+              },
+              {
+                "@context": "https://schema.org",
+                "@type": "SiteNavigationElement",
+                "@id": "https://www.awab.design/#navigation",
+                name: "Main Navigation",
+                hasPart: [
+                  { "@type": "WebPage", name: "Services", url: "https://www.awab.design/services" },
+                  { "@type": "WebPage", name: "Web Design Istanbul", url: "https://www.awab.design/services/webdesign-istanbul" },
+                  { "@type": "WebPage", name: "AI Chatbot Integration", url: "https://www.awab.design/services/ai-chatbot-integration" },
+                  { "@type": "WebPage", name: "Clinic Websites", url: "https://www.awab.design/services/clinic-websites" },
+                  { "@type": "WebPage", name: "Brand Identity", url: "https://www.awab.design/services/brand-identity" },
+                  { "@type": "WebPage", name: "Rate Calculator", url: "https://www.awab.design/rate-calculator" },
+                ],
+              },
+            ]),
+          }}
+        />
+
         {children}
         <CookieConsent />
       </body>
