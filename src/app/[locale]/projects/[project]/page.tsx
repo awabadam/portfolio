@@ -4,6 +4,7 @@ import { getProjectById, getAllProjects } from "@/data/projects";
 import { getTranslations, getLocale } from "next-intl/server";
 import ProjectDetail from "@/components/projects/ProjectDetail";
 import Breadcrumbs from "@/components/seo/Breadcrumbs";
+import CreativeWorkSchema from "@/components/seo/CreativeWorkSchema";
 
 export const revalidate = 60;
 
@@ -70,6 +71,14 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
         { name: "Projects", url: "/projects" },
         { name: project.title, url: `/projects/${project.id}` },
       ]} />
+      <CreativeWorkSchema
+        name={project.title}
+        description={project.description}
+        url={`/projects/${project.id}`}
+        imageUrl={project.thumbnail_url ?? project.images?.[0]}
+        technologies={project.technologies}
+        category={project.category}
+      />
       <ProjectDetail project={project} nextProject={nextProject} />
     </>
   );
