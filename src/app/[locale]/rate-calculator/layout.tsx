@@ -9,6 +9,28 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: t("title"),
     description: t("description"),
+    openGraph: {
+      title: t("title"),
+      description: t("description"),
+      url: "https://www.awab.design/rate-calculator",
+      images: [
+        {
+          url: "/img/hero-image.jpg",
+          width: 1200,
+          height: 630,
+          alt: "Awab Design — Rate Calculator",
+        },
+      ],
+    },
+    alternates: {
+      canonical: "/rate-calculator",
+      languages: {
+        en: "/rate-calculator",
+        ar: "/ar/rate-calculator",
+        tr: "/tr/rate-calculator",
+        fr: "/fr/rate-calculator",
+      },
+    },
   };
 }
 
