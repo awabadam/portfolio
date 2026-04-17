@@ -41,6 +41,41 @@ export default function AboutLayout({ children }: { children: React.ReactNode })
         { name: "Home", url: "/" },
         { name: "About", url: "/about" },
       ]} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "ProfilePage",
+            dateCreated: "2024-01-01",
+            dateModified: "2026-04-16",
+            mainEntity: {
+              "@type": "Person",
+              "@id": "https://www.awab.design/#person",
+              name: "Awab Elkhalil",
+              jobTitle: "Web Designer & Developer",
+              description:
+                "Professional web designer and developer in Istanbul specializing in modern, conversion-focused websites, UI/UX design, SEO, and AI chatbot integration.",
+              image: "https://www.awab.design/img/hero-image.jpg",
+              url: "https://www.awab.design",
+              sameAs: [
+                "https://www.linkedin.com/in/awab-adam/",
+                "https://www.instagram.com/awabeladam/",
+              ],
+              knowsAbout: [
+                "Web Design",
+                "Web Development",
+                "UI/UX Design",
+                "SEO",
+                "AI Chatbot Integration",
+                "Next.js",
+                "React",
+                "TypeScript",
+              ],
+            },
+          }),
+        }}
+      />
       {children}
     </>
   );
