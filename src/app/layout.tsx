@@ -271,10 +271,6 @@ export default function RootLayout({
                   reviewBody: "Awab's expertise helped us establish a strong online presence. His attention to detail made all the difference.",
                 },
               ],
-              speakable: {
-                "@type": "SpeakableSpecification",
-                cssSelector: [".hero-subtitle", ".services-description"],
-              },
             }),
           }}
         />
@@ -287,6 +283,7 @@ export default function RootLayout({
                 "@type": "WebSite",
                 "@id": "https://www.awab.design/#website",
                 name: "Awab Design",
+                alternateName: ["Awab Elkhalil", "awab.design"],
                 url: "https://www.awab.design",
                 publisher: { "@id": "https://www.awab.design/#person" },
                 inLanguage: ["en", "ar", "tr", "fr"],
