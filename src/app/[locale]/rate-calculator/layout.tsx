@@ -3,6 +3,7 @@ import { Metadata } from "next";
 // 💰 Pricing source of truth: edit prices in src/lib/pricing.ts
 // The OfferCatalog JSON-LD below is generated from projectTiers + addOns.
 import { projectTiers, addOns, intlPriceMap } from "@/lib/pricing";
+import Breadcrumbs from "@/components/seo/Breadcrumbs";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("metadata.rateCalculator");
@@ -131,6 +132,10 @@ export default function RateCalculatorLayout({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+      <Breadcrumbs items={[
+        { name: "Home", url: "/" },
+        { name: "Rate Calculator", url: "/rate-calculator" },
+      ]} />
       {children}
     </>
   );
