@@ -308,6 +308,50 @@ export default function RootLayout({
             ]),
           }}
         />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "ProfessionalService",
+              "@id": "https://www.awab.design/#business",
+              name: "Awab Design",
+              url: "https://www.awab.design",
+              telephone: "+905541759945",
+              email: "awabe.adam@gmail.com",
+              image: "https://www.awab.design/img/hero-image.jpg",
+              address: {
+                "@type": "PostalAddress",
+                addressLocality: "Istanbul",
+                addressCountry: "TR",
+              },
+              geo: {
+                "@type": "GeoCoordinates",
+                latitude: 41.00824,
+                longitude: 28.97836,
+              },
+              openingHoursSpecification: {
+                "@type": "OpeningHoursSpecification",
+                dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+                opens: "09:00",
+                closes: "18:00",
+              },
+              priceRange: "$150 - $1500+",
+              areaServed: ["Worldwide", "Turkey", "France", "Middle East"],
+              founder: { "@id": "https://www.awab.design/#person" },
+              sameAs: [
+                "https://www.linkedin.com/in/awab-adam/",
+                "https://www.instagram.com/awabeladam/",
+              ],
+              aggregateRating: {
+                "@type": "AggregateRating",
+                ratingValue: "5.0",
+                reviewCount: "4",
+                bestRating: "5",
+              },
+            }),
+          }}
+        />
 
         {children}
         <CookieConsent />
