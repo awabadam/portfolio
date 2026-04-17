@@ -196,7 +196,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               "@context": "https://schema.org",
-              "@type": ["Person", "ProfessionalService"],
+              "@type": "Person",
               "@id": "https://www.awab.design/#person",
               name: "Awab Design",
               jobTitle: "Web Designer & Developer",
