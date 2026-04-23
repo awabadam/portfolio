@@ -17,6 +17,7 @@ import {
   Mail,
   Layout,
   Bot,
+  Smartphone,
 } from "lucide-react";
 import { useRouter } from "@/i18n/routing";
 import { useTranslations, useLocale } from "next-intl";
@@ -39,6 +40,7 @@ const projectTypeIcons: Record<string, React.ReactNode> = {
   landing: <Globe className="h-5 w-5" />,
   business: <Code className="h-5 w-5" />,
   custom: <Layout className="h-5 w-5" />,
+  app: <Smartphone className="h-5 w-5" />,
 };
 
 // Icons for the shared addOns from lib/pricing (keyed by add-on id)

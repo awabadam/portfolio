@@ -254,6 +254,39 @@
       "ctaHeading": "Desteğinizi Otomatikleştirmeye Hazır mısınız?",
       "ctaDescription": "Yapay zeka chatbot entegrasyon ihtiyaçlarınız için anında teklif alın veya ücretsiz danışmanlık randevusu oluşturun."
     },
+    "appDev": {
+      "heading": "Uygulama Geliştirme",
+      "title": "Uygulama Geliştirme",
+      "lead": "Gerçek iş sorunlarını çözmek için tasarlanmış özel mobil ve web uygulamaları. iOS, Android ve web'de sorunsuz çalışan çapraz platform uygulamalar.",
+      "pricing": "₺38.000'den başlayan fiyatlarla",
+      "deliveryTime": "4-8 hafta",
+      "inclusions": [
+        "Çapraz platform mobil uygulama (iOS ve Android)",
+        "Progresif web uygulaması (PWA)",
+        "UI/UX tasarım ve prototipleme",
+        "API geliştirme ve entegrasyon",
+        "Push bildirimleri",
+        "Kullanıcı kimlik doğrulama ve güvenlik",
+        "Uygulama mağazası gönderimi (Apple ve Google)",
+        "Analitik ve hata raporlama",
+        "Lansman sonrası hata düzeltmeleri (30 gün)",
+        "Kaynak kod sahipliği"
+      ],
+      "phase1Step": "01",
+      "phase1Title": "Keşif",
+      "phase1Desc": "Uygulamanızın hedeflerini, kullanıcı akışlarını ve teknik gereksinimleri belirliyoruz.",
+      "phase2Step": "02",
+      "phase2Title": "Tasarım",
+      "phase2Desc": "Tüm ekranlar ve platformlar için etkileşimli prototipler ve UI tasarımı.",
+      "phase3Step": "03",
+      "phase3Title": "Geliştirme",
+      "phase3Desc": "Modern framework'lerle uygulamanızı oluşturma, cihazlar arası test.",
+      "phase4Step": "04",
+      "phase4Title": "Lansman",
+      "phase4Desc": "Uygulama mağazası gönderimi, dağıtım ve lansman sonrası izleme.",
+      "ctaHeading": "Uygulamanızı oluşturmaya hazır mısınız?",
+      "ctaDescription": "Uygulama fikrinizi tartışalım ve gerçeğe dönüştürelim."
+    },
     "brandIdentity": {
       "title": "Marka Kimliği",
       "heading": "İstanbul Grafik Tasarım Marka Kimliği",
@@ -496,6 +529,8 @@
     "businessWebsiteDesc": "İşletmeniz için 3-5 sayfalık, mobil uyumlu eksiksiz site",
     "customWebsite": "Özel Tasarım",
     "customWebsiteDesc": "İhtiyacınıza göre özel geliştirme ve entegrasyonlar",
+    "appDevelopment": "Uygulama Geliştirme",
+    "appDevelopmentDesc": "İşletmenize özel mobil ve web uygulamaları",
     "addOnsHeading": "Sitenizi özelleştirin",
     "seoSetup": "SEO Kurulumu",
     "blogSystem": "Blog",
@@ -784,6 +819,10 @@
     "aiChatbot": {
       "title": "Yapay Zeka Chatbot Entegrasyon Hizmetleri | Awab Design",
       "description": "Müşteri desteğini otomatikleştirmek, potansiyel müşterileri nitelendirmek ve web sitenizde 7/24 yardım sağlamak için akıllı yapay zeka chatbotları entegre edin."
+    },
+    "appDev": {
+      "title": "Uygulama Geliştirme | Awab Design",
+      "description": "Özel mobil ve web uygulama geliştirme. Modern framework'lerle oluşturulmuş çapraz platform iOS, Android ve web uygulamaları."
     },
     "brandIdentity": {
       "title": "İstanbul Marka Kimliği Tasarım Hizmetleri | Awab Design",

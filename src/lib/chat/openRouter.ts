@@ -35,7 +35,7 @@ function buildSystemPrompt(context: ChatContext, locale?: string): string {
   // Build locale-aware pricing
   const tierPrices = projectTiers.map((t) => {
     const price = getPrice(t.id, t.basePrice, loc);
-    return `${t.nameKey === "landingPage" ? "Landing Page" : t.nameKey === "businessWebsite" ? "Business Website" : "Custom Website"}: from ${formatPrice(price, loc, tryRate)}`;
+    return `${t.nameKey === "landingPage" ? "Landing Page" : t.nameKey === "businessWebsite" ? "Business Website" : t.nameKey === "customWebsite" ? "Custom Website" : "App Development"}: from ${formatPrice(price, loc, tryRate)}`;
   }).join(", ");
 
   const addOnLabels: Record<string, string> = {

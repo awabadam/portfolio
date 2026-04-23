@@ -31,6 +31,7 @@ export const projectTiers = [
   { id: "landing", nameKey: "landingPage" as const, descKey: "landingPageDesc" as const, basePrice: 100 },
   { id: "business", nameKey: "businessWebsite" as const, descKey: "businessWebsiteDesc" as const, basePrice: 300, popular: true },
   { id: "custom", nameKey: "customWebsite" as const, descKey: "customWebsiteDesc" as const, basePrice: 800 },
+  { id: "app", nameKey: "appDevelopment" as const, descKey: "appDevelopmentDesc" as const, basePrice: 1000 },
 ];
 
 export const addOns = [
@@ -51,6 +52,7 @@ export const intlPriceMap: Record<string, number> = {
   cms: 250,
   chatbot: 500,
   multilang: 150,
+  app: 2000,
 };
 
 export function getPrice(id: string, basePrice: number, locale: string): number {

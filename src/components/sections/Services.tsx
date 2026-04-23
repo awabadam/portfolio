@@ -19,6 +19,7 @@ import {
   DollarSign,
   Target,
   Bot,
+  Smartphone,
 } from "lucide-react";
 import {
   trackServiceInterest,
@@ -75,6 +76,23 @@ const services: Service[] = [
     link: "#contact",
     slug: "ai-chatbot-integration",
   },
+  {
+    icon: <Smartphone className="h-10 w-10 text-primary" />,
+    title: "App Development",
+    description:
+      "Custom mobile and web applications for your business. From concept to deployment, modern apps that work across all platforms.",
+    benefits: [
+      "Cross-platform mobile apps",
+      "Progressive web applications",
+      "API integration & backend",
+      "App store deployment",
+      "Post-launch support",
+    ],
+    timeframe: "4-8 weeks",
+    priceRange: "Starting from $1,000",
+    link: "#contact",
+    slug: "app-development",
+  },
 ];
 
 const Services = () => {
@@ -102,15 +120,15 @@ const Services = () => {
             className="font-display text-display-3 leading-none tracking-tight"
             variants={fadeInUp}
           >
-            Web Design & AI Chatbot Services
+            Web Design, AI Chatbot & App Development
           </motion.h2>
           <motion.p
             className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground"
             variants={fadeInUp}
           >
-            Professional web design and AI chatbot integration services
-            tailored to help your business stand out in Istanbul's competitive
-            market and achieve measurable results.
+            Professional web design, AI chatbot integration, and app
+            development services tailored to help your business stand out in
+            Istanbul's competitive market and achieve measurable results.
           </motion.p>
         </motion.div>
 

@@ -254,6 +254,39 @@
       "ctaHeading": "Ready to Automate Your Support?",
       "ctaDescription": "Get an instant quote or schedule a free consultation to discuss your AI chatbot integration needs."
     },
+    "appDev": {
+      "heading": "App Development",
+      "title": "App Development",
+      "lead": "Custom mobile and web applications built to solve real business problems. Cross-platform apps that work seamlessly on iOS, Android, and the web.",
+      "pricing": "Starting from $2,000",
+      "deliveryTime": "4-8 weeks",
+      "inclusions": [
+        "Cross-platform mobile app (iOS & Android)",
+        "Progressive web app (PWA)",
+        "UI/UX design & prototyping",
+        "API development & integration",
+        "Push notifications",
+        "User authentication & security",
+        "App store submission (Apple & Google)",
+        "Analytics & crash reporting",
+        "Post-launch bug fixes (30 days)",
+        "Source code ownership"
+      ],
+      "phase1Step": "01",
+      "phase1Title": "Discovery",
+      "phase1Desc": "We define your app's goals, user flows, and technical requirements.",
+      "phase2Step": "02",
+      "phase2Title": "Design",
+      "phase2Desc": "Interactive prototypes and UI design for all screens and platforms.",
+      "phase3Step": "03",
+      "phase3Title": "Development",
+      "phase3Desc": "Building your app with modern frameworks, testing across devices.",
+      "phase4Step": "04",
+      "phase4Title": "Launch",
+      "phase4Desc": "App store submission, deployment, and post-launch monitoring.",
+      "ctaHeading": "Ready to build your app?",
+      "ctaDescription": "Let's discuss your app idea and turn it into reality."
+    },
     "brandIdentity": {
       "title": "Brand Identity",
       "heading": "Graphic Design Istanbul Brand Identity",
@@ -496,6 +529,8 @@
     "businessWebsiteDesc": "A complete site for your business — 3 to 5 pages, mobile-ready",
     "customWebsite": "Custom Website",
     "customWebsiteDesc": "Tailored build with custom features and integrations",
+    "appDevelopment": "App Development",
+    "appDevelopmentDesc": "Custom mobile and web apps tailored to your business",
     "addOnsHeading": "Make it yours",
     "seoSetup": "SEO Setup",
     "blogSystem": "Blog",
@@ -783,6 +818,10 @@
     "aiChatbot": {
       "title": "AI Chatbot Integration Services | Awab Design",
       "description": "Integrate intelligent AI chatbots to automate customer support, qualify leads, and provide 24/7 assistance on your website."
+    },
+    "appDev": {
+      "title": "App Development | Awab Design",
+      "description": "Custom mobile and web app development. Cross-platform iOS, Android, and web applications built with modern frameworks."
     },
     "brandIdentity": {
       "title": "Brand Identity Design Services Istanbul | Awab Design",

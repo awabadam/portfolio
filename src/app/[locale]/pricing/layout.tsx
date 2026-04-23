@@ -64,6 +64,10 @@ const tierSchemaLabels: Record<string, { name: string; description: string }> = 
     name: "Custom Website",
     description: "Tailored Next.js build with custom features, integrations, and advanced SEO",
   },
+  app: {
+    name: "App Development",
+    description: "Custom mobile and web application development",
+  },
 };
 
 const addOnSchemaLabels: Record<string, string> = {

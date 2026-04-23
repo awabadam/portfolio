@@ -51,6 +51,10 @@ const tierSchemaLabels: Record<string, { name: string; description: string }> = 
     name: "Custom Website",
     description: "Tailored build with custom features and integrations",
   },
+  app: {
+    name: "App Development",
+    description: "Custom mobile and web application development",
+  },
 };
 
 const addOnSchemaLabels: Record<string, string> = {

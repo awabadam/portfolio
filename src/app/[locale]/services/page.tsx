@@ -5,7 +5,7 @@ import { Link } from "@/i18n/routing";
 import { Button } from "@/components/ui/button";
 import {
   Layout, Palette, Search, FileText, Code, Bot,
-  Globe, Brush, Shield, Server, ArrowRight, ChevronDown,
+  Globe, Brush, Shield, Server, ArrowRight, ChevronDown, Smartphone,
 } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
 import { ScrollReveal, StaggerContainer, StaggerItem } from "@/components/effects";
@@ -42,6 +42,7 @@ const tierIcons = [
   <Globe key="landing" className="h-6 w-6" />,
   <Code key="business" className="h-6 w-6" />,
   <Layout key="custom" className="h-6 w-6" />,
+  <Smartphone key="app" className="h-6 w-6" />,
 ];
 
 export default function ServicesPage() {

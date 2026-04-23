@@ -254,6 +254,39 @@
       "ctaHeading": "Prêt à automatiser votre support ?",
       "ctaDescription": "Obtenez un devis instantané ou planifiez une consultation gratuite pour discuter de vos besoins en chatbot IA."
     },
+    "appDev": {
+      "heading": "Développement d'Applications",
+      "title": "Développement d'Applications",
+      "lead": "Applications mobiles et web personnalisées pour résoudre de vrais problèmes métier. Des apps multiplateformes qui fonctionnent parfaitement sur iOS, Android et le web.",
+      "pricing": "À partir de 2 000 €",
+      "deliveryTime": "4-8 semaines",
+      "inclusions": [
+        "Application mobile multiplateforme (iOS & Android)",
+        "Application web progressive (PWA)",
+        "Design UI/UX & prototypage",
+        "Développement et intégration API",
+        "Notifications push",
+        "Authentification utilisateur & sécurité",
+        "Soumission App Store (Apple & Google)",
+        "Analytique & rapports de crash",
+        "Corrections de bugs post-lancement (30 jours)",
+        "Propriété du code source"
+      ],
+      "phase1Step": "01",
+      "phase1Title": "Découverte",
+      "phase1Desc": "Nous définissons les objectifs de votre app, les flux utilisateurs et les exigences techniques.",
+      "phase2Step": "02",
+      "phase2Title": "Design",
+      "phase2Desc": "Prototypes interactifs et design UI pour tous les écrans et plateformes.",
+      "phase3Step": "03",
+      "phase3Title": "Développement",
+      "phase3Desc": "Construction de votre app avec des frameworks modernes, tests multi-appareils.",
+      "phase4Step": "04",
+      "phase4Title": "Lancement",
+      "phase4Desc": "Soumission App Store, déploiement et suivi post-lancement.",
+      "ctaHeading": "Prêt à créer votre application ?",
+      "ctaDescription": "Discutons de votre idée d'application et transformons-la en réalité."
+    },
     "brandIdentity": {
       "title": "Identité de Marque",
       "heading": "Design d'Identité de Marque",
@@ -496,6 +529,8 @@
     "businessWebsiteDesc": "Un site complet pour votre entreprise — 3 à 5 pages, responsive",
     "customWebsite": "Site Sur Mesure",
     "customWebsiteDesc": "Développement sur mesure avec fonctionnalités et intégrations personnalisées",
+    "appDevelopment": "Développement d'Apps",
+    "appDevelopmentDesc": "Applications mobiles et web personnalisées pour votre entreprise",
     "addOnsHeading": "Personnalisez",
     "seoSetup": "SEO",
     "blogSystem": "Blog",
@@ -783,6 +818,10 @@
     "aiChatbot": {
       "title": "Intégration Chatbot IA | Awab Design",
       "description": "Intégrez des chatbots IA intelligents pour automatiser le support client, qualifier vos leads et offrir une assistance 24h/24."
+    },
+    "appDev": {
+      "title": "Développement d'Applications | Awab Design",
+      "description": "Développement d'applications mobiles et web sur mesure. Applications multiplateformes iOS, Android et web avec des frameworks modernes."
     },
     "brandIdentity": {
       "title": "Design d'Identité de Marque | Awab Design",
