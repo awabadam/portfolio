@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter as FontSans, Space_Grotesk as FontDisplay, Tajawal as FontArabic } from "next/font/google";
+import { Inter as FontSans, Space_Grotesk as FontDisplay, Cairo as FontArabic } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { cn } from "@/lib/utils";
@@ -19,9 +19,9 @@ const fontDisplay = FontDisplay({
 });
 
 const fontArabic = FontArabic({
-  subsets: ["arabic"],
+  subsets: ["arabic", "latin"],
   variable: "--font-arabic",
-  weight: ["300", "400", "500", "700", "800"],
+  weight: ["300", "400", "500", "600", "700", "800"],
   display: "swap",
 });
 
