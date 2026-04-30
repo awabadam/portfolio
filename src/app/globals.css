@@ -64,14 +64,12 @@
 }
 
 /* Arabic font and RTL overrides */
-[lang="ar"] body {
+[lang="ar"] {
   font-family: var(--font-arabic), var(--font-sans), sans-serif;
+  letter-spacing: 0 !important;
 }
 [lang="ar"] .font-display {
   font-family: var(--font-arabic), var(--font-display), sans-serif;
-}
-[lang="ar"] {
-  letter-spacing: 0 !important;
 }
 
 /* Custom Scrollbar */

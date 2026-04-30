@@ -2,6 +2,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
+import { isRtl } from '@/i18n/config';
 import { ThemeProvider } from "@/components/theme-provider";
 import { ConditionalLayout, ConditionalFooter } from "@/components/layout/ConditionalLayout";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
@@ -30,26 +31,30 @@ export default async function LocaleLayout({
   setRequestLocale(locale);
   const messages = await getMessages();
 
+  const rtl = isRtl(locale as any);
+
   return (
-    <NextIntlClientProvider messages={messages}>
-      <ThemeProvider
-        attribute="class"
-        defaultTheme="system"
-        enableSystem
-        disableTransitionOnChange
-      >
-        <WhatsAppProvider>
-          <GoogleAnalytics />
-          <PageTracking />
-          <ScrollProgress />
-          <SmoothScroll />
-          <NoiseOverlay />
-          <ConditionalLayout />
-          <PageTransition>{children}</PageTransition>
-          <ConditionalFooter />
-          <Toaster position="top-right" richColors closeButton />
-        </WhatsAppProvider>
-      </ThemeProvider>
-    </NextIntlClientProvider>
+    <div lang={locale} dir={rtl ? 'rtl' : 'ltr'}>
+      <NextIntlClientProvider messages={messages}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <WhatsAppProvider>
+            <GoogleAnalytics />
+            <PageTracking />
+            <ScrollProgress />
+            <SmoothScroll />
+            <NoiseOverlay />
+            <ConditionalLayout />
+            <PageTransition>{children}</PageTransition>
+            <ConditionalFooter />
+            <Toaster position="top-right" richColors closeButton />
+          </WhatsAppProvider>
+        </ThemeProvider>
+      </NextIntlClientProvider>
+    </div>
   );
 }
