@@ -126,7 +126,7 @@ export default function HomePageContent() {
           */}
           <motion.h1
             style={{ x: headingParallax.x, y: headingParallax.y }}
-            className="text-center font-display text-[12vw] font-bold leading-none tracking-tighter text-white/70 md:text-[10vw]"
+            className="text-center font-display text-[12vw] font-bold leading-none tracking-tighter text-neutral-300 md:text-[10vw]"
           >
             {t('heroLine1')}
             <br />
@@ -139,7 +139,7 @@ export default function HomePageContent() {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5, duration: 1 }}
             style={{ x: subtitleParallax.x, y: subtitleParallax.y }}
-            className="mt-8 max-w-xl text-center text-lg text-white/60 font-medium md:text-xl"
+            className="mt-8 max-w-xl text-center text-lg text-neutral-400 font-medium md:text-xl"
           >
             {t('heroSubtitle')}
           </motion.p>
@@ -168,7 +168,7 @@ export default function HomePageContent() {
           animate={{ opacity: 1 }}
           transition={{ delay: 1, duration: 1 }}
           style={{ x: scrollIndicatorParallax.x, y: scrollIndicatorParallax.y }}
-          className="absolute bottom-12 left-1/2 -translate-x-1/2 text-white/50"
+          className="absolute bottom-12 left-1/2 -translate-x-1/2 text-neutral-500"
         >
           <div className="flex flex-col items-center gap-2">
             <span className="text-xs uppercase tracking-widest">{t('scroll')}</span>
@@ -218,7 +218,7 @@ export default function HomePageContent() {
       <section id="work" className="relative z-10 bg-background py-32 text-foreground md:py-48">
         <div className="container mx-auto px-4">
           <ScrollReveal animation="fadeUp" className="mb-16 flex items-end justify-between md:mb-32">
-            <h2 className="font-display text-[10vw] font-bold leading-none tracking-tighter opacity-10 md:text-[8vw]">
+            <h2 className="font-display text-[10vw] font-bold leading-none tracking-tighter text-foreground/10 md:text-[8vw]">
               {t('workHeading')}
             </h2>
             <Button asChild variant="outline" className="hidden border-border bg-transparent hover:bg-primary hover:text-primary-foreground md:flex">

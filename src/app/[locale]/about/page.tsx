@@ -47,7 +47,7 @@ export default function AboutPage() {
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-            className="text-center font-display text-[15vw] font-bold leading-none tracking-tighter text-white/70 md:text-[12vw]"
+            className="text-center font-display text-[15vw] font-bold leading-none tracking-tighter text-neutral-300 md:text-[12vw]"
           >
             {t('heroLine1')}
             <br />
@@ -59,7 +59,7 @@ export default function AboutPage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1, duration: 1 }}
-          className="absolute bottom-12 left-1/2 -translate-x-1/2 text-white/50"
+          className="absolute bottom-12 left-1/2 -translate-x-1/2 text-neutral-500"
         >
           <div className="flex flex-col items-center gap-2">
             <span className="text-xs uppercase tracking-widest">{t('scroll')}</span>
