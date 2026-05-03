@@ -1,4 +1,4 @@
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
 import { Metadata } from "next";
 // 💰 Pricing source of truth: edit prices in src/lib/pricing.ts
 // The OfferCatalog JSON-LD below is generated from projectTiers + addOns.
@@ -7,6 +7,9 @@ import Breadcrumbs from "@/components/seo/Breadcrumbs";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("metadata.rateCalculator");
+  const locale = await getLocale();
+  const ogLocale = locale === "ar" ? "ar_SA" : locale === "tr" ? "tr_TR" : locale === "fr" ? "fr_FR" : "en_US";
+
   return {
     title: t("title"),
     description: t("description"),
@@ -14,6 +17,8 @@ export async function generateMetadata(): Promise<Metadata> {
       title: t("title"),
       description: t("description"),
       url: "https://www.awab.design/rate-calculator",
+      locale: ogLocale,
+      type: "website",
       images: [
         {
           url: "/img/hero-image.jpg",
@@ -22,6 +27,12 @@ export async function generateMetadata(): Promise<Metadata> {
           alt: "Awab Design — Rate Calculator",
         },
       ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: t("title"),
+      description: t("description"),
+      images: ["/img/hero-image.jpg"],
     },
     alternates: {
       canonical: "/rate-calculator",

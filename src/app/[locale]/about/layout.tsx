@@ -16,6 +16,14 @@ export async function generateMetadata(): Promise<Metadata> {
       url: "https://www.awab.design/about",
       locale: ogLocale,
       type: "profile",
+      images: [
+        {
+          url: "/img/hero-image.jpg",
+          width: 1200,
+          height: 630,
+          alt: "Awab Design — About",
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image",

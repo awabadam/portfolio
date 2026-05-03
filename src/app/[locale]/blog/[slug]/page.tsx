@@ -29,7 +29,7 @@ export async function generateMetadata({
   const { slug } = await params;
   const post = await getBlogPostBySlug(slug);
   const locale = await getLocale();
-  const ogLocale = locale === 'ar' ? 'ar_SA' : locale === 'tr' ? 'tr_TR' : 'en_US';
+  const ogLocale = locale === 'ar' ? 'ar_SA' : locale === 'tr' ? 'tr_TR' : locale === 'fr' ? 'fr_FR' : 'en_US';
 
   if (!post) {
     return {

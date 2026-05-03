@@ -7,11 +7,13 @@ import { Button } from "@/components/ui/button";
 
 interface ImageGalleryProps {
   images: string[];
+  title?: string;
   className?: string;
 }
 
 const ImageGallery: React.FC<ImageGalleryProps> = ({
   images = [],
+  title,
   className = "",
 }) => {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -46,7 +48,7 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
       <div className="relative aspect-video w-full overflow-hidden rounded-lg">
         <Image
           src={images[activeIndex]}
-          alt={`Project image ${activeIndex + 1}`}
+          alt={title ? `${title} — image ${activeIndex + 1}` : `Project image ${activeIndex + 1}`}
           fill
           className="object-cover"
         />
@@ -95,7 +97,7 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
           >
             <Image
               src={image}
-              alt={`Thumbnail ${index + 1}`}
+              alt={title ? `${title} — thumbnail ${index + 1}` : `Thumbnail ${index + 1}`}
               fill
               className="object-cover"
             />
@@ -109,7 +111,7 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
           <div className="relative h-[80vh] w-[80vw]">
             <Image
               src={images[activeIndex]}
-              alt={`Project image ${activeIndex + 1}`}
+              alt={title ? `${title} — image ${activeIndex + 1}` : `Project image ${activeIndex + 1}`}
               fill
               className="object-contain"
             />
