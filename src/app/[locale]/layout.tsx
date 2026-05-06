@@ -14,6 +14,9 @@ import { ScrollProgress, SmoothScroll, NoiseOverlay } from "@/components/effects
 const PageTransition = dynamic(
   () => import("@/components/effects/PageTransition"),
 );
+const LoadingScreen = dynamic(
+  () => import("@/components/effects/LoadingScreen"),
+);
 import { Toaster } from "@/components/ui/toaster";
 
 export function generateStaticParams() {
@@ -48,6 +51,7 @@ export default async function LocaleLayout({
           disableTransitionOnChange
         >
           <WhatsAppProvider>
+            <LoadingScreen />
             <GoogleAnalytics />
             <PageTracking />
             <ScrollProgress />

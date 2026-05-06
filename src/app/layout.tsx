@@ -139,6 +139,13 @@ export default function RootLayout({
         */}
         <link rel="preconnect" href="https://www.googletagmanager.com" />
         <link rel="preconnect" href="https://www.google-analytics.com" crossOrigin="anonymous" />
+        {/* Instant dark cover for loading screen — prevents content flash
+            before React hydrates. Removed by LoadingScreen component. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{if(!sessionStorage.getItem("intro-shown")){var d=document.createElement("div");d.id="intro-cover";d.style.cssText="position:fixed;inset:0;z-index:9999;background:#0a0a0a";document.documentElement.appendChild(d)}}catch(e){}})()`,
+          }}
+        />
       </head>
       <body
         className={cn(
