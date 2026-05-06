@@ -5,6 +5,7 @@ import { motion, useInView } from "framer-motion";
 import { Project } from "@/types";
 import { ArrowUpRight } from "lucide-react";
 import { Link } from "@/i18n/routing";
+import { ClipReveal } from "@/components/effects";
 
 interface ProjectListProps {
   projects: Project[];
@@ -40,7 +41,8 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
         onMouseLeave={() => setIsHovered(false)}
       >
         {/* Thumbnail Container */}
-        <div className="relative aspect-[19/10] w-full overflow-hidden rounded-lg bg-muted [clip-path:inset(0_round_0.5rem)]">
+        <ClipReveal mode="center-x">
+        <div className="relative aspect-[19/10] w-full overflow-hidden rounded-lg bg-muted shadow-[0_2px_4px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.06)] transition-shadow duration-500 group-hover:shadow-[0_8px_24px_rgba(0,0,0,0.1),0_24px_60px_rgba(0,0,0,0.14)] [clip-path:inset(0_round_0.5rem)]">
           {/* Layer 1: Gradient placeholder */}
           <div className="absolute inset-0 bg-gradient-to-br from-muted via-muted/80 to-muted/60" />
 
@@ -95,6 +97,7 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
             style={{ pointerEvents: "none" }}
           />
         </div>
+        </ClipReveal>
 
         {/* Project Info */}
         <div className="mt-5 flex items-start justify-between gap-4">

@@ -28,8 +28,8 @@ const ScrollProgress = () => {
   return (
     <div
       ref={barRef}
-      className="fixed top-0 left-0 z-50 h-1 bg-primary/20"
-      style={{ width: 0 }}
+      className="fixed top-0 left-0 z-50 h-[3px] bg-primary/80 shadow-[0_0_8px_var(--primary),0_0_20px_var(--primary)]"
+      style={{ width: 0, willChange: "width" }}
     />
   );
 };

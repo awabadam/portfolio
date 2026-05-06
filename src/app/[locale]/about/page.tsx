@@ -6,7 +6,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 import { ArrowDown } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { ScrollReveal, StaggerContainer, StaggerItem } from "@/components/effects";
+import { ScrollReveal, StaggerContainer, StaggerItem, PerspectiveSection, ClipReveal, DepthFloat, ScrollVelocityText } from "@/components/effects";
 
 // Dynamic import for Three.js component (no SSR)
 const InteractiveTetrahedrons = dynamic(
@@ -42,8 +42,10 @@ export default function AboutPage() {
     offset: ["start start", "end end"],
   });
 
-  const heroScale = useTransform(scrollYProgress, [0, 0.2], [1, 1.1]);
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
+  const heroScale = useTransform(scrollYProgress, [0, 0.15], [1, 1.1]);
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.15], [1, 0]);
+  const heroBgY = useTransform(scrollYProgress, [0, 0.2], ["0%", "15%"]);
+  const heroContentY = useTransform(scrollYProgress, [0, 0.2], ["0%", "25%"]);
 
   const skills = [
     "React", "Next.js", "TypeScript", "Generative AI", "Motion",
@@ -58,11 +60,11 @@ export default function AboutPage() {
         className="relative h-screen w-full overflow-hidden"
         style={{ scale: heroScale, opacity: heroOpacity }}
       >
-        <div className="absolute inset-0 bg-black">
+        <motion.div className="absolute inset-0 bg-black" style={{ y: heroBgY }}>
           {shapesReady && <InteractiveTetrahedrons shapeCount={40} isDark={true} />}
-        </div>
+        </motion.div>
 
-        <div className="absolute inset-0 flex items-center justify-center">
+        <motion.div className="absolute inset-0 flex items-center justify-center" style={{ y: heroContentY }}>
           <motion.h1
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
@@ -73,7 +75,7 @@ export default function AboutPage() {
             <br />
             {t('heroLine2')}
           </motion.h1>
-        </div>
+        </motion.div>
 
         <motion.div
           initial={{ opacity: 0 }}
@@ -89,7 +91,8 @@ export default function AboutPage() {
       </motion.section>
 
       {/* The Story - Big Typography */}
-      <section className="relative z-10 bg-background py-32 md:py-64">
+      <PerspectiveSection className="relative z-10 bg-background py-32 md:py-64">
+        <DepthFloat depth={0.3} maxOffset={25} className="pointer-events-none absolute top-32 right-[10%] hidden h-64 w-64 rounded-full bg-primary/[0.03] blur-3xl md:block" />
         <div className="container mx-auto px-4">
           <StaggerContainer className="space-y-32 md:space-y-64" staggerDelay={0.3}>
             <StaggerItem animation="fadeUp">
@@ -111,7 +114,7 @@ export default function AboutPage() {
             </StaggerItem>
           </StaggerContainer>
         </div>
-      </section>
+      </PerspectiveSection>
 
       {/* Skills Marquee */}
       <section className="overflow-hidden bg-black py-24 text-white dark:bg-zinc-950 dark:text-zinc-100">
@@ -141,7 +144,7 @@ export default function AboutPage() {
               </p>
             </ScrollReveal>
 
-            <ScrollReveal animation="scale" delay={0.2}>
+            <ClipReveal mode="circle">
               <div className="relative aspect-square w-full overflow-hidden rounded-2xl grayscale transition-all duration-500 hover:grayscale-0">
                 <Image
                   src="/img/hero-image.jpg"
@@ -150,7 +153,7 @@ export default function AboutPage() {
                   className="object-cover"
                 />
               </div>
-            </ScrollReveal>
+            </ClipReveal>
           </div>
         </div>
       </section>

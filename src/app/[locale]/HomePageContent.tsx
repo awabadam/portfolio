@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Project } from "@/types";
 import ProjectCard from "@/components/cards/ProjectCard";
 import StickyMobileCTA from "@/components/ui/StickyMobileCTA";
-import { ScrollReveal, StaggerContainer, StaggerItem, MagneticElement, TiltCard, TextReveal, LineReveal } from "@/components/effects";
+import { ScrollReveal, StaggerContainer, StaggerItem, MagneticElement, TiltCard, TextReveal, LineReveal, ClipReveal, PerspectiveSection, ScrollVelocityText, DepthFloat } from "@/components/effects";
 import { trackCTAClick } from "@/lib/analytics/gtm";
 
 // Dynamic import for Three.js component (no SSR). We additionally defer
@@ -49,8 +49,13 @@ export default function HomePageContent() {
     offset: ["start start", "end end"],
   });
 
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
-  const heroScale = useTransform(scrollYProgress, [0, 0.2], [1, 0.95]);
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.15], [1, 0]);
+  const heroScale = useTransform(scrollYProgress, [0, 0.15], [1, 0.9]);
+
+  // Multi-layer scroll parallax for hero depth
+  const heroBgY = useTransform(scrollYProgress, [0, 0.2], ["0%", "15%"]);     // Background (slowest)
+  const heroContentY = useTransform(scrollYProgress, [0, 0.2], ["0%", "30%"]); // Content (medium)
+  const heroScrollY = useTransform(scrollYProgress, [0, 0.2], ["0%", "50%"]);  // Scroll indicator (fastest)
 
   // Parallax layers for hero text — move opposite to mouse for depth
   const headingParallax = useParallaxMouse(15);
@@ -117,11 +122,11 @@ export default function HomePageContent() {
         className="fixed inset-0 h-screen w-full overflow-hidden"
         style={{ opacity: heroOpacity, scale: heroScale }}
       >
-        <div className="absolute inset-0 bg-black">
+        <motion.div className="absolute inset-0 bg-black" style={{ y: heroBgY }}>
           {cubesReady && <InteractiveCubes cubeCount={40} isDark={true} />}
-        </div>
+        </motion.div>
 
-        <div className="absolute inset-0 flex flex-col items-center justify-center p-4">
+        <motion.div className="absolute inset-0 flex flex-col items-center justify-center p-4" style={{ y: heroContentY }}>
           {/*
             Heading renders at final state on first paint — no initial
             opacity:0 animation — so it becomes the LCP element
@@ -165,13 +170,13 @@ export default function HomePageContent() {
               </a>
             </Button>
           </motion.div>
-        </div>
+        </motion.div>
 
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1, duration: 1 }}
-          style={{ x: scrollIndicatorParallax.x, y: scrollIndicatorParallax.y }}
+          style={{ x: scrollIndicatorParallax.x, y: heroScrollY }}
           className="absolute bottom-12 left-1/2 -translate-x-1/2 text-neutral-500"
         >
           <div className="flex flex-col items-center gap-2">
@@ -185,12 +190,17 @@ export default function HomePageContent() {
       <div data-hero-spacer className="h-screen" />
 
       {/* Services Reveal */}
-      <section className="relative z-10 bg-background py-32 md:py-48">
+      <PerspectiveSection className="relative z-10 bg-background py-32 md:py-48">
+        {/* Floating depth decorations */}
+        <DepthFloat depth={0.3} maxOffset={20} className="pointer-events-none absolute -top-20 right-[10%] hidden h-64 w-64 rounded-full bg-primary/[0.03] blur-3xl md:block" />
+        <DepthFloat depth={0.6} maxOffset={35} className="pointer-events-none absolute bottom-0 left-[5%] hidden h-48 w-48 rounded-full bg-primary/[0.04] blur-2xl md:block" />
         <div className="container mx-auto px-4">
           <div className="mb-16 md:mb-32">
-            <ScrollReveal animation="blurUp">
-              <h2 className="mb-4 font-mono text-sm uppercase text-muted-foreground">{t('servicesHeading')}</h2>
-            </ScrollReveal>
+            <ScrollVelocityText>
+              <ScrollReveal animation="blurUp">
+                <h2 className="mb-4 font-mono text-sm uppercase text-muted-foreground">{t('servicesHeading')}</h2>
+              </ScrollReveal>
+            </ScrollVelocityText>
             <TextReveal
               as="p"
               className="max-w-4xl font-display text-4xl font-medium leading-tight md:text-6xl"
@@ -203,8 +213,8 @@ export default function HomePageContent() {
 
           <StaggerContainer className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4" staggerDelay={0.05}>
             {capabilities.map((cap, i) => (
-              <StaggerItem key={i} animation="fadeUp">
-                <div className="rounded-xl border border-border/40 bg-card p-5 transition-all duration-300 hover:border-primary/30 hover:shadow-md">
+              <StaggerItem key={i} animation="liftUp">
+                <div className="rounded-xl border border-border/40 bg-card p-5 transition-all duration-300 hover:border-primary/30 hover:shadow-[0_4px_12px_rgba(0,0,0,0.06),0_12px_40px_rgba(0,0,0,0.1)] hover:-translate-y-1">
                   <div className="mb-3 text-primary">{cap.icon}</div>
                   <h3 className="font-semibold">{cap.title}</h3>
                   <p className="mt-1 text-xs text-muted-foreground">{cap.desc}</p>
@@ -223,27 +233,32 @@ export default function HomePageContent() {
             </Link>
           </ScrollReveal>
         </div>
-      </section>
+      </PerspectiveSection>
 
       {/* Selected Work Preview */}
-      <section id="work" className="relative z-10 bg-background py-32 text-foreground md:py-48">
+      <PerspectiveSection className="relative z-10 bg-background py-32 text-foreground md:py-48">
+        <DepthFloat depth={0.4} maxOffset={25} className="pointer-events-none absolute top-20 left-[8%] hidden h-40 w-40 rounded-full bg-primary/[0.03] blur-3xl md:block" />
         <div className="container mx-auto px-4">
-          <ScrollReveal animation="blurUp" className="mb-16 flex items-end justify-between md:mb-32">
-            <h2 className="font-display text-[10vw] font-bold leading-none tracking-tighter text-foreground/10 md:text-[8vw]">
-              {t('workHeading')}
-            </h2>
-            <Button asChild variant="outline" className="hidden border-border bg-transparent hover:bg-primary hover:text-primary-foreground md:flex">
-              <Link href="/projects">{t('viewAllProjects')}</Link>
-            </Button>
-          </ScrollReveal>
+          <ScrollVelocityText>
+            <ScrollReveal animation="zoomIn" className="mb-16 flex items-end justify-between md:mb-32">
+              <h2 className="font-display text-[10vw] font-bold leading-none tracking-tighter text-foreground/10 md:text-[8vw]">
+                {t('workHeading')}
+              </h2>
+              <Button asChild variant="outline" className="hidden border-border bg-transparent hover:bg-primary hover:text-primary-foreground md:flex">
+                <Link href="/projects">{t('viewAllProjects')}</Link>
+              </Button>
+            </ScrollReveal>
+          </ScrollVelocityText>
 
           <StaggerContainer className="flex flex-col gap-8 md:flex-row" staggerDelay={0.2}>
             {projects.length > 0 ? (
               projects.map((project, index) => (
-                <StaggerItem key={project.id} animation="fadeUp" className="w-full flex-1">
-                  <TiltCard className="relative overflow-hidden rounded-2xl" tiltStrength={8}>
-                    <ProjectCard project={project} index={index} inverse />
-                  </TiltCard>
+                <StaggerItem key={project.id} animation="liftUp" className="w-full flex-1">
+                  <ClipReveal mode="center-x">
+                    <TiltCard className="relative overflow-hidden rounded-2xl" tiltStrength={8}>
+                      <ProjectCard project={project} index={index} inverse />
+                    </TiltCard>
+                  </ClipReveal>
                 </StaggerItem>
               ))
             ) : (
@@ -263,13 +278,13 @@ export default function HomePageContent() {
             </Button>
           </ScrollReveal>
         </div>
-      </section>
+      </PerspectiveSection>
 
       {/* About Snippet */}
       <section className="relative z-10 bg-background py-24">
         <LineReveal className="container mx-auto px-4 mb-16" direction="center" />
         <div className="container mx-auto px-4 text-center">
-          <ScrollReveal animation="blurUp">
+          <ScrollReveal animation="zoomIn">
             <p className="mx-auto max-w-2xl text-lg leading-relaxed text-muted-foreground">
               {tAbout('storyLine1')} {tAbout('storyLine2')} {tAbout('storyLine3')}
             </p>
@@ -286,8 +301,10 @@ export default function HomePageContent() {
 
       {/* CTA Section */}
       <section className="relative z-10 bg-background flex min-h-[80vh] items-center justify-center py-32 text-center">
+        <DepthFloat depth={0.5} maxOffset={40} className="pointer-events-none absolute top-1/4 right-[15%] hidden h-72 w-72 rounded-full bg-primary/[0.03] blur-3xl md:block" />
+        <DepthFloat depth={0.3} maxOffset={20} className="pointer-events-none absolute bottom-1/4 left-[10%] hidden h-56 w-56 rounded-full bg-primary/[0.02] blur-3xl md:block" />
         <div className="container mx-auto px-4">
-          <ScrollReveal animation="fadeUp">
+          <ScrollReveal animation="zoomIn">
             <p className="mb-8 font-mono text-sm uppercase text-muted-foreground">{t('readyToStart')}</p>
             <MagneticElement strength={40}>
               <Link

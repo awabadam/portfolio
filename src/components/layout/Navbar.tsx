@@ -49,8 +49,10 @@ const Navbar = () => {
   return (
     <>
       <motion.nav 
-        className={`fixed top-0 z-50 w-full transition-colors duration-300 ${
-          isScrolled ? "bg-background/80 backdrop-blur-md border-b border-border/10" : "bg-transparent"
+        className={`fixed top-0 z-50 w-full transition-all duration-500 ${
+          isScrolled
+            ? "bg-background/60 backdrop-blur-xl border-b border-border/15 shadow-[0_1px_3px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.06),0_12px_40px_rgba(0,0,0,0.08)]"
+            : "bg-transparent"
         }`}
         initial={{ y: -100 }}
         animate={{ y: 0 }}

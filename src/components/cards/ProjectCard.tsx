@@ -60,7 +60,9 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
         onClick={handleProjectClick}
       >
         <div className={cn(
-          "relative overflow-hidden rounded-2xl border transition-all duration-500 group-hover:shadow-2xl group-hover:-translate-y-1",
+          "relative overflow-hidden rounded-2xl border transition-all duration-500 group-hover:-translate-y-2",
+          "shadow-[0_2px_4px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.06)]",
+          "group-hover:shadow-[0_4px_8px_rgba(0,0,0,0.06),0_8px_24px_rgba(0,0,0,0.1),0_24px_60px_rgba(0,0,0,0.14)]",
           inverse
             ? "border-border/40 bg-card/50 group-hover:border-primary/50"
             : "border-border/40 bg-card group-hover:border-primary/50"

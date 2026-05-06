@@ -89,7 +89,9 @@ export default function TiltCard({
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
     >
-      {children}
+      <div style={{ transform: "translateZ(0px)", transformStyle: "preserve-3d" }}>
+        {children}
+      </div>
       {glare && (
         <motion.div
           className="pointer-events-none absolute inset-0 rounded-[inherit]"

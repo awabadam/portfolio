@@ -8,7 +8,7 @@ import {
   Globe, Brush, Shield, Server, ArrowRight, ChevronDown, Smartphone,
 } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
-import { ScrollReveal, StaggerContainer, StaggerItem } from "@/components/effects";
+import { ScrollReveal, StaggerContainer, StaggerItem, PerspectiveSection, DepthFloat, ScrollVelocityText } from "@/components/effects";
 // 💰 Pricing source of truth: edit prices in src/lib/pricing.ts
 import { projectTiers, getPrice, formatPrice, FALLBACK_TRY_RATE } from "@/lib/pricing";
 import FAQSchema from "@/components/seo/FAQSchema";
@@ -77,16 +77,19 @@ export default function ServicesPage() {
       </section>
 
       {/* Process */}
-      <section className="border-t border-border py-24">
+      <PerspectiveSection className="border-t border-border py-24">
+        <DepthFloat depth={0.3} maxOffset={20} className="pointer-events-none absolute -top-10 right-[15%] hidden h-48 w-48 rounded-full bg-primary/[0.03] blur-3xl md:block" />
         <div className="container mx-auto px-4">
+          <ScrollVelocityText>
           <ScrollReveal animation="fadeUp">
             <h2 className="mb-4 font-mono text-sm uppercase tracking-widest text-muted-foreground">
               {t("processHeading")}
             </h2>
           </ScrollReveal>
+          </ScrollVelocityText>
           <StaggerContainer className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4" staggerDelay={0.1}>
             {processSteps.map((step) => (
-              <StaggerItem key={step.key} animation="fadeUp">
+              <StaggerItem key={step.key} animation="liftUp">
                 <div className="group">
                   <span className="font-mono text-4xl font-bold text-primary/20 transition-colors group-hover:text-primary/40">
                     {step.num}
@@ -102,7 +105,7 @@ export default function ServicesPage() {
             ))}
           </StaggerContainer>
         </div>
-      </section>
+      </PerspectiveSection>
 
       {/* Capabilities */}
       <section className="border-t border-border py-24">
@@ -115,7 +118,7 @@ export default function ServicesPage() {
           <StaggerContainer className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5" staggerDelay={0.05}>
             {capabilities.map((cap) => (
               <StaggerItem key={cap.key} animation="fadeUp">
-                <div className="rounded-xl border border-border/40 bg-card p-5 transition-all duration-300 hover:border-primary/30 hover:shadow-md">
+                <div className="rounded-xl border border-border/40 bg-card p-5 transition-all duration-300 hover:border-primary/30 hover:shadow-[0_4px_12px_rgba(0,0,0,0.06),0_12px_40px_rgba(0,0,0,0.1)] hover:-translate-y-1">
                   <div className="mb-3 text-primary">{cap.icon}</div>
                   <h3 className="font-semibold">{t(cap.key)}</h3>
                   <p className="mt-1 text-xs text-muted-foreground">
@@ -172,7 +175,7 @@ export default function ServicesPage() {
             {projectTiers.map((tier, i) => (
               <StaggerItem key={tier.id} animation="fadeUp">
                 <div
-                  className={`relative flex flex-col rounded-2xl border-2 p-8 transition-all duration-300 hover:shadow-lg ${
+                  className={`relative flex flex-col rounded-2xl border-2 p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_4px_12px_rgba(0,0,0,0.06),0_12px_40px_rgba(0,0,0,0.1),0_24px_60px_rgba(0,0,0,0.08)] ${
                     tier.popular
                       ? "border-primary bg-primary/5"
                       : "border-border hover:border-primary/30"
