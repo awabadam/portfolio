@@ -1,12 +1,9 @@
 "use client";
 
-import { useRef, useState, useEffect, useCallback } from "react";
+import { useState } from "react";
 import { Link } from "@/i18n/routing";
 import { ArrowRight, Globe } from "lucide-react";
 import type { Project } from "@/types";
-
-const IFRAME_WIDTH = 1440;
-const IFRAME_HEIGHT = 1080;
 
 interface ClinicProjectCardProps {
   project: Project;
@@ -23,32 +20,20 @@ export default function ClinicProjectCard({
   project,
   viewCaseStudyLabel,
 }: ClinicProjectCardProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [scale, setScale] = useState(0.3);
+  const [useFallback, setUseFallback] = useState(false);
   const [screenshotError, setScreenshotError] = useState(false);
-  const useIframe = project.live_url && !project.iframe_blocked;
 
-  const updateScale = useCallback(() => {
-    if (containerRef.current) {
-      setScale(containerRef.current.offsetWidth / IFRAME_WIDTH);
-    }
-  }, []);
-
-  useEffect(() => {
-    updateScale();
-    window.addEventListener("resize", updateScale);
-    return () => window.removeEventListener("resize", updateScale);
-  }, [updateScale]);
+  const thumbnailSrc = `/img/projects/${project.id}-thumbnail.webp`;
+  const screenshotSrc = project.live_url
+    ? `/api/screenshot?url=${encodeURIComponent(project.live_url)}`
+    : null;
 
   return (
     <Link
       href={`/projects/${project.id}`}
       className="group relative block overflow-hidden rounded-2xl border border-border bg-card transition-all hover:border-primary/30 hover:shadow-lg"
     >
-      <div
-        ref={containerRef}
-        className="relative aspect-[4/3] w-full overflow-hidden bg-muted"
-      >
+      <div className="relative aspect-[19/10] w-full overflow-hidden bg-muted">
         {/* Layer 1: Gradient placeholder (final fallback) */}
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-gradient-to-br from-muted via-muted/80 to-muted/60">
           <Globe className="h-10 w-10 text-muted-foreground/40" />
@@ -62,11 +47,24 @@ export default function ClinicProjectCard({
           )}
         </div>
 
-        {/* Layer 2: Screenshot (covers placeholder while iframe loads) */}
-        {project.live_url && !screenshotError && (
+        {/* Layer 2: Local thumbnail → screenshot API fallback */}
+        {!useFallback && (
           /* eslint-disable-next-line @next/next/no-img-element */
           <img
-            src={`/api/screenshot?url=${encodeURIComponent(project.live_url)}`}
+            src={thumbnailSrc}
+            alt={project.title}
+            width={800}
+            height={600}
+            loading="lazy"
+            decoding="async"
+            className="absolute inset-0 z-[1] h-full w-full object-cover object-top"
+            onError={() => setUseFallback(true)}
+          />
+        )}
+        {useFallback && screenshotSrc && !screenshotError && (
+          /* eslint-disable-next-line @next/next/no-img-element */
+          <img
+            src={screenshotSrc}
             alt={project.title}
             width={800}
             height={600}
@@ -77,21 +75,6 @@ export default function ClinicProjectCard({
           />
         )}
 
-        {/* Layer 3: Iframe (covers screenshot if the site allows framing) */}
-        {useIframe && (
-          <iframe
-            src={project.live_url}
-            title={project.title}
-            className="pointer-events-none absolute left-0 top-0 z-[2] origin-top-left border-0"
-            style={{
-              width: `${IFRAME_WIDTH}px`,
-              height: `${IFRAME_HEIGHT}px`,
-              transform: `scale(${scale})`,
-            }}
-            sandbox="allow-scripts allow-same-origin"
-            loading="lazy"
-          />
-        )}
       </div>
 
       <div className="p-6">

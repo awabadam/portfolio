@@ -196,7 +196,7 @@ export default function ProjectDetail({
                   transformOrigin: "top left",
                 }}
                 sandbox="allow-scripts allow-same-origin"
-                loading="eager"
+                loading="lazy"
               />
             )}
           </motion.div>

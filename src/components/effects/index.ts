@@ -10,4 +10,6 @@ export {
   StaggerContainer,
   StaggerItem,
   Parallax,
+  TextReveal,
+  LineReveal,
 } from './ScrollReveal';

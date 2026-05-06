@@ -64,12 +64,12 @@ export default function ServicesPage() {
     <main className="min-h-screen bg-background pt-32">
       {/* Hero */}
       <section className="container mx-auto px-4 pb-24">
-        <ScrollReveal animation="fadeUp">
+        <ScrollReveal animation="blurUp">
           <h1 className="font-display text-display-1 font-bold leading-none tracking-tighter">
             {t("heading")}
           </h1>
         </ScrollReveal>
-        <ScrollReveal animation="fadeUp" delay={0.1}>
+        <ScrollReveal animation="blurUp" delay={0.1}>
           <p className="mt-8 max-w-2xl text-xl leading-relaxed text-muted-foreground">
             {t("description")}
           </p>
@@ -131,7 +131,7 @@ export default function ServicesPage() {
       {/* Specialist / Clinic Websites callout */}
       <section className="border-t border-border py-24">
         <div className="container mx-auto px-4">
-          <ScrollReveal animation="fadeUp">
+          <ScrollReveal animation="slideReveal">
             <div className="mx-auto max-w-5xl overflow-hidden rounded-3xl border-2 border-primary/30 bg-gradient-to-br from-primary/5 via-background to-background p-10 md:p-14">
               <p className="mb-3 font-mono text-xs uppercase tracking-widest text-primary">
                 {t("specialistHeading")}

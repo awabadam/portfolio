@@ -3,7 +3,7 @@
 import { motion, useInView, useScroll, useTransform, Variants } from "framer-motion";
 import { useRef, ReactNode } from "react";
 
-type AnimationType = "fadeUp" | "fadeDown" | "fadeLeft" | "fadeRight" | "scale" | "fade" | "rotateIn" | "flipUp";
+type AnimationType = "fadeUp" | "fadeDown" | "fadeLeft" | "fadeRight" | "scale" | "fade" | "rotateIn" | "flipUp" | "blurUp" | "slideReveal";
 
 interface ScrollRevealProps {
   children: ReactNode;
@@ -47,6 +47,14 @@ const animations: Record<AnimationType, Variants> = {
   flipUp: {
     hidden: { opacity: 0, rotateX: 45, y: 60 },
     visible: { opacity: 1, rotateX: 0, y: 0 },
+  },
+  blurUp: {
+    hidden: { opacity: 0, y: 40, filter: "blur(10px)" },
+    visible: { opacity: 1, y: 0, filter: "blur(0px)" },
+  },
+  slideReveal: {
+    hidden: { opacity: 0, x: -80, skewX: -4 },
+    visible: { opacity: 1, x: 0, skewX: 0 },
   },
 };
 
@@ -144,6 +152,79 @@ export function StaggerItem({
     >
       {children}
     </motion.div>
+  );
+}
+
+// Word-by-word text reveal for premium heading entrances
+interface TextRevealProps {
+  children: string;
+  className?: string;
+  as?: "h1" | "h2" | "h3" | "p" | "span";
+  delay?: number;
+  once?: boolean;
+  threshold?: number;
+}
+
+export function TextReveal({
+  children,
+  className = "",
+  as: Tag = "h2",
+  delay = 0,
+  once = true,
+  threshold = 0.2,
+}: TextRevealProps) {
+  const ref = useRef<HTMLDivElement>(null);
+  const isInView = useInView(ref, { once, amount: threshold });
+  const words = children.split(" ");
+
+  return (
+    <Tag ref={ref as unknown as React.RefObject<HTMLHeadingElement>} className={className}>
+      {words.map((word, i) => (
+        <span key={i} className="inline-block overflow-hidden">
+          <motion.span
+            className="inline-block"
+            initial={{ y: "100%", opacity: 0 }}
+            animate={isInView ? { y: "0%", opacity: 1 } : { y: "100%", opacity: 0 }}
+            transition={{
+              duration: 0.5,
+              delay: delay + i * 0.04,
+              ease: [0.22, 1, 0.36, 1],
+            }}
+          >
+            {word}
+            {i < words.length - 1 ? "\u00A0" : ""}
+          </motion.span>
+        </span>
+      ))}
+    </Tag>
+  );
+}
+
+// Animated line/divider that draws in on scroll
+interface LineRevealProps {
+  className?: string;
+  direction?: "left" | "center";
+  delay?: number;
+}
+
+export function LineReveal({
+  className = "",
+  direction = "left",
+  delay = 0,
+}: LineRevealProps) {
+  const ref = useRef<HTMLDivElement>(null);
+  const isInView = useInView(ref, { once: true, amount: 0.5 });
+
+  return (
+    <div ref={ref} className={`overflow-hidden ${className}`}>
+      <motion.div
+        className="h-px w-full bg-border"
+        initial={{ scaleX: 0 }}
+        animate={isInView ? { scaleX: 1 } : { scaleX: 0 }}
+        transition={{ duration: 0.8, delay, ease: [0.22, 1, 0.36, 1] }}
+        style={{ transformOrigin: direction === "center" ? "center" : "left" }}
+      />
+    </div>
   );
 }
 

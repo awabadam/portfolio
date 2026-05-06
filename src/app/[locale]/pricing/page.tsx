@@ -120,7 +120,7 @@ export default function PricingPage() {
     <main className="min-h-screen bg-background pt-32">
       {/* Hero */}
       <section className="container mx-auto px-4 pb-16 text-center">
-        <ScrollReveal animation="fadeUp">
+        <ScrollReveal animation="blurUp">
           <p className="mb-4 font-mono text-sm uppercase tracking-widest text-muted-foreground">
             {t("heroEyebrow")}
           </p>
@@ -128,7 +128,7 @@ export default function PricingPage() {
             {t("heroHeading")}
           </h1>
         </ScrollReveal>
-        <ScrollReveal animation="fadeUp" delay={0.1}>
+        <ScrollReveal animation="blurUp" delay={0.1}>
           <p className="mx-auto mt-8 max-w-2xl text-xl leading-relaxed text-muted-foreground">
             {t("heroSubtitle")}
           </p>

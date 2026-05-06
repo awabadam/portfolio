@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Project } from "@/types";
 import ProjectCard from "@/components/cards/ProjectCard";
 import StickyMobileCTA from "@/components/ui/StickyMobileCTA";
-import { ScrollReveal, StaggerContainer, StaggerItem, MagneticElement, TiltCard } from "@/components/effects";
+import { ScrollReveal, StaggerContainer, StaggerItem, MagneticElement, TiltCard, TextReveal, LineReveal } from "@/components/effects";
 import { trackCTAClick } from "@/lib/analytics/gtm";
 
 // Dynamic import for Three.js component (no SSR). We additionally defer
@@ -76,18 +76,22 @@ export default function HomePageContent() {
   }, []);
 
   // Defer loading the heavy Three.js cubes until the browser is idle so
-  // they don't block LCP / TBT on the initial page load. Falls back to a
-  // setTimeout on browsers without requestIdleCallback (Safari).
+  // they don't block LCP / TBT on the initial page load. Skip entirely
+  // on mobile / low-power devices to save ~883KB of JS.
   useEffect(() => {
+    const isMobile = window.innerWidth < 768;
+    const isLowPower = navigator.hardwareConcurrency != null && navigator.hardwareConcurrency <= 2;
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (isMobile || isLowPower || prefersReduced) return;
+
     const schedule = (cb: () => void) => {
-      if (typeof window === "undefined") return 0;
       const ric = (window as unknown as { requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number }).requestIdleCallback;
       if (ric) return ric(cb, { timeout: 2000 });
       return window.setTimeout(cb, 1000);
     };
     const handle = schedule(() => setCubesReady(true));
     return () => {
-      if (typeof window === "undefined") return;
       const cic = (window as unknown as { cancelIdleCallback?: (id: number) => void }).cancelIdleCallback;
       if (cic) cic(handle);
       else window.clearTimeout(handle);
@@ -114,7 +118,7 @@ export default function HomePageContent() {
         style={{ opacity: heroOpacity, scale: heroScale }}
       >
         <div className="absolute inset-0 bg-black">
-          {cubesReady && <InteractiveCubes cubeCount={70} isDark={true} />}
+          {cubesReady && <InteractiveCubes cubeCount={40} isDark={true} />}
         </div>
 
         <div className="absolute inset-0 flex flex-col items-center justify-center p-4">
@@ -183,12 +187,19 @@ export default function HomePageContent() {
       {/* Services Reveal */}
       <section className="relative z-10 bg-background py-32 md:py-48">
         <div className="container mx-auto px-4">
-          <ScrollReveal animation="fadeUp" className="mb-16 md:mb-32">
-            <h2 className="mb-4 font-mono text-sm uppercase text-muted-foreground">{t('servicesHeading')}</h2>
-            <p className="max-w-4xl font-display text-4xl font-medium leading-tight md:text-6xl">
+          <div className="mb-16 md:mb-32">
+            <ScrollReveal animation="blurUp">
+              <h2 className="mb-4 font-mono text-sm uppercase text-muted-foreground">{t('servicesHeading')}</h2>
+            </ScrollReveal>
+            <TextReveal
+              as="p"
+              className="max-w-4xl font-display text-4xl font-medium leading-tight md:text-6xl"
+              delay={0.1}
+            >
               {t('servicesDescription')}
-            </p>
-          </ScrollReveal>
+            </TextReveal>
+            <LineReveal className="mt-8" delay={0.3} />
+          </div>
 
           <StaggerContainer className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4" staggerDelay={0.05}>
             {capabilities.map((cap, i) => (
@@ -217,7 +228,7 @@ export default function HomePageContent() {
       {/* Selected Work Preview */}
       <section id="work" className="relative z-10 bg-background py-32 text-foreground md:py-48">
         <div className="container mx-auto px-4">
-          <ScrollReveal animation="fadeUp" className="mb-16 flex items-end justify-between md:mb-32">
+          <ScrollReveal animation="blurUp" className="mb-16 flex items-end justify-between md:mb-32">
             <h2 className="font-display text-[10vw] font-bold leading-none tracking-tighter text-foreground/10 md:text-[8vw]">
               {t('workHeading')}
             </h2>
@@ -256,8 +267,9 @@ export default function HomePageContent() {
 
       {/* About Snippet */}
       <section className="relative z-10 bg-background py-24">
+        <LineReveal className="container mx-auto px-4 mb-16" direction="center" />
         <div className="container mx-auto px-4 text-center">
-          <ScrollReveal animation="fadeUp">
+          <ScrollReveal animation="blurUp">
             <p className="mx-auto max-w-2xl text-lg leading-relaxed text-muted-foreground">
               {tAbout('storyLine1')} {tAbout('storyLine2')} {tAbout('storyLine3')}
             </p>

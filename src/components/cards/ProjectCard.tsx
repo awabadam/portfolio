@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect, useState, useCallback } from "react";
+import { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { Project } from "@/types";
@@ -13,9 +13,6 @@ import {
   trackProjectClick,
 } from "@/lib/analytics/gtm";
 import { fadeInUp } from "@/lib/animations";
-
-const IFRAME_WIDTH = 1440;
-const IFRAME_HEIGHT = 1080;
 
 interface ProjectCardProps {
   project: Project;
@@ -32,21 +29,13 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 }) => {
   const t = useTranslations('projects');
   const containerRef = useRef<HTMLDivElement>(null);
-  const [scale, setScale] = useState(0.3);
+  const [useFallback, setUseFallback] = useState(false);
   const [screenshotError, setScreenshotError] = useState(false);
-  const useIframe = project.live_url && !project.iframe_blocked;
 
-  const updateScale = useCallback(() => {
-    if (containerRef.current) {
-      setScale(containerRef.current.offsetWidth / IFRAME_WIDTH);
-    }
-  }, []);
-
-  useEffect(() => {
-    updateScale();
-    window.addEventListener("resize", updateScale);
-    return () => window.removeEventListener("resize", updateScale);
-  }, [updateScale]);
+  const thumbnailSrc = `/img/projects/${project.id}-thumbnail.webp`;
+  const screenshotSrc = project.live_url
+    ? `/api/screenshot?url=${encodeURIComponent(project.live_url)}`
+    : null;
 
   const handleProjectClick = () => {
     trackProjectView(project.id, project.title);
@@ -76,7 +65,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
             ? "border-border/40 bg-card/50 group-hover:border-primary/50"
             : "border-border/40 bg-card group-hover:border-primary/50"
         )}>
-          <div ref={containerRef} className="relative aspect-[4/3] w-full overflow-hidden bg-muted [clip-path:inset(0_round_1rem_1rem_0_0)]">
+          <div ref={containerRef} className="relative aspect-[19/10] w-full overflow-hidden bg-muted [clip-path:inset(0_round_1rem_1rem_0_0)]">
 
             {/* Layer 1: Gradient placeholder (always present as final fallback) */}
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-gradient-to-br from-muted via-muted/80 to-muted/60">
@@ -91,34 +80,31 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
               )}
             </div>
 
-            {/* Layer 2: Screenshot from thum.io (covers placeholder if it loads) */}
-            {project.live_url && !screenshotError && (
+            {/* Layer 2: Local thumbnail → screenshot API fallback */}
+            {!useFallback && (
               /* eslint-disable-next-line @next/next/no-img-element */
               <img
-                src={`/api/screenshot?url=${encodeURIComponent(project.live_url)}`}
+                src={thumbnailSrc}
                 alt={project.title}
                 width={800}
                 height={600}
                 loading="lazy"
                 decoding="async"
-                className="absolute inset-0 z-[1] h-full w-full object-cover object-top"
-                onError={() => setScreenshotError(true)}
+                className="absolute inset-0 z-[1] h-full w-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-105"
+                onError={() => setUseFallback(true)}
               />
             )}
-
-            {/* Layer 3: Iframe (covers screenshot if allowed and loads) */}
-            {useIframe && (
-              <iframe
-                src={project.live_url}
-                title={project.title}
-                className="absolute top-0 left-0 z-[2] border-0 pointer-events-none origin-top-left"
-                style={{
-                  width: `${IFRAME_WIDTH}px`,
-                  height: `${IFRAME_HEIGHT}px`,
-                  transform: `scale(${scale})`,
-                }}
-                sandbox="allow-scripts allow-same-origin"
-                loading="eager"
+            {useFallback && screenshotSrc && !screenshotError && (
+              /* eslint-disable-next-line @next/next/no-img-element */
+              <img
+                src={screenshotSrc}
+                alt={project.title}
+                width={800}
+                height={600}
+                loading="lazy"
+                decoding="async"
+                className="absolute inset-0 z-[1] h-full w-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-105"
+                onError={() => setScreenshotError(true)}
               />
             )}
 

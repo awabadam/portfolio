@@ -3,7 +3,7 @@
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import { ArrowDown } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { ScrollReveal, StaggerContainer, StaggerItem } from "@/components/effects";
@@ -11,12 +11,32 @@ import { ScrollReveal, StaggerContainer, StaggerItem } from "@/components/effect
 // Dynamic import for Three.js component (no SSR)
 const InteractiveTetrahedrons = dynamic(
   () => import("@/components/three/InteractiveTetrahedrons"),
-  { ssr: false }
+  { ssr: false, loading: () => null }
 );
 
 export default function AboutPage() {
   const t = useTranslations('about');
   const containerRef = useRef<HTMLDivElement>(null!);
+  const [shapesReady, setShapesReady] = useState(false);
+
+  // Skip Three.js on mobile / low-power / reduced-motion
+  useEffect(() => {
+    const isMobile = window.innerWidth < 768;
+    const isLowPower = navigator.hardwareConcurrency != null && navigator.hardwareConcurrency <= 2;
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (isMobile || isLowPower || prefersReduced) return;
+
+    const ric = (window as unknown as { requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number }).requestIdleCallback;
+    const handle = ric
+      ? ric(() => setShapesReady(true), { timeout: 2000 })
+      : window.setTimeout(() => setShapesReady(true), 1000);
+    return () => {
+      const cic = (window as unknown as { cancelIdleCallback?: (id: number) => void }).cancelIdleCallback;
+      if (cic) cic(handle);
+      else window.clearTimeout(handle);
+    };
+  }, []);
   const { scrollYProgress } = useScroll({
     target: containerRef as any,
     offset: ["start start", "end end"],
@@ -39,7 +59,7 @@ export default function AboutPage() {
         style={{ scale: heroScale, opacity: heroOpacity }}
       >
         <div className="absolute inset-0 bg-black">
-          <InteractiveTetrahedrons shapeCount={70} isDark={true} />
+          {shapesReady && <InteractiveTetrahedrons shapeCount={40} isDark={true} />}
         </div>
 
         <div className="absolute inset-0 flex items-center justify-center">

@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { ScrollReveal, Parallax } from "@/components/effects";
+import { ScrollReveal, Parallax, LineReveal } from "@/components/effects";
 
 interface ProjectsHeroProps {
   projectCount: number;
@@ -23,7 +23,7 @@ export default function ProjectsHero({ projectCount }: ProjectsHeroProps) {
               {projectCount} {projectCount === 1 ? "project" : "projects"}
             </span>
           </div>
-          <div className="mt-6 h-px w-full bg-border" />
+          <LineReveal className="mt-6" delay={0.3} />
         </Parallax>
       </ScrollReveal>
     </div>

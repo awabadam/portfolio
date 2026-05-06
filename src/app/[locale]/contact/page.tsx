@@ -28,7 +28,7 @@ export default function ContactPage() {
   return (
     <div className="flex min-h-screen w-full flex-col bg-background pt-32">
       <div className="container mx-auto flex flex-1 flex-col px-4 pb-16">
-        <ScrollReveal animation="fadeUp" className="mb-16 md:mb-32">
+        <ScrollReveal animation="blurUp" className="mb-16 md:mb-32">
           <Parallax speed={0.3}>
             <h1 className="font-display text-[15vw] font-bold leading-none tracking-tighter text-foreground md:text-[12vw]">
               {t('heading')}

@@ -8,7 +8,12 @@ import { ConditionalLayout, ConditionalFooter } from "@/components/layout/Condit
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 import PageTracking from "@/components/PageTracking";
 import { WhatsAppProvider } from "@/components/chat/WhatsAppContext";
-import { ScrollProgress, SmoothScroll, NoiseOverlay, PageTransition } from "@/components/effects";
+import dynamic from "next/dynamic";
+import { ScrollProgress, SmoothScroll, NoiseOverlay } from "@/components/effects";
+
+const PageTransition = dynamic(
+  () => import("@/components/effects/PageTransition"),
+);
 import { Toaster } from "@/components/ui/toaster";
 
 export function generateStaticParams() {

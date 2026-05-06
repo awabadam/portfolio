@@ -12,16 +12,16 @@ const fontSans = FontSans({
 });
 
 const fontDisplay = FontDisplay({
-  subsets: ["latin", "latin-ext"],
+  subsets: ["latin"],
   variable: "--font-display",
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["400", "500", "700"],
   display: "swap",
 });
 
 const fontArabic = FontArabic({
-  subsets: ["arabic", "latin"],
+  subsets: ["arabic"],
   variable: "--font-arabic",
-  weight: ["300", "400", "500", "600", "700", "800"],
+  weight: ["400", "700"],
   display: "swap",
 });
 
@@ -139,7 +139,6 @@ export default function RootLayout({
         */}
         <link rel="preconnect" href="https://www.googletagmanager.com" />
         <link rel="preconnect" href="https://www.google-analytics.com" crossOrigin="anonymous" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
       <body
         className={cn(

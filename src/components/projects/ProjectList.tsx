@@ -10,14 +10,17 @@ interface ProjectListProps {
   projects: Project[];
 }
 
-const IFRAME_WIDTH = 1440;
-const IFRAME_HEIGHT = 900;
-
 function ProjectCard({ project, index }: { project: Project; index: number }) {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, amount: 0.15 });
+  const [useFallback, setUseFallback] = useState(false);
   const [screenshotError, setScreenshotError] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+
+  const thumbnailSrc = `/img/projects/${project.id}-thumbnail.webp`;
+  const screenshotSrc = project.live_url
+    ? `/api/screenshot?url=${encodeURIComponent(project.live_url)}`
+    : null;
 
   return (
     <motion.div
@@ -37,38 +40,32 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
         onMouseLeave={() => setIsHovered(false)}
       >
         {/* Thumbnail Container */}
-        <div className="relative aspect-[16/10] w-full overflow-hidden rounded-lg bg-muted [clip-path:inset(0_round_0.5rem)]">
+        <div className="relative aspect-[19/10] w-full overflow-hidden rounded-lg bg-muted [clip-path:inset(0_round_0.5rem)]">
           {/* Layer 1: Gradient placeholder */}
           <div className="absolute inset-0 bg-gradient-to-br from-muted via-muted/80 to-muted/60" />
 
-          {/* Layer 2: Screenshot */}
-          {project.live_url && !screenshotError && (
+          {/* Layer 2: Local thumbnail → screenshot API fallback */}
+          {!useFallback && (
             /* eslint-disable-next-line @next/next/no-img-element */
             <img
-              src={`/api/screenshot?url=${encodeURIComponent(project.live_url)}`}
+              src={thumbnailSrc}
               alt={project.title}
-              className="absolute inset-0 z-[1] h-full w-full object-cover object-top"
-              onError={() => setScreenshotError(true)}
+              className="absolute inset-0 z-[1] h-full w-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-105"
+              loading="lazy"
+              decoding="async"
+              onError={() => setUseFallback(true)}
             />
           )}
-
-          {/* Layer 3: Iframe preview */}
-          {project.live_url && !project.iframe_blocked && (
-            <div className="absolute inset-0 z-[2]">
-              <iframe
-                src={project.live_url}
-                title={project.title}
-                className="h-full w-full border-0"
-                style={{
-                  width: IFRAME_WIDTH,
-                  height: IFRAME_HEIGHT,
-                  transform: `scale(${1 / (IFRAME_WIDTH / (ref.current?.offsetWidth || IFRAME_WIDTH))})`,
-                  transformOrigin: "top left",
-                }}
-                sandbox="allow-scripts allow-same-origin"
-                loading="eager"
-              />
-            </div>
+          {useFallback && screenshotSrc && !screenshotError && (
+            /* eslint-disable-next-line @next/next/no-img-element */
+            <img
+              src={screenshotSrc}
+              alt={project.title}
+              className="absolute inset-0 z-[1] h-full w-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-105"
+              loading="lazy"
+              decoding="async"
+              onError={() => setScreenshotError(true)}
+            />
           )}
 
           {/* Hover overlay */}
