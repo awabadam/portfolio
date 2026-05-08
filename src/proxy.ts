@@ -4,17 +4,6 @@ import createIntlMiddleware from 'next-intl/middleware';
 import { routing } from '@/i18n/routing';
 import { createMiddlewareSupabaseClient } from '@/lib/supabase/middleware';
 
-// Map countries to preferred locale
-const countryLocaleMap: Record<string, string> = {
-  TR: 'tr',
-  SA: 'ar', SD: 'ar', EG: 'ar', AE: 'ar', IQ: 'ar',
-  JO: 'ar', KW: 'ar', QA: 'ar', BH: 'ar', OM: 'ar',
-  LB: 'ar', LY: 'ar', YE: 'ar', SY: 'ar', PS: 'ar',
-  FR: 'fr', BE: 'fr', CH: 'fr', MC: 'fr',
-  MA: 'fr', TN: 'fr', DZ: 'fr',
-  SN: 'fr', CI: 'fr', CM: 'fr', CD: 'fr', MG: 'fr',
-};
-
 const intlMiddleware = createIntlMiddleware(routing);
 
 // Block indexing on preview/development deploys so Vercel preview URLs
@@ -33,27 +22,9 @@ export async function proxy(request: NextRequest) {
     pathname.startsWith('/_next') ||
     pathname.includes('.');
 
-  if (!shouldSkipIntl) {
-    // Geo-based locale detection for first visits (no locale prefix in URL)
-    const hasLocalePrefix = /^\/(en|ar|tr|fr)(\/|$)/.test(pathname);
-    const isRoot = pathname === '/';
-
-    if ((isRoot || !hasLocalePrefix) && !request.cookies.get('NEXT_LOCALE')) {
-      const country = request.headers.get('x-vercel-ip-country') || '';
-      const geoLocale = countryLocaleMap[country];
-
-      if (geoLocale && geoLocale !== 'en') {
-        const url = request.nextUrl.clone();
-        url.pathname = `/${geoLocale}${pathname}`;
-        // 308 (permanent) instead of 307 (temporary) so Google updates
-        // the canonical URL instead of re-crawling the old one every time.
-        const response = NextResponse.redirect(url, 308);
-        response.cookies.set('NEXT_LOCALE', geoLocale, { maxAge: 60 * 60 * 24 * 365 });
-        return response;
-      }
-    }
-  }
-
+  // next-intl's createIntlMiddleware automatically detects the user's
+  // preferred language from the Accept-Language header (device language)
+  // and redirects to the matching locale on first visit.
   const response = shouldSkipIntl
     ? NextResponse.next()
     : intlMiddleware(request);
