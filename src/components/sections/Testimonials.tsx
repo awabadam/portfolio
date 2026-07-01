@@ -3,50 +3,7 @@
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Star, Quote } from "lucide-react";
-
-interface Testimonial {
-  name: string;
-  company: string;
-  role: string;
-  content: string;
-  rating: number;
-  image?: string;
-}
-
-const testimonials: Testimonial[] = [
-  {
-    name: "Dr. Ahmed Hassan",
-    company: "Saphiredent Clinic",
-    role: "Dental Surgeon",
-    content:
-      "Awab transformed our clinic's online presence completely. Our new website not only looks professional but has increased our patient inquiries by 40%. The design perfectly reflects our brand values and the user experience is exceptional.",
-    rating: 5,
-  },
-  {
-    name: "Sarah Johnson",
-    company: "Estetikworld",
-    role: "Marketing Director",
-    content:
-      "Working with Awab was a game-changer for our aesthetic clinic. He understood our vision perfectly and delivered a website that converts visitors into patients. The SEO optimization has significantly improved our search rankings.",
-    rating: 5,
-  },
-  {
-    name: "Mehmet Yılmaz",
-    company: "Italy Pizza",
-    role: "Owner",
-    content:
-      "Awab created a stunning website for our restaurant that perfectly captures our brand. The online ordering system integration was seamless, and our customers love the user-friendly interface. Highly recommended!",
-    rating: 5,
-  },
-  {
-    name: "Fatima Al-Zahra",
-    company: "Boost Sudan",
-    role: "CEO",
-    content:
-      "Awab's expertise in web design and development helped us establish a strong online presence in Sudan. His attention to detail and understanding of local market needs made all the difference.",
-    rating: 5,
-  },
-];
+import { testimonials } from "@/data/testimonials";
 
 const Testimonials = () => {
   return (

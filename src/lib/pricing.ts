@@ -27,37 +27,72 @@
 
 export const FALLBACK_TRY_RATE = 38;
 
+// Local/regional (AR/TR) base prices. Kept as the discounted tier — roughly
+// 0.4x of the international rates in intlPriceMap below. Benchmarked 2026
+// against Istanbul agency pricing (Longway Media) + global market research.
 export const projectTiers = [
-  { id: "landing", nameKey: "landingPage" as const, descKey: "landingPageDesc" as const, basePrice: 100 },
-  { id: "business", nameKey: "businessWebsite" as const, descKey: "businessWebsiteDesc" as const, basePrice: 300, popular: true },
-  { id: "custom", nameKey: "customWebsite" as const, descKey: "customWebsiteDesc" as const, basePrice: 800 },
-  { id: "app", nameKey: "appDevelopment" as const, descKey: "appDevelopmentDesc" as const, basePrice: 1000 },
+  { id: "landing", nameKey: "landingPage" as const, descKey: "landingPageDesc" as const, basePrice: 300 },
+  { id: "business", nameKey: "businessWebsite" as const, descKey: "businessWebsiteDesc" as const, basePrice: 700, popular: true },
+  { id: "custom", nameKey: "customWebsite" as const, descKey: "customWebsiteDesc" as const, basePrice: 1800 },
+  { id: "app", nameKey: "appDevelopment" as const, descKey: "appDevelopmentDesc" as const, basePrice: 3500 },
 ];
 
+// Add-on base (AR/TR) prices. The intlPriceMap value doubles as the
+// "valued at" figure shown when an add-on is bundled free into a package.
 export const addOns = [
-  { id: "seo", nameKey: "seoSetup" as const, price: 80 },
-  { id: "blog", nameKey: "blogSystem" as const, price: 80 },
-  { id: "cms", nameKey: "contentManagement" as const, price: 150 },
-  { id: "chatbot", nameKey: "aiChatbotAddon" as const, price: 300 },
-  { id: "multilang", nameKey: "multiLanguage" as const, price: 100 },
+  { id: "seo", nameKey: "seoSetup" as const, price: 250 },
+  { id: "blog", nameKey: "blogSystem" as const, price: 180 },
+  { id: "cms", nameKey: "contentManagement" as const, price: 400 },
+  { id: "chatbot", nameKey: "aiChatbotAddon" as const, price: 700 },
+  { id: "multilang", nameKey: "multiLanguage" as const, price: 300 },
 ];
 
-// International (EN/FR) prices — higher tier
+// Care Plans — one managed monthly plan per site tier, bundling hosting +
+// domain registration/renewal + SSL + a tier-appropriate change allowance.
+// Names/features live in the `services.websiteMaintenance` translation namespace.
+// `basePrice` is the local (AR/TR) monthly rate; intlPriceMap holds EN/FR.
+export const carePlans = [
+  { id: "careLite", nameKey: "careLite", featuresKey: "careLiteFeatures", forTier: "landing", basePrice: 15 },
+  { id: "careStandard", nameKey: "careStandard", featuresKey: "careStandardFeatures", forTier: "business", basePrice: 39, popular: true },
+  { id: "carePro", nameKey: "carePro", featuresKey: "careProFeatures", forTier: "custom", basePrice: 79 },
+];
+
+// Add-ons bundled FREE into each package. Consumers render these as
+// "<name> — free, valued at <price>" and exclude them from the payable
+// add-on grid so they're never double-charged.
+export const includedAddOns: Record<string, string[]> = {
+  landing: ["seo"],
+  business: ["seo", "blog", "multilang"],
+  custom: ["seo", "blog", "cms", "multilang"],
+  app: ["seo", "cms", "chatbot", "multilang"],
+};
+
+// International (EN/FR) prices — higher tier. Add-on values here are also
+// what we show as the "valued at" figure for bundled-in add-ons.
 export const intlPriceMap: Record<string, number> = {
-  landing: 150,
-  business: 500,
-  custom: 1500,
-  seo: 120,
-  blog: 120,
-  cms: 250,
-  chatbot: 500,
-  multilang: 150,
-  app: 2000,
+  landing: 900,
+  business: 2200,
+  custom: 4500,
+  seo: 600,
+  blog: 400,
+  cms: 900,
+  chatbot: 1500,
+  multilang: 700,
+  app: 8000,
+  careLite: 29,
+  careStandard: 79,
+  carePro: 149,
 };
 
 export function getPrice(id: string, basePrice: number, locale: string): number {
   if ((locale === "en" || locale === "fr") && intlPriceMap[id] !== undefined) return intlPriceMap[id];
   return basePrice;
+}
+
+// Resolve the add-on objects bundled into a given tier, in addOns order.
+export function getIncludedAddOns(tierId: string) {
+  const ids = includedAddOns[tierId] ?? [];
+  return addOns.filter((a) => ids.includes(a.id));
 }
 
 export function formatPrice(amount: number, locale: string, tryRate: number): string {

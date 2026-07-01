@@ -19,10 +19,10 @@ import {
   Bot,
   Smartphone,
 } from "lucide-react";
-import { useRouter } from "@/i18n/routing";
+import { useRouter, Link } from "@/i18n/routing";
 import { useTranslations, useLocale } from "next-intl";
 // 💰 Pricing source of truth: edit prices in src/lib/pricing.ts
-import { FALLBACK_TRY_RATE, projectTiers, addOns, getPrice, formatPrice } from "@/lib/pricing";
+import { FALLBACK_TRY_RATE, projectTiers, addOns, getPrice, formatPrice, includedAddOns, getIncludedAddOns } from "@/lib/pricing";
 
 interface CalculatorData {
   projectType: string;
@@ -78,11 +78,19 @@ export default function RateCalculator() {
 
   const selectedProject = projectTiers.find((p) => p.id === calculatorData.projectType);
 
+  // Add-ons bundled free into the chosen package: shown as "Included free",
+  // hidden from the payable grid, and never added to the total.
+  const includedIds = calculatorData.projectType ? includedAddOns[calculatorData.projectType] ?? [] : [];
+  const includedAddOnObjs = getIncludedAddOns(calculatorData.projectType);
+  const payableAddOns = addOns.filter((a) => !includedIds.includes(a.id));
+
   const basePrice = selectedProject ? getPrice(selectedProject.id, selectedProject.basePrice, locale) : 0;
-  const addOnsCost = calculatorData.addOns.reduce((sum, addOnId) => {
-    const addOn = addOns.find((a) => a.id === addOnId);
-    return sum + (addOn ? getPrice(addOn.id, addOn.price, locale) : 0);
-  }, 0);
+  const addOnsCost = calculatorData.addOns
+    .filter((id) => !includedIds.includes(id))
+    .reduce((sum, addOnId) => {
+      const addOn = addOns.find((a) => a.id === addOnId);
+      return sum + (addOn ? getPrice(addOn.id, addOn.price, locale) : 0);
+    }, 0);
   const total = basePrice + addOnsCost;
 
   const toggleAddOn = (addOnId: string) => {
@@ -102,9 +110,12 @@ export default function RateCalculator() {
 
     try {
       const selectedAddOns = calculatorData.addOns
+        .filter((id) => !includedIds.includes(id))
         .map((id) => addOns.find((a) => a.id === id))
         .filter(Boolean)
         .map((a) => t(a!.nameKey));
+
+      const includedNames = includedAddOnObjs.map((a) => t(a.nameKey));
 
       const projectName = selectedProject ? t(selectedProject.nameKey) : "";
 
@@ -117,7 +128,7 @@ export default function RateCalculator() {
           phone: calculatorData.contactInfo.phone,
           formType: "rate_calculator",
           projectType: `Web Design - ${projectName}`,
-          message: `Rate Calculator Quote Request:\n\nProject Type: ${projectName}\nSelected Add-ons: ${selectedAddOns.join(", ") || "None"}\n\nEstimated Total: ${formatPrice(total, locale, tryRate)}\n\nProject Description: ${calculatorData.description || "N/A"}`,
+          message: `Rate Calculator Quote Request:\n\nProject Type: ${projectName}\nIncluded Free: ${includedNames.join(", ") || "None"}\nSelected Add-ons: ${selectedAddOns.join(", ") || "None"}\n\nEstimated Total: ${formatPrice(total, locale, tryRate)}\n\nProject Description: ${calculatorData.description || "N/A"}`,
         }),
       });
 
@@ -170,7 +181,15 @@ export default function RateCalculator() {
                       key={type.id}
                       type="button"
                       onClick={() =>
-                        setCalculatorData((prev) => ({ ...prev, projectType: type.id }))
+                        setCalculatorData((prev) => {
+                          // Drop any selected add-ons now bundled free into this tier.
+                          const tierIncluded = includedAddOns[type.id] ?? [];
+                          return {
+                            ...prev,
+                            projectType: type.id,
+                            addOns: prev.addOns.filter((id) => !tierIncluded.includes(id)),
+                          };
+                        })
                       }
                       className={`group relative rounded-xl border-2 p-5 text-left rtl:text-right transition-all hover:border-primary/50 ${
                         calculatorData.projectType === type.id
@@ -199,8 +218,29 @@ export default function RateCalculator() {
                 <h2 className="mb-4 font-display text-xl font-semibold">
                   {t("addOnsHeading")}
                 </h2>
+
+                {includedAddOnObjs.length > 0 && (
+                  <div className="mb-4 rounded-xl border-2 border-primary/30 bg-primary/5 p-4">
+                    <p className="mb-3 font-mono text-xs uppercase tracking-widest text-primary">
+                      {t("includedHeading")}
+                    </p>
+                    <div className="grid gap-2 sm:grid-cols-2">
+                      {includedAddOnObjs.map((addOn) => (
+                        <div key={addOn.id} className="flex items-center gap-3 text-sm">
+                          <CheckCircle className="h-4 w-4 shrink-0 text-primary" />
+                          <span className="flex-1 font-medium">{t(addOn.nameKey)}</span>
+                          <span className="text-xs font-semibold text-primary">{t("freeTag")}</span>
+                          <span className="text-xs text-muted-foreground line-through">
+                            {formatPrice(getPrice(addOn.id, addOn.price, locale), locale, tryRate)}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                  {addOns.map((addOn) => (
+                  {payableAddOns.map((addOn) => (
                     <button
                       key={addOn.id}
                       type="button"
@@ -316,18 +356,31 @@ export default function RateCalculator() {
                         <span>{selectedProject ? t(selectedProject.nameKey) : ""}</span>
                         <span>{formatPrice(basePrice, locale, tryRate)}</span>
                       </div>
-                      {calculatorData.addOns.length > 0 && (
+                      {includedAddOnObjs.length > 0 && (
                         <>
                           <div className="my-2 border-t border-border" />
-                          {calculatorData.addOns.map((addOnId) => {
-                            const addOn = addOns.find((a) => a.id === addOnId);
-                            return (
-                              <div key={addOnId} className="flex justify-between text-muted-foreground">
-                                <span>{addOn ? t(addOn.nameKey) : ""}</span>
-                                <span>+{formatPrice(addOn ? getPrice(addOn.id, addOn.price, locale) : 0, locale, tryRate)}</span>
-                              </div>
-                            );
-                          })}
+                          {includedAddOnObjs.map((addOn) => (
+                            <div key={addOn.id} className="flex justify-between text-primary">
+                              <span>{t(addOn.nameKey)}</span>
+                              <span className="font-semibold">{t("freeTag")}</span>
+                            </div>
+                          ))}
+                        </>
+                      )}
+                      {calculatorData.addOns.filter((id) => !includedIds.includes(id)).length > 0 && (
+                        <>
+                          <div className="my-2 border-t border-border" />
+                          {calculatorData.addOns
+                            .filter((id) => !includedIds.includes(id))
+                            .map((addOnId) => {
+                              const addOn = addOns.find((a) => a.id === addOnId);
+                              return (
+                                <div key={addOnId} className="flex justify-between text-muted-foreground">
+                                  <span>{addOn ? t(addOn.nameKey) : ""}</span>
+                                  <span>+{formatPrice(addOn ? getPrice(addOn.id, addOn.price, locale) : 0, locale, tryRate)}</span>
+                                </div>
+                              );
+                            })}
                         </>
                       )}
                       <div className="mt-4 flex justify-between border-t border-border pt-3 text-base font-bold">
@@ -358,6 +411,19 @@ export default function RateCalculator() {
                   </Button>
                 </CardContent>
               </Card>
+
+              {/* Care Plan cross-sell — recurring hosting + domain + maintenance */}
+              <Link
+                href="/services/website-maintenance"
+                className="mt-4 block rounded-2xl border border-primary/30 bg-primary/5 p-5 transition-colors hover:bg-primary/10"
+              >
+                <p className="text-sm font-semibold text-primary">{t("carePlanTitle")}</p>
+                <p className="mt-1 text-xs text-muted-foreground">{t("carePlanText")}</p>
+                <span className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-primary">
+                  {t("carePlanCta")}
+                  <ArrowRight className="h-3 w-3 rtl:rotate-180" />
+                </span>
+              </Link>
             </div>
           </div>
         </form>

@@ -12,8 +12,10 @@ import { useWhatsApp } from "@/components/chat/WhatsAppContext";
 import { fadeIn, staggerContainer } from "@/lib/animations";
 import { MagneticElement } from "@/components/effects";
 
-// Pages with dark hero sections where white text is needed
-const DARK_HERO_PAGES = ["/", "/about"];
+// Pages whose hero is always dark (white nav text needed at the top).
+// The homepage hero is theme-aware — it becomes light in light mode — so it
+// is intentionally NOT listed here; its nav follows the theme foreground.
+const DARK_HERO_PAGES = ["/about"];
 
 const Navbar = () => {
   const t = useTranslations('nav');

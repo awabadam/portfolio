@@ -143,9 +143,9 @@ export function processMessage(
     lowerMessage.includes("cost") ||
     lowerMessage.includes("how much")
   ) {
-    const landing = getPrice("landing", 100, "en");
-    const business = getPrice("business", 300, "en");
-    const custom = getPrice("custom", 800, "en");
+    const landing = getPrice("landing", 300, "en");
+    const business = getPrice("business", 700, "en");
+    const custom = getPrice("custom", 1800, "en");
     response = `Here's our pricing structure:\n\n• Landing Page: Starting at $${landing.toLocaleString()}\n• Business Website: Starting at $${business.toLocaleString()}\n• Custom Website: Starting at $${custom.toLocaleString()}\n\nYou can use our rate calculator at /rate-calculator for a detailed quote based on your specific needs, including add-ons and complexity adjustments.`;
     return { response, context: newContext, action: "show_pricing" };
   }

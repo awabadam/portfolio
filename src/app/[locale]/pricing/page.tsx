@@ -15,7 +15,10 @@ import {
   Mail,
   Bot,
   Calculator,
+  Quote,
+  Star,
 } from "lucide-react";
+import { testimonials } from "@/data/testimonials";
 import { useTranslations, useLocale } from "next-intl";
 import { ScrollReveal, StaggerContainer, StaggerItem } from "@/components/effects";
 import FAQSchema from "@/components/seo/FAQSchema";
@@ -28,6 +31,7 @@ import {
   getPrice,
   formatPrice,
   FALLBACK_TRY_RATE,
+  getIncludedAddOns,
 } from "@/lib/pricing";
 
 // Feature list keys per tier id — defined in the `pricing` translation namespace
@@ -138,7 +142,8 @@ export default function PricingPage() {
       {/* Pricing Tiers — sourced from lib/pricing.ts */}
       <section className="container mx-auto px-4 py-16">
         <StaggerContainer className="grid gap-6 md:grid-cols-3" staggerDelay={0.1}>
-          {projectTiers.map((tier) => {
+          {/* Only the three website tiers have feature lists here; app is shown as a callout below. */}
+          {projectTiers.filter((tier) => tierFeatureKeys[tier.id]).map((tier) => {
             const price = getPrice(tier.id, tier.basePrice, locale);
             const featureKeys = tierFeatureKeys[tier.id] ?? [];
             const timeframeKey = `${tier.id}Timeframe`;
@@ -177,6 +182,20 @@ export default function PricingPage() {
                         <span>{t(key)}</span>
                       </li>
                     ))}
+                    {getIncludedAddOns(tier.id).map((addOn) => (
+                      <li key={addOn.id} className="flex items-start gap-2 text-sm">
+                        <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                        <span>
+                          <span className="font-medium">{tCalc(addOn.nameKey)}</span>
+                          <span className="text-muted-foreground">
+                            {" — "}
+                            {tCalc("valuedAt", {
+                              value: formatPrice(getPrice(addOn.id, addOn.price, locale), locale, tryRate),
+                            })}
+                          </span>
+                        </span>
+                      </li>
+                    ))}
                   </ul>
                   <Button
                     asChild
@@ -194,6 +213,23 @@ export default function PricingPage() {
             );
           })}
         </StaggerContainer>
+
+        {/* App development callout — app tier lives on its own service page */}
+        <ScrollReveal animation="fadeUp" delay={0.1}>
+          <div className="mx-auto mt-8 flex max-w-3xl flex-col items-center justify-between gap-4 rounded-2xl border border-border bg-card px-8 py-6 text-center sm:flex-row sm:text-left rtl:sm:text-right">
+            <p className="text-base text-muted-foreground">
+              {t("appCalloutText", {
+                price: formatPrice(getPrice("app", 3500, locale), locale, tryRate),
+              })}
+            </p>
+            <Button asChild variant="outline" className="shrink-0 rounded-full">
+              <Link href="/services/app-development">
+                {t("appCalloutCta")}
+                <ArrowRight className="ml-2 rtl:ml-0 rtl:mr-2 rtl:rotate-180 h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
+        </ScrollReveal>
       </section>
 
       {/* Add-ons — sourced from lib/pricing.ts */}
@@ -294,25 +330,50 @@ export default function PricingPage() {
         </div>
       </section>
 
-      {/* Testimonial Placeholder */}
+      {/* Testimonials — real client quotes */}
       <section className="border-t border-border py-24">
         <div className="container mx-auto px-4">
           <ScrollReveal animation="fadeUp">
-            <div className="mx-auto max-w-3xl text-center">
+            <div className="mx-auto mb-12 max-w-3xl text-center">
               <h2 className="mb-2 font-display text-3xl font-bold md:text-4xl">
                 {t("testimonialHeading")}
               </h2>
-              <p className="mb-8 text-muted-foreground">{t("testimonialSubtitle")}</p>
-              <div className="rounded-2xl border border-dashed border-border bg-card/50 p-12">
-                <p className="text-muted-foreground">{t("testimonialPlaceholder")}</p>
-                <Button asChild variant="outline" className="mt-6 rounded-full">
-                  <Link href="/projects">
-                    {t("testimonialViewWork")}
-                    <ArrowRight className="ml-2 rtl:ml-0 rtl:mr-2 rtl:rotate-180 h-4 w-4" />
-                  </Link>
-                </Button>
-              </div>
+              <p className="text-muted-foreground">{t("testimonialSubtitle")}</p>
             </div>
+          </ScrollReveal>
+          <StaggerContainer className="mx-auto grid max-w-5xl gap-6 md:grid-cols-3" staggerDelay={0.1}>
+            {testimonials.slice(0, 3).map((testimonial) => (
+              <StaggerItem key={testimonial.id} animation="fadeUp">
+                <div className="flex h-full flex-col rounded-2xl border border-border bg-card p-6">
+                  <Quote className="h-7 w-7 text-primary/30" />
+                  <div className="mt-3 flex gap-1">
+                    {Array.from({ length: testimonial.rating }).map((_, i) => (
+                      <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                    ))}
+                  </div>
+                  <p className="mt-4 flex-1 text-sm leading-relaxed text-muted-foreground">
+                    &ldquo;{testimonial.content}&rdquo;
+                  </p>
+                  <div className="mt-6 flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
+                      {testimonial.name.split(" ").map((n) => n[0]).join("").slice(0, 2)}
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium">{testimonial.name}</p>
+                      <p className="text-xs text-muted-foreground">{testimonial.role}, {testimonial.company}</p>
+                    </div>
+                  </div>
+                </div>
+              </StaggerItem>
+            ))}
+          </StaggerContainer>
+          <ScrollReveal animation="fadeUp" delay={0.2} className="mt-10 text-center">
+            <Button asChild variant="outline" className="rounded-full">
+              <Link href="/projects">
+                {t("testimonialViewWork")}
+                <ArrowRight className="ml-2 rtl:ml-0 rtl:mr-2 rtl:rotate-180 h-4 w-4" />
+              </Link>
+            </Button>
           </ScrollReveal>
         </div>
       </section>

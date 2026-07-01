@@ -59,11 +59,11 @@ const AppDevelopmentPage = async () => {
     areaServed: "Worldwide",
     offers: {
       "@type": "Offer",
-      price: "2000",
+      price: "8000",
       priceCurrency: "USD",
       priceSpecification: {
         "@type": "UnitPriceSpecification",
-        price: "2000",
+        price: "8000",
         priceCurrency: "USD",
         unitText: "project",
       },

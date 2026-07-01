@@ -24,7 +24,7 @@ export const services: Service[] = [
     name: "Web Design & Development",
     description:
       "Modern, responsive websites built with Next.js, React, and Tailwind CSS. Mobile-first, SEO-optimized, conversion-focused.",
-    pricing: "Landing pages from $150, business websites from $500, custom builds from $1,500",
+    pricing: "Landing pages from $900, business websites from $2,200, custom builds from $4,500, app development from $8,000 (international rates; lower local/regional pricing available). Each package bundles premium add-ons free (SEO on every tier; plus blog, CMS, multi-language, and AI chatbot depending on tier).",
     link: "/services",
   },
   {
@@ -37,14 +37,14 @@ export const services: Service[] = [
     name: "SEO Setup",
     description:
       "Optimized site structure, meta tags, fast loading, and sitemaps to rank higher on search engines.",
-    pricing: "From $120 as an add-on",
+    pricing: "Included free with every package ($600 value)",
     link: "/rate-calculator",
   },
   {
     name: "AI Chatbot Integration",
     description:
       "24/7 automated support for visitors. AI-powered conversation flows, lead qualification, and CRM integration.",
-    pricing: "From $500 as an add-on",
+    pricing: "Included free with App Development; otherwise from $500 as an add-on",
     link: "/rate-calculator",
   },
   {
@@ -57,14 +57,15 @@ export const services: Service[] = [
   {
     name: "Domain & Hosting Management",
     description:
-      "Domain registration, SSL certificates, and reliable hosting setup and management.",
-    link: "/services",
+      "Managed domain registration & renewal, SSL, and reliable hosting — handled for you as part of a monthly Care Plan. You own your domain and can request a full transfer anytime (handover within 3 business days, no lock-in).",
+    pricing: "Included in Care Plans from $29/month",
+    link: "/services/website-maintenance",
   },
   {
-    name: "Website Maintenance",
+    name: "Care Plans (Hosting, Domain & Maintenance)",
     description:
-      "Ongoing security updates, performance optimization, content changes, and monitoring.",
-    pricing: "From $150/month",
+      "One managed monthly plan per site tier: hosting + domain + SSL + security/monitoring + a change allowance that scales with the site. Care Lite (landing), Care Standard (business), Care Pro (custom/apps).",
+    pricing: "From $29/month (Lite $29 · Standard $79 · Pro $149)",
     link: "/services/website-maintenance",
   },
 ];

@@ -13,9 +13,13 @@ export async function GET(request: Request) {
 
     const supabase = createAppServerClient();
 
+    // Featured projects first, then most-recent — so a `limit` without the
+    // `featured` filter surfaces the curated ones and backfills with the
+    // newest work to fill out the grid.
     let query = supabase
       .from('projects')
       .select('*')
+      .order('featured', { ascending: false })
       .order('created_at', { ascending: false });
 
     if (featured) query = query.eq('featured', true);

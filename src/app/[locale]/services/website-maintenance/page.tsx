@@ -4,6 +4,8 @@ import { Link } from "@/i18n/routing";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, CheckCircle, Clock, DollarSign } from "lucide-react";
 import { getTranslations, getLocale } from "next-intl/server";
+// 💰 Pricing source of truth: edit prices in src/lib/pricing.ts
+import { carePlans, getPrice, formatPrice, FALLBACK_TRY_RATE } from "@/lib/pricing";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('metadata.websiteMaintenance');
@@ -38,16 +40,19 @@ export async function generateMetadata(): Promise<Metadata> {
 
 const WebsiteMaintenancePage = async () => {
   const t = await getTranslations('services');
+  const tCalc = await getTranslations('rateCalculator');
+  const locale = await getLocale();
   const inclusions = t.raw('websiteMaintenance.inclusions') as string[];
-  const basicFeatures = t.raw('websiteMaintenance.basicFeatures') as string[];
-  const proFeatures = t.raw('websiteMaintenance.proFeatures') as string[];
-  const enterpriseFeatures = t.raw('websiteMaintenance.enterpriseFeatures') as string[];
+  const perMonth = t('websiteMaintenance.perMonth');
 
-  const plans = [
-    { name: t('websiteMaintenance.basicPlan'), price: t('websiteMaintenance.basicPrice'), features: basicFeatures },
-    { name: t('websiteMaintenance.proPlan'), price: t('websiteMaintenance.proPrice'), features: proFeatures },
-    { name: t('websiteMaintenance.enterprisePlan'), price: t('websiteMaintenance.enterprisePrice'), features: enterpriseFeatures },
-  ];
+  // Care Plans sourced from lib/pricing.ts — one per site tier.
+  const plans = carePlans.map((p) => ({
+    id: p.id,
+    name: t(`websiteMaintenance.${p.nameKey}`),
+    price: formatPrice(getPrice(p.id, p.basePrice, locale), locale, FALLBACK_TRY_RATE) + perMonth,
+    features: t.raw(`websiteMaintenance.${p.featuresKey}`) as string[],
+    popular: !!p.popular,
+  }));
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -58,9 +63,9 @@ const WebsiteMaintenancePage = async () => {
     areaServed: "Worldwide",
     offers: {
       "@type": "Offer",
-      price: "150",
+      price: "29",
       priceCurrency: "USD",
-      priceSpecification: { "@type": "UnitPriceSpecification", price: "150", priceCurrency: "USD", unitText: "month" },
+      priceSpecification: { "@type": "UnitPriceSpecification", price: "29", priceCurrency: "USD", unitText: "month" },
     },
   };
 
@@ -119,7 +124,17 @@ const WebsiteMaintenancePage = async () => {
           </h2>
           <div className="grid gap-8 md:grid-cols-3">
             {plans.map((plan) => (
-              <div key={plan.name} className="rounded-2xl border border-border bg-card p-8">
+              <div
+                key={plan.id}
+                className={`relative rounded-2xl border-2 p-8 ${
+                  plan.popular ? "border-primary bg-primary/5" : "border-border bg-card"
+                }`}
+              >
+                {plan.popular && (
+                  <span className="absolute -top-3 right-6 rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground">
+                    {tCalc('popular')}
+                  </span>
+                )}
                 <h3 className="mb-2 font-display text-2xl font-bold">{plan.name}</h3>
                 <p className="mb-6 text-2xl font-semibold text-primary">{plan.price}</p>
                 <ul className="space-y-3">
@@ -133,6 +148,16 @@ const WebsiteMaintenancePage = async () => {
               </div>
             ))}
           </div>
+        </section>
+
+        {/* Ownership / transfer — no lock-in */}
+        <section className="mb-16 rounded-2xl border-2 border-primary/30 bg-primary/5 p-8 md:p-10">
+          <h2 className="mb-3 font-display text-2xl font-bold md:text-3xl">
+            {t('websiteMaintenance.transferTitle')}
+          </h2>
+          <p className="max-w-3xl leading-relaxed text-muted-foreground">
+            {t('websiteMaintenance.transferText')}
+          </p>
         </section>
 
         <section className="rounded-2xl border border-border bg-muted/30 p-12 text-center">

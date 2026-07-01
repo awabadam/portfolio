@@ -5,7 +5,24 @@ import { handleWebSocketConnection } from './src/lib/chat/websocketHandler';
 
 const dev = process.env.NODE_ENV !== 'production';
 const hostname = process.env.HOSTNAME || 'localhost';
-const port = parseInt(process.env.PORT || '3000', 10);
+
+// Support `--port <n>` / `-p <n>` / `--port=<n>` on the CLI (e.g.
+// `npm run dev -- --port 5000`), falling back to the PORT env var, then 3000.
+function resolvePort(): number {
+  const argv = process.argv.slice(2);
+  for (let i = 0; i < argv.length; i++) {
+    const arg = argv[i];
+    if (arg === '--port' || arg === '-p') {
+      const val = argv[i + 1];
+      if (val) return parseInt(val, 10);
+    } else if (arg.startsWith('--port=')) {
+      return parseInt(arg.slice('--port='.length), 10);
+    }
+  }
+  return parseInt(process.env.PORT || '3000', 10);
+}
+
+const port = resolvePort();
 
 const app = next({ dev, hostname, port });
 const handle = app.getRequestHandler();

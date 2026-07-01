@@ -5,12 +5,13 @@ import { Link } from "@/i18n/routing";
 import { Button } from "@/components/ui/button";
 import {
   Layout, Palette, Search, FileText, Code, Bot,
-  Globe, Brush, Shield, Server, ArrowRight, ChevronDown, Smartphone,
+  Globe, Brush, Shield, Server, ArrowRight, ChevronDown, Smartphone, CheckCircle, Quote, Star,
 } from "lucide-react";
+import { testimonials } from "@/data/testimonials";
 import { useTranslations, useLocale } from "next-intl";
 import { ScrollReveal, StaggerContainer, StaggerItem, PerspectiveSection, DepthFloat, ScrollVelocityText } from "@/components/effects";
 // 💰 Pricing source of truth: edit prices in src/lib/pricing.ts
-import { projectTiers, getPrice, formatPrice, FALLBACK_TRY_RATE } from "@/lib/pricing";
+import { projectTiers, getPrice, formatPrice, FALLBACK_TRY_RATE, getIncludedAddOns } from "@/lib/pricing";
 import FAQSchema from "@/components/seo/FAQSchema";
 
 const processSteps = [
@@ -159,6 +160,38 @@ export default function ServicesPage() {
         </div>
       </section>
 
+      {/* Proof — real client testimonials */}
+      <section className="border-t border-border py-24">
+        <div className="container mx-auto px-4">
+          <ScrollReveal animation="fadeUp">
+            <h2 className="mb-12 font-mono text-sm uppercase tracking-widest text-muted-foreground">
+              {t("testimonialsHeading")}
+            </h2>
+          </ScrollReveal>
+          <StaggerContainer className="grid gap-6 md:grid-cols-3" staggerDelay={0.08}>
+            {testimonials.slice(0, 3).map((testimonial) => (
+              <StaggerItem key={testimonial.id} animation="fadeUp">
+                <div className="flex h-full flex-col rounded-2xl border border-border/40 bg-card p-6">
+                  <Quote className="h-7 w-7 text-primary/30" />
+                  <div className="mt-3 flex gap-1">
+                    {Array.from({ length: testimonial.rating }).map((_, i) => (
+                      <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                    ))}
+                  </div>
+                  <p className="mt-4 flex-1 text-sm leading-relaxed text-muted-foreground">
+                    &ldquo;{testimonial.content}&rdquo;
+                  </p>
+                  <div className="mt-6">
+                    <p className="text-sm font-medium">{testimonial.name}</p>
+                    <p className="text-xs text-muted-foreground">{testimonial.role}, {testimonial.company}</p>
+                  </div>
+                </div>
+              </StaggerItem>
+            ))}
+          </StaggerContainer>
+        </div>
+      </section>
+
       {/* Pricing */}
       <section className="border-t border-border py-24">
         <div className="container mx-auto px-4">
@@ -198,6 +231,31 @@ export default function ServicesPage() {
                       {formatPrice(getPrice(tier.id, tier.basePrice, locale), locale, tryRate)}+
                     </span>
                   </div>
+
+                  {getIncludedAddOns(tier.id).length > 0 && (
+                    <div className="mt-6">
+                      <p className="mb-3 font-mono text-xs uppercase tracking-widest text-primary">
+                        {t("includedTitle")}
+                      </p>
+                      <ul className="space-y-2">
+                        {getIncludedAddOns(tier.id).map((addOn) => (
+                          <li key={addOn.id} className="flex items-start gap-2 text-sm">
+                            <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                            <span>
+                              <span className="font-medium">{tCalc(addOn.nameKey)}</span>
+                              <span className="text-muted-foreground">
+                                {" — "}
+                                {t("includedValued", {
+                                  value: formatPrice(getPrice(addOn.id, addOn.price, locale), locale, tryRate),
+                                })}
+                              </span>
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
                   <Button asChild className="mt-6 rounded-full" size="lg">
                     <Link href="/rate-calculator">
                       {t("tierGetQuote")}
