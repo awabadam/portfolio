@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import { Project } from "@/types";
 import { testimonials } from "@/data/testimonials";
 import ProjectCard from "@/components/cards/ProjectCard";
-import StickyMobileCTA from "@/components/ui/StickyMobileCTA";
 import { ScrollReveal, StaggerContainer, StaggerItem, MagneticElement, TiltCard, TextReveal, LineReveal, ClipReveal, PerspectiveSection, ScrollVelocityText, DepthFloat } from "@/components/effects";
 import { trackCTAClick } from "@/lib/analytics/gtm";
 
@@ -535,8 +534,6 @@ export default function HomePageContent() {
           </ScrollReveal>
         </div>
       </section>
-
-      <StickyMobileCTA label={t('stickyGetQuote')} />
     </div>
   );
 }
