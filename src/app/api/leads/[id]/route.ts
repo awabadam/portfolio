@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server";
-import { createServiceRoleClient } from "@/lib/supabase";
+import { eq } from "drizzle-orm";
+import { db } from "@/db";
+import { leads } from "@/db/schema";
+import { getSession } from "@/lib/auth/server";
 
 // GET - Fetch a single lead
 export async function GET(
@@ -7,17 +10,21 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const session = await getSession();
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { id } = await params;
-    const supabase = createServiceRoleClient();
 
-    const { data, error } = await supabase
-      .from("leads")
-      .select("*")
-      .eq("id", id)
-      .single();
-
-    if (error) {
+    let data;
+    try {
+      [data] = await db.select().from(leads).where(eq(leads.id, id)).limit(1);
+    } catch (error) {
       console.error("Error fetching lead:", error);
+    }
+
+    if (!data) {
       return NextResponse.json({ error: "Lead not found" }, { status: 404 });
     }
 
@@ -34,28 +41,36 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const session = await getSession();
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { id } = await params;
     const body = await request.json();
     const { status, notes, name, email, phone } = body;
 
-    const supabase = createServiceRoleClient();
-
-    const updateData: Record<string, any> = {};
+    const updateData: Partial<typeof leads.$inferInsert> = {};
     if (status !== undefined) updateData.status = status;
     if (notes !== undefined) updateData.notes = notes;
     if (name !== undefined) updateData.name = name;
     if (email !== undefined) updateData.email = email;
     if (phone !== undefined) updateData.phone = phone;
 
-    const { data, error } = await supabase
-      .from("leads")
-      .update(updateData)
-      .eq("id", id)
-      .select()
-      .single();
-
-    if (error) {
+    let data;
+    try {
+      [data] = await db
+        .update(leads)
+        .set(updateData)
+        .where(eq(leads.id, id))
+        .returning();
+    } catch (error) {
       console.error("Error updating lead:", error);
+      return NextResponse.json({ error: "Failed to update lead" }, { status: 500 });
+    }
+
+    if (!data) {
+      console.error("Error updating lead: not found", id);
       return NextResponse.json({ error: "Failed to update lead" }, { status: 500 });
     }
 
@@ -72,15 +87,16 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const session = await getSession();
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { id } = await params;
-    const supabase = createServiceRoleClient();
 
-    const { error } = await supabase
-      .from("leads")
-      .delete()
-      .eq("id", id);
-
-    if (error) {
+    try {
+      await db.delete(leads).where(eq(leads.id, id));
+    } catch (error) {
       console.error("Error deleting lead:", error);
       return NextResponse.json({ error: "Failed to delete lead" }, { status: 500 });
     }
@@ -91,4 +107,3 @@ export async function DELETE(
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
-

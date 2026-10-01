@@ -1,33 +1,22 @@
 import { NextResponse } from "next/server";
-import { createApiClient, createAuthenticatedClient, createAnonClient } from "@/lib/supabase";
+import { asc, desc, eq, getTableColumns } from "drizzle-orm";
+import { db } from "@/db";
+import { chatConversations, chatMessages } from "@/db/schema";
+import { getSession } from "@/lib/auth/server";
+
+// Timestamps come back as Date objects; serialize them as ISO strings (like
+// Supabase did) so CSV cells don't get Date#toString() output.
+function iso(value: Date | null) {
+  return value ? value.toISOString() : null;
+}
 
 export async function GET(request: Request) {
   try {
-    const supabase = createApiClient();
-
     // Check authentication
-    const authHeader = request.headers.get("authorization");
-    let user = null;
-    let accessToken: string | null = null;
-
-    if (authHeader?.startsWith("Bearer ")) {
-      accessToken = authHeader.substring(7);
-      const { data: { user: tokenUser }, error: tokenError } = await supabase.auth.getUser(accessToken);
-      if (!tokenError && tokenUser) {
-        user = tokenUser;
-      }
-    }
-
-    const isLocalAuth = request.headers.get("x-local-auth") === "true";
-    const isDevelopment = process.env.NODE_ENV === "development";
-
-    if (!user && !(isLocalAuth && isDevelopment)) {
+    const session = await getSession();
+    if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-
-    const adminSupabase = accessToken
-      ? createAuthenticatedClient(accessToken)
-      : createAnonClient();
 
     const { searchParams } = new URL(request.url);
     const conversationId = searchParams.get("conversationId");
@@ -35,26 +24,28 @@ export async function GET(request: Request) {
 
     if (conversationId) {
       // Export single conversation
-      const { data: conversation, error: convError } = await adminSupabase
-        .from("chat_conversations")
-        .select("*")
-        .eq("id", conversationId)
-        .single();
+      const [conversation] = await db
+        .select()
+        .from(chatConversations)
+        .where(eq(chatConversations.id, conversationId))
+        .limit(1)
+        .catch(() => []);
 
-      if (convError || !conversation) {
+      if (!conversation) {
         return NextResponse.json(
           { error: "Conversation not found" },
           { status: 404 }
         );
       }
 
-      const { data: messages, error: msgError } = await adminSupabase
-        .from("chat_messages")
-        .select("*")
-        .eq("conversation_id", conversationId)
-        .order("created_at", { ascending: true });
+      const messages = await db
+        .select()
+        .from(chatMessages)
+        .where(eq(chatMessages.conversation_id, conversationId))
+        .orderBy(asc(chatMessages.created_at))
+        .catch(() => null);
 
-      if (msgError) {
+      if (!messages) {
         return NextResponse.json(
           { error: "Failed to fetch messages" },
           { status: 500 }
@@ -69,26 +60,26 @@ export async function GET(request: Request) {
           visitor_email: conversation.visitor_email,
           visitor_phone: conversation.visitor_phone,
           status: conversation.status,
-          started_at: conversation.started_at,
-          ended_at: conversation.ended_at,
+          started_at: iso(conversation.started_at),
+          ended_at: iso(conversation.ended_at),
         },
-        messages: (messages || []).map((m) => ({
+        messages: messages.map((m) => ({
           role: m.role,
           content: m.content,
-          created_at: m.created_at,
+          created_at: iso(m.created_at),
         })),
         exported_at: new Date().toISOString(),
       };
 
       if (format === "csv") {
         // Convert to CSV format
-        const rows = (messages || []).map((m) => ({
+        const rows = messages.map((m) => ({
           conversation_id: conversation.id,
           visitor_name: conversation.visitor_name || "",
           visitor_email: conversation.visitor_email || "",
           role: m.role,
           content: m.content.replace(/"/g, '""').replace(/\n/g, " "),
-          created_at: m.created_at,
+          created_at: iso(m.created_at),
         }));
 
         const headers = ["conversation_id", "visitor_name", "visitor_email", "role", "content", "created_at"];
@@ -110,31 +101,32 @@ export async function GET(request: Request) {
       return NextResponse.json(exportData);
     } else {
       // Export all conversations
-      const { data: conversations, error } = await adminSupabase
-        .from("chat_conversations")
-        .select(`
-          *,
-          chat_messages(count)
-        `)
-        .order("started_at", { ascending: false });
+      const conversations = await db
+        .select({
+          ...getTableColumns(chatConversations),
+          message_count: db.$count(chatMessages, eq(chatMessages.conversation_id, chatConversations.id)),
+        })
+        .from(chatConversations)
+        .orderBy(desc(chatConversations.started_at))
+        .catch(() => null);
 
-      if (error) {
+      if (!conversations) {
         return NextResponse.json(
           { error: "Failed to fetch conversations" },
           { status: 500 }
         );
       }
 
-      const exportData = (conversations || []).map((c: any) => ({
+      const exportData = conversations.map((c) => ({
         id: c.id,
         session_id: c.session_id,
         visitor_name: c.visitor_name,
         visitor_email: c.visitor_email,
         visitor_phone: c.visitor_phone,
         status: c.status,
-        message_count: c.chat_messages?.[0]?.count || 0,
-        started_at: c.started_at,
-        ended_at: c.ended_at,
+        message_count: c.message_count || 0,
+        started_at: iso(c.started_at),
+        ended_at: iso(c.ended_at),
       }));
 
       if (format === "csv") {

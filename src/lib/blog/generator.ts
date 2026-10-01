@@ -1,4 +1,4 @@
-import { createClient } from "@supabase/supabase-js";
+import { blogPosts } from "@/db/schema";
 
 interface GeneratedPost {
   title: string;
@@ -95,7 +95,7 @@ REQUIREMENTS:
 - Use markdown formatting (## for headings, **bold**, bullet points)
 - Include practical, actionable advice — not generic filler
 - Mention Istanbul and Awab Design naturally where relevant (don't force it)
-- End with a CTA: "Ready to get started? [Get an instant quote](/rate-calculator) and see what your project would cost."
+- End with a CTA: "Ready to get started? [Get in touch](/contact) to discuss your project and get a personalized quote."
 - Start the post with: "*This article was drafted by AI and reviewed by the Awab Design team.*"
 - For links, use plain markdown: [link text](/path) — no domain name in display text
 
@@ -176,32 +176,28 @@ RESPOND IN THIS EXACT JSON FORMAT (no markdown wrapping):
   };
 }
 
-function getSupabaseClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-  return createClient(url, key, { auth: { persistSession: false } });
-}
-
 export async function saveBlogPost(post: GeneratedPost, locale: string = "en"): Promise<void> {
-  const supabase = getSupabaseClient();
+  const { db } = await import("@/db");
 
-  const { error } = await supabase.from("blog_posts").insert({
-    title: post.title,
-    slug: post.slug,
-    excerpt: post.excerpt,
-    content: post.content,
-    featured_image_url: post.featured_image_url,
-    category: post.category,
-    tags: post.tags,
-    published: false,
-    meta_title: post.meta_title,
-    meta_description: post.meta_description,
-    reading_time: post.reading_time,
-    view_count: 0,
-    locale,
-  });
-
-  if (error) throw new Error(`Supabase insert error (${locale}): ${error.message}`);
+  try {
+    await db.insert(blogPosts).values({
+      title: post.title,
+      slug: post.slug,
+      excerpt: post.excerpt,
+      content: post.content,
+      featured_image_url: post.featured_image_url,
+      category: post.category,
+      tags: post.tags,
+      published: false,
+      meta_title: post.meta_title,
+      meta_description: post.meta_description,
+      reading_time: post.reading_time,
+      view_count: 0,
+      locale,
+    });
+  } catch (error) {
+    throw new Error(`Database insert error (${locale}): ${error instanceof Error ? error.message : String(error)}`);
+  }
 }
 
 export async function generateAndSaveAllLocales(topic: TopicInput): Promise<string[]> {

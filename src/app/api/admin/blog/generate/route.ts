@@ -1,11 +1,17 @@
 import { NextResponse } from "next/server";
 import { generateBlogPost, saveBlogPost } from "@/lib/blog/generator";
 import { pickTopic } from "@/lib/blog/topics";
+import { getSession } from "@/lib/auth/server";
 
 export const maxDuration = 60;
 
 export async function POST(request: Request) {
   try {
+    const session = await getSession();
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const body = await request.json().catch(() => ({}));
     const { customTopic } = body as { customTopic?: string };
 

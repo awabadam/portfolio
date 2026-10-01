@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { BlogPost } from "@/types";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -27,7 +26,14 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import AdminLayout from "@/components/admin/layout/AdminLayout";
-import { useSupabaseAuth } from "@/hooks/useSupabase";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
+import {
+  deleteBlogPost,
+  listBlogPosts,
+  saveBlogPost,
+  setBlogPostPublished,
+  type AdminBlogPost as BlogPost,
+} from "../_actions/blog";
 import { z } from "zod";
 import { Home, ChevronRight } from "lucide-react";
 
@@ -40,7 +46,7 @@ const localeFlags: Record<string, string> = {
 };
 
 const BlogAdminPage = () => {
-  const { user, supabase } = useSupabaseAuth();
+  const { user } = useAdminAuth();
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -69,18 +75,12 @@ const BlogAdminPage = () => {
   });
 
   useEffect(() => {
-    if (user && supabase) fetchPosts();
-  }, [user, supabase]);
+    if (user) fetchPosts();
+  }, [user]);
 
   const fetchPosts = async () => {
-    if (!supabase) return;
     try {
-      const { data, error } = await supabase
-        .from("blog_posts")
-        .select("*")
-        .order("created_at", { ascending: false });
-      if (error) { toast.error(error.message); return; }
-      setPosts(data || []);
+      setPosts(await listBlogPosts());
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Unknown error");
     } finally {
@@ -153,25 +153,13 @@ const BlogAdminPage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!supabase || !validateForm()) return;
+    if (!validateForm()) return;
 
     try {
-      const postData = {
-        ...formData,
-        tags: formData.tags.split(",").map((t) => t.trim()).filter(Boolean),
-        published_at: formData.published ? new Date().toISOString() : null,
-        author_id: user?.id || null,
-      };
-
-      if (editingPost) {
-        const { error } = await supabase.from("blog_posts").update(postData).eq("id", editingPost.id);
-        if (error) throw error;
-        toast.success("Post updated!");
-      } else {
-        const { error } = await supabase.from("blog_posts").insert([postData]);
-        if (error) throw error;
-        toast.success("Post created!");
-      }
+      // tags are split, published_at and author_id are set server-side
+      const result = await saveBlogPost(formData, editingPost?.id);
+      if (!result.ok) throw new Error(result.error);
+      toast.success(editingPost ? "Post updated!" : "Post created!");
 
       setShowForm(false);
       setEditingPost(null);
@@ -183,25 +171,18 @@ const BlogAdminPage = () => {
   };
 
   const handleQuickPublish = async (post: BlogPost) => {
-    if (!supabase) return;
     const newState = !post.published;
-    const { error } = await supabase
-      .from("blog_posts")
-      .update({
-        published: newState,
-        published_at: newState ? new Date().toISOString() : null,
-      })
-      .eq("id", post.id);
-    if (error) { toast.error(error.message); return; }
+    const result = await setBlogPostPublished(post.id, newState);
+    if (!result.ok) { toast.error(result.error); return; }
     toast.success(newState ? "Published!" : "Unpublished");
     fetchPosts();
   };
 
   const handleDelete = async () => {
-    if (!postToDelete || !supabase) return;
+    if (!postToDelete) return;
     try {
-      const { error } = await supabase.from("blog_posts").delete().eq("id", postToDelete);
-      if (error) throw error;
+      const result = await deleteBlogPost(postToDelete);
+      if (!result.ok) throw new Error(result.error);
       toast.success("Post deleted!");
       fetchPosts();
     } catch (error) {

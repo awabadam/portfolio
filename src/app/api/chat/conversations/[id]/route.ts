@@ -1,33 +1,14 @@
 import { NextResponse } from "next/server";
-import { createApiClient, createAuthenticatedClient, createAnonClient } from "@/lib/supabase";
+import { asc, eq, inArray } from "drizzle-orm";
+import { db } from "@/db";
+import { chatConversations, chatMessages, type ChatMessage } from "@/db/schema";
+import { getSession } from "@/lib/auth/server";
 
-// Helper function to get authenticated client
-async function getAdminClient(request: Request) {
-  const supabase = createApiClient();
-  const authHeader = request.headers.get("authorization");
-  let user = null;
-  let accessToken: string | null = null;
-  
-  if (authHeader?.startsWith("Bearer ")) {
-    accessToken = authHeader.substring(7);
-    const { data: { user: tokenUser }, error: tokenError } = await supabase.auth.getUser(accessToken);
-    if (!tokenError && tokenUser) {
-      user = tokenUser;
-    }
-  }
-  
-  const isLocalAuth = request.headers.get("x-local-auth") === "true";
-  const isDevelopment = process.env.NODE_ENV === "development";
-  
-  if (!user && !(isLocalAuth && isDevelopment)) {
-    return { authorized: false, client: null };
-  }
-  
-  const client = accessToken 
-    ? createAuthenticatedClient(accessToken)
-    : createAnonClient();
-    
-  return { authorized: true, client };
+// These endpoints are admin-only (the admin chat pages). Anonymous visitors
+// never read conversations through them.
+async function isAuthorized() {
+  const session = await getSession();
+  return !!session;
 }
 
 export async function GET(
@@ -35,9 +16,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { authorized, client: adminSupabase } = await getAdminClient(request);
-    
-    if (!authorized || !adminSupabase) {
+    if (!(await isAuthorized())) {
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 401 }
@@ -47,39 +26,42 @@ export async function GET(
     const { id: conversationId } = await params;
 
     // Get conversation
-    const { data: conversation, error: convError } = await adminSupabase
-      .from("chat_conversations")
-      .select("*")
-      .eq("id", conversationId)
-      .single();
+    const [conversation] = await db
+      .select()
+      .from(chatConversations)
+      .where(eq(chatConversations.id, conversationId))
+      .limit(1)
+      .catch(() => []);
 
-    if (convError || !conversation) {
+    if (!conversation) {
       return NextResponse.json(
         { error: "Conversation not found" },
         { status: 404 }
       );
     }
 
-    // Get all conversation IDs for this session first
-    const { data: sessionConversations, error: convsError } = await adminSupabase
-      .from("chat_conversations")
-      .select("id")
-      .eq("session_id", conversation.session_id);
-
-    if (convsError) {
-      console.error("Error fetching session conversations:", convsError);
-    }
+    // Get all conversations for this session (also gives us their IDs)
+    // This ensures we show all messages from the same session, even if they were split into different conversations
+    const allConversations = await db
+      .select()
+      .from(chatConversations)
+      .where(eq(chatConversations.session_id, conversation.session_id))
+      .orderBy(asc(chatConversations.started_at))
+      .catch((error) => {
+        console.error("Error fetching session conversations:", error);
+        return null;
+      });
 
     // Get all messages for all conversations in this session
-    // This ensures we show all messages from the same session, even if they were split into different conversations
-    const conversationIds = sessionConversations?.map(c => c.id) || [conversationId];
-    const { data: allMessages, error: messagesError } = await adminSupabase
-      .from("chat_messages")
-      .select("*")
-      .in("conversation_id", conversationIds)
-      .order("created_at", { ascending: true });
-
-    if (messagesError) {
+    const conversationIds = allConversations?.map(c => c.id) || [conversationId];
+    let allMessages: ChatMessage[];
+    try {
+      allMessages = await db
+        .select()
+        .from(chatMessages)
+        .where(inArray(chatMessages.conversation_id, conversationIds))
+        .orderBy(asc(chatMessages.created_at));
+    } catch (messagesError) {
       console.error("Error fetching messages:", messagesError);
       return NextResponse.json(
         { error: "Failed to fetch messages" },
@@ -88,25 +70,19 @@ export async function GET(
     }
 
     // Group messages by conversation_id
-    const messagesByConversation: Record<string, typeof allMessages> = {};
-    (allMessages || []).forEach((message) => {
+    const messagesByConversation: Record<string, ChatMessage[]> = {};
+    allMessages.forEach((message) => {
       const convId = message.conversation_id;
+      if (!convId) return;
       if (!messagesByConversation[convId]) {
         messagesByConversation[convId] = [];
       }
       messagesByConversation[convId].push(message);
     });
 
-    // Get all conversations for this session
-    const { data: allConversations } = await adminSupabase
-      .from("chat_conversations")
-      .select("*")
-      .eq("session_id", conversation.session_id)
-      .order("started_at", { ascending: true });
-
     return NextResponse.json({
       conversation,
-      messages: allMessages || [],
+      messages: allMessages,
       messagesByConversation,
       allConversations: allConversations || [],
     });
@@ -124,9 +100,7 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { authorized, client: adminSupabase } = await getAdminClient(request);
-    
-    if (!authorized || !adminSupabase) {
+    if (!(await isAuthorized())) {
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 401 }
@@ -136,15 +110,28 @@ export async function PATCH(
     const { id: conversationId } = await params;
     const body = await request.json();
 
-    const { data, error } = await adminSupabase
-      .from("chat_conversations")
-      .update(body)
-      .eq("id", conversationId)
-      .select()
-      .single();
+    // Only allow updating editable fields (never id / session_id)
+    const updateData: Partial<typeof chatConversations.$inferInsert> = {};
+    if (body.status !== undefined) updateData.status = body.status;
+    if (body.visitor_name !== undefined) updateData.visitor_name = body.visitor_name;
+    if (body.visitor_email !== undefined) updateData.visitor_email = body.visitor_email;
+    if (body.visitor_phone !== undefined) updateData.visitor_phone = body.visitor_phone;
+    if (body.ended_at !== undefined) {
+      updateData.ended_at = body.ended_at ? new Date(body.ended_at) : null;
+    }
 
-    if (error) {
+    let data;
+    try {
+      [data] = await db
+        .update(chatConversations)
+        .set(updateData)
+        .where(eq(chatConversations.id, conversationId))
+        .returning();
+    } catch (error) {
       console.error("Error updating conversation:", error);
+    }
+
+    if (!data) {
       return NextResponse.json(
         { error: "Failed to update conversation" },
         { status: 500 }
@@ -166,9 +153,7 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { authorized, client: adminSupabase } = await getAdminClient(request);
-    
-    if (!authorized || !adminSupabase) {
+    if (!(await isAuthorized())) {
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 401 }
@@ -177,12 +162,11 @@ export async function DELETE(
     
     const { id: conversationId } = await params;
 
-    const { error } = await adminSupabase
-      .from("chat_conversations")
-      .delete()
-      .eq("id", conversationId);
-
-    if (error) {
+    try {
+      await db
+        .delete(chatConversations)
+        .where(eq(chatConversations.id, conversationId));
+    } catch (error) {
       console.error("Error deleting conversation:", error);
       return NextResponse.json(
         { error: "Failed to delete conversation" },
@@ -199,4 +183,3 @@ export async function DELETE(
     );
   }
 }
-

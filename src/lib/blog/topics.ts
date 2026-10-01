@@ -1,4 +1,4 @@
-import { createClient } from "@supabase/supabase-js";
+import { blogPosts } from "@/db/schema";
 
 export interface TopicTemplate {
   titleTemplate: string;
@@ -47,18 +47,12 @@ export async function pickTopic(): Promise<{
   keywords: string[];
   category: string;
 } | null> {
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    { auth: { persistSession: false } }
-  );
+  const { db } = await import("@/db");
 
   // Get existing slugs to avoid duplicates
-  const { data: existing } = await supabase
-    .from("blog_posts")
-    .select("slug");
+  const existing = await db.select({ slug: blogPosts.slug }).from(blogPosts);
 
-  const usedSlugs = new Set((existing || []).map((p) => p.slug));
+  const usedSlugs = new Set(existing.map((p) => p.slug));
 
   const year = new Date().getFullYear().toString();
 

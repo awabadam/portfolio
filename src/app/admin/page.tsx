@@ -26,7 +26,7 @@ import {
   Clock,
 } from "lucide-react";
 import { WhatsAppIcon } from "@/components/icons/WhatsAppIcon";
-import { useSupabaseAuth } from "@/hooks/useSupabase";
+import { getDashboardStats, getRecentBlogPosts, getRecentLeads } from "./_actions/dashboard";
 
 interface Stats {
   totalLeads: number;
@@ -56,7 +56,6 @@ interface ActivityItem {
 }
 
 export default function AdminDashboardPage() {
-  const { supabase } = useSupabaseAuth();
   const [activity, setActivity] = useState<ActivityItem[]>([]);
   const [stats, setStats] = useState<Stats>({
     totalLeads: 0,
@@ -69,20 +68,9 @@ export default function AdminDashboardPage() {
 
   useEffect(() => {
     const fetchStats = async () => {
-      if (!supabase) { setLoading(false); return; }
       try {
-        const { data: leads } = await supabase
-          .from("leads")
-          .select("source, status");
-
-        const all = leads || [];
-        setStats({
-          totalLeads: all.length,
-          newLeads: all.filter((l) => l.status === "new").length,
-          whatsappLeads: all.filter((l) => l.source === "whatsapp").length,
-          contactFormLeads: all.filter((l) => l.source === "contact_form").length,
-          chatConversations: 0,
-        });
+        const counts = await getDashboardStats();
+        setStats({ ...counts, chatConversations: 0 });
       } catch (error) {
         console.error("Error fetching stats:", error);
       } finally {
@@ -91,22 +79,17 @@ export default function AdminDashboardPage() {
     };
 
     const fetchActivity = async () => {
-      if (!supabase) return;
       const items: ActivityItem[] = [];
 
       try {
-        const { data: leads } = await supabase
-          .from("leads")
-          .select("name, source, created_at")
-          .order("created_at", { ascending: false })
-          .limit(5);
+        const leads = await getRecentLeads(5);
 
         if (leads) {
           for (const lead of leads) {
             items.push({
               type: "lead",
               title: lead.name || "Anonymous",
-              detail: lead.source === "whatsapp" ? "WhatsApp inquiry" : lead.source === "rate_calculator" ? "Quote request" : "Contact form",
+              detail: lead.source === "whatsapp" ? "WhatsApp inquiry" : "Contact form",
               time: lead.created_at,
             });
           }
@@ -114,12 +97,7 @@ export default function AdminDashboardPage() {
       } catch {}
 
       try {
-        const { data: drafts } = await supabase
-          .from("blog_posts")
-          .select("title, created_at, published, locale")
-          .eq("locale", "en")
-          .order("created_at", { ascending: false })
-          .limit(5);
+        const drafts = await getRecentBlogPosts(5);
 
         if (drafts) {
           for (const d of drafts) {
@@ -139,7 +117,7 @@ export default function AdminDashboardPage() {
 
     fetchStats();
     fetchActivity();
-  }, [supabase]);
+  }, []);
 
   return (
     <AdminLayout>

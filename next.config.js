@@ -19,12 +19,6 @@ const nextConfig = {
       },
       {
         protocol: "https",
-        hostname: "ixpsdumronjzsegxscdt.supabase.co",
-        port: "",
-        pathname: "/storage/v1/object/public/**",
-      },
-      {
-        protocol: "https",
         hostname: "mir-s3-cdn-cf.behance.net",
         port: "",
         pathname: "/**",

@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server';
-import { createAppServerClient } from '@/lib/supabase';
+import { desc, eq } from 'drizzle-orm';
+import { db } from '@/db';
+import { projects as projectsTable } from '@/db/schema';
+import { getSession } from '@/lib/auth/server';
 
 // Cache featured projects aggressively — they change rarely and are
 // used on the homepage which needs to avoid loading Supabase client-side.
@@ -11,24 +14,23 @@ export async function GET(request: Request) {
     const featured = searchParams.get('featured') === 'true';
     const limit = parseInt(searchParams.get('limit') || '0', 10);
 
-    const supabase = createAppServerClient();
-
     // Featured projects first, then most-recent — so a `limit` without the
     // `featured` filter surfaces the curated ones and backfills with the
     // newest work to fill out the grid.
-    let query = supabase
-      .from('projects')
-      .select('*')
-      .order('featured', { ascending: false })
-      .order('created_at', { ascending: false });
+    const query = db
+      .select()
+      .from(projectsTable)
+      .where(featured ? eq(projectsTable.featured, true) : undefined)
+      .orderBy(desc(projectsTable.featured), desc(projectsTable.created_at));
 
-    if (featured) query = query.eq('featured', true);
-    if (limit > 0) query = query.limit(limit);
-
-    const { data: projects, error } = await query;
-
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+    let projects;
+    try {
+      projects = limit > 0 ? await query.limit(limit) : await query;
+    } catch (error) {
+      return NextResponse.json(
+        { error: error instanceof Error ? error.message : 'Failed to fetch projects' },
+        { status: 500 }
+      );
     }
 
     return NextResponse.json(
@@ -46,10 +48,8 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const supabase = createAppServerClient();
-    
     // Get the current user session
-    const { data: { session } } = await supabase.auth.getSession();
+    const session = await getSession();
     
     // Check if user is authenticated
     if (!session) {
@@ -63,10 +63,13 @@ export async function POST(request: Request) {
     const body = await request.json();
     
     // Insert new project
-    const { data, error } = await supabase
-      .from('projects')
-      .insert([
-        { 
+    let data;
+    try {
+      data = await db
+        .insert(projectsTable)
+        .values({
+          // projects.id is a text PK with no database default
+          id: crypto.randomUUID(),
           title: body.title,
           category: body.category,
           description: body.description,
@@ -74,12 +77,13 @@ export async function POST(request: Request) {
           thumbnail_url: body.thumbnailUrl,
           featured: body.featured || false,
           user_id: session.user.id
-        }
-      ])
-      .select();
-    
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+        })
+        .returning();
+    } catch (error) {
+      return NextResponse.json(
+        { error: error instanceof Error ? error.message : 'Failed to create project' },
+        { status: 500 }
+      );
     }
     
     return NextResponse.json({ project: data[0] }, { status: 201 });

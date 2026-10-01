@@ -2,5 +2,5 @@
 export { useGTM } from './useGTM';
 export { usePageTracking } from './usePageTracking';
 
-// Supabase hooks
-export { useSupabase, useSupabaseAuth } from './useSupabase';
+// Auth hooks
+export { useAdminAuth } from './useAdminAuth';

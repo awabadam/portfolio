@@ -9,8 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent } from "@/components/ui/card";
 import { Project } from "@/types";
-import { createBrowserSupabaseClient } from "@/lib/supabase";
-import { useSupabaseAuth } from "@/hooks/useSupabase";
+import { saveProject } from "@/app/admin/_actions/projects";
 
 interface ProjectFormProps {
   initialData?: Partial<Project>;
@@ -19,7 +18,6 @@ interface ProjectFormProps {
 
 export default function ProjectForm({ initialData, onSuccess }: ProjectFormProps) {
   const router = useRouter();
-  const { user } = useSupabaseAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState<Partial<Project>>(
@@ -56,9 +54,6 @@ export default function ProjectForm({ initialData, onSuccess }: ProjectFormProps
         throw new Error("Title, category, and description are required");
       }
 
-      const supabase = createBrowserSupabaseClient();
-      if (!supabase) throw new Error("Database connection not available");
-
       const projectData = {
         id: formData.id || generateId(formData.title),
         title: formData.title,
@@ -72,17 +67,11 @@ export default function ProjectForm({ initialData, onSuccess }: ProjectFormProps
         overview: formData.overview || null,
         objectives: formData.objectives && formData.objectives.length > 0 ? formData.objectives : null,
         role: formData.role || null,
-        user_id: user?.id || null,
       };
 
-      if (initialData?.id) {
-        const { id, ...updateData } = projectData;
-        const { error } = await supabase.from("projects").update(updateData).eq("id", initialData.id);
-        if (error) throw new Error(error.message);
-      } else {
-        const { error } = await supabase.from("projects").insert([projectData]);
-        if (error) throw new Error(error.message);
-      }
+      // user_id is set server-side from the session
+      const result = await saveProject(projectData, initialData?.id);
+      if (!result.ok) throw new Error(result.error);
 
       router.refresh();
       if (onSuccess) onSuccess();

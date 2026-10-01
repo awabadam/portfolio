@@ -1,10 +1,18 @@
 import { NextResponse } from "next/server";
-import { createServiceRoleClient } from "@/lib/supabase";
+import { inArray } from "drizzle-orm";
+import { db } from "@/db";
+import { leads } from "@/db/schema";
+import { getSession } from "@/lib/auth/server";
 import { bulkLeadUpdateSchema, bulkDeleteSchema } from "@/lib/validation/schemas";
 
 // PATCH - Bulk update lead status
 export async function PATCH(request: Request) {
   try {
+    const session = await getSession();
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const body = await request.json();
     const validation = bulkLeadUpdateSchema.safeParse(body);
 
@@ -16,15 +24,15 @@ export async function PATCH(request: Request) {
     }
 
     const { ids, status } = validation.data;
-    const supabase = createServiceRoleClient();
 
-    const { data, error } = await supabase
-      .from("leads")
-      .update({ status, updated_at: new Date().toISOString() })
-      .in("id", ids)
-      .select();
-
-    if (error) {
+    let data;
+    try {
+      data = await db
+        .update(leads)
+        .set({ status, updated_at: new Date() })
+        .where(inArray(leads.id, ids))
+        .returning();
+    } catch (error) {
       console.error("Error bulk updating leads:", error);
       return NextResponse.json(
         { error: "Failed to update leads" },
@@ -34,8 +42,8 @@ export async function PATCH(request: Request) {
 
     return NextResponse.json({
       success: true,
-      updated: data?.length || 0,
-      message: `Updated ${data?.length || 0} leads to "${status}"`,
+      updated: data.length,
+      message: `Updated ${data.length} leads to "${status}"`,
     });
   } catch (error) {
     console.error("Error in bulk update:", error);
@@ -49,6 +57,11 @@ export async function PATCH(request: Request) {
 // DELETE - Bulk delete leads
 export async function DELETE(request: Request) {
   try {
+    const session = await getSession();
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const body = await request.json();
     const validation = bulkDeleteSchema.safeParse(body);
 
@@ -60,20 +73,22 @@ export async function DELETE(request: Request) {
     }
 
     const { ids } = validation.data;
-    const supabase = createServiceRoleClient();
 
-    const { error, count } = await supabase
-      .from("leads")
-      .delete()
-      .in("id", ids);
-
-    if (error) {
+    let deleted;
+    try {
+      deleted = await db
+        .delete(leads)
+        .where(inArray(leads.id, ids))
+        .returning({ id: leads.id });
+    } catch (error) {
       console.error("Error bulk deleting leads:", error);
       return NextResponse.json(
         { error: "Failed to delete leads" },
         { status: 500 }
       );
     }
+
+    const count = deleted.length;
 
     return NextResponse.json({
       success: true,

@@ -37,7 +37,6 @@ export default function SEOHead({
 
       {/* DNS prefetch for performance */}
       <link rel="dns-prefetch" href="//images.unsplash.com" />
-      <link rel="dns-prefetch" href="//xvnzxbtldhydyeimhdgz.supabase.co" />
 
       {/* Additional meta tags */}
       <meta name="theme-color" content="#000000" />

@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server";
-import { createApiClient, createAuthenticatedClient, createAnonClient } from "@/lib/supabase";
+import { ilike, or } from "drizzle-orm";
+import { db } from "@/db";
+import { blogPosts, chatConversations, leads, projects } from "@/db/schema";
+import { getSession } from "@/lib/auth/server";
 import { checkRateLimit, getIdentifier, getRateLimitHeaders, rateLimiters } from "@/lib/rateLimit";
 
 interface SearchResult {
@@ -23,31 +26,11 @@ export async function GET(request: Request) {
       );
     }
 
-    const supabase = createApiClient();
-
     // Check authentication
-    const authHeader = request.headers.get("authorization");
-    let user = null;
-    let accessToken: string | null = null;
-
-    if (authHeader?.startsWith("Bearer ")) {
-      accessToken = authHeader.substring(7);
-      const { data: { user: tokenUser }, error: tokenError } = await supabase.auth.getUser(accessToken);
-      if (!tokenError && tokenUser) {
-        user = tokenUser;
-      }
-    }
-
-    const isLocalAuth = request.headers.get("x-local-auth") === "true";
-    const isDevelopment = process.env.NODE_ENV === "development";
-
-    if (!user && !(isLocalAuth && isDevelopment)) {
+    const session = await getSession();
+    if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-
-    const adminSupabase = accessToken
-      ? createAuthenticatedClient(accessToken)
-      : createAnonClient();
 
     const { searchParams } = new URL(request.url);
     const query = searchParams.get("q")?.trim();
@@ -62,19 +45,20 @@ export async function GET(request: Request) {
 
     // Search leads
     if (!type || type === "all" || type === "leads") {
-      const { data: leads } = await adminSupabase
-        .from("leads")
-        .select("id, name, email, phone, source")
-        .or(`name.ilike.${searchPattern},email.ilike.${searchPattern},phone.ilike.${searchPattern}`)
-        .limit(5);
+      const leadRows = await db
+        .select({ id: leads.id, name: leads.name, email: leads.email, phone: leads.phone, source: leads.source })
+        .from(leads)
+        .where(or(ilike(leads.name, searchPattern), ilike(leads.email, searchPattern), ilike(leads.phone, searchPattern)))
+        .limit(5)
+        .catch(() => null);
 
-      if (leads) {
-        for (const lead of leads) {
+      if (leadRows) {
+        for (const lead of leadRows) {
           results.push({
             id: lead.id,
             type: "lead",
             title: lead.name || lead.email || lead.phone || "Unknown Lead",
-            subtitle: lead.email || lead.phone,
+            subtitle: lead.email || lead.phone || undefined,
             href: `/admin/leads?search=${encodeURIComponent(lead.email || lead.name || "")}`,
           });
         }
@@ -83,11 +67,25 @@ export async function GET(request: Request) {
 
     // Search conversations
     if (!type || type === "all" || type === "conversations") {
-      const { data: conversations } = await adminSupabase
-        .from("chat_conversations")
-        .select("id, visitor_name, visitor_email, visitor_phone, session_id")
-        .or(`visitor_name.ilike.${searchPattern},visitor_email.ilike.${searchPattern},visitor_phone.ilike.${searchPattern},session_id.ilike.${searchPattern}`)
-        .limit(5);
+      const conversations = await db
+        .select({
+          id: chatConversations.id,
+          visitor_name: chatConversations.visitor_name,
+          visitor_email: chatConversations.visitor_email,
+          visitor_phone: chatConversations.visitor_phone,
+          session_id: chatConversations.session_id,
+        })
+        .from(chatConversations)
+        .where(
+          or(
+            ilike(chatConversations.visitor_name, searchPattern),
+            ilike(chatConversations.visitor_email, searchPattern),
+            ilike(chatConversations.visitor_phone, searchPattern),
+            ilike(chatConversations.session_id, searchPattern)
+          )
+        )
+        .limit(5)
+        .catch(() => null);
 
       if (conversations) {
         for (const conv of conversations) {
@@ -104,14 +102,15 @@ export async function GET(request: Request) {
 
     // Search projects
     if (!type || type === "all" || type === "projects") {
-      const { data: projects } = await adminSupabase
-        .from("projects")
-        .select("id, title, category, description")
-        .or(`title.ilike.${searchPattern},category.ilike.${searchPattern},description.ilike.${searchPattern}`)
-        .limit(5);
+      const projectRows = await db
+        .select({ id: projects.id, title: projects.title, category: projects.category, description: projects.description })
+        .from(projects)
+        .where(or(ilike(projects.title, searchPattern), ilike(projects.category, searchPattern), ilike(projects.description, searchPattern)))
+        .limit(5)
+        .catch(() => null);
 
-      if (projects) {
-        for (const project of projects) {
+      if (projectRows) {
+        for (const project of projectRows) {
           results.push({
             id: project.id,
             type: "project",
@@ -125,11 +124,12 @@ export async function GET(request: Request) {
 
     // Search blog posts
     if (!type || type === "all" || type === "blog") {
-      const { data: posts } = await adminSupabase
-        .from("blog_posts")
-        .select("id, title, slug, excerpt, category")
-        .or(`title.ilike.${searchPattern},excerpt.ilike.${searchPattern},category.ilike.${searchPattern}`)
-        .limit(5);
+      const posts = await db
+        .select({ id: blogPosts.id, title: blogPosts.title, slug: blogPosts.slug, excerpt: blogPosts.excerpt, category: blogPosts.category })
+        .from(blogPosts)
+        .where(or(ilike(blogPosts.title, searchPattern), ilike(blogPosts.excerpt, searchPattern), ilike(blogPosts.category, searchPattern)))
+        .limit(5)
+        .catch(() => null);
 
       if (posts) {
         for (const post of posts) {

@@ -1,91 +1,77 @@
 import { NextResponse } from "next/server";
-import { createAnonClient } from "@/lib/supabase";
+import { sql } from "drizzle-orm";
+import { db } from "@/db";
+import { chatConversations, chatMessages } from "@/db/schema";
+import { getSession } from "@/lib/auth/server";
 
 export async function GET() {
   try {
     // Check configuration
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-    
-    if (!supabaseUrl) {
+    if (!process.env.DATABASE_URL) {
       return NextResponse.json(
         {
-          error: "Supabase not configured",
-          message: "NEXT_PUBLIC_SUPABASE_URL is not set",
+          error: "Database not configured",
+          message: "DATABASE_URL is not set",
           config: {
-            hasUrl: false,
-            hasAnonKey: !!anonKey,
+            hasDatabaseUrl: false,
           },
         },
         { status: 500 }
       );
     }
 
-    if (!anonKey) {
-      return NextResponse.json(
-        {
-          error: "Supabase not configured",
-          message: "NEXT_PUBLIC_SUPABASE_ANON_KEY is not set",
-          config: {
-            hasUrl: true,
-            hasAnonKey: false,
-          },
-        },
-        { status: 500 }
-      );
+    // Test basic connectivity
+    let connectionError: string | null = null;
+    try {
+      await db.execute(sql`select 1`);
+    } catch (error) {
+      connectionError = error instanceof Error ? error.message : String(error);
     }
 
-    // Use anon client - this tests basic connectivity
-    // Note: RLS policies may limit what anonymous users can see
-    const supabase = createAnonClient();
+    const connectionOk = !connectionError;
 
-    // Test connectivity by trying to count conversations
-    // This will return 0 if RLS blocks anonymous users (which is expected)
-    const { count: conversationCount, error: convError } = await supabase
-      .from("chat_conversations")
-      .select("*", { count: "exact", head: true });
+    // Counts are private data: only the signed-in admin gets them. Anonymous
+    // callers see 0, the same thing RLS returned to them under Supabase.
+    const session = await getSession();
+    let conversationCount = 0;
+    let messageCount = 0;
+    let convError: string | null = null;
+    let msgError: string | null = null;
 
-    const { count: messageCount, error: msgError } = await supabase
-      .from("chat_messages")
-      .select("*", { count: "exact", head: true });
-
-    // If we get "permission denied" errors, that's actually good - it means
-    // RLS is working and the connection is fine
-    const rlsWorking = 
-      (convError?.code === "42501" || convError?.message?.includes("permission")) ||
-      (msgError?.code === "42501" || msgError?.message?.includes("permission"));
-
-    // Test INSERT capability (what anonymous users need)
-    // We'll do a dry-run by checking if the table exists
-    const { error: tableError } = await supabase
-      .from("chat_conversations")
-      .select("id")
-      .limit(0);
-
-    const connectionOk = !tableError || tableError.code === "42501" || rlsWorking;
+    if (connectionOk && session) {
+      [conversationCount, messageCount] = await Promise.all([
+        db.$count(chatConversations).catch((error) => {
+          convError = error instanceof Error ? error.message : String(error);
+          return 0;
+        }),
+        db.$count(chatMessages).catch((error) => {
+          msgError = error instanceof Error ? error.message : String(error);
+          return 0;
+        }),
+      ]);
+    }
 
     return NextResponse.json({
       success: connectionOk,
       connection: {
         status: connectionOk ? "connected" : "failed",
-        rlsEnabled: rlsWorking || (!convError && conversationCount === 0),
+        // Access control is now enforced in the API routes, not via RLS
+        rlsEnabled: false,
       },
       counts: {
-        conversations: conversationCount || 0,
-        messages: messageCount || 0,
+        conversations: conversationCount,
+        messages: messageCount,
       },
       errors: {
-        conversationCount: convError?.message || null,
-        messageCount: msgError?.message || null,
+        connection: connectionError,
+        conversationCount: convError,
+        messageCount: msgError,
       },
-      notes: rlsWorking 
-        ? "RLS is properly blocking anonymous SELECT - this is expected behavior"
-        : conversationCount === 0 
-          ? "No conversations yet, or RLS is blocking anonymous access"
-          : null,
+      notes: session
+        ? null
+        : "Counts are only returned to the signed-in admin",
       config: {
-        supabaseUrl: supabaseUrl ? `${supabaseUrl.substring(0, 25)}...` : "not set",
-        hasAnonKey: !!anonKey,
+        hasDatabaseUrl: true,
       },
     });
   } catch (error) {
@@ -100,8 +86,8 @@ export async function GET() {
     if (error instanceof Error && error.message.includes("fetch")) {
       errorDetails.type = "Network/Connection Error";
       errorDetails.suggestions = [
-        "Check if your Supabase project is paused (free tier pauses after 7 days of inactivity)",
-        "Verify NEXT_PUBLIC_SUPABASE_URL is correct",
+        "Check that the Neon database is reachable (free tier computes suspend when idle)",
+        "Verify DATABASE_URL is correct",
         "Check your internet connection",
       ];
     }

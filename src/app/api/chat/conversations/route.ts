@@ -1,41 +1,19 @@
 import { NextResponse } from "next/server";
-import { createApiClient, createAuthenticatedClient, createAnonClient } from "@/lib/supabase";
+import { desc, eq, getTableColumns } from "drizzle-orm";
+import { db } from "@/db";
+import { chatConversations, chatMessages } from "@/db/schema";
+import { getSession } from "@/lib/auth/server";
 
 export async function GET(request: Request) {
   try {
-    const supabase = createApiClient();
-
-    // Check for Authorization header (Bearer token)
-    const authHeader = request.headers.get("authorization");
-    let user = null;
-    let accessToken: string | null = null;
-
-    if (authHeader?.startsWith("Bearer ")) {
-      // If Bearer token is provided, verify it
-      accessToken = authHeader.substring(7);
-      const { data: { user: tokenUser }, error: tokenError } = await supabase.auth.getUser(accessToken);
-      if (!tokenError && tokenUser) {
-        user = tokenUser;
-      }
-    }
-
-    // In development, allow local auth (check for local-auth header)
-    const isLocalAuth = request.headers.get("x-local-auth") === "true";
-    const isDevelopment = process.env.NODE_ENV === "development";
-
-    // Check if user is authenticated (or using local auth in dev)
-    if (!user && !(isLocalAuth && isDevelopment)) {
+    // Only the signed-in admin can list conversations
+    const session = await getSession();
+    if (!session) {
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 401 }
       );
     }
-
-    // Use authenticated client with access token for RLS (admin can see all)
-    // In dev with local auth, use anon client (RLS policies should be configured for this)
-    const adminSupabase = accessToken
-      ? createAuthenticatedClient(accessToken)
-      : createAnonClient(); // Fallback for local auth in dev
 
     const { searchParams } = new URL(request.url);
     const status = searchParams.get("status");
@@ -43,41 +21,27 @@ export async function GET(request: Request) {
     const offset = parseInt(searchParams.get("offset") || "0");
 
     // Build query with message counts using a single query
-    // This fixes the N+1 problem by using a lateral join / subquery approach
-    let query = adminSupabase
-      .from("chat_conversations")
-      .select(`
-        *,
-        chat_messages(count)
-      `)
-      .order("started_at", { ascending: false })
-      .range(offset, offset + limit - 1);
-
-    if (status) {
-      query = query.eq("status", status);
-    }
-
-    const { data: conversations, error } = await query;
-
-    if (error) {
-      console.error("Error fetching conversations:", {
-        message: error.message,
-        details: error.details,
-        hint: error.hint,
-        code: error.code,
-      });
+    // (correlated count subquery, avoids the N+1 problem)
+    let conversationsWithCounts;
+    try {
+      conversationsWithCounts = await db
+        .select({
+          ...getTableColumns(chatConversations),
+          message_count: db.$count(chatMessages, eq(chatMessages.conversation_id, chatConversations.id)),
+        })
+        .from(chatConversations)
+        .where(status ? eq(chatConversations.status, status) : undefined)
+        .orderBy(desc(chatConversations.started_at))
+        .limit(limit)
+        .offset(offset);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.error("Error fetching conversations:", { message });
       return NextResponse.json(
-        { error: "Failed to fetch conversations", details: error.message },
+        { error: "Failed to fetch conversations", details: message },
         { status: 500 }
       );
     }
-
-    // Transform the data to include message_count
-    const conversationsWithCounts = (conversations || []).map((conv: any) => ({
-      ...conv,
-      message_count: conv.chat_messages?.[0]?.count || 0,
-      chat_messages: undefined, // Remove the nested object
-    }));
 
     // Group conversations by session_id and combine message counts
     const groupedBySession: Record<string, typeof conversationsWithCounts> = {};
@@ -94,7 +58,7 @@ export async function GET(request: Request) {
     const groupedConversations = Object.entries(groupedBySession).map(([sessionId, convs]) => {
       // Sort by started_at descending to get most recent first
       const sorted = [...convs].sort((a, b) =>
-        new Date(b.started_at).getTime() - new Date(a.started_at).getTime()
+        (b.started_at?.getTime() ?? 0) - (a.started_at?.getTime() ?? 0)
       );
       const primary = sorted[0];
       const totalMessages = convs.reduce((sum, c) => sum + (c.message_count || 0), 0);
@@ -111,7 +75,7 @@ export async function GET(request: Request) {
 
     // Sort grouped conversations by most recent start time
     groupedConversations.sort((a, b) =>
-      new Date(b.started_at).getTime() - new Date(a.started_at).getTime()
+      (b.started_at?.getTime() ?? 0) - (a.started_at?.getTime() ?? 0)
     );
 
     return NextResponse.json({ conversations: groupedConversations });

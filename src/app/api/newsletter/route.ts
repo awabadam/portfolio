@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
-import { createAppServerClient } from "@/lib/supabase";
+import { db } from "@/db";
+import { leads } from "@/db/schema";
 
 export async function POST(request: Request) {
   try {
@@ -19,8 +20,7 @@ export async function POST(request: Request) {
       const ipAddress = headers.get("x-forwarded-for") || headers.get("x-real-ip") || "unknown";
       const userAgent = headers.get("user-agent") || "unknown";
       
-      const supabase = createAppServerClient();
-      await supabase.from("leads").insert({
+      await db.insert(leads).values({
         source: "newsletter",
         email: email,
         ip_address: ipAddress,

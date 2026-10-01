@@ -4,7 +4,8 @@ import AdminLayout from "@/components/admin/layout/AdminLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useSupabaseAuth } from "@/hooks/useSupabase";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
+import { authClient } from "@/lib/auth/client";
 import { useState } from "react";
 import {
   Card,
@@ -20,7 +21,7 @@ import { passwordChangeSchema, getValidationErrors } from "@/lib/validation/sche
 import { z } from "zod";
 
 export default function SettingsPage() {
-  const { user, isLocalAuth, supabase } = useSupabaseAuth();
+  const { user } = useAdminAuth();
   const [saving, setSaving] = useState(false);
   const [passwordForm, setPasswordForm] = useState({
     currentPassword: "",
@@ -31,11 +32,6 @@ export default function SettingsPage() {
 
   const handlePasswordChange = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (isLocalAuth || !supabase) {
-      toast.error("Password change is not available in local development mode");
-      return;
-    }
 
     // Validate form
     try {
@@ -53,27 +49,20 @@ export default function SettingsPage() {
     setSaving(true);
 
     try {
-      // First verify current password by attempting to sign in
-      const { error: signInError } = await supabase.auth.signInWithPassword({
-        email: user?.email || "",
-        password: passwordForm.currentPassword,
-      });
-
-      if (signInError) {
-        setFieldErrors({ currentPassword: "Current password is incorrect" });
-        toast.error("Current password is incorrect");
-        setSaving(false);
-        return;
-      }
-
-      // Update password
-      const { error: updateError } = await supabase.auth.updateUser({
-        password: passwordForm.newPassword,
+      // Verifies the current password server-side and signs out other devices
+      const { error: updateError } = await authClient.changePassword({
+        currentPassword: passwordForm.currentPassword,
+        newPassword: passwordForm.newPassword,
+        revokeOtherSessions: true,
       });
 
       if (updateError) {
-        toast.error(updateError.message);
-        setSaving(false);
+        if (updateError.code === "INVALID_PASSWORD") {
+          setFieldErrors({ currentPassword: "Current password is incorrect" });
+          toast.error("Current password is incorrect");
+        } else {
+          toast.error(updateError.message || "Failed to update password");
+        }
         return;
       }
 
@@ -127,9 +116,7 @@ export default function SettingsPage() {
                   className="max-w-md"
                 />
                 <p className="text-xs text-muted-foreground">
-                  {isLocalAuth
-                    ? "Using local development authentication"
-                    : "Email is managed by Supabase Auth"}
+                  To change the admin email, re-run scripts/create-admin.ts
                 </p>
               </div>
             </CardContent>
@@ -147,12 +134,7 @@ export default function SettingsPage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {isLocalAuth ? (
-                <p className="text-sm text-muted-foreground">
-                  Security settings are not available in local development mode.
-                </p>
-              ) : (
-                <form onSubmit={handlePasswordChange} className="space-y-4">
+              <form onSubmit={handlePasswordChange} className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="current-password">Current Password</Label>
                     <Input
@@ -224,7 +206,6 @@ export default function SettingsPage() {
                     )}
                   </Button>
                 </form>
-              )}
             </CardContent>
           </Card>
 

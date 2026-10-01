@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { useSupabaseAuth } from "@/hooks/useSupabase";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -72,7 +72,7 @@ const navItems = [
 ];
 
 export default function AdminLayout({ children }: AdminLayoutProps) {
-  const { user, loading, signOut } = useSupabaseAuth();
+  const { user, loading, signOut } = useAdminAuth();
   const router = useRouter();
   const pathname = usePathname();
   const [isClient, setIsClient] = useState(false);

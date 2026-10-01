@@ -18,7 +18,7 @@ import {
 import { Pagination, PaginationInfo } from "@/components/ui/pagination";
 import { toast } from "@/components/ui/toaster";
 import { exportConversations } from "@/lib/export";
-import { useSupabaseAuth } from "@/hooks/useSupabase";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
 import Link from "next/link";
 import {
   Eye,
@@ -57,7 +57,7 @@ interface Conversation {
 const PAGE_SIZE = 10;
 
 export default function AdminChatPage() {
-  const { user, loading, supabase, isLocalAuth } = useSupabaseAuth();
+  const { user, loading } = useAdminAuth();
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -91,15 +91,6 @@ export default function AdminChatPage() {
         "Content-Type": "application/json",
       };
 
-      if (isLocalAuth) {
-        headers["x-local-auth"] = "true";
-      } else if (supabase) {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session?.access_token) {
-          headers["Authorization"] = `Bearer ${session.access_token}`;
-        }
-      }
-
       const response = await fetch(url.toString(), {
         method: "GET",
         headers,
@@ -128,15 +119,6 @@ export default function AdminChatPage() {
         "Content-Type": "application/json",
       };
 
-      if (isLocalAuth) {
-        headers["x-local-auth"] = "true";
-      } else if (supabase) {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session?.access_token) {
-          headers["Authorization"] = `Bearer ${session.access_token}`;
-        }
-      }
-
       const response = await fetch(`/api/chat/conversations/${id}`, {
         method: "PATCH",
         headers,
@@ -163,15 +145,6 @@ export default function AdminChatPage() {
       const headers: HeadersInit = {
         "Content-Type": "application/json",
       };
-
-      if (isLocalAuth) {
-        headers["x-local-auth"] = "true";
-      } else if (supabase) {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session?.access_token) {
-          headers["Authorization"] = `Bearer ${session.access_token}`;
-        }
-      }
 
       const response = await fetch(`/api/chat/conversations/${conversationToDelete}`, {
         method: "DELETE",

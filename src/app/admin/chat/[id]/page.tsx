@@ -4,7 +4,7 @@ import React, { useEffect, useState, useRef } from "react";
 import AdminLayout from "@/components/admin/layout/AdminLayout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { useSupabaseAuth } from "@/hooks/useSupabase";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
 import Link from "next/link";
 import { ArrowLeft, Archive, Trash2, Mail, Phone, User, MessageSquare, Clock } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
@@ -34,7 +34,7 @@ interface Conversation {
 }
 
 export default function ConversationDetailPage() {
-  const { user, loading, supabase, isLocalAuth } = useSupabaseAuth();
+  const { user, loading } = useAdminAuth();
   const params = useParams();
   const router = useRouter();
   const conversationId = params.id as string;
@@ -64,15 +64,6 @@ export default function ConversationDetailPage() {
         "Content-Type": "application/json",
       };
 
-      if (isLocalAuth) {
-        headers["x-local-auth"] = "true";
-      } else if (supabase) {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session?.access_token) {
-          headers["Authorization"] = `Bearer ${session.access_token}`;
-        }
-      }
-
       const response = await fetch(`/api/chat/conversations/${conversationId}`, {
         method: "GET",
         headers,
@@ -101,15 +92,6 @@ export default function ConversationDetailPage() {
         "Content-Type": "application/json",
       };
 
-      if (isLocalAuth) {
-        headers["x-local-auth"] = "true";
-      } else if (supabase) {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session?.access_token) {
-          headers["Authorization"] = `Bearer ${session.access_token}`;
-        }
-      }
-
       const response = await fetch(`/api/chat/conversations/${conversationId}`, {
         method: "PATCH",
         headers,
@@ -134,15 +116,6 @@ export default function ConversationDetailPage() {
       const headers: HeadersInit = {
         "Content-Type": "application/json",
       };
-
-      if (isLocalAuth) {
-        headers["x-local-auth"] = "true";
-      } else if (supabase) {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session?.access_token) {
-          headers["Authorization"] = `Bearer ${session.access_token}`;
-        }
-      }
 
       const response = await fetch(`/api/chat/conversations/${conversationId}`, {
         method: "DELETE",

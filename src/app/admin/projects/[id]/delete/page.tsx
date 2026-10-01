@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import AdminLayout from "@/components/admin/layout/AdminLayout";
 import { Button } from "@/components/ui/button";
-import { createBrowserSupabaseClient } from "@/lib/supabase";
+import { deleteProject, getProject } from "../../../_actions/projects";
 
 export default function DeleteProjectPage() {
   const params = useParams();
@@ -22,19 +22,7 @@ export default function DeleteProjectPage() {
         setIsLoading(true);
         setError(null);
 
-        const supabase = createBrowserSupabaseClient();
-        if (!supabase) {
-          throw new Error("Database connection not available");
-        }
-        const { data, error } = await supabase
-          .from("projects")
-          .select("title")
-          .eq("id", params.id)
-          .single();
-
-        if (error) {
-          throw new Error(error.message);
-        }
+        const data = await getProject(params.id as string);
 
         if (!data) {
           throw new Error("Project not found");
@@ -61,17 +49,10 @@ export default function DeleteProjectPage() {
       setIsDeleting(true);
       setError(null);
 
-      const supabase = createBrowserSupabaseClient();
-      if (!supabase) {
-        throw new Error("Database connection not available");
-      }
-      const { error } = await supabase
-        .from("projects")
-        .delete()
-        .eq("id", params.id);
+      const result = await deleteProject(params.id as string);
 
-      if (error) {
-        throw new Error(error.message);
+      if (!result.ok) {
+        throw new Error(result.error);
       }
 
       // Success - redirect to projects list

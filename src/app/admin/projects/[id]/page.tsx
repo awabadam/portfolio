@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import AdminLayout from "@/components/admin/layout/AdminLayout";
 import ProjectForm from "@/components/admin/forms/ProjectForm";
 import { Project } from "@/types";
-import { createBrowserSupabaseClient } from "@/lib/supabase";
+import { getProject } from "../../_actions/projects";
 import Link from "next/link";
 import { Home, ChevronRight } from "lucide-react";
 
@@ -24,19 +24,7 @@ export default function EditProjectPage() {
         setIsLoading(true);
         setError(null);
 
-        const supabase = createBrowserSupabaseClient();
-        if (!supabase) {
-          throw new Error("Database connection not available");
-        }
-        const { data, error } = await supabase
-          .from("projects")
-          .select("*")
-          .eq("id", params.id)
-          .single();
-
-        if (error) {
-          throw new Error(error.message);
-        }
+        const data = await getProject(params.id as string);
 
         if (!data) {
           throw new Error("Project not found");
@@ -47,14 +35,14 @@ export default function EditProjectPage() {
           title: data.title,
           category: data.category,
           description: data.description,
-          live_url: data.live_url,
-          featured: data.featured,
-          iframe_blocked: data.iframe_blocked,
+          live_url: data.live_url ?? undefined,
+          featured: data.featured ?? undefined,
+          iframe_blocked: data.iframe_blocked ?? undefined,
           technologies: data.technologies || [],
           results: data.results || [],
-          role: data.role,
-          overview: data.overview,
-          objectives: data.objectives,
+          role: data.role ?? undefined,
+          overview: data.overview ?? undefined,
+          objectives: data.objectives ?? undefined,
         });
       } catch (err) {
         console.error("Error fetching project:", err);

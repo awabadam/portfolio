@@ -1,64 +1,67 @@
 import { NextResponse } from "next/server";
-import { createAppServerClient, createServiceRoleClient } from "@/lib/supabase";
+import { and, desc, eq, ilike, or, type SQL } from "drizzle-orm";
+import { db } from "@/db";
+import { leads } from "@/db/schema";
+import { getSession } from "@/lib/auth/server";
 import { checkRateLimit, getIdentifier, getRateLimitHeaders, rateLimiters } from "@/lib/rateLimit";
-
-// Check if Supabase is properly configured
-function isSupabaseConfigured() {
-  return (
-    process.env.NEXT_PUBLIC_SUPABASE_URL &&
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY &&
-    process.env.NEXT_PUBLIC_SUPABASE_URL !== "your-supabase-url" &&
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== "your-anon-key"
-  );
-}
 
 // GET - Fetch all leads with filtering
 export async function GET(request: Request) {
   try {
-    const { searchParams } = new URL(request.url);
-
-    // Check if Supabase is configured
-    if (!isSupabaseConfigured()) {
-      console.warn("Supabase not configured, returning empty leads");
-      return NextResponse.json({
-        leads: [],
-        total: 0,
-        limit: 50,
-        offset: 0,
-        message: "Database not configured",
-      });
+    const session = await getSession();
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    const { searchParams } = new URL(request.url);
     const source = searchParams.get("source");
     const status = searchParams.get("status");
     const search = searchParams.get("search");
     const limit = parseInt(searchParams.get("limit") || "50");
     const offset = parseInt(searchParams.get("offset") || "0");
 
-    const supabase = createServiceRoleClient();
-
-    let query = supabase
-      .from("leads")
-      .select("*", { count: "exact" })
-      .order("created_at", { ascending: false })
-      .range(offset, offset + limit - 1);
+    const conditions: (SQL | undefined)[] = [];
 
     if (source) {
-      query = query.eq("source", source);
+      conditions.push(eq(leads.source, source));
     }
 
     if (status) {
-      query = query.eq("status", status);
+      conditions.push(eq(leads.status, status));
     }
 
     if (search) {
-      query = query.or(
-        `name.ilike.%${search}%,email.ilike.%${search}%,phone.ilike.%${search}%`
+      const pattern = `%${search}%`;
+      conditions.push(
+        or(
+          ilike(leads.name, pattern),
+          ilike(leads.email, pattern),
+          ilike(leads.phone, pattern)
+        )
       );
     }
 
-    const { data, error, count } = await query;
+    const where = and(...conditions);
 
-    if (error) {
+    try {
+      const [data, count] = await Promise.all([
+        db
+          .select()
+          .from(leads)
+          .where(where)
+          .orderBy(desc(leads.created_at))
+          .limit(limit)
+          .offset(offset),
+        db.$count(leads, where),
+      ]);
+
+      return NextResponse.json({
+        leads: data,
+        total: count || 0,
+        limit,
+        offset,
+      });
+    } catch (error) {
       console.error("Error fetching leads:", error);
       // Return empty array instead of error for better UX
       return NextResponse.json({
@@ -66,16 +69,9 @@ export async function GET(request: Request) {
         total: 0,
         limit,
         offset,
-        error: error.message,
+        error: error instanceof Error ? error.message : "Failed to fetch leads",
       });
     }
-
-    return NextResponse.json({
-      leads: data || [],
-      total: count || 0,
-      limit,
-      offset,
-    });
   } catch (error) {
     console.error("Error in leads API:", error);
     // Return empty array instead of 500 error
@@ -106,15 +102,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // Check if Supabase is configured
-    if (!isSupabaseConfigured()) {
-      console.warn("Supabase not configured, lead not saved");
-      return NextResponse.json({
-        success: true,
-        message: "Lead received but not saved (database not configured)"
-      });
-    }
-
     const body = await request.json();
     const { source, name, email, phone, message, project_type, metadata } = body;
 
@@ -134,36 +121,33 @@ export async function POST(request: Request) {
       "unknown";
     const userAgent = headers.get("user-agent") || "unknown";
 
-    const supabase = createAppServerClient();
-
-    const { data, error } = await supabase
-      .from("leads")
-      .insert({
-        source,
-        name: sanitizedName,
-        email,
-        phone,
-        message: sanitizedMessage,
-        project_type,
-        ip_address: ipAddress,
-        user_agent: userAgent,
-        metadata,
-        status: "new",
-      })
-      .select()
-      .single();
-
-    if (error) {
+    let data;
+    try {
+      [data] = await db
+        .insert(leads)
+        .values({
+          source,
+          name: sanitizedName,
+          email,
+          phone,
+          message: sanitizedMessage,
+          project_type,
+          ip_address: ipAddress,
+          user_agent: userAgent,
+          metadata,
+          status: "new",
+        })
+        .returning();
+    } catch (error) {
       console.error("Error creating lead:", error);
       // Return success anyway so the user experience isn't affected
       return NextResponse.json({ 
         success: true, 
         message: "Lead received but may not have been saved",
-        error: error.message 
       });
     }
 
-    return NextResponse.json({ lead: data, success: true });
+    return NextResponse.json({ lead: { id: data.id }, success: true });
   } catch (error) {
     console.error("Error in leads API:", error);
     // Return success anyway so the user experience isn't affected

@@ -1,7 +1,21 @@
 import { BlogPost, BlogCategory } from "../types";
-import { createStaticSupabaseClient } from "@/lib/supabase";
+import { and, asc, desc, eq, ilike, ne, or, arrayContains } from "drizzle-orm";
+import { blogPosts, blogCategories } from "@/db/schema";
 
-// Fallback blog posts data if Supabase is not available
+// The database client is imported lazily so builds without DATABASE_URL
+// (where `@/db` throws on import) fall back to the static data below.
+const getDb = async () => (await import("@/db")).db;
+
+// Drizzle returns timestamps as Date objects; consumers expect ISO strings.
+function serializeRow<T>(row: Record<string, unknown>): T {
+  return Object.fromEntries(
+    Object.entries(row).map(([key, value]) => [key, value instanceof Date ? value.toISOString() : value])
+  ) as T;
+}
+
+const toBlogPosts = (rows: Record<string, unknown>[]): BlogPost[] => rows.map((row) => serializeRow<BlogPost>(row));
+
+// Fallback blog posts data if the database is not available
 export const fallbackBlogPosts: BlogPost[] = [
   {
     id: "web-design-trends-2024",
@@ -496,31 +510,20 @@ export const fallbackBlogCategories: BlogCategory[] = [
 
 export const getBlogPostBySlug = async (slug: string, locale: string = 'en'): Promise<BlogPost | undefined> => {
   try {
-    const supabase = createStaticSupabaseClient();
-    // Try locale-specific version first, fall back to English
-    let { data, error } = await supabase
-      .from('blog_posts')
-      .select('*')
-      .eq('slug', slug)
-      .eq('locale', locale)
-      .eq('published', true)
-      .single();
+    const db = await getDb();
+    const findPost = (postLocale: string) =>
+      db
+        .select()
+        .from(blogPosts)
+        .where(and(eq(blogPosts.slug, slug), eq(blogPosts.locale, postLocale), eq(blogPosts.published, true)))
+        .limit(1);
 
-    if ((error || !data) && locale !== 'en') {
+    // Try locale-specific version first, fall back to English
+    let [data] = await findPost(locale);
+
+    if (!data && locale !== 'en') {
       // Fall back to English version
-      ({ data, error } = await supabase
-        .from('blog_posts')
-        .select('*')
-        .eq('slug', slug)
-        .eq('locale', 'en')
-        .eq('published', true)
-        .single());
-    }
-    
-    if (error) {
-      console.error(`❌ Error fetching blog post for slug "${slug}":`, error);
-      console.log('🔄 Falling back to static data');
-      return fallbackBlogPosts.find(post => post.slug === slug);
+      [data] = await findPost('en');
     }
     
     if (!data) {
@@ -529,7 +532,7 @@ export const getBlogPostBySlug = async (slug: string, locale: string = 'en'): Pr
     }
     
     console.log(`✅ Successfully fetched blog post: ${data.title}`);
-    return data as BlogPost;
+    return serializeRow<BlogPost>(data);
   } catch (error) {
     console.error(`❌ Error in getBlogPostBySlug for slug "${slug}":`, error);
     console.log('🔄 Falling back to static data');
@@ -539,38 +542,29 @@ export const getBlogPostBySlug = async (slug: string, locale: string = 'en'): Pr
 
 export const getAllBlogPosts = async (locale: string = 'en'): Promise<BlogPost[]> => {
   try {
-    const supabase = createStaticSupabaseClient();
-    // Get posts for locale, fall back to English posts that don't have a translation
-    let { data, error } = await supabase
-      .from('blog_posts')
-      .select('*')
-      .eq('published', true)
-      .eq('locale', locale)
-      .order('published_at', { ascending: false });
+    const db = await getDb();
+    const findPosts = (postLocale: string) =>
+      db
+        .select()
+        .from(blogPosts)
+        .where(and(eq(blogPosts.published, true), eq(blogPosts.locale, postLocale)))
+        .orderBy(desc(blogPosts.published_at));
 
-    if ((!data || data.length === 0) && locale !== 'en') {
+    // Get posts for locale, fall back to English posts that don't have a translation
+    let data = await findPosts(locale);
+
+    if (data.length === 0 && locale !== 'en') {
       // Fall back to English posts
-      ({ data, error } = await supabase
-        .from('blog_posts')
-        .select('*')
-        .eq('published', true)
-        .eq('locale', 'en')
-        .order('published_at', { ascending: false }));
+      data = await findPosts('en');
     }
     
-    if (error) {
-      console.error('❌ Error fetching blog posts:', error);
-      console.log('🔄 Falling back to static data');
-      return fallbackBlogPosts;
-    }
-    
-    if (!data || data.length === 0) {
+    if (data.length === 0) {
       console.log('⚠️ No published posts found in database, using fallback data');
       return fallbackBlogPosts;
     }
     
-    console.log(`✅ Successfully fetched ${data.length} blog posts from Supabase`);
-    return data as BlogPost[];
+    console.log(`✅ Successfully fetched ${data.length} blog posts from the database`);
+    return toBlogPosts(data);
   } catch (error) {
     console.error('❌ Error in getAllBlogPosts:', error);
     console.log('🔄 Falling back to static data');
@@ -580,28 +574,21 @@ export const getAllBlogPosts = async (locale: string = 'en'): Promise<BlogPost[]
 
 export const getFeaturedBlogPosts = async (count: number = 3, locale: string = 'en'): Promise<BlogPost[]> => {
   try {
-    const supabase = createStaticSupabaseClient();
-    const { data, error } = await supabase
-      .from('blog_posts')
-      .select('*')
-      .eq('published', true)
-      .eq('locale', locale)
-      .order('view_count', { ascending: false })
+    const db = await getDb();
+    const data = await db
+      .select()
+      .from(blogPosts)
+      .where(and(eq(blogPosts.published, true), eq(blogPosts.locale, locale)))
+      .orderBy(desc(blogPosts.view_count))
       .limit(count);
     
-    if (error) {
-      console.error('❌ Error fetching featured blog posts:', error);
-      console.log('🔄 Falling back to static data');
-      return fallbackBlogPosts.slice(0, count);
-    }
-    
-    if (!data || data.length === 0) {
+    if (data.length === 0) {
       console.log('⚠️ No featured posts found in database, using fallback data');
       return fallbackBlogPosts.slice(0, count);
     }
     
-    console.log(`✅ Successfully fetched ${data.length} featured blog posts from Supabase`);
-    return data as BlogPost[];
+    console.log(`✅ Successfully fetched ${data.length} featured blog posts from the database`);
+    return toBlogPosts(data);
   } catch (error) {
     console.error('❌ Error in getFeaturedBlogPosts:', error);
     console.log('🔄 Falling back to static data');
@@ -611,31 +598,21 @@ export const getFeaturedBlogPosts = async (count: number = 3, locale: string = '
 
 export const getBlogPostsByCategory = async (category: string, locale: string = 'en'): Promise<BlogPost[]> => {
   try {
-    const supabase = createStaticSupabaseClient();
-    let { data, error } = await supabase
-      .from('blog_posts')
-      .select('*')
-      .eq('published', true)
-      .eq('category', category)
-      .eq('locale', locale)
-      .order('published_at', { ascending: false });
+    const db = await getDb();
+    const findPosts = (postLocale: string) =>
+      db
+        .select()
+        .from(blogPosts)
+        .where(and(eq(blogPosts.published, true), eq(blogPosts.category, category), eq(blogPosts.locale, postLocale)))
+        .orderBy(desc(blogPosts.published_at));
 
-    if ((!data || data.length === 0) && locale !== 'en') {
-      ({ data, error } = await supabase
-        .from('blog_posts')
-        .select('*')
-        .eq('published', true)
-        .eq('category', category)
-        .eq('locale', 'en')
-        .order('published_at', { ascending: false }));
+    let data = await findPosts(locale);
+
+    if (data.length === 0 && locale !== 'en') {
+      data = await findPosts('en');
     }
 
-    if (error) {
-      console.error('Error fetching blog posts by category:', error);
-      return fallbackBlogPosts.filter(post => post.category === category);
-    }
-
-    return data as BlogPost[];
+    return toBlogPosts(data);
   } catch (error) {
     console.error('Error in getBlogPostsByCategory:', error);
     return fallbackBlogPosts.filter(post => post.category === category);
@@ -644,18 +621,13 @@ export const getBlogPostsByCategory = async (category: string, locale: string = 
 
 export const getAllBlogCategories = async (): Promise<BlogCategory[]> => {
   try {
-    const supabase = createStaticSupabaseClient();
-    const { data, error } = await supabase
-      .from('blog_categories')
-      .select('*')
-      .order('name', { ascending: true });
+    const db = await getDb();
+    const data = await db
+      .select()
+      .from(blogCategories)
+      .orderBy(asc(blogCategories.name));
     
-    if (error) {
-      console.error('Error fetching blog categories:', error);
-      return fallbackBlogCategories;
-    }
-    
-    return data as BlogCategory[];
+    return data.map((row) => serializeRow<BlogCategory>(row));
   } catch (error) {
     console.error('Error in getAllBlogCategories:', error);
     return fallbackBlogCategories;
@@ -667,52 +639,43 @@ export async function getRelatedPosts(
   category: string,
   limit: number = 3
 ): Promise<BlogPost[]> {
-  const supabase = createStaticSupabaseClient();
-  if (!supabase) {
+  try {
+    const db = await getDb();
+    const data = await db
+      .select()
+      .from(blogPosts)
+      .where(and(ne(blogPosts.slug, currentSlug), eq(blogPosts.category, category), eq(blogPosts.published, true)))
+      .orderBy(desc(blogPosts.published_at))
+      .limit(limit);
+
+    return toBlogPosts(data);
+  } catch {
     return fallbackBlogPosts
       .filter((p) => p.slug !== currentSlug && p.category === category)
       .slice(0, limit);
   }
-
-  const { data, error } = await supabase
-    .from("blog_posts")
-    .select("*")
-    .neq("slug", currentSlug)
-    .eq("category", category)
-    .eq("published", true)
-    .order("published_at", { ascending: false })
-    .limit(limit);
-
-  if (error || !data) {
-    return fallbackBlogPosts
-      .filter((p) => p.slug !== currentSlug && p.category === category)
-      .slice(0, limit);
-  }
-
-  return data;
 }
 
 export const searchBlogPosts = async (query: string, locale: string = 'en'): Promise<BlogPost[]> => {
   try {
-    const supabase = createStaticSupabaseClient();
-    const { data, error } = await supabase
-      .from('blog_posts')
-      .select('*')
-      .eq('published', true)
-      .eq('locale', locale)
-      .or(`title.ilike.%${query}%,content.ilike.%${query}%,tags.cs.{${query}}`)
-      .order('published_at', { ascending: false });
+    const db = await getDb();
+    const data = await db
+      .select()
+      .from(blogPosts)
+      .where(
+        and(
+          eq(blogPosts.published, true),
+          eq(blogPosts.locale, locale),
+          or(
+            ilike(blogPosts.title, `%${query}%`),
+            ilike(blogPosts.content, `%${query}%`),
+            arrayContains(blogPosts.tags, [query])
+          )
+        )
+      )
+      .orderBy(desc(blogPosts.published_at));
     
-    if (error) {
-      console.error('Error searching blog posts:', error);
-      return fallbackBlogPosts.filter(post => 
-        post.title.toLowerCase().includes(query.toLowerCase()) ||
-        post.content.toLowerCase().includes(query.toLowerCase()) ||
-        post.tags.some(tag => tag.toLowerCase().includes(query.toLowerCase()))
-      );
-    }
-    
-    return data as BlogPost[];
+    return toBlogPosts(data);
   } catch (error) {
     console.error('Error in searchBlogPosts:', error);
     return fallbackBlogPosts.filter(post => 

@@ -1,7 +1,19 @@
 import { Project } from "@/types";
-import { createStaticSupabaseClient } from "@/lib/supabase";
+import { desc, eq } from "drizzle-orm";
+import { projects } from "@/db/schema";
 
-// Fallback data if Supabase is unavailable
+// The database client is imported lazily so builds without DATABASE_URL
+// (where `@/db` throws on import) fall back to the static data below.
+const getDb = async () => (await import("@/db")).db;
+
+// Drizzle returns timestamps as Date objects; convert them to ISO strings.
+function serializeRow<T>(row: Record<string, unknown>): T {
+  return Object.fromEntries(
+    Object.entries(row).map(([key, value]) => [key, value instanceof Date ? value.toISOString() : value])
+  ) as T;
+}
+
+// Fallback data if the database is unavailable
 const fallbackProjects: Project[] = [
   {
     id: "jouvence",
@@ -96,14 +108,14 @@ const fallbackProjects: Project[] = [
 
 export async function getAllProjects(): Promise<Project[]> {
   try {
-    const supabase = createStaticSupabaseClient();
-    const { data, error } = await supabase
-      .from("projects")
-      .select("*")
-      .order("created_at", { ascending: false });
+    const db = await getDb();
+    const data = await db
+      .select()
+      .from(projects)
+      .orderBy(desc(projects.created_at));
 
-    if (error || !data || data.length === 0) return fallbackProjects;
-    return data as Project[];
+    if (data.length === 0) return fallbackProjects;
+    return data.map((row) => serializeRow<Project>(row));
   } catch {
     return fallbackProjects;
   }
@@ -111,16 +123,16 @@ export async function getAllProjects(): Promise<Project[]> {
 
 export async function getFeaturedProjects(limit = 3): Promise<Project[]> {
   try {
-    const supabase = createStaticSupabaseClient();
-    const { data, error } = await supabase
-      .from("projects")
-      .select("*")
-      .eq("featured", true)
-      .order("created_at", { ascending: false })
+    const db = await getDb();
+    const data = await db
+      .select()
+      .from(projects)
+      .where(eq(projects.featured, true))
+      .orderBy(desc(projects.created_at))
       .limit(limit);
 
-    if (error || !data || data.length === 0) return fallbackProjects.filter((p) => p.featured).slice(0, limit);
-    return data as Project[];
+    if (data.length === 0) return fallbackProjects.filter((p) => p.featured).slice(0, limit);
+    return data.map((row) => serializeRow<Project>(row));
   } catch {
     return fallbackProjects.filter((p) => p.featured).slice(0, limit);
   }
@@ -128,15 +140,15 @@ export async function getFeaturedProjects(limit = 3): Promise<Project[]> {
 
 export async function getProjectById(id: string): Promise<Project | null> {
   try {
-    const supabase = createStaticSupabaseClient();
-    const { data, error } = await supabase
-      .from("projects")
-      .select("*")
-      .eq("id", id)
-      .single();
+    const db = await getDb();
+    const [data] = await db
+      .select()
+      .from(projects)
+      .where(eq(projects.id, id))
+      .limit(1);
 
-    if (error || !data) return fallbackProjects.find((p) => p.id === id) || null;
-    return data as Project;
+    if (!data) return fallbackProjects.find((p) => p.id === id) || null;
+    return serializeRow<Project>(data);
   } catch {
     return fallbackProjects.find((p) => p.id === id) || null;
   }

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { createAnonClientWithSession } from "@/lib/supabase";
+import { and, asc, desc, eq } from "drizzle-orm";
+import { chatConversations, chatMessages } from "@/db/schema";
 import { processMessage, ChatContext, ChatMessage } from "@/lib/chat/chatBot";
 import { getOpenRouterResponse } from "@/lib/chat/openRouter";
 import { checkRateLimit, getIdentifier, getRateLimitHeaders, rateLimiters } from "@/lib/rateLimit";
@@ -45,26 +46,45 @@ export async function POST(request: Request) {
 
     // Try to use database, but gracefully handle if unavailable
     try {
-      // Skip DB if Supabase is not configured
-      if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-        throw new Error('Supabase not configured');
+      // Skip DB if it is not configured
+      if (!process.env.DATABASE_URL) {
+        throw new Error('Database not configured');
       }
 
-      // Use anon client with session ID for RLS
-      // RLS policies allow anonymous users to create/update their own conversations
-      const supabase = createAnonClientWithSession(sessionId);
+      const { db } = await import("@/db");
+
+      // Anonymous callers may only access conversations belonging to their session ID
+      if (currentConversationId) {
+        const [owned] = await db
+          .select({ id: chatConversations.id })
+          .from(chatConversations)
+          .where(
+            and(
+              eq(chatConversations.id, currentConversationId),
+              eq(chatConversations.session_id, sessionId)
+            )
+          )
+          .limit(1);
+
+        if (!owned) {
+          currentConversationId = undefined;
+        }
+      }
 
       // Get or create conversation
       if (!currentConversationId) {
         // First, check if there's an existing active conversation for this session
-        const { data: existingConversation } = await supabase
-          .from("chat_conversations")
-          .select("id")
-          .eq("session_id", sessionId)
-          .eq("status", "active")
-          .order("started_at", { ascending: false })
-          .limit(1)
-          .maybeSingle();
+        const [existingConversation] = await db
+          .select({ id: chatConversations.id })
+          .from(chatConversations)
+          .where(
+            and(
+              eq(chatConversations.session_id, sessionId),
+              eq(chatConversations.status, "active")
+            )
+          )
+          .orderBy(desc(chatConversations.started_at))
+          .limit(1);
 
         if (existingConversation) {
           currentConversationId = existingConversation.id;
@@ -77,50 +97,47 @@ export async function POST(request: Request) {
             "unknown";
           const userAgent = headers.get("user-agent") || "unknown";
 
-          const { data: conversation, error: convError } = await supabase
-            .from("chat_conversations")
-            .insert({
-              session_id: sessionId,
-              ip_address: ipAddress,
-              user_agent: userAgent,
-              status: "active",
-            })
-            .select()
-            .single();
-
-          if (convError) {
-            console.warn("Database unavailable for chat storage:", convError.message);
-            dbAvailable = false;
-          } else {
+          try {
+            const [conversation] = await db
+              .insert(chatConversations)
+              .values({
+                session_id: sessionId,
+                ip_address: ipAddress,
+                user_agent: userAgent,
+                status: "active",
+              })
+              .returning();
             currentConversationId = conversation.id;
+          } catch (convError) {
+            console.warn("Database unavailable for chat storage:", convError instanceof Error ? convError.message : convError);
+            dbAvailable = false;
           }
         }
       }
 
       // If DB is available, load context
       if (dbAvailable && currentConversationId) {
-        const { data: conversation } = await supabase
-          .from("chat_conversations")
-          .select("*")
-          .eq("id", currentConversationId)
-          .single();
+        const [conversation] = await db
+          .select()
+          .from(chatConversations)
+          .where(eq(chatConversations.id, currentConversationId))
+          .limit(1);
 
-        const { data: existingMessages } = await supabase
-          .from("chat_messages")
-          .select("*")
-          .eq("conversation_id", currentConversationId)
-          .order("created_at", { ascending: true });
+        const existingMessages = await db
+          .select()
+          .from(chatMessages)
+          .where(eq(chatMessages.conversation_id, currentConversationId))
+          .orderBy(asc(chatMessages.created_at));
 
         context = {
-          conversationHistory:
-            existingMessages?.map((msg) => ({
-              role: msg.role as "user" | "assistant" | "system",
-              content: msg.content,
-              metadata: msg.metadata,
-            })) || [],
-          visitorName: conversation?.visitor_name,
-          visitorEmail: conversation?.visitor_email,
-          visitorPhone: conversation?.visitor_phone,
+          conversationHistory: existingMessages.map((msg) => ({
+            role: msg.role as "user" | "assistant" | "system",
+            content: msg.content,
+            metadata: msg.metadata as ChatMessage["metadata"],
+          })),
+          visitorName: conversation?.visitor_name ?? undefined,
+          visitorEmail: conversation?.visitor_email ?? undefined,
+          visitorPhone: conversation?.visitor_phone ?? undefined,
         };
       }
     } catch (dbError) {
@@ -197,30 +214,30 @@ export async function POST(request: Request) {
     }
 
     // Try to save to database if available
-    if (dbAvailable && currentConversationId && process.env.NEXT_PUBLIC_SUPABASE_URL) {
+    if (dbAvailable && currentConversationId && process.env.DATABASE_URL) {
       try {
-        const supabase = createAnonClientWithSession(sessionId);
+        const { db } = await import("@/db");
 
         // Save user message
-        const { error: userMsgError } = await supabase.from("chat_messages").insert({
-          conversation_id: currentConversationId,
-          role: "user",
-          content: sanitizedMessage,
-        });
-
-        if (userMsgError) {
+        try {
+          await db.insert(chatMessages).values({
+            conversation_id: currentConversationId,
+            role: "user",
+            content: sanitizedMessage,
+          });
+        } catch (userMsgError) {
           console.error("Error saving user message:", userMsgError);
         }
 
         // Save assistant response
-        const { error: assistantMsgError } = await supabase.from("chat_messages").insert({
-          conversation_id: currentConversationId,
-          role: "assistant",
-          content: response,
-          metadata: action ? { action } : null,
-        });
-
-        if (assistantMsgError) {
+        try {
+          await db.insert(chatMessages).values({
+            conversation_id: currentConversationId,
+            role: "assistant",
+            content: response,
+            metadata: action ? { action } : null,
+          });
+        } catch (assistantMsgError) {
           console.error("Error saving assistant message:", assistantMsgError);
         }
 
@@ -241,12 +258,17 @@ export async function POST(request: Request) {
             updateData.visitor_phone = updatedContext.visitorPhone;
           }
 
-          const { error: updateError } = await supabase
-            .from("chat_conversations")
-            .update(updateData)
-            .eq("id", currentConversationId);
-
-          if (updateError) {
+          try {
+            await db
+              .update(chatConversations)
+              .set(updateData)
+              .where(
+                and(
+                  eq(chatConversations.id, currentConversationId),
+                  eq(chatConversations.session_id, sessionId)
+                )
+              );
+          } catch (updateError) {
             console.error("Error updating conversation:", updateError);
           }
 

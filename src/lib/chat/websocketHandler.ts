@@ -1,6 +1,7 @@
 import { WebSocket } from 'ws';
 import { IncomingMessage } from 'http';
-import { createAnonClientWithSession } from '@/lib/supabase';
+import { and, asc, desc, eq } from 'drizzle-orm';
+import { chatConversations, chatMessages } from '@/db/schema';
 import { ChatContext, ChatMessage, generateSessionId } from './chatBot';
 import { getOpenRouterResponse } from './openRouter';
 
@@ -55,13 +56,16 @@ export function handleWebSocketConnection(ws: WebSocket, req: IncomingMessage) {
   // Load conversation history if conversationId exists
   if (conversationId) {
     loadConversationHistory(conversationId, sessionId).then((history) => {
+      const conn = connections.get(sessionId);
       if (history) {
         context = history;
-        const conn = connections.get(sessionId);
         if (conn) {
           conn.context = context;
           conn.conversationId = conversationId;
         }
+      } else if (conn && conn.conversationId === conversationId) {
+        // Unknown conversation or one owned by another session: don't use it
+        conn.conversationId = undefined;
       }
     }).catch(console.error);
   }
@@ -148,31 +152,31 @@ export function handleWebSocketConnection(ws: WebSocket, req: IncomingMessage) {
 
 async function loadConversationHistory(conversationId: string, sessionId: string): Promise<ChatContext | null> {
   try {
-    const supabase = createAnonClientWithSession(sessionId);
-    const { data: conversation } = await supabase
-      .from('chat_conversations')
-      .select('*')
-      .eq('id', conversationId)
-      .single();
+    const { db } = await import('@/db');
+    // Only load conversations owned by this session ID
+    const [conversation] = await db
+      .select()
+      .from(chatConversations)
+      .where(and(eq(chatConversations.id, conversationId), eq(chatConversations.session_id, sessionId)))
+      .limit(1);
 
     if (!conversation) return null;
 
-    const { data: messages } = await supabase
-      .from('chat_messages')
-      .select('*')
-      .eq('conversation_id', conversationId)
-      .order('created_at', { ascending: true });
+    const messages = await db
+      .select()
+      .from(chatMessages)
+      .where(eq(chatMessages.conversation_id, conversationId))
+      .orderBy(asc(chatMessages.created_at));
 
     return {
-      conversationHistory:
-        messages?.map((msg) => ({
-          role: msg.role as 'user' | 'assistant' | 'system',
-          content: msg.content,
-          metadata: msg.metadata,
-        })) || [],
-      visitorName: conversation.visitor_name,
-      visitorEmail: conversation.visitor_email,
-      visitorPhone: conversation.visitor_phone,
+      conversationHistory: messages.map((msg) => ({
+        role: msg.role as 'user' | 'assistant' | 'system',
+        content: msg.content,
+        metadata: msg.metadata as ChatMessage['metadata'],
+      })),
+      visitorName: conversation.visitor_name ?? undefined,
+      visitorEmail: conversation.visitor_email ?? undefined,
+      visitorPhone: conversation.visitor_phone ?? undefined,
     };
   } catch (error) {
     console.error('Error loading conversation history:', error);
@@ -221,15 +225,13 @@ async function handleChatMessage(connection: ClientConnection, userMessage: stri
     let currentConversationId = conversationId;
     if (!currentConversationId) {
       // First, check if there's an existing active conversation for this session
-      const supabase = createAnonClientWithSession(sessionId);
-      const { data: existingConversation } = await supabase
-        .from('chat_conversations')
-        .select('id')
-        .eq('session_id', sessionId)
-        .eq('status', 'active')
-        .order('started_at', { ascending: false })
-        .limit(1)
-        .maybeSingle();
+      const { db } = await import('@/db');
+      const [existingConversation] = await db
+        .select({ id: chatConversations.id })
+        .from(chatConversations)
+        .where(and(eq(chatConversations.session_id, sessionId), eq(chatConversations.status, 'active')))
+        .orderBy(desc(chatConversations.started_at))
+        .limit(1);
 
       if (existingConversation) {
         currentConversationId = existingConversation.id;
@@ -315,20 +317,18 @@ async function handleChatMessage(connection: ClientConnection, userMessage: stri
 
 async function createConversation(sessionId: string, ipAddress: string = 'unknown', userAgent: string = 'WebSocket Client'): Promise<string> {
   try {
-    const supabase = createAnonClientWithSession(sessionId);
+    const { db } = await import('@/db');
 
-    const { data, error } = await supabase
-      .from('chat_conversations')
-      .insert({
+    const [data] = await db
+      .insert(chatConversations)
+      .values({
         session_id: sessionId,
         ip_address: Array.isArray(ipAddress) ? ipAddress[0] : ipAddress,
         user_agent: userAgent,
         status: 'active',
       })
-      .select()
-      .single();
+      .returning({ id: chatConversations.id });
 
-    if (error) throw error;
     return data.id;
   } catch (error) {
     console.error('Error creating conversation:', error);
@@ -345,28 +345,40 @@ async function saveMessages(
   sessionId: string
 ) {
   try {
-    const supabase = createAnonClientWithSession(sessionId);
+    const { db } = await import('@/db');
+
+    // Only write to conversations owned by this session ID
+    const [owned] = await db
+      .select({ id: chatConversations.id })
+      .from(chatConversations)
+      .where(and(eq(chatConversations.id, conversationId), eq(chatConversations.session_id, sessionId)))
+      .limit(1);
+
+    if (!owned) {
+      console.error('Error saving messages: conversation does not belong to this session');
+      return;
+    }
 
     // Save user message
-    const { error: userMsgError } = await supabase.from('chat_messages').insert({
-      conversation_id: conversationId,
-      role: 'user',
-      content: userMessage,
-    });
-
-    if (userMsgError) {
+    try {
+      await db.insert(chatMessages).values({
+        conversation_id: conversationId,
+        role: 'user',
+        content: userMessage,
+      });
+    } catch (userMsgError) {
       console.error('Error saving user message:', userMsgError);
     }
 
     // Save assistant response
-    const { error: assistantMsgError } = await supabase.from('chat_messages').insert({
-      conversation_id: conversationId,
-      role: 'assistant',
-      content: response,
-      metadata: action ? { action } : null,
-    });
-
-    if (assistantMsgError) {
+    try {
+      await db.insert(chatMessages).values({
+        conversation_id: conversationId,
+        role: 'assistant',
+        content: response,
+        metadata: action ? { action } : null,
+      });
+    } catch (assistantMsgError) {
       console.error('Error saving assistant message:', assistantMsgError);
     }
 
@@ -377,12 +389,12 @@ async function saveMessages(
       if (context.visitorEmail) updateData.visitor_email = context.visitorEmail;
       if (context.visitorPhone) updateData.visitor_phone = context.visitorPhone;
 
-      const { error: updateError } = await supabase
-        .from('chat_conversations')
-        .update(updateData)
-        .eq('id', conversationId);
-
-      if (updateError) {
+      try {
+        await db
+          .update(chatConversations)
+          .set(updateData)
+          .where(and(eq(chatConversations.id, conversationId), eq(chatConversations.session_id, sessionId)));
+      } catch (updateError) {
         console.error('Error updating conversation:', updateError);
       }
     }

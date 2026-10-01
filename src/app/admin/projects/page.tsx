@@ -18,9 +18,8 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { toast } from "@/components/ui/toaster";
-import { useSupabaseAuth } from "@/hooks/useSupabase";
-import { Project } from "@/types";
-import { createBrowserSupabaseClient } from "@/lib/supabase";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
+import { deleteProject, listProjects, type AdminProject } from "../_actions/projects";
 import {
   Plus,
   Edit,
@@ -35,8 +34,8 @@ import {
 } from "lucide-react";
 
 export default function AdminProjectsPage() {
-  const { user, loading } = useSupabaseAuth();
-  const [projects, setProjects] = useState<Project[]>([]);
+  const { user, loading } = useAdminAuth();
+  const [projects, setProjects] = useState<AdminProject[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -49,16 +48,7 @@ export default function AdminProjectsPage() {
   const fetchProjects = async () => {
     try {
       setIsLoading(true);
-      const supabase = createBrowserSupabaseClient();
-      if (!supabase) throw new Error("DB not available");
-
-      const { data, error } = await supabase
-        .from("projects")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      if (error) throw new Error(error.message);
-      setProjects(data || []);
+      setProjects(await listProjects());
     } catch (err) {
       toast.error("Failed to load projects");
     } finally {
@@ -69,10 +59,8 @@ export default function AdminProjectsPage() {
   const handleDelete = async () => {
     if (!projectToDelete) return;
     try {
-      const supabase = createBrowserSupabaseClient();
-      if (!supabase) throw new Error("DB not available");
-      const { error } = await supabase.from("projects").delete().eq("id", projectToDelete);
-      if (error) throw new Error(error.message);
+      const result = await deleteProject(projectToDelete);
+      if (!result.ok) throw new Error(result.error);
       toast.success("Project deleted");
       setProjects((prev) => prev.filter((p) => p.id !== projectToDelete));
     } catch {
