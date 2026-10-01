@@ -130,7 +130,7 @@ const AIChatbotIntegrationPage = async () => {
           </p>
           <div className="flex flex-col justify-center gap-4 sm:flex-row">
             <Button asChild size="lg" className="h-14 px-8 text-lg">
-              <Link href="/rate-calculator">{t('getQuote')}</Link>
+              <Link href="/contact">{t('getQuote')}</Link>
             </Button>
             <Button asChild variant="outline" size="lg" className="h-14 px-8 text-lg">
               <Link href="/contact">{t('contactMe')}</Link>

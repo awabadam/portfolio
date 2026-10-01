@@ -235,15 +235,15 @@ const Services = () => {
               size="lg"
               className="h-14 px-8 text-lg font-medium"
               onClick={() => {
-                trackCTAClick("rate_calculator", "services_section");
+                trackCTAClick("get_quote", "services_section");
                 trackButtonClick(
-                  "rate_calculator",
+                  "get_quote",
                   "services_section",
                   "secondary_cta",
                 );
               }}
             >
-              <Link href="/rate-calculator">Get Instant Quote</Link>
+              <Link href="/contact">Get Instant Quote</Link>
             </Button>
           </div>
           <p className="mt-6 text-sm text-muted-foreground">

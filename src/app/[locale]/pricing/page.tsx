@@ -203,7 +203,7 @@ export default function PricingPage() {
                     size="lg"
                     variant={tier.popular ? "default" : "outline"}
                   >
-                    <Link href="/rate-calculator">
+                    <Link href="/contact">
                       {t("tierCTA")}
                       <ArrowRight className="ml-2 rtl:ml-0 rtl:mr-2 rtl:rotate-180 h-4 w-4" />
                     </Link>
@@ -268,7 +268,7 @@ export default function PricingPage() {
 
           <ScrollReveal animation="fadeUp" delay={0.2} className="mt-10 text-center">
             <Button asChild variant="outline" className="rounded-full">
-              <Link href="/rate-calculator">
+              <Link href="/contact">
                 <Calculator className="mr-2 rtl:ml-2 rtl:mr-0 h-4 w-4" />
                 {t("addOnsCalculatorCTA")}
               </Link>
@@ -421,7 +421,7 @@ export default function PricingPage() {
             </p>
             <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Button asChild size="lg" className="h-14 rounded-full px-8 text-base">
-                <Link href="/rate-calculator">
+                <Link href="/contact">
                   {t("ctaPrimary")}
                   <ArrowRight className="ml-2 rtl:ml-0 rtl:mr-2 rtl:rotate-180 h-4 w-4" />
                 </Link>

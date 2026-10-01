@@ -17,7 +17,7 @@ export default function BlogCTA() {
       <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
         <Button asChild size="lg" className="rounded-full px-8">
           <Link
-            href="/rate-calculator"
+            href="/contact"
             onClick={() => trackCTAClick("free_quote", "blog_post")}
           >
             {t("ctaGetQuote")}

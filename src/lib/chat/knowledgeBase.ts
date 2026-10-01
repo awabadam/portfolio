@@ -38,14 +38,14 @@ export const services: Service[] = [
     description:
       "Optimized site structure, meta tags, fast loading, and sitemaps to rank higher on search engines.",
     pricing: "Included free with every package ($600 value)",
-    link: "/rate-calculator",
+    link: "/pricing",
   },
   {
     name: "AI Chatbot Integration",
     description:
       "24/7 automated support for visitors. AI-powered conversation flows, lead qualification, and CRM integration.",
     pricing: "Included free with App Development; otherwise from $500 as an add-on",
-    link: "/rate-calculator",
+    link: "/pricing",
   },
   {
     name: "Brand Identity",
@@ -121,20 +121,20 @@ export const businessInfo = {
   portfolio: "/projects",
   services: "/services",
   contact: "/contact",
-  rateCalculator: "/rate-calculator",
+  pricing: "/pricing",
 };
 
 export const faqs: FAQ[] = [
   {
     question: "What services do you offer?",
     answer:
-      "I offer web design & development, UI/UX design, SEO, AI chatbot integration, brand identity, domain & hosting management, and website maintenance. Check /services for details or /rate-calculator for an instant quote.",
+      "I offer web design & development, UI/UX design, SEO, AI chatbot integration, brand identity, domain & hosting management, and website maintenance. Check /services for details or /pricing to see packages.",
     keywords: ["services", "what do you do", "offer", "provide", "help"],
   },
   {
     question: "How much does a website cost?",
     answer:
-      "Pricing depends on the type of website and add-ons you need. Use /rate-calculator for an instant, personalized estimate — it shows prices based on your region automatically.",
+      "Pricing depends on the type of website and add-ons you need. See /pricing for package details, or reach out at /contact for a personalized quote.",
     keywords: ["price", "cost", "pricing", "how much", "fee", "budget", "rate", "quote"],
   },
   {
@@ -176,13 +176,13 @@ export const faqs: FAQ[] = [
   {
     question: "Do you offer SEO?",
     answer:
-      "Every website includes basic SEO — optimized structure, meta tags, fast loading, sitemap. Advanced SEO optimization is also available as an add-on. Check /rate-calculator for pricing.",
+      "Every website includes basic SEO — optimized structure, meta tags, fast loading, sitemap. Advanced SEO optimization is also available as an add-on. Check /pricing for details.",
     keywords: ["seo", "search engine", "google", "ranking", "search"],
   },
   {
     question: "Can you add a chatbot to my site?",
     answer:
-      "Yes! AI chatbot integration is available as an add-on for any website. It provides 24/7 automated support, lead qualification, and CRM integration. See /rate-calculator for pricing.",
+      "Yes! AI chatbot integration is available as an add-on for any website. It provides 24/7 automated support, lead qualification, and CRM integration. See /pricing for details.",
     keywords: ["chatbot", "bot", "ai", "automation", "support", "chat"],
   },
   {
@@ -194,7 +194,7 @@ export const faqs: FAQ[] = [
   {
     question: "Can my website be in multiple languages?",
     answer:
-      "Yes! Multi-language support is available as an add-on. I can build your site in English, Turkish, Arabic, French, or any language your audience needs. See /rate-calculator for pricing.",
+      "Yes! Multi-language support is available as an add-on. I can build your site in English, Turkish, Arabic, French, or any language your audience needs. See /pricing for details.",
     keywords: ["language", "multilingual", "translation", "bilingual", "multi-language"],
   },
   {
@@ -214,7 +214,7 @@ export const greetings = [
 export const farewells = [
   "Thanks for visiting! Feel free to reach out anytime. Have a great day!",
   "Great chatting! If you need anything else, just ask. Take care!",
-  "Thanks for stopping by! Get your instant quote at /rate-calculator anytime.",
+  "Thanks for stopping by! Reach out anytime at /contact for a quote.",
 ];
 
 export function findMatchingFAQ(query: string): FAQ | null {

@@ -50,7 +50,7 @@ export default function QuickActions({ onActionClick }: QuickActionsProps) {
         variant="outline"
         size="sm"
         className="gap-2 text-xs"
-        onClick={() => handleAction("get_quote", "/rate-calculator")}
+        onClick={() => handleAction("get_quote", "/contact")}
         aria-label={t('getQuote')}
       >
         <Calculator className="h-3.5 w-3.5" aria-hidden="true" />
@@ -80,7 +80,7 @@ export default function QuickActions({ onActionClick }: QuickActionsProps) {
         variant="outline"
         size="sm"
         className="gap-2 text-xs"
-        onClick={() => handleAction("pricing", "/rate-calculator")}
+        onClick={() => handleAction("pricing", "/pricing")}
         aria-label={t('pricingAction')}
       >
         <DollarSign className="h-3.5 w-3.5" aria-hidden="true" />

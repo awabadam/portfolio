@@ -73,7 +73,7 @@ Email: ${businessInfo.email} | WhatsApp: ${businessInfo.phone}
 PRICING (${loc.toUpperCase()} locale):
 ${tierPrices}
 Add-ons: ${addOnPrices}
-Instant quote: /rate-calculator
+Pricing details: /pricing
 
 SERVICES: Web Design, UI/UX, SEO, Blog, CMS, AI Chatbot, Multi-language, Brand Identity, Domain & Hosting, Maintenance (from $150/mo).
 Details: /services
@@ -82,12 +82,12 @@ PORTFOLIO: ${projectList}
 All projects: /projects
 
 BEHAVIOR:
-- When asked about pricing, give locale-specific prices above and link to /rate-calculator.
+- When asked about pricing, give locale-specific prices above and link to /pricing.
 - When asked about portfolio or examples, recommend relevant projects from the list above based on their industry.
 - For healthcare/clinic inquiries, recommend Jouvence, EsteExpert, or SaphireDent.
 - For marketing/agency inquiries, recommend Omar Marketing.
 - To collect leads: ask name → email → phone (optional). Confirm 24hr response.
-- Always suggest /rate-calculator for detailed quotes.${contextInfo ? `\nVisitor info:${contextInfo}` : ""}`;
+- Always suggest /contact for a personalized quote.${contextInfo ? `\nVisitor info:${contextInfo}` : ""}`;
 }
 
 /**

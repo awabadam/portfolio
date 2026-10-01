@@ -328,7 +328,6 @@ export default function RootLayout({
                   { "@type": "WebPage", name: "AI Chatbot Integration", url: "https://www.awab.design/services/ai-chatbot-integration" },
                   { "@type": "WebPage", name: "Clinic Websites", url: "https://www.awab.design/services/clinic-websites" },
                   { "@type": "WebPage", name: "Brand Identity", url: "https://www.awab.design/services/brand-identity" },
-                  { "@type": "WebPage", name: "Rate Calculator", url: "https://www.awab.design/rate-calculator" },
                 ],
               },
             ]),

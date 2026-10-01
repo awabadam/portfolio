@@ -257,7 +257,7 @@ export default function ServicesPage() {
                   )}
 
                   <Button asChild className="mt-6 rounded-full" size="lg">
-                    <Link href="/rate-calculator">
+                    <Link href="/contact">
                       {t("tierGetQuote")}
                       <ArrowRight className="ml-2 rtl:ml-0 rtl:mr-2 rtl:rotate-180 h-4 w-4" />
                     </Link>
@@ -309,7 +309,7 @@ export default function ServicesPage() {
               {t("ctaHeading")}
             </p>
             <Link
-              href="/rate-calculator"
+              href="/contact"
               className="mt-6 inline-block rounded-full bg-primary px-10 py-4 text-base font-semibold text-primary-foreground transition-opacity hover:opacity-90"
             >
               {t("getQuote")}

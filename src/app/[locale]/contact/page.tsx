@@ -410,16 +410,6 @@ export default function ContactPage() {
                   </div>
                 </div>
               </ScrollReveal>
-
-              {/* CTA */}
-              <ScrollReveal animation="fadeUp" delay={0.35}>
-                <Button asChild size="lg" className="w-full rounded-full text-base">
-                  <Link href="/rate-calculator">
-                    {t("cta")}
-                    <ArrowUpRight className="ml-2 rtl:ml-0 rtl:mr-2 h-4 w-4" />
-                  </Link>
-                </Button>
-              </ScrollReveal>
             </div>
           </div>
         </div>

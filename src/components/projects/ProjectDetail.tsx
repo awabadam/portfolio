@@ -346,7 +346,7 @@ export default function ProjectDetail({
             {t("ctaHeading")}
           </p>
           <Link
-            href="/rate-calculator"
+            href="/contact"
             className="mt-6 inline-block rounded-full bg-foreground px-10 py-4 text-base font-medium text-background transition-opacity hover:opacity-90"
           >
             {t("ctaButton")}

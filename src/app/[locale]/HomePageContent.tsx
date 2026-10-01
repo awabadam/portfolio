@@ -284,7 +284,7 @@ export default function HomePageContent() {
             className="mt-10 flex flex-col items-center gap-4 sm:flex-row"
           >
             <Button asChild size="lg" className="h-14 rounded-full bg-foreground px-8 text-base font-semibold text-background hover:bg-foreground/90">
-              <Link href="/rate-calculator" onClick={() => trackCTAClick("free_quote", "hero")}>
+              <Link href="/contact" onClick={() => trackCTAClick("free_quote", "hero")}>
                 {t('heroCTAPrimary')}
               </Link>
             </Button>
@@ -513,7 +513,7 @@ export default function HomePageContent() {
             <p className="mb-8 font-mono text-sm uppercase text-muted-foreground">{t('readyToStart')}</p>
             <MagneticElement strength={40}>
               <Link
-                href="/rate-calculator"
+                href="/contact"
                 className="group relative inline-block"
                 onClick={() => trackCTAClick("free_quote", "bottom_cta")}
               >

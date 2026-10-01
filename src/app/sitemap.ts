@@ -31,7 +31,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...withAlternates('/projects', { changeFrequency: 'weekly', priority: 0.8 }),
     ...withAlternates('/services', { changeFrequency: 'monthly', priority: 0.8 }),
     ...withAlternates('/contact', { changeFrequency: 'monthly', priority: 0.7 }),
-    ...withAlternates('/rate-calculator', { changeFrequency: 'weekly', priority: 0.8 }),
     ...withAlternates('/blog', { changeFrequency: 'weekly', priority: 0.8 }),
     ...['webdesign-istanbul', 'ai-chatbot-integration', 'brand-identity', 'website-maintenance', 'clinic-websites'].flatMap(
       slug => withAlternates(`/services/${slug}`, { changeFrequency: 'monthly', priority: 0.8 })

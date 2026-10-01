@@ -7,8 +7,6 @@
 // getPrice() + formatPrice() for locale-aware display.
 //
 // Consumers (anywhere that shows or references prices):
-//   • src/app/[locale]/rate-calculator/page.tsx   — interactive calculator
-//   • src/app/[locale]/rate-calculator/layout.tsx — OfferCatalog JSON-LD
 //   • src/app/[locale]/pricing/page.tsx           — SEO pricing landing page
 //   • src/app/[locale]/pricing/layout.tsx         — OfferCatalog JSON-LD
 //   • src/app/[locale]/services/page.tsx          — services tier cards

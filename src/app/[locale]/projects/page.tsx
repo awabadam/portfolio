@@ -62,7 +62,7 @@ const ProjectsPage = async () => {
           </ScrollReveal>
           <ScrollReveal animation="fadeUp" delay={0.2}>
             <Link
-              href="/rate-calculator"
+              href="/contact"
               className="mt-8 inline-block rounded-full bg-primary px-10 py-4 text-base font-semibold text-primary-foreground transition-opacity hover:opacity-90"
             >
               {t('ctaButton')}

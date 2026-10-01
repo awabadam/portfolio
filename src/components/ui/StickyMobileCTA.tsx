@@ -44,7 +44,7 @@ export default function StickyMobileCTA({ label }: StickyMobileCTAProps) {
         >
           <Button asChild size="lg" className="w-full h-12 rounded-full text-base font-semibold">
             <Link
-              href="/rate-calculator"
+              href="/contact"
               onClick={() => trackCTAClick("free_quote", "sticky_mobile")}
             >
               {label}

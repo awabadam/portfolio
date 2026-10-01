@@ -146,7 +146,7 @@ export function processMessage(
     const landing = getPrice("landing", 300, "en");
     const business = getPrice("business", 700, "en");
     const custom = getPrice("custom", 1800, "en");
-    response = `Here's our pricing structure:\n\n• Landing Page: Starting at $${landing.toLocaleString()}\n• Business Website: Starting at $${business.toLocaleString()}\n• Custom Website: Starting at $${custom.toLocaleString()}\n\nYou can use our rate calculator at /rate-calculator for a detailed quote based on your specific needs, including add-ons and complexity adjustments.`;
+    response = `Here's our pricing structure:\n\n• Landing Page: Starting at $${landing.toLocaleString()}\n• Business Website: Starting at $${business.toLocaleString()}\n• Custom Website: Starting at $${custom.toLocaleString()}\n\nSee /pricing for full package details, or reach out at /contact for a personalized quote based on your specific needs.`;
     return { response, context: newContext, action: "show_pricing" };
   }
 
@@ -195,8 +195,8 @@ export function processMessage(
     lowerMessage.includes("estimate") ||
     lowerMessage.includes("calculator")
   ) {
-    response = `You can get a detailed quote using our rate calculator at ${businessInfo.rateCalculator}. It will help you estimate the cost based on your specific project requirements. Would you like me to guide you through it?`;
-    return { response, context: newContext, action: "show_calculator" };
+    response = `You can get a personalized quote by reaching out at ${businessInfo.contact}. Just share your project details and I'll estimate the cost based on your specific requirements. Would you like me to help you get in touch?`;
+    return { response, context: newContext, action: "start_contact" };
   }
 
   // Try to find matching FAQ

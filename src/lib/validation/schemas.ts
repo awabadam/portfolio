@@ -38,7 +38,7 @@ export const leadSchema = z.object({
     .max(2000, "Message must be less than 2000 characters")
     .optional(),
   projectType: z.string().optional(),
-  source: z.enum(["contact_form", "chat", "whatsapp", "calculator"]).optional(),
+  source: z.enum(["contact_form", "chat", "whatsapp"]).optional(),
 });
 
 export type LeadFormData = z.infer<typeof leadSchema>;
