@@ -1,3 +1,6 @@
+// 💰 Pricing source of truth: edit prices in src/lib/pricing.ts
+import { intlPriceMap } from "@/lib/pricing";
+
 export interface Service {
   name: string;
   description: string;
@@ -24,7 +27,7 @@ export const services: Service[] = [
     name: "Web Design & Development",
     description:
       "Modern, responsive websites built with Next.js, React, and Tailwind CSS. Mobile-first, SEO-optimized, conversion-focused.",
-    pricing: "Landing pages from $900, business websites from $2,200, custom builds from $4,500, app development from $8,000 (international rates; lower local/regional pricing available). Each package bundles premium add-ons free (SEO on every tier; plus blog, CMS, multi-language, and AI chatbot depending on tier).",
+    pricing: `Landing pages from $${intlPriceMap.landing.toLocaleString()}, business websites from $${intlPriceMap.business.toLocaleString()}, custom builds from $${intlPriceMap.custom.toLocaleString()} (international rates; lower local/regional pricing available). Each package bundles premium extras free (SEO on every tier; blog and multi-language from Business; CMS and AI chatbot on Custom).`,
     link: "/services",
   },
   {
@@ -37,22 +40,15 @@ export const services: Service[] = [
     name: "SEO Setup",
     description:
       "Optimized site structure, meta tags, fast loading, and sitemaps to rank higher on search engines.",
-    pricing: "Included free with every package ($600 value)",
+    pricing: `Included free with every package ($${intlPriceMap.seo.toLocaleString()} value)`,
     link: "/pricing",
   },
   {
     name: "AI Chatbot Integration",
     description:
       "24/7 automated support for visitors. AI-powered conversation flows, lead qualification, and CRM integration.",
-    pricing: "Included free with App Development; otherwise from $500 as an add-on",
+    pricing: "Included free with the Custom Website package",
     link: "/pricing",
-  },
-  {
-    name: "Brand Identity",
-    description:
-      "Logos, color palettes, typography, guidelines, business cards, and social media templates.",
-    pricing: "Starting from $800",
-    link: "/services/brand-identity",
   },
   {
     name: "Domain & Hosting Management",
@@ -64,7 +60,7 @@ export const services: Service[] = [
   {
     name: "Care Plans (Hosting, Domain & Maintenance)",
     description:
-      "One managed monthly plan per site tier: hosting + domain + SSL + security/monitoring + a change allowance that scales with the site. Care Lite (landing), Care Standard (business), Care Pro (custom/apps).",
+      "One managed monthly plan per site tier: hosting + domain + SSL + security/monitoring + a change allowance that scales with the site. Care Lite (landing), Care Standard (business), Care Pro (custom).",
     pricing: "From $29/month (Lite $29 · Standard $79 · Pro $149)",
     link: "/services/website-maintenance",
   },
@@ -128,13 +124,13 @@ export const faqs: FAQ[] = [
   {
     question: "What services do you offer?",
     answer:
-      "I offer web design & development, UI/UX design, SEO, AI chatbot integration, brand identity, domain & hosting management, and website maintenance. Check /services for details or /pricing to see packages.",
+      "I design and build websites for small businesses — especially clinics — with SEO, multi-language, AI chatbots, and managed hosting & maintenance via Care Plans. Check /services for details or /pricing to see packages.",
     keywords: ["services", "what do you do", "offer", "provide", "help"],
   },
   {
     question: "How much does a website cost?",
     answer:
-      "Pricing depends on the type of website and add-ons you need. See /pricing for package details, or reach out at /contact for a personalized quote.",
+      "Pricing depends on the package you choose — every package is fixed-price with extras bundled in. See /pricing for package details, or reach out at /contact for a personalized quote.",
     keywords: ["price", "cost", "pricing", "how much", "fee", "budget", "rate", "quote"],
   },
   {
@@ -176,13 +172,13 @@ export const faqs: FAQ[] = [
   {
     question: "Do you offer SEO?",
     answer:
-      "Every website includes basic SEO — optimized structure, meta tags, fast loading, sitemap. Advanced SEO optimization is also available as an add-on. Check /pricing for details.",
+      "Every website includes basic SEO — optimized structure, meta tags, fast loading, sitemap. Every package also bundles a full SEO setup for free. Check /pricing for details.",
     keywords: ["seo", "search engine", "google", "ranking", "search"],
   },
   {
     question: "Can you add a chatbot to my site?",
     answer:
-      "Yes! AI chatbot integration is available as an add-on for any website. It provides 24/7 automated support, lead qualification, and CRM integration. See /pricing for details.",
+      "Yes! An AI chatbot comes bundled free with the Custom Website package. It provides 24/7 automated support, lead qualification, and CRM integration. See /pricing for details.",
     keywords: ["chatbot", "bot", "ai", "automation", "support", "chat"],
   },
   {

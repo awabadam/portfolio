@@ -200,14 +200,14 @@ export async function POST(request: Request) {
       } catch (openRouterError) {
         console.warn("OpenRouter API failed, falling back to rule-based system:", openRouterError);
         // Fallback to rule-based system
-        const result = processMessage(sanitizedMessage, updatedContext);
+        const result = processMessage(sanitizedMessage, updatedContext, locale);
         response = result.response;
         updatedContext = result.context;
         action = result.action;
       }
     } else {
       // Use rule-based system
-      const result = processMessage(sanitizedMessage, updatedContext);
+      const result = processMessage(sanitizedMessage, updatedContext, locale);
       response = result.response;
       updatedContext = result.context;
       action = result.action;

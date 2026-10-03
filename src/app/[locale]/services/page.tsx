@@ -1,17 +1,16 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { Link } from "@/i18n/routing";
 import { Button } from "@/components/ui/button";
 import {
   Layout, Palette, Search, FileText, Code, Bot,
-  Globe, Brush, Shield, Server, ArrowRight, ChevronDown, Smartphone, CheckCircle, Quote, Star,
+  Globe, Shield, Server, ArrowRight, ChevronDown, CheckCircle, Quote, Star,
 } from "lucide-react";
 import { testimonials } from "@/data/testimonials";
 import { useTranslations, useLocale } from "next-intl";
 import { ScrollReveal, StaggerContainer, StaggerItem, PerspectiveSection, DepthFloat, ScrollVelocityText } from "@/components/effects";
 // 💰 Pricing source of truth: edit prices in src/lib/pricing.ts
-import { projectTiers, getPrice, formatPrice, FALLBACK_TRY_RATE, getIncludedAddOns } from "@/lib/pricing";
+import { projectTiers, getPrice, formatPrice, getIncludedAddOns } from "@/lib/pricing";
 import FAQSchema from "@/components/seo/FAQSchema";
 
 const processSteps = [
@@ -29,7 +28,6 @@ const capabilities = [
   { key: "capCms", icon: <Code className="h-5 w-5" /> },
   { key: "capChatbot", icon: <Bot className="h-5 w-5" /> },
   { key: "capMultilang", icon: <Globe className="h-5 w-5" /> },
-  { key: "capBrand", icon: <Brush className="h-5 w-5" /> },
   { key: "capDomain", icon: <Shield className="h-5 w-5" /> },
   { key: "capHosting", icon: <Server className="h-5 w-5" /> },
 ];
@@ -43,23 +41,12 @@ const tierIcons = [
   <Globe key="landing" className="h-6 w-6" />,
   <Code key="business" className="h-6 w-6" />,
   <Layout key="custom" className="h-6 w-6" />,
-  <Smartphone key="app" className="h-6 w-6" />,
 ];
 
 export default function ServicesPage() {
   const t = useTranslations("services");
   const tCalc = useTranslations("rateCalculator");
   const locale = useLocale();
-  const [tryRate, setTryRate] = useState(FALLBACK_TRY_RATE);
-
-  useEffect(() => {
-    if (locale === "tr") {
-      fetch("/api/exchange-rate")
-        .then((r) => r.json())
-        .then((d) => { if (d.rate) setTryRate(d.rate); })
-        .catch(() => {});
-    }
-  }, [locale]);
 
   return (
     <main className="min-h-screen bg-background pt-32">
@@ -228,7 +215,7 @@ export default function ServicesPage() {
                   </p>
                   <div className="mt-6 border-t border-border pt-4">
                     <span className="text-2xl font-bold text-primary">
-                      {formatPrice(getPrice(tier.id, tier.basePrice, locale), locale, tryRate)}+
+                      {formatPrice(getPrice(tier.id, tier.basePrice, locale), locale)}+
                     </span>
                   </div>
 
@@ -246,7 +233,7 @@ export default function ServicesPage() {
                               <span className="text-muted-foreground">
                                 {" — "}
                                 {t("includedValued", {
-                                  value: formatPrice(getPrice(addOn.id, addOn.price, locale), locale, tryRate),
+                                  value: formatPrice(getPrice(addOn.id, addOn.price, locale), locale),
                                 })}
                               </span>
                             </span>

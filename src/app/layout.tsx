@@ -251,7 +251,7 @@ export default function RootLayout({
                 "Web Design Istanbul", "Kurumsal Web Tasarım", "Istanbul Web Tasarım",
                 "Performance Optimization", "Conversion Rate Optimization",
               ],
-              priceRange: "$150 - $1500+",
+              priceRange: "$200 - $3000+",
               makesOffer: [
                 {
                   "@type": "Offer",
@@ -326,9 +326,7 @@ export default function RootLayout({
                 hasPart: [
                   { "@type": "WebPage", name: "Services", url: "https://www.awab.design/services" },
                   { "@type": "WebPage", name: "Web Design Istanbul", url: "https://www.awab.design/services/webdesign-istanbul" },
-                  { "@type": "WebPage", name: "AI Chatbot Integration", url: "https://www.awab.design/services/ai-chatbot-integration" },
                   { "@type": "WebPage", name: "Clinic Websites", url: "https://www.awab.design/services/clinic-websites" },
-                  { "@type": "WebPage", name: "Brand Identity", url: "https://www.awab.design/services/brand-identity" },
                 ],
               },
             ]),
@@ -362,7 +360,7 @@ export default function RootLayout({
                 opens: "09:00",
                 closes: "18:00",
               },
-              priceRange: "$150 - $1500+",
+              priceRange: "$200 - $3000+",
               areaServed: [
                 {
                   "@type": "City",
@@ -401,8 +399,6 @@ export default function RootLayout({
                     "@type": "OfferCatalog",
                     "name": "Digital Services",
                     "itemListElement": [
-                      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "AI Chatbot Integration", "url": "https://www.awab.design/services/ai-chatbot-integration" } },
-                      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Brand Identity Design", "url": "https://www.awab.design/services/brand-identity" } },
                       { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Website Maintenance", "url": "https://www.awab.design/services/website-maintenance" } },
                     ],
                   },

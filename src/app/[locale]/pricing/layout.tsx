@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { getTranslations, getLocale } from "next-intl/server";
 import Breadcrumbs from "@/components/seo/Breadcrumbs";
 // 💰 Pricing source of truth: edit prices in src/lib/pricing.ts
-// The OfferCatalog JSON-LD below is generated from projectTiers + addOns.
-import { projectTiers, addOns, intlPriceMap } from "@/lib/pricing";
+// The OfferCatalog JSON-LD below is generated from projectTiers.
+import { projectTiers, intlPriceMap } from "@/lib/pricing";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("metadata.pricing");
@@ -72,18 +72,6 @@ const tierSchemaLabels: Record<string, { name: string; description: string }> = 
     name: "Custom Website",
     description: "Tailored Next.js build with custom features, integrations, and advanced SEO",
   },
-  app: {
-    name: "App Development",
-    description: "Custom mobile and web application development",
-  },
-};
-
-const addOnSchemaLabels: Record<string, string> = {
-  seo: "SEO Setup",
-  blog: "Blog System",
-  cms: "Content Management",
-  chatbot: "AI Chatbot Integration",
-  multilang: "Multi-Language Support",
 };
 
 export default function PricingLayout({ children }: { children: React.ReactNode }) {
@@ -98,23 +86,6 @@ export default function PricingLayout({ children }: { children: React.ReactNode 
         "@type": "Service",
         name: labels?.name ?? tier.id,
         description: labels?.description,
-      },
-      priceSpecification: {
-        "@type": "UnitPriceSpecification",
-        price: String(price),
-        priceCurrency: "USD",
-        unitText: "project",
-      },
-    };
-  });
-
-  const addOnOffers = addOns.map((addOn) => {
-    const price = intlPriceMap[addOn.id] ?? addOn.price;
-    return {
-      "@type": "Offer",
-      itemOffered: {
-        "@type": "Service",
-        name: addOnSchemaLabels[addOn.id] ?? addOn.id,
       },
       priceSpecification: {
         "@type": "UnitPriceSpecification",
@@ -143,7 +114,7 @@ export default function PricingLayout({ children }: { children: React.ReactNode 
     hasOfferCatalog: {
       "@type": "OfferCatalog",
       name: "Web Design Packages",
-      itemListElement: [...tierOffers, ...addOnOffers],
+      itemListElement: tierOffers,
     },
   };
 

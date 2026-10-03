@@ -29,6 +29,18 @@ const nextConfig = {
   compress: true,
   poweredByHeader: false,
   generateEtags: false,
+  // Retired service pages — 301 to the closest live page to keep their SEO.
+  async redirects() {
+    const retired = [
+      ["app-development", "/services"],
+      ["brand-identity", "/services"],
+      ["ai-chatbot-integration", "/pricing"],
+    ];
+    return retired.flatMap(([slug, dest]) => [
+      { source: `/services/${slug}`, destination: dest, permanent: true },
+      { source: `/:locale(ar|tr|fr)/services/${slug}`, destination: `/:locale${dest}`, permanent: true },
+    ]);
+  },
   experimental: {
     // Tree-shake barrel imports from heavy libraries so only what's
     // actually used ends up in the client bundle. Saves ~50-100 KB

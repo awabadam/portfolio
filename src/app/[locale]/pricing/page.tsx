@@ -1,6 +1,5 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { Link } from "@/i18n/routing";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,10 +10,6 @@ import {
   Globe,
   Code,
   Layout,
-  Zap,
-  Mail,
-  Bot,
-  Calculator,
   Quote,
   Star,
 } from "lucide-react";
@@ -27,10 +22,8 @@ import FAQSchema from "@/components/seo/FAQSchema";
 // names/descriptions come from lib/pricing + the rateCalculator namespace.
 import {
   projectTiers,
-  addOns,
   getPrice,
   formatPrice,
-  FALLBACK_TRY_RATE,
   getIncludedAddOns,
 } from "@/lib/pricing";
 
@@ -72,15 +65,6 @@ const tierIcons: Record<string, React.ReactNode> = {
   custom: <Layout className="h-6 w-6" />,
 };
 
-// Icons for add-ons (keyed by pricing.ts add-on id)
-const addOnIcons: Record<string, React.ReactNode> = {
-  seo: <Zap className="h-5 w-5" />,
-  blog: <Mail className="h-5 w-5" />,
-  cms: <Code className="h-5 w-5" />,
-  chatbot: <Bot className="h-5 w-5" />,
-  multilang: <Globe className="h-5 w-5" />,
-};
-
 const includedItems = [
   "included1",
   "included2",
@@ -107,18 +91,6 @@ export default function PricingPage() {
   const t = useTranslations("pricing");
   const tCalc = useTranslations("rateCalculator");
   const locale = useLocale();
-  const [tryRate, setTryRate] = useState(FALLBACK_TRY_RATE);
-
-  useEffect(() => {
-    if (locale === "tr") {
-      fetch("/api/exchange-rate")
-        .then((r) => r.json())
-        .then((d) => {
-          if (d.rate) setTryRate(d.rate);
-        })
-        .catch(() => {});
-    }
-  }, [locale]);
 
   return (
     <main className="min-h-screen bg-background pt-32">
@@ -142,8 +114,7 @@ export default function PricingPage() {
       {/* Pricing Tiers — sourced from lib/pricing.ts */}
       <section className="container mx-auto px-4 py-16">
         <StaggerContainer className="grid gap-6 md:grid-cols-3" staggerDelay={0.1}>
-          {/* Only the three website tiers have feature lists here; app is shown as a callout below. */}
-          {projectTiers.filter((tier) => tierFeatureKeys[tier.id]).map((tier) => {
+          {projectTiers.map((tier) => {
             const price = getPrice(tier.id, tier.basePrice, locale);
             const featureKeys = tierFeatureKeys[tier.id] ?? [];
             const timeframeKey = `${tier.id}Timeframe`;
@@ -170,7 +141,7 @@ export default function PricingPage() {
                         tier.popular ? "text-primary" : ""
                       }`}
                     >
-                      {formatPrice(price, locale, tryRate)}
+                      {formatPrice(price, locale)}
                       {t("tierPriceSuffix")}
                     </span>
                     <p className="mt-1 text-xs text-muted-foreground">{t(timeframeKey)}</p>
@@ -190,7 +161,7 @@ export default function PricingPage() {
                           <span className="text-muted-foreground">
                             {" — "}
                             {tCalc("valuedAt", {
-                              value: formatPrice(getPrice(addOn.id, addOn.price, locale), locale, tryRate),
+                              value: formatPrice(getPrice(addOn.id, addOn.price, locale), locale),
                             })}
                           </span>
                         </span>
@@ -214,67 +185,6 @@ export default function PricingPage() {
           })}
         </StaggerContainer>
 
-        {/* App development callout — app tier lives on its own service page */}
-        <ScrollReveal animation="fadeUp" delay={0.1}>
-          <div className="mx-auto mt-8 flex max-w-3xl flex-col items-center justify-between gap-4 rounded-2xl border border-border bg-card px-8 py-6 text-center sm:flex-row sm:text-left rtl:sm:text-right">
-            <p className="text-base text-muted-foreground">
-              {t("appCalloutText", {
-                price: formatPrice(getPrice("app", 3500, locale), locale, tryRate),
-              })}
-            </p>
-            <Button asChild variant="outline" className="shrink-0 rounded-full">
-              <Link href="/services/app-development">
-                {t("appCalloutCta")}
-                <ArrowRight className="ml-2 rtl:ml-0 rtl:mr-2 rtl:rotate-180 h-4 w-4" />
-              </Link>
-            </Button>
-          </div>
-        </ScrollReveal>
-      </section>
-
-      {/* Add-ons — sourced from lib/pricing.ts */}
-      <section className="border-t border-border py-24">
-        <div className="container mx-auto px-4">
-          <ScrollReveal animation="fadeUp">
-            <h2 className="mb-2 text-center font-display text-3xl font-bold md:text-4xl">
-              {t("addOnsHeading")}
-            </h2>
-            <p className="mb-12 text-center text-muted-foreground">
-              {t("addOnsSubtitle")}
-            </p>
-          </ScrollReveal>
-
-          <StaggerContainer
-            className="mx-auto grid max-w-5xl gap-4 sm:grid-cols-2 lg:grid-cols-3"
-            staggerDelay={0.05}
-          >
-            {addOns.map((addOn) => {
-              const price = getPrice(addOn.id, addOn.price, locale);
-              return (
-                <StaggerItem key={addOn.id} animation="fadeUp">
-                  <div className="flex items-center gap-4 rounded-xl border border-border bg-card p-5 transition-all hover:border-primary/30 hover:shadow-md">
-                    <div className="text-primary">{addOnIcons[addOn.id]}</div>
-                    <div className="flex-1">
-                      <div className="text-sm font-semibold">{tCalc(addOn.nameKey)}</div>
-                      <div className="text-sm text-primary">
-                        +{formatPrice(price, locale, tryRate)}
-                      </div>
-                    </div>
-                  </div>
-                </StaggerItem>
-              );
-            })}
-          </StaggerContainer>
-
-          <ScrollReveal animation="fadeUp" delay={0.2} className="mt-10 text-center">
-            <Button asChild variant="outline" className="rounded-full">
-              <Link href="/contact">
-                <Calculator className="mr-2 rtl:ml-2 rtl:mr-0 h-4 w-4" />
-                {t("addOnsCalculatorCTA")}
-              </Link>
-            </Button>
-          </ScrollReveal>
-        </div>
       </section>
 
       {/* What's Included / Not Included Comparison */}

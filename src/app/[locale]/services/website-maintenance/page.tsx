@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, CheckCircle, Clock, DollarSign } from "lucide-react";
 import { getTranslations, getLocale } from "next-intl/server";
 // 💰 Pricing source of truth: edit prices in src/lib/pricing.ts
-import { carePlans, getPrice, formatPrice, FALLBACK_TRY_RATE } from "@/lib/pricing";
+import { carePlans, getPrice, formatPrice } from "@/lib/pricing";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('metadata.websiteMaintenance');
@@ -49,10 +49,14 @@ const WebsiteMaintenancePage = async () => {
   const plans = carePlans.map((p) => ({
     id: p.id,
     name: t(`websiteMaintenance.${p.nameKey}`),
-    price: formatPrice(getPrice(p.id, p.basePrice, locale), locale, FALLBACK_TRY_RATE) + perMonth,
+    price: formatPrice(getPrice(p.id, p.basePrice, locale), locale) + perMonth,
     features: t.raw(`websiteMaintenance.${p.featuresKey}`) as string[],
     popular: !!p.popular,
   }));
+  const entryPlan = carePlans[0];
+  const fromPrice = formatPrice(getPrice(entryPlan.id, entryPlan.basePrice, locale), locale);
+  // Structured data stays in USD at the international rate (matches pricing/layout.tsx).
+  const schemaPrice = String(getPrice(entryPlan.id, entryPlan.basePrice, "en"));
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -63,9 +67,9 @@ const WebsiteMaintenancePage = async () => {
     areaServed: "Worldwide",
     offers: {
       "@type": "Offer",
-      price: "29",
+      price: schemaPrice,
       priceCurrency: "USD",
-      priceSpecification: { "@type": "UnitPriceSpecification", price: "29", priceCurrency: "USD", unitText: "month" },
+      priceSpecification: { "@type": "UnitPriceSpecification", price: schemaPrice, priceCurrency: "USD", unitText: "month" },
     },
   };
 
@@ -94,7 +98,7 @@ const WebsiteMaintenancePage = async () => {
             <div className="flex items-center gap-2">
               <DollarSign className="h-5 w-5 text-primary" />
               <span className="text-xl font-semibold text-primary">
-                {t('websiteMaintenance.pricing')}
+                {t('websiteMaintenance.pricing', { price: fromPrice })}
               </span>
             </div>
             <div className="flex items-center gap-2">

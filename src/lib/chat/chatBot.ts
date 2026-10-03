@@ -7,7 +7,7 @@ import {
   findMatchingFAQ,
 } from "./knowledgeBase";
 // 💰 Pricing source of truth: edit prices in src/lib/pricing.ts
-import { getPrice } from "@/lib/pricing";
+import { projectTiers, getPrice, formatPrice } from "@/lib/pricing";
 
 export interface ChatMessage {
   role: "user" | "assistant" | "system";
@@ -59,7 +59,8 @@ export function isFarewell(message: string): boolean {
 
 export function processMessage(
   userMessage: string,
-  context: ChatContext
+  context: ChatContext,
+  locale: string = "en"
 ): { response: string; context: ChatContext; action?: string } {
   const lowerMessage = userMessage.toLowerCase().trim();
   let response = "";
@@ -143,10 +144,10 @@ export function processMessage(
     lowerMessage.includes("cost") ||
     lowerMessage.includes("how much")
   ) {
-    const landing = getPrice("landing", 300, "en");
-    const business = getPrice("business", 700, "en");
-    const custom = getPrice("custom", 1800, "en");
-    response = `Here's our pricing structure:\n\n• Landing Page: Starting at $${landing.toLocaleString()}\n• Business Website: Starting at $${business.toLocaleString()}\n• Custom Website: Starting at $${custom.toLocaleString()}\n\nSee /pricing for full package details, or reach out at /contact for a personalized quote based on your specific needs.`;
+    const [landing, business, custom] = projectTiers.map((t) =>
+      formatPrice(getPrice(t.id, t.basePrice, locale), locale)
+    );
+    response = `Here's our pricing structure:\n\n• Landing Page: Starting at ${landing}\n• Business Website: Starting at ${business}\n• Custom Website: Starting at ${custom}\n\nSee /pricing for full package details, or reach out at /contact for a personalized quote based on your specific needs.`;
     return { response, context: newContext, action: "show_pricing" };
   }
 

@@ -14,6 +14,8 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { getTranslations, getLocale } from "next-intl/server";
+// 💰 Pricing source of truth: edit prices in src/lib/pricing.ts
+import { projectTiers, carePlans, getPrice, formatPrice } from "@/lib/pricing";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("metadata.webdesign");
@@ -62,11 +64,17 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
+// FAQ copy is English-only (also emitted as FAQPage JSON-LD), so it quotes the
+// international USD prices from lib/pricing.ts.
+const usd = (id: string, basePrice: number) => formatPrice(getPrice(id, basePrice, "en"), "en");
+const [landingTier, businessTier, customTier] = projectTiers;
+const entryCarePlan = carePlans[0];
+
 const faqItems = [
   {
     question: "How much does web design cost in Istanbul?",
     answer:
-      "Web design prices in Istanbul range from $150 for a landing page to $3,000+ for custom projects. At Awab Design, business websites start at $500 with no hidden fees. We offer transparent pricing and a free quote calculator.",
+      `At Awab Design, a landing page starts at ${usd(landingTier.id, landingTier.basePrice)}, a business website at ${usd(businessTier.id, businessTier.basePrice)}, and custom projects at ${usd(customTier.id, customTier.basePrice)}+. Every package is fixed-price with no hidden fees — see the pricing page for what each one includes, or get in touch for a free quote.`,
   },
   {
     question: "How long does it take to build a website in Istanbul?",
@@ -113,13 +121,15 @@ const faqItems = [
   {
     question: "Do you offer website maintenance after launch?",
     answer:
-      "Yes, we offer ongoing maintenance starting at $150/month covering security updates, performance optimization, content changes, and monthly reports. You're never left alone after launch.",
+      `Yes, our monthly Care Plans start at ${usd(entryCarePlan.id, entryCarePlan.basePrice)}/month and cover hosting, domain, SSL, security updates, and content changes. You're never left alone after launch.`,
   },
 ];
 
 const WebdesignIstanbulPage = async () => {
   const t = await getTranslations("services");
+  const locale = await getLocale();
   const inclusions = t.raw("webdesign.inclusions") as string[];
+  const fromPrice = formatPrice(getPrice(landingTier.id, landingTier.basePrice, locale), locale);
 
   const serviceJsonLd = {
     "@context": "https://schema.org",
@@ -202,7 +212,7 @@ const WebdesignIstanbulPage = async () => {
               <div className="flex items-center gap-2">
                 <DollarSign className="h-5 w-5 text-primary" />
                 <span className="text-xl font-semibold text-primary">
-                  {t("webdesign.pricing")}
+                  {t("webdesign.pricing", { price: fromPrice })}
                 </span>
               </div>
               <div className="flex items-center gap-2">

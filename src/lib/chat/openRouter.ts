@@ -2,7 +2,7 @@ import { ChatMessage, ChatContext } from "./chatBot";
 import { services, projects, businessInfo, faqs } from "./knowledgeBase";
 // 💰 Pricing source of truth: edit prices in src/lib/pricing.ts
 // The chat assistant's pricing answers are generated from this data.
-import { projectTiers, addOns, getPrice, formatPrice, FALLBACK_TRY_RATE } from "@/lib/pricing";
+import { projectTiers, carePlans, getPrice, formatPrice, getIncludedAddOns } from "@/lib/pricing";
 
 export interface OpenRouterResponse {
   id: string;
@@ -30,12 +30,11 @@ const PRIORITY_MESSAGE_COUNT = 4; // Always keep the last N messages
  */
 function buildSystemPrompt(context: ChatContext, locale?: string): string {
   const loc = locale || "en";
-  const tryRate = FALLBACK_TRY_RATE;
 
   // Build locale-aware pricing
   const tierPrices = projectTiers.map((t) => {
     const price = getPrice(t.id, t.basePrice, loc);
-    return `${t.nameKey === "landingPage" ? "Landing Page" : t.nameKey === "businessWebsite" ? "Business Website" : t.nameKey === "customWebsite" ? "Custom Website" : "App Development"}: from ${formatPrice(price, loc, tryRate)}`;
+    return `${t.nameKey === "landingPage" ? "Landing Page" : t.nameKey === "businessWebsite" ? "Business Website" : "Custom Website"}: from ${formatPrice(price, loc)}`;
   }).join(", ");
 
   const addOnLabels: Record<string, string> = {
@@ -45,10 +44,10 @@ function buildSystemPrompt(context: ChatContext, locale?: string): string {
     chatbot: "AI Chatbot",
     multilang: "Multi-language",
   };
-  const addOnPrices = addOns.map((a) => {
-    const price = getPrice(a.id, a.price, loc);
-    return `${addOnLabels[a.id] ?? a.id} (+${formatPrice(price, loc, tryRate)})`;
-  }).join(", ");
+  const bundles = projectTiers.map((t) =>
+    `${t.id}: ${getIncludedAddOns(t.id).map((a) => addOnLabels[a.id] ?? a.id).join(", ")}`
+  ).join("; ");
+  const careFrom = formatPrice(getPrice(carePlans[0].id, carePlans[0].basePrice, loc), loc);
 
   // Build project showcase
   const projectList = projects
@@ -72,10 +71,10 @@ Email: ${businessInfo.email} | WhatsApp: ${businessInfo.phone}
 
 PRICING (${loc.toUpperCase()} locale):
 ${tierPrices}
-Add-ons: ${addOnPrices}
+Bundled free (no paid add-ons): ${bundles}
 Pricing details: /pricing
 
-SERVICES: Web Design, UI/UX, SEO, Blog, CMS, AI Chatbot, Multi-language, Brand Identity, Domain & Hosting, Maintenance (from $150/mo).
+SERVICES: Websites for small businesses (especially clinics) — Landing, Business, Custom packages. Care Plans for hosting, domain & maintenance (from ${careFrom}/mo). No app development or brand identity work.
 Details: /services
 
 PORTFOLIO: ${projectList}
