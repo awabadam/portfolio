@@ -6,6 +6,7 @@ import { Project } from "@/types";
 import { Link } from "@/i18n/routing";
 import { useTranslations } from "next-intl";
 import { ArrowUpRight, ArrowLeft, Globe, ArrowRight, CheckCircle } from "lucide-react";
+import { GlassPill } from "@/components/ui/glass-pill";
 
 const IFRAME_WIDTH = 1440;
 const IFRAME_HEIGHT = 900;
@@ -48,12 +49,12 @@ export default function ProjectDetail({
   return (
     <main className="min-h-screen bg-background">
       {/* Back Navigation */}
-      <div className="fixed left-6 top-6 z-50">
+      <div className="fixed start-6 top-6 z-50">
         <Link
           href="/projects"
-          className="group flex items-center gap-2 rounded-full border border-border/50 bg-background/80 px-4 py-2 text-sm font-medium backdrop-blur-md transition-all hover:border-foreground/20 hover:bg-background"
+          className="group inline-flex h-11 items-center gap-2 rounded-lg border border-border/50 bg-background/80 px-5 text-sm font-medium backdrop-blur-md transition-colors hover:border-foreground/20 hover:bg-background"
         >
-          <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
+          <ArrowLeft aria-hidden="true" className="h-4 w-4 rtl:-scale-x-100" />
           {t("viewAllWork")}
         </Link>
       </div>
@@ -72,7 +73,7 @@ export default function ProjectDetail({
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
             className="mb-6 flex items-center gap-4"
           >
-            <span className="rounded-full border border-border px-3 py-1 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+            <span className="rounded-md border border-border px-3 py-1 text-label text-muted-foreground">
               {project.category}
             </span>
             {project.role && (
@@ -91,7 +92,7 @@ export default function ProjectDetail({
               delay: 0.1,
               ease: [0.22, 1, 0.36, 1],
             }}
-            className="font-display text-5xl font-bold leading-none tracking-tighter md:text-7xl lg:text-8xl"
+            className="font-display text-hero"
           >
             {project.title}
           </motion.h1>
@@ -125,7 +126,7 @@ export default function ProjectDetail({
               {project.technologies.map((tech) => (
                 <span
                   key={tech}
-                  className="rounded-full bg-muted px-3 py-1 text-xs font-medium text-muted-foreground"
+                  className="rounded-md bg-muted px-3 py-1 text-label text-muted-foreground"
                 >
                   {tech}
                 </span>
@@ -133,15 +134,9 @@ export default function ProjectDetail({
             </div>
 
             {project.live_url && (
-              <a
-                href={project.live_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group flex items-center gap-2 rounded-full bg-foreground px-6 py-3 text-sm font-medium text-background transition-all hover:gap-3"
-              >
+              <GlassPill href={project.live_url} external tone="dark" arrow>
                 {t("visitLive")}
-                <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-              </a>
+              </GlassPill>
             )}
           </motion.div>
         </div>
@@ -345,12 +340,11 @@ export default function ProjectDetail({
           <p className="font-mono text-sm uppercase tracking-widest text-muted-foreground">
             {t("ctaHeading")}
           </p>
-          <Link
-            href="/contact"
-            className="mt-6 inline-block rounded-full bg-foreground px-10 py-4 text-base font-medium text-background transition-opacity hover:opacity-90"
-          >
-            {t("ctaButton")}
-          </Link>
+          <div className="mt-6">
+            <GlassPill href="/contact" tone="dark" arrow>
+              {t("ctaButton")}
+            </GlassPill>
+          </div>
         </div>
       </section>
 
@@ -364,10 +358,10 @@ export default function ProjectDetail({
             <span className="mb-4 font-mono text-xs uppercase tracking-wider text-muted-foreground">
               {t("nextCaseStudy")}
             </span>
-            <h2 className="font-display text-5xl font-bold tracking-tight transition-all duration-500 group-hover:tracking-normal md:text-7xl lg:text-8xl">
+            <h2 className="font-display text-heading">
               {nextProject.title}
             </h2>
-            <ArrowRight className="mt-6 h-6 w-6 text-muted-foreground transition-transform duration-500 group-hover:translate-x-2" />
+            <ArrowRight aria-hidden="true" className="mt-6 h-6 w-6 text-muted-foreground transition-transform duration-500 group-hover:translate-x-2 rtl:-scale-x-100 rtl:group-hover:-translate-x-2" />
           </div>
         </Link>
       </section>

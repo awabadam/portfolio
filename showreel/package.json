@@ -1,0 +1,11 @@
+{
+  "name": "portfolio-showreel",
+  "private": true,
+  "description": "HyperFrames compositions that turn project screenshots into the hero showreel videos.",
+  "scripts": {
+    "build": "node build.mjs"
+  },
+  "devDependencies": {
+    "hyperframes": "0.8.163"
+  }
+}

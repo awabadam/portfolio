@@ -1,198 +1,245 @@
 "use client";
 
-import { Link, usePathname } from '@/i18n/routing';
-import { useTranslations } from 'next-intl';
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence, useScroll } from "framer-motion";
+import { Link, usePathname } from "@/i18n/routing";
+import { useTranslations } from "next-intl";
+import { useEffect, useState } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ModeToggle } from "@/components/ui/mode-toggle";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
-import { Button } from "@/components/ui/button";
-import { trackNavigationClick, trackContactClick } from "@/lib/analytics/gtm";
+import { GlassPill } from "@/components/ui/glass-pill";
+import {
+  trackContactClick,
+  trackNavigationClick,
+  trackSocialClick,
+} from "@/lib/analytics/gtm";
 import { useWhatsApp } from "@/components/chat/WhatsAppContext";
-import { fadeIn, staggerContainer } from "@/lib/animations";
-import { MagneticElement } from "@/components/effects";
 
-// Pages whose hero is always dark (white nav text needed at the top).
-// The homepage hero is theme-aware — it becomes light in light mode — so it
-// is intentionally NOT listed here; its nav follows the theme foreground.
-const DARK_HERO_PAGES = ["/about"];
+// Pages whose hero is always black (white nav text needed until scrolled).
+// `usePathname` from next-intl returns the locale-stripped path.
+const DARK_HERO_PAGES = ["/", "/about"];
+const SCROLL_THRESHOLD = 40;
+
+const SOCIAL_LINKS = [
+  { id: "linkedin", label: "LinkedIn", href: "https://www.linkedin.com/in/awab-adam/" },
+  { id: "instagram", label: "Instagram", href: "https://www.instagram.com/awabeladam/" },
+] as const;
 
 const Navbar = () => {
-  const t = useTranslations('nav');
+  const t = useTranslations("nav");
   const { openWhatsApp } = useWhatsApp();
   const pathname = usePathname();
+  const reduceMotion = useReducedMotion();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const { scrollY } = useScroll();
 
-  // Check if current page has a dark hero
+  // Close the overlay whenever the route changes (derived during render,
+  // no effect needed).
+  const [prevPathname, setPrevPathname] = useState(pathname);
+  if (pathname !== prevPathname) {
+    setPrevPathname(pathname);
+    setIsMenuOpen(false);
+  }
+
   const hasDarkHero = DARK_HERO_PAGES.includes(pathname || "");
+  // Transparent + white text over a dark hero before scrolling, and while
+  // the black mobile overlay is open (the nav sits above it).
+  const isTransparent = (hasDarkHero && !isScrolled) || isMenuOpen;
 
   useEffect(() => {
-    return scrollY.onChange((latest) => {
-      setIsScrolled(latest > 50);
-    });
-  }, [scrollY]);
+    const onScroll = () => setIsScrolled(window.scrollY > SCROLL_THRESHOLD);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
-  const navItems = [
-    { href: "/about", label: t('about') },
-    { href: "/projects", label: t('work') },
-    { href: "/services", label: t('services') },
-    { href: "/pricing", label: t('pricing') },
-    { href: "/blog", label: t('journal') },
-    { href: "/contact", label: t('contact') },
+  // Lock page scroll while the mobile overlay is open.
+  useEffect(() => {
+    if (!isMenuOpen) return;
+    const root = document.documentElement;
+    const previous = root.style.overflow;
+    root.style.overflow = "hidden";
+    return () => {
+      root.style.overflow = previous;
+    };
+  }, [isMenuOpen]);
+
+  const desktopItems = [
+    { id: "work", href: "/projects", label: t("work") },
+    { id: "services", href: "/services", label: t("services") },
+    { id: "about", href: "/about", label: t("about") },
+    { id: "journal", href: "/blog", label: t("journal") },
   ] as const;
 
-  const handleNavClick = (label: string) => {
-    trackNavigationClick(label.toLowerCase(), "navbar");
+  const mobileItems = [
+    { id: "work", href: "/projects", label: t("work") },
+    { id: "services", href: "/services", label: t("services") },
+    { id: "pricing", href: "/pricing", label: t("pricing") },
+    { id: "about", href: "/about", label: t("about") },
+    { id: "journal", href: "/blog", label: t("journal") },
+    { id: "contact", href: "/contact", label: t("contact") },
+  ] as const;
+
+  const handleNavClick = (id: string, location: string) => {
+    trackNavigationClick(id, location);
     setIsMenuOpen(false);
   };
 
+  const navTone = isTransparent ? "text-white" : "text-foreground";
+  const navSurface = isTransparent
+    ? "bg-transparent border-b border-transparent"
+    : "bg-background/80 backdrop-blur-md border-b border-border/40";
+
+  const overlayVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { duration: 0.3, ease: "easeOut" } },
+    exit: { opacity: 0, transition: { duration: 0.2, ease: "easeIn" } },
+  } as const;
+
+  const listVariants = {
+    hidden: {},
+    visible: { transition: { staggerChildren: reduceMotion ? 0 : 0.05, delayChildren: 0.1 } },
+    exit: {},
+  } as const;
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: reduceMotion ? 0 : 16 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] } },
+    exit: { opacity: 0, transition: { duration: 0.15 } },
+  } as const;
+
   return (
     <>
-      <motion.nav 
-        className={`fixed top-0 z-50 w-full transition-all duration-500 ${
-          isScrolled
-            ? "bg-background/60 backdrop-blur-xl border-b border-border/15 shadow-[0_1px_3px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.06),0_12px_40px_rgba(0,0,0,0.08)]"
-            : "bg-transparent"
-        }`}
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+      <nav
+        className={`fixed top-0 z-50 w-full transition-colors duration-300 ${navSurface} ${navTone}`}
       >
-        <div className="container mx-auto flex h-24 items-center justify-between px-6">
-          <MagneticElement strength={10}>
-            <Link
-              href="/"
-              className={`group relative z-50 font-display text-2xl font-bold tracking-tighter transition-colors duration-300 ${
-                isScrolled || !hasDarkHero ? "text-foreground" : "text-white"
-              }`}
-              onClick={() => handleNavClick("home")}
-            >
-              <span className="relative inline-block overflow-hidden">
-                <span className="inline-block transition-transform duration-500 group-hover:-translate-y-full">{t('logo')}</span>
-                <span className="absolute start-0 top-0 inline-block translate-y-full transition-transform duration-500 group-hover:translate-y-0">{t('logo')}</span>
-              </span>
-            </Link>
-          </MagneticElement>
-
-          {/* Desktop Navigation */}
-          <div className="hidden items-center gap-12 md:flex">
-            {navItems.map((item) => (
-              <MagneticElement key={item.href} strength={12}>
-                <Link
-                  href={item.href}
-                  className={`group relative text-sm font-medium uppercase tracking-widest transition-colors duration-300 ${
-                    isScrolled || !hasDarkHero
-                      ? "text-muted-foreground hover:text-foreground"
-                      : "text-white/80 hover:text-white"
-                  }`}
-                  onClick={() => handleNavClick(item.label)}
-                >
-                  {item.label}
-                  <span className={`absolute -bottom-1 start-0 h-px w-0 transition-all duration-300 group-hover:w-full ${
-                    isScrolled || !hasDarkHero ? "bg-foreground" : "bg-white"
-                  }`} />
-                </Link>
-              </MagneticElement>
-            ))}
-            
-            <div className={`flex items-center gap-4 border-s ps-8 transition-colors duration-300 ${
-              isScrolled || !hasDarkHero ? "border-border/20" : "border-white/20"
-            }`}>
-              <LanguageSwitcher />
-              <ModeToggle />
-              <MagneticElement strength={15}>
-                <Button
-                  variant="outline"
-                  className={`rounded-full px-6 transition-all ${
-                    isScrolled || !hasDarkHero
-                      ? "hover:bg-foreground hover:text-background"
-                      : "border-white/50 bg-transparent text-white hover:bg-white hover:text-black"
-                  }`}
-                  onClick={() => {
-                    trackContactClick("whatsapp", "navbar");
-                    openWhatsApp();
-                  }}
-                >
-                  {t('cta')}
-                </Button>
-              </MagneticElement>
-            </div>
-          </div>
-
-          {/* Mobile Menu Button */}
-          <div className="flex items-center gap-4 md:hidden">
-            <LanguageSwitcher />
-            <ModeToggle />
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="group z-50 flex h-10 w-10 flex-col items-center justify-center gap-1.5"
-              aria-label={t('toggleMenu')}
-            >
-              <span className={`h-0.5 w-6 transition-all duration-300 ${isMenuOpen ? "rotate-45 translate-y-2" : ""} ${
-                isScrolled || !hasDarkHero ? "bg-foreground" : "bg-white"
-              }`} />
-              <span className={`h-0.5 w-6 transition-all duration-300 ${isMenuOpen ? "opacity-0" : ""} ${
-                isScrolled || !hasDarkHero ? "bg-foreground" : "bg-white"
-              }`} />
-              <span className={`h-0.5 w-6 transition-all duration-300 ${isMenuOpen ? "-rotate-45 -translate-y-2" : ""} ${
-                isScrolled || !hasDarkHero ? "bg-foreground" : "bg-white"
-              }`} />
-            </button>
-          </div>
-        </div>
-      </motion.nav>
-
-      {/* Full-Screen Menu Overlay */}
-      <AnimatePresence>
-        {isMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.4 }}
-            className="fixed inset-0 z-40 flex flex-col justify-center bg-background/95 backdrop-blur-xl md:hidden"
+        <div className="container mx-auto flex h-20 items-center justify-between px-5 md:px-8">
+          <Link
+            href="/"
+            className="font-display text-xl font-medium tracking-tight"
+            onClick={() => handleNavClick("home", "navbar")}
           >
-            <motion.div
-              initial="hidden"
-              animate="visible"
-              exit="hidden"
-              variants={staggerContainer}
-              className="container mx-auto flex flex-col gap-8 px-6"
-            >
-              {navItems.map((item, index) => (
-                <motion.div key={item.href} variants={fadeIn}>
+            {t("logo")}
+          </Link>
+
+          {/* Desktop */}
+          <div className="hidden items-center gap-8 md:flex">
+            <ul className="flex items-center gap-8">
+              {desktopItems.map((item) => (
+                <li key={item.id}>
                   <Link
                     href={item.href}
-                    className="font-display text-5xl font-bold uppercase tracking-tight text-foreground transition-colors hover:text-muted-foreground"
-                    onClick={() => handleNavClick(item.label)}
+                    className="text-sm font-medium transition-opacity hover:opacity-70"
+                    onClick={() => handleNavClick(item.id, "navbar")}
                   >
                     {item.label}
                   </Link>
-                </motion.div>
+                </li>
               ))}
-              
-              <motion.div variants={fadeIn} className="mt-12 h-px w-full bg-border" />
-              
-              <motion.div variants={fadeIn} className="flex flex-col gap-4">
-                <span className="font-mono text-sm uppercase text-muted-foreground">{t('getInTouch')}</span>
-                <a href={`mailto:${t('email')}`} className="text-xl">{t('email')}</a>
-                <Button
-                  size="lg"
-                  className="mt-4 w-full rounded-full"
-                  onClick={() => {
-                    trackContactClick("whatsapp", "navbar-mobile");
-                    openWhatsApp();
-                    setIsMenuOpen(false);
-                  }}
+            </ul>
+
+            <span aria-hidden="true" className="h-5 w-px bg-current opacity-20" />
+
+            <div className="flex items-center gap-2">
+              <LanguageSwitcher />
+              <ModeToggle />
+              <GlassPill
+                href="/contact"
+                tone={isTransparent ? "glass" : "dark"}
+                className="ms-2 h-10"
+                onClick={() => handleNavClick("contact", "navbar")}
+              >
+                {t("contact")}
+              </GlassPill>
+            </div>
+          </div>
+
+          {/* Mobile */}
+          <div className="flex items-center gap-2 md:hidden">
+            <LanguageSwitcher />
+            <ModeToggle />
+            <button
+              type="button"
+              onClick={() => setIsMenuOpen((open) => !open)}
+              className="ms-2 font-mono text-label uppercase"
+              aria-expanded={isMenuOpen}
+              aria-controls="mobile-menu"
+            >
+              {isMenuOpen ? t("close") : t("menu")}
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      {/* Mobile overlay */}
+      <AnimatePresence>
+        {isMenuOpen ? (
+          <motion.div
+            id="mobile-menu"
+            variants={overlayVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            className="fixed inset-0 z-40 bg-black text-white md:hidden"
+          >
+            <motion.div
+              variants={listVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              className="container mx-auto flex h-full flex-col justify-between px-5 pb-8 pt-28"
+            >
+              <ul className="flex flex-col gap-4">
+                {mobileItems.map((item) => (
+                  <motion.li key={item.id} variants={itemVariants}>
+                    <Link
+                      href={item.href}
+                      className="font-display text-[40px] leading-none tracking-tight"
+                      onClick={() => handleNavClick(item.id, "navbar-mobile")}
+                    >
+                      {item.label}
+                    </Link>
+                  </motion.li>
+                ))}
+              </ul>
+
+              <motion.div variants={itemVariants} className="flex flex-col gap-3">
+                <span className="text-label text-white/50">{t("getInTouch")}</span>
+                <a
+                  href={`mailto:${t("email")}`}
+                  className="text-sm text-white hover:text-white/70"
+                  onClick={() => trackContactClick("email", "navbar-mobile")}
                 >
-                  {t('startProject')}
-                </Button>
+                  {t("email")}
+                </a>
+                <div className="flex items-center gap-5 text-sm">
+                  <button
+                    type="button"
+                    className="text-white hover:text-white/70"
+                    onClick={() => {
+                      trackContactClick("whatsapp", "navbar-mobile");
+                      setIsMenuOpen(false);
+                      openWhatsApp();
+                    }}
+                  >
+                    WhatsApp
+                  </button>
+                  {SOCIAL_LINKS.map((social) => (
+                    <a
+                      key={social.id}
+                      href={social.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-white hover:text-white/70"
+                      onClick={() => trackSocialClick(social.id, "navbar-mobile")}
+                    >
+                      {social.label}
+                    </a>
+                  ))}
+                </div>
               </motion.div>
             </motion.div>
           </motion.div>
-        )}
+        ) : null}
       </AnimatePresence>
     </>
   );

@@ -1,102 +1,103 @@
 "use client";
 
-import { Link } from '@/i18n/routing';
-import { useTranslations } from 'next-intl';
-import { Button } from "@/components/ui/button";
-import { ArrowUpRight } from "lucide-react";
+import { Link } from "@/i18n/routing";
+import { useTranslations } from "next-intl";
+import { motion, useReducedMotion } from "framer-motion";
 import { useWhatsApp } from "@/components/chat/WhatsAppContext";
+import { GlassPill } from "@/components/ui/glass-pill";
 import {
-  trackSocialClick,
   trackContactClick,
   trackNavigationClick,
+  trackSocialClick,
 } from "@/lib/analytics/gtm";
-import { MagneticElement } from "@/components/effects";
+
+const SOCIAL_LINKS = [
+  { id: "linkedin", href: "https://www.linkedin.com/in/awab-adam/" },
+  { id: "instagram", href: "https://www.instagram.com/awabeladam/" },
+] as const;
 
 const Footer = () => {
-  const t = useTranslations('footer');
+  const t = useTranslations("footer");
   const { openWhatsApp } = useWhatsApp();
+  const reduceMotion = useReducedMotion();
   const currentYear = new Date().getFullYear();
 
-  const footerLinks = [
-    { name: t('about'), href: "/about" },
-    { name: t('work'), href: "/projects" },
-    { name: t('services'), href: "/services" },
-    { name: t('pricing'), href: "/pricing" },
-    { name: t('blog'), href: "/blog" },
-  ];
-
-  const socialLinks = [
-    { name: t('linkedin'), href: "https://www.linkedin.com/in/awab-adam/" },
-    { name: t('instagram'), href: "https://www.instagram.com/awabeladam/" },
-  ];
+  const sitemapLinks = [
+    { id: "about", href: "/about", label: t("about") },
+    { id: "work", href: "/projects", label: t("work") },
+    { id: "services", href: "/services", label: t("services") },
+    { id: "pricing", href: "/pricing", label: t("pricing") },
+    { id: "blog", href: "/blog", label: t("blog") },
+  ] as const;
 
   return (
-    <footer className="relative z-10 w-full overflow-hidden bg-background text-foreground pt-24 pb-12">
-      <div className="container mx-auto px-6">
-        <div className="grid gap-16 lg:grid-cols-2">
-          {/* Brand & CTA */}
-          <div className="flex flex-col justify-between space-y-12">
-            <MagneticElement strength={30}>
-              <h2 className="font-display text-[12vw] leading-none tracking-tighter md:text-[8vw]">
-                {t('brandName')}
-              </h2>
-            </MagneticElement>
-            
-            <div className="max-w-md space-y-6">
-              <p className="text-xl opacity-80">
-                {t('tagline')}
-              </p>
-              <MagneticElement strength={20}>
-                <Button
-                  className="h-14 rounded-full bg-primary px-8 text-lg text-primary-foreground hover:bg-primary/90"
-                  onClick={() => {
-                    trackContactClick("whatsapp", "footer");
-                    openWhatsApp();
-                  }}
-                >
-                  {t('startProject')}
-                </Button>
-              </MagneticElement>
+    <footer className="relative z-10 w-full bg-black pb-8 pt-20 text-white">
+      <div className="container mx-auto px-5 md:px-8">
+        <div className="grid gap-14 lg:grid-cols-12 lg:gap-8">
+          {/* Brand + CTA */}
+          <div className="flex flex-col gap-8 lg:col-span-6">
+            <p className="font-display text-[28px] font-medium tracking-tight">
+              {t("brandName")}
+            </p>
+            <p className="max-w-xl font-display text-heading">
+              {t("haveSomething")}
+              <br />
+              {t("makeItHappen")}
+            </p>
+            <div className="flex flex-wrap items-center gap-5">
+              <GlassPill
+                href="/contact"
+                arrow
+                onClick={() => trackNavigationClick("contact", "footer")}
+              >
+                {t("getInTouch")}
+              </GlassPill>
+              <button
+                type="button"
+                className="text-sm text-white/70 underline-offset-4 transition-colors hover:text-white hover:underline"
+                onClick={() => {
+                  trackContactClick("whatsapp", "footer");
+                  openWhatsApp();
+                }}
+              >
+                WhatsApp
+              </button>
             </div>
           </div>
 
-          {/* Navigation Links */}
-          <div className="grid grid-cols-2 gap-12 md:grid-cols-2 lg:ps-24">
-            <div className="space-y-6">
-              <h3 className="font-mono text-sm uppercase opacity-50">{t('sitemapHeading')}</h3>
-              <ul className="space-y-4">
-                {footerLinks.map((link) => (
-                  <li key={link.name}>
-                    <MagneticElement strength={10}>
-                      <Link
-                        href={link.href}
-                        className="group flex items-center gap-2 text-lg transition-colors hover:opacity-70"
-                        onClick={() => trackNavigationClick(link.name.toLowerCase(), "footer")}
-                      >
-                        {link.name}
-                      </Link>
-                    </MagneticElement>
+          {/* Sitemap + Social */}
+          <div className="grid grid-cols-2 gap-8 lg:col-span-5 lg:col-start-8">
+            <div>
+              <h3 className="mb-4 text-label text-white/50">{t("sitemapHeading")}</h3>
+              <ul className="flex flex-col gap-3">
+                {sitemapLinks.map((link) => (
+                  <li key={link.id}>
+                    <Link
+                      href={link.href}
+                      className="text-sm text-white transition-colors hover:text-white/70"
+                      onClick={() => trackNavigationClick(link.id, "footer")}
+                    >
+                      {link.label}
+                    </Link>
                   </li>
                 ))}
               </ul>
             </div>
 
-            <div className="space-y-6">
-              <h3 className="font-mono text-sm uppercase opacity-50">{t('socialsHeading')}</h3>
-              <ul className="space-y-4">
-                {socialLinks.map((link) => (
-                  <li key={link.name}>
-                    <MagneticElement strength={10}>
-                      <Link
-                        href={link.href}
-                        target="_blank"
-                        className="group flex items-center gap-2 text-lg transition-colors hover:opacity-70"
-                        onClick={() => trackSocialClick(link.name.toLowerCase(), "footer")}
-                      >
-                        {link.name}
-                        <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-1 group-hover:translate-x-1 rtl:group-hover:-translate-x-1" />
-                      </Link>
-                    </MagneticElement>
+            <div>
+              <h3 className="mb-4 text-label text-white/50">{t("socialsHeading")}</h3>
+              <ul className="flex flex-col gap-3">
+                {SOCIAL_LINKS.map((social) => (
+                  <li key={social.id}>
+                    <a
+                      href={social.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm text-white transition-colors hover:text-white/70"
+                      onClick={() => trackSocialClick(social.id, "footer")}
+                    >
+                      {t(social.id)}
+                    </a>
                   </li>
                 ))}
               </ul>
@@ -104,14 +105,21 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="mt-24 flex flex-col items-center justify-between gap-6 border-t border-current/10 pt-8 text-sm opacity-40 md:flex-row">
-          <p>{t('copyright', { year: currentYear })}</p>
-          <div className="flex gap-8">
-            <span className="hidden md:inline">{t('location')}</span>
-            <span className="hidden md:inline">+90 554 175 9945</span>
-            <span>{t('timezone')}</span>
-          </div>
+        {/* Divider that draws in from the start edge */}
+        <motion.div
+          aria-hidden="true"
+          className="mt-20 h-px w-full bg-white/15 origin-left rtl:origin-right"
+          initial={{ scaleX: reduceMotion ? 1 : 0 }}
+          whileInView={{ scaleX: 1 }}
+          viewport={{ once: true, amount: 0.5 }}
+          transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+        />
+
+        <div className="flex flex-col gap-3 pt-6 text-label text-white/50 md:flex-row md:items-center md:justify-between">
+          <p>{t("copyright", { year: currentYear })}</p>
+          <p>
+            {t("location")} {t("timezone")}
+          </p>
         </div>
       </div>
     </footer>

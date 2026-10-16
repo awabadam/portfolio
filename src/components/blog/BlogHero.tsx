@@ -12,7 +12,7 @@ export default function BlogHero({ postCount }: BlogHeroProps) {
   return (
     <div className="container mx-auto mb-24 px-4">
       <ScrollReveal animation="fadeUp">
-        <h1 className="font-display text-display-1 font-bold leading-none tracking-tighter">
+        <h1 className="font-display text-hero">
           {t('heroTitle')}
           <span className="ms-4 text-lg font-normal tracking-normal text-muted-foreground md:text-xl">
             ({postCount})

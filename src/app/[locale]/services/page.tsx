@@ -53,7 +53,7 @@ export default function ServicesPage() {
       {/* Hero */}
       <section className="container mx-auto px-4 pb-24">
         <ScrollReveal animation="blurUp">
-          <h1 className="font-display text-display-1 font-bold leading-none tracking-tighter">
+          <h1 className="font-display text-hero">
             {t("heading")}
           </h1>
         </ScrollReveal>

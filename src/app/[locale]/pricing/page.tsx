@@ -100,7 +100,7 @@ export default function PricingPage() {
           <p className="mb-4 font-mono text-sm uppercase tracking-widest text-muted-foreground">
             {t("heroEyebrow")}
           </p>
-          <h1 className="mx-auto max-w-4xl font-display text-display-1 font-bold leading-none tracking-tighter">
+          <h1 className="mx-auto max-w-4xl font-display text-hero">
             {t("heroHeading")}
           </h1>
         </ScrollReveal>

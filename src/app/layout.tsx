@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
-import { Inter as FontSans, Space_Grotesk as FontDisplay, Cairo as FontArabic } from "next/font/google";
+import { Inter as FontSans, Azeret_Mono as FontMono, Cairo as FontArabic } from "next/font/google";
+import localFont from "next/font/local";
 import Script from "next/script";
 import "./globals.css";
 import { cn } from "@/lib/utils";
@@ -11,10 +12,19 @@ const fontSans = FontSans({
   display: "swap",
 });
 
-const fontDisplay = FontDisplay({
-  subsets: ["latin"],
+// Switzer (variable) — display face for headings, labels and nav.
+const fontDisplay = localFont({
+  src: "../../public/fonts/switzer/Switzer-Variable.woff2",
   variable: "--font-display",
-  weight: ["400", "500", "700"],
+  weight: "100 900",
+  display: "swap",
+});
+
+// Azeret Mono — kickers, arrows and small mono labels.
+const fontMono = FontMono({
+  subsets: ["latin"],
+  variable: "--font-mono",
+  weight: "400",
   display: "swap",
 });
 
@@ -33,7 +43,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   viewportFit: "cover",
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: light)", color: "#f7f7f7" },
     { media: "(prefers-color-scheme: dark)", color: "#000000" },
   ],
 };
@@ -139,20 +149,13 @@ export default function RootLayout({
         */}
         <link rel="preconnect" href="https://www.googletagmanager.com" />
         <link rel="preconnect" href="https://www.google-analytics.com" crossOrigin="anonymous" />
-        {/* Instant dark cover for loading screen — prevents content flash
-            before React hydrates. Removed by LoadingScreen component, which
-            only mounts under [locale], so skip /login and /admin. */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(function(){try{if(!/^\\/(login|admin)(\\/|$)/.test(location.pathname)&&!sessionStorage.getItem("intro-shown")){var d=document.createElement("div");d.id="intro-cover";d.style.cssText="position:fixed;inset:0;z-index:9999;background:#0a0a0a";document.documentElement.appendChild(d)}}catch(e){}})()`,
-          }}
-        />
       </head>
       <body
         className={cn(
           "h-full w-screen overflow-x-clip bg-background font-sans antialiased",
           fontSans.variable,
           fontDisplay.variable,
+          fontMono.variable,
           fontArabic.variable,
         )}
       >

@@ -51,6 +51,8 @@ const config: Config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        // Accent blue — inline text links ONLY (dubs rule).
+        link: "hsl(var(--accent-link))",
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -60,12 +62,14 @@ const config: Config = {
       fontFamily: {
         sans: ["var(--font-sans)", ...fontFamily.sans],
         display: ["var(--font-display)", ...fontFamily.sans],
+        mono: ["var(--font-mono)", ...fontFamily.mono],
       },
       fontSize: {
-        "display-1": ["clamp(64px, 12vw, 120px)", { lineHeight: "1", letterSpacing: "-0.02em", fontWeight: "700" }],
-        "display-2": ["clamp(48px, 8vw, 96px)", { lineHeight: "1.1", letterSpacing: "-0.02em", fontWeight: "700" }],
-        "display-3": ["clamp(36px, 6vw, 72px)", { lineHeight: "1.1", letterSpacing: "-0.01em", fontWeight: "600" }],
-        "display-4": ["clamp(28px, 5vw, 56px)", { lineHeight: "1.2", letterSpacing: "-0.01em", fontWeight: "600" }],
+        // dubs type scale — restrained, weight 400 headings, tight tracking.
+        label: ["13px", { lineHeight: "1", letterSpacing: "-0.01em", fontWeight: "500" }],
+        "card-title": ["28px", { lineHeight: "1.1", letterSpacing: "-0.03em", fontWeight: "400" }],
+        heading: ["clamp(36px, 4vw, 50px)", { lineHeight: "1.1", letterSpacing: "-0.03em", fontWeight: "400" }],
+        hero: ["clamp(40px, 5vw, 64px)", { lineHeight: "1.05", letterSpacing: "-0.03em", fontWeight: "400" }],
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",

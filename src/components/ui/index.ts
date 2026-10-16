@@ -19,3 +19,5 @@ export * from "./navigation-menu";
 export * from "./avatar";
 export * from "./checkbox";
 export * from "./separator";
+
+export { GlassPill, type GlassPillProps, type GlassPillTone } from "./glass-pill";

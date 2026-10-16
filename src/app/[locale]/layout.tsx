@@ -8,15 +8,7 @@ import { ConditionalLayout, ConditionalFooter } from "@/components/layout/Condit
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 import PageTracking from "@/components/PageTracking";
 import { WhatsAppProvider } from "@/components/chat/WhatsAppContext";
-import dynamic from "next/dynamic";
-import { ScrollProgress, SmoothScroll, NoiseOverlay } from "@/components/effects";
-
-const PageTransition = dynamic(
-  () => import("@/components/effects/PageTransition"),
-);
-const LoadingScreen = dynamic(
-  () => import("@/components/effects/LoadingScreen"),
-);
+import SmoothScroll from "@/components/effects/SmoothScroll";
 import { Toaster } from "@/components/ui/toaster";
 
 export function generateStaticParams() {
@@ -51,14 +43,11 @@ export default async function LocaleLayout({
           disableTransitionOnChange
         >
           <WhatsAppProvider>
-            <LoadingScreen />
             <GoogleAnalytics />
             <PageTracking />
-            <ScrollProgress />
             <SmoothScroll />
-            <NoiseOverlay />
             <ConditionalLayout />
-            <PageTransition>{children}</PageTransition>
+            <div className="flex min-h-screen w-full flex-col">{children}</div>
             <ConditionalFooter />
             <Toaster position="top-right" richColors closeButton />
           </WhatsAppProvider>

@@ -5,7 +5,7 @@
 @layer base {
   :root {
     /* Light mode - Clean white and grays */
-    --background: 0 0% 98%;          /* Light gray background */
+    --background: 0 0% 97%;          /* Light gray background (#f7f7f7) */
     --foreground: 0 0% 0%;           /* Pure black text */
     --card: 0 0% 100%;               /* Pure white cards */
     --card-foreground: 0 0% 0%;      /* Black text on cards */
@@ -24,6 +24,7 @@
     --border: 0 0% 89%;              /* Light gray borders */
     --input: 0 0% 89%;               /* Light gray inputs */
     --ring: 0 0% 0%;                 /* Black focus rings */
+    --accent-link: 204 100% 50%;     /* rgb(0,153,255) — inline text links only */
     --radius: 0.5rem;
   }
 
@@ -48,6 +49,7 @@
     --border: 220 13% 20%;           /* Medium gray borders with blue hint */
     --input: 220 13% 20%;            /* Medium gray inputs with blue hint */
     --ring: 0 0% 83%;                /* Light gray focus rings */
+    --accent-link: 204 100% 50%;     /* rgb(0,153,255) — inline text links only */
   }
 }
 
@@ -55,9 +57,8 @@
   * {
     @apply border-border;
   }
-  html {
-    scroll-behavior: smooth;
-  }
+  /* No native scroll-behavior: smooth — Lenis (SmoothScroll) handles it on
+     pointer devices, and the two fight each other on anchor jumps. */
   body {
     @apply bg-background text-foreground;
   }
@@ -70,6 +71,10 @@
 }
 [lang="ar"] .font-display {
   font-family: var(--font-arabic), var(--font-display), sans-serif;
+}
+/* Azeret Mono has no Arabic glyphs — kickers/labels fall back to Cairo. */
+[lang="ar"] .font-mono {
+  font-family: var(--font-arabic), var(--font-sans), sans-serif;
 }
 
 /* Custom Scrollbar */
