@@ -2,3 +2,4 @@ node_modules
 renders
 /*.html
 !/template.html
+.hyperframes
