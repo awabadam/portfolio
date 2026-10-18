@@ -10,6 +10,8 @@ import { getPlaybook, leadTrackerCsv } from "@/lib/playbook";
 import { createPlaybookKey } from "@/lib/playbookKey";
 import { playbookHref } from "@/lib/playbookMeta";
 import { localeUrl } from "@/lib/seo";
+import { buildAdminPlaybookAlert } from "@/emails/AdminPlaybookAlert";
+import { buildPlaybookAccessEmail } from "@/emails/PlaybookAccess";
 
 /**
  * POST /api/playbook: the direct path to the playbook, without the check.
@@ -29,30 +31,6 @@ const bodySchema = z.object({
   // Honeypot: real users never fill this.
   company_website: z.string().max(300).optional().default(""),
 });
-
-type Messages = {
-  email: { greeting: string; whatsapp: string; signoff: string };
-  playbook: {
-    email: {
-      subject: string;
-      heading: string;
-      text: string;
-      csvNote: string;
-      summaryIntro: string;
-      checkLine: string;
-      packLine: string;
-    };
-  };
-};
-
-async function loadMessages(locale: Locale): Promise<Messages> {
-  const mod = (await import(`@/messages/${locale}.json`)) as { default: { audit: Messages } };
-  return mod.default.audit;
-}
-
-function fill(template: string, values: Record<string, string | number>) {
-  return template.replace(/\{(\w+)\}/g, (_, k) => (k in values ? String(values[k]) : `{${k}}`));
-}
 
 export async function POST(request: Request) {
   const rate = checkRateLimit(getIdentifier(request), RATE_LIMIT);
@@ -128,60 +106,38 @@ export async function POST(request: Request) {
   let confirmed = false;
   if (isEmailConfigured()) {
     const transporter = createEmailTransport();
-    const [m, playbook] = await Promise.all([loadMessages(locale), getPlaybook(locale)]);
+    const playbook = await getPlaybook(locale);
     const csv = leadTrackerCsv(playbook);
 
-    const adminResult = await sendEmail(
-      {
-        to: NOTIFICATION_RECIPIENT(),
-        replyTo: data.email,
-        subject: `Playbook download: ${website ?? data.email}`,
-        text: [
-          "Playbook requested (direct, no check).",
-          "",
-          `Email:    ${data.email}`,
-          `Website:  ${website ?? "-"}`,
-          `Locale:   ${locale}`,
-          `Lead id:  ${leadId ?? "not saved"}`,
-        ].join("\n"),
-      },
-      transporter,
-    );
-    notified = adminResult.sent;
+    // Rendering is best effort like sending: a template error never fails the request.
+    try {
+      const admin = await buildAdminPlaybookAlert({ email: data.email, website, locale, leadId });
+      const adminResult = await sendEmail(
+        { to: NOTIFICATION_RECIPIENT(), replyTo: data.email, subject: admin.subject, text: admin.text, html: admin.html },
+        transporter,
+      );
+      notified = adminResult.sent;
+    } catch (error) {
+      console.error("[playbook] failed to render the admin alert:", error);
+    }
 
-    const userText = [
-      m.email.greeting,
-      "",
-      m.playbook.email.heading,
-      m.playbook.email.text,
-      playbookUrl,
-      "",
-      ...(csv ? [m.playbook.email.csvNote, ""] : []),
-      m.playbook.email.packLine,
-      "",
-      m.playbook.email.summaryIntro,
-      ...playbook.summary.slice(0, 3).map((line, i) => `${i + 1}. ${line}`),
-      "",
-      fill(m.playbook.email.checkLine, { url: localeUrl("/audit", locale) }),
-      "",
-      fill(m.email.whatsapp, { number: "+90 554 175 9945" }),
-      "",
-      m.email.signoff,
-      "Awab Elkhalil",
-      "https://www.awab.design",
-    ].join("\n");
-
-    const userResult = await sendEmail(
-      {
-        to: data.email,
-        replyTo: NOTIFICATION_RECIPIENT(),
-        subject: m.playbook.email.subject,
-        text: userText,
-        attachments: csv ? [{ filename: csv.filename, content: csv.content, contentType: "text/csv; charset=utf-8" }] : undefined,
-      },
-      transporter,
-    );
-    confirmed = userResult.sent;
+    try {
+      const access = await buildPlaybookAccessEmail({ locale, playbookUrl, playbook, csvAttached: Boolean(csv) });
+      const userResult = await sendEmail(
+        {
+          to: data.email,
+          replyTo: NOTIFICATION_RECIPIENT(),
+          subject: access.subject,
+          text: access.text,
+          html: access.html,
+          attachments: csv ? [{ filename: csv.filename, content: csv.content, contentType: "text/csv; charset=utf-8" }] : undefined,
+        },
+        transporter,
+      );
+      confirmed = userResult.sent;
+    } catch (error) {
+      console.error("[playbook] failed to render the playbook email:", error);
+    }
   } else {
     console.warn("[playbook] email not configured; lead saved without notification", { leadId });
   }

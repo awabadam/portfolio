@@ -55,7 +55,7 @@ export async function sendEmail(
   }
   try {
     await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+      from: { name: "Awab Elkhalil", address: process.env.EMAIL_USER ?? "" },
       to: options.to,
       replyTo: options.replyTo,
       subject: options.subject,

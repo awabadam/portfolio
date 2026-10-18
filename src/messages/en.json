@@ -464,7 +464,18 @@
       "Your site and your markets, in 15 minutes",
       "What I would fix first, and what it would cost",
       "A fixed quote afterwards if you want one"
-    ]
+    ],
+    "email": {
+      "subject": "Thanks, {name}. I got your message",
+      "subjectNoName": "Thanks, I got your message",
+      "preheader": "I reply within 24 hours, usually sooner.",
+      "kicker": "Message received",
+      "heading": "Thanks, I got your message",
+      "text": "I read every message myself and will reply within 24 hours, usually sooner, with questions or a fixed quote.",
+      "yourMessage": "Your message",
+      "button": "See recent clinic projects",
+      "footer": "You are getting this email because you sent a message through awab.design. If that wasn't you, you can ignore it."
+    }
   },
   "thankYou": {
     "quoteHeading": "Quote request received",
@@ -773,24 +784,16 @@
     "resultOutOf": "out of 100",
     "bands": {
       "losing": {
-        "name": "Losing patients",
-        "text": "Patients who find you today are mostly leaving before they write. The good news: the first fixes are the ones with the biggest effect.",
-        "meaning": "Most of the patients your ads and Google send you are leaving before they write. Every week this stays as it is, that budget buys clicks, not patients."
+        "name": "Losing patients"
       },
       "starting": {
-        "name": "Getting started",
-        "text": "The basics exist, but there are gaps in the path from reading to asking. Closing the three below will show in your inquiries within weeks.",
-        "meaning": "You are getting inquiries, but paying for far more visits than you turn into patients. The three fixes below close the gap where most of them drop out."
+        "name": "Getting started"
       },
       "competitive": {
-        "name": "Competitive",
-        "text": "Your site holds up against most clinics competing for the same patients. The remaining fixes are about measuring and feeding your ads.",
-        "meaning": "Patients who land on your site are writing. The money left on the table is in what happens after: knowing which patients came from where, and teaching your ads to find more of them."
+        "name": "Competitive"
       },
       "ready": {
-        "name": "Ready",
-        "text": "Your site is doing the work. The gains now come from tuning: faster pages, better tracking and sending booked patients back to your ads.",
-        "meaning": "Your site is doing its job. From here, growth comes from the system around it: tracking every inquiry through to a booking and letting your ad budget follow the patients who actually come."
+        "name": "Ready"
       }
     },
     "fixesHeading": "Your 3 fixes, in order",
@@ -829,7 +832,7 @@
       "rateLimited": "Too many requests from this connection. Try again in an hour or message me on WhatsApp."
     },
     "email": {
-      "subject": "Your score: {score}/100, and the 3 fixes that will bring more patients",
+      "subject": "{domain} scored {score}/100: 3 fixes from Awab",
       "greeting": "Hello,",
       "greetingNamed": "Hello {name},",
       "scoreLine": "Your website {website} scored {score}/100: {band}.",
@@ -837,7 +840,59 @@
       "promise": "I will go through your site myself and send you a written audit within 48 hours, with what each fix is worth to you and what to do first.",
       "diy": "Prefer to fix it yourself? The 3 fixes above are enough to start. If you want it done, the Clinic Website package starts at $2,500.",
       "whatsapp": "Questions in the meantime? WhatsApp: {number}",
-      "signoff": "Best regards,"
+      "signoff": "Best regards,",
+      "preheader": "Your free playbook is inside. Personal audit within 48 hours.",
+      "kicker": "Clinic check",
+      "introLabel": "A note from Awab",
+      "askLabel": "Your turn",
+      "scoreKicker": "Readiness score",
+      "checksHeading": "Your 10 checks",
+      "legendYes": "In place",
+      "legendPartly": "Partly",
+      "legendNo": "Missing",
+      "readChapter": "Read chapter {n} ({minutes} min)",
+      "whatsappLink": "Ask about {domain} on WhatsApp",
+      "whatsappPrefill": "Hi Awab, I just did the clinic check for {website}. I have a question:",
+      "bookLink": "Book a 15-minute call",
+      "nextHeading": "What happens next",
+      "nextToday": "Today",
+      "nextTodayText": "Your playbook, ready now. Start with the chapter for fix 1.",
+      "next48": "Within 48 hours",
+      "next48Text": "A personal written audit of your site, from me: what each fix is worth and what to do first.",
+      "next2days": "In 2 days",
+      "next2daysText": "The Template Pack: all 17 templates in one PDF, ready to share with your team.",
+      "signatureRole": "Web designer for clinics, Istanbul",
+      "footer": "You are getting this email because you took the free clinic check on awab.design. Just reply to reach me.",
+      "ack": "You checked {domain} against the 10 things patients abroad look for before they write. It scored {score}/100.",
+      "complimentTwo": "Your site already does what most clinics skip: {a}, and {b}.",
+      "complimentOne": "Your site already does what most clinics skip: {a}.",
+      "complimentNone": "You took two minutes to check your site, which most clinics never do.",
+      "askIntro": "One question before I write your audit:",
+      "askReply": "Just reply to this email; one line is enough.",
+      "compliments": {
+        "languages": "you have full pages in your patients' languages",
+        "journey": "you explain the whole trip, not just the treatment",
+        "whatsapp": "patients can reach you on WhatsApp from every treatment page",
+        "speed": "your pages load fast on a phone",
+        "treatments": "your treatment pages show a price range and recovery time",
+        "credentials": "your doctors' credentials are easy to find",
+        "gallery": "you show before-and-after results with consent",
+        "booking": "a patient can ask for a consultation in two taps",
+        "tracking": "you know which country and source each inquiry came from",
+        "feedback": "you report booked patients back to your ads"
+      },
+      "asks": {
+        "languages": "Which country sends you the most patients right now?",
+        "journey": "What question do your coordinators answer most often on WhatsApp?",
+        "whatsapp": "When a patient messages you on WhatsApp at 11pm, who answers, and when?",
+        "speed": "Is your site built on WordPress, or something else?",
+        "treatments": "Which treatment brings you the most patients from abroad?",
+        "credentials": "Which of your doctors do patients ask for by name?",
+        "gallery": "Do you have signed consent for the before-and-after photos you already have?",
+        "booking": "When a patient fills your form, who sees it first, and how fast?",
+        "tracking": "Where do your inquiries land today: WhatsApp, email or a CRM?",
+        "feedback": "Roughly how much do you spend on ads each month?"
+      }
     },
     "ctaBlock": {
       "eyebrow": "Free playbook",
@@ -976,7 +1031,10 @@
         "subject": "Your playbook: The 30-Day International Patient Website Playbook",
         "summaryIntro": "If you read nothing else, start with these:",
         "checkLine": "Not sure which chapter to start with? The free 2-minute check gives you your score and your 3 fixes in order: {url}",
-        "packLine": "In 2 days I will email you the Template Pack: all 17 templates in one PDF, ready to print or share with your team."
+        "packLine": "In 2 days I will email you the Template Pack: all 17 templates in one PDF, ready to print or share with your team.",
+        "preheader": "10 chapters, 17 templates and a lead tracker. Your personal link is inside.",
+        "nextTodayText": "Your playbook, ready now.",
+        "footer": "You are getting this email because you asked for the playbook on awab.design. Just reply to reach me."
       }
     },
     "inside": {
@@ -1148,7 +1206,25 @@
       "startWith": "Start with three: the pre-filled WhatsApp messages, the first-reply scripts and the price range table. They take an afternoon, and they decide whether a patient books.",
       "auditCta": "Not sure where your site loses patients? The free 2-minute check shows you: {url}",
       "callCta": "Rather talk it through? Book a 15-minute call with me: {url}",
-      "stop": "Not useful? Reply \"stop\" and I won't email you again."
+      "stop": "Not useful? Reply \"stop\" and I won't email you again.",
+      "preheader": "All 17 templates in one PDF. Start with these three.",
+      "kicker": "Template Pack",
+      "button": "Download the Template Pack (PDF)",
+      "footer": "You are getting this email because you got the playbook on awab.design."
+    },
+    "summaryLine": "{yes} of 10 checks in place. Biggest gap: {gap}.",
+    "summaryAllDone": "All 10 checks in place.",
+    "gaps": {
+      "languages": "pages in your patients' languages",
+      "journey": "a page that explains the whole trip",
+      "whatsapp": "WhatsApp on your treatment pages",
+      "speed": "loading speed on a phone",
+      "treatments": "prices and recovery time on treatment pages",
+      "credentials": "doctor credentials patients can check",
+      "gallery": "before-and-after results with consent",
+      "booking": "a short path to a consultation request",
+      "tracking": "knowing where each inquiry comes from",
+      "feedback": "reporting booked patients back to your ads"
     }
   },
   "related": {

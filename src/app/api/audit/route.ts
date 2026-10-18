@@ -25,11 +25,13 @@ import {
 } from "@/lib/audit";
 import { locales, defaultLocale, type Locale } from "@/i18n/config";
 import { SCAN_VERSION, scanChecksSchema, scanFactsForEmail, type ScanChecks } from "@/lib/auditScan";
-import { chapterById, getPlaybook, leadTrackerCsv } from "@/lib/playbook";
+import { getPlaybook, leadTrackerCsv } from "@/lib/playbook";
 import { createPlaybookKey } from "@/lib/playbookKey";
 import { verifyAuditLeadToken } from "@/lib/auditLeadToken";
 import { playbookHref } from "@/lib/playbookMeta";
 import { localeUrl } from "@/lib/seo";
+import { buildAdminAuditAlert } from "@/emails/AdminAuditAlert";
+import { buildAuditReportEmail } from "@/emails/AuditReport";
 
 /**
  * POST /api/audit — "International Patient Readiness Score" lead capture.
@@ -45,7 +47,8 @@ import { localeUrl } from "@/lib/seo";
  * so older clients that send less still work; without role, channel, timeline
  * and budgetFit the tier is provisional (see computeTier).
  * Email failures never fail the request: the lead is already saved. A hot lead
- * turns Awab's notification into the hot-lead alert (subject "Hot audit lead: ...").
+ * turns Awab's notification into the hot-lead alert (subject "Hot: {clinic} · ...",
+ * see src/emails/AdminAuditAlert.tsx).
  * `partialToken` (from POST /api/audit/start) turns the partial lead saved on
  * the website step into this complete one (same row, created_at kept,
  * metadata.partial = false); a missing, forged or already completed token
@@ -86,42 +89,6 @@ const bodySchema = z.object({
 });
 
 const MAX_SCAN_JSON = 8000;
-
-type AuditMessages = {
-  questions: Record<QuestionId, { q: string; why: string; fix: string; impact: string }>;
-  bands: Record<string, { name: string; text: string; meaning: string }>;
-  impactLabel: string;
-  email: {
-    subject: string;
-    greeting: string;
-    greetingNamed: string;
-    scoreLine: string;
-    fixesIntro: string;
-    promise: string;
-    diy: string;
-    whatsapp: string;
-    signoff: string;
-  };
-  playbook: {
-    email: {
-      heading: string;
-      text: string;
-      stepsIntro: string;
-      chapterLine: string;
-      csvNote: string;
-      packLine: string;
-    };
-  };
-};
-
-async function loadAuditMessages(locale: Locale): Promise<AuditMessages> {
-  const mod = (await import(`@/messages/${locale}.json`)) as { default: { audit: AuditMessages } };
-  return mod.default.audit;
-}
-
-function fill(template: string, values: Record<string, string | number>) {
-  return template.replace(/\{(\w+)\}/g, (_, k) => (k in values ? String(values[k]) : `{${k}}`));
-}
 
 export async function POST(request: Request) {
   const identifier = getIdentifier(request);
@@ -288,119 +255,70 @@ export async function POST(request: Request) {
   let confirmed = false;
   if (isEmailConfigured()) {
     const transporter = createEmailTransport();
-    const [m, playbook] = await Promise.all([loadAuditMessages(locale), getPlaybook(locale)]);
-
-    const answerLines = QUESTION_IDS.map(
-      (id) => `  [${(answers[id] ?? "-").padEnd(6)}] ${m.questions[id].q}`,
-    ).join("\n");
-
-    const adminText = [
-      hot
-        ? `Hot clinic audit lead (score ${score}/100, ${band}, v${AUDIT_VERSION}). They were shown the booking calendar.`
-        : `Clinic audit request (score ${score}/100, ${band}, v${AUDIT_VERSION})`,
-      "",
-      `Website:  ${website}`,
-      `Clinic:   ${data.clinic || "-"}`,
-      `Name:     ${data.name || "-"}`,
-      `Email:    ${data.email}`,
-      `Phone:    ${data.phone || "-"}`,
-      `Markets:  ${marketsLabel}`,
-      `Treats:   ${data.treatments ?? "-"}`,
-      `Volume:   ${data.volume ?? "-"} international patients/month`,
-      `Role:     ${qualification?.role ?? "-"}`,
-      `Channels: ${qualification?.channel.join(", ") ?? "-"}`,
-      `Timeline: ${qualification?.timeline ?? "-"}`,
-      `Budget:   ${qualification?.budgetFit ?? "-"}`,
-      `Tier:     ${tier}${qualification ? "" : " (provisional, no qualification answers)"}`,
-      `Locale:   ${locale}`,
-      `Lead id:  ${leadId ?? "not saved"}`,
-      "",
-      "Answers:",
-      answerLines,
-      "",
-      `Top fixes: ${fixes.join(", ")}`,
-      "",
-      ...(scan
-        ? ["Automated scan of the home page:", ...scanFacts.map((f) => `  - ${f}`), ""]
-        : ["Automated scan: not run (skipped or failed).", ""]),
-      "Promise made: a personal written audit within 48 hours.",
-    ].join("\n");
-
-    const adminResult = await sendEmail(
-      {
-        to: NOTIFICATION_RECIPIENT(),
-        replyTo: data.email,
-        subject: hot
-          ? `Hot audit lead: ${data.clinic || website} (${score}/100)`
-          : `Clinic audit: ${data.clinic || website} (${score}/100, ${tier})`,
-        text: adminText,
-      },
-      transporter,
-    );
-    notified = adminResult.sent;
-
-    // Each fix: the audit's fix text, then the matching playbook chapter and its first two steps.
-    const fixesText = fixes
-      .map((id, i) => {
-        const chapter = chapterById(playbook, id);
-        const chapterIndex = playbook.chapters.findIndex((c) => c.id === id) + 1;
-        const lines = [
-          `${i + 1}. ${m.questions[id].q}`,
-          `   ${m.questions[id].fix}`,
-          `   ${m.impactLabel}: ${m.questions[id].impact}`,
-        ];
-        if (chapter) {
-          lines.push(
-            "",
-            `   ${fill(m.playbook.email.chapterLine, { n: chapterIndex, title: chapter.title, minutes: chapter.minutes })}`,
-            `   ${m.playbook.email.stepsIntro}`,
-            ...chapter.steps.slice(0, 2).flatMap((step, j) => [`   ${j + 1}) ${step.title}`, `      ${step.body}`]),
-          );
-        }
-        return lines.join("\n");
-      })
-      .join("\n\n");
-    const greeting = data.name ? fill(m.email.greetingNamed, { name: data.name }) : m.email.greeting;
+    const playbook = await getPlaybook(locale);
     const csv = leadTrackerCsv(playbook);
-    const userText = [
-      greeting,
-      "",
-      fill(m.email.scoreLine, { score, band: m.bands[band].name, website }),
-      m.bands[band].meaning,
-      "",
-      m.email.fixesIntro,
-      "",
-      fixesText,
-      "",
-      m.playbook.email.heading,
-      m.playbook.email.text,
-      playbookUrl,
-      "",
-      ...(csv ? [m.playbook.email.csvNote, ""] : []),
-      m.playbook.email.packLine,
-      "",
-      m.email.promise,
-      "",
-      m.email.diy,
-      "",
-      fill(m.email.whatsapp, { number: "+90 554 175 9945" }),
-      "",
-      m.email.signoff,
-      "Awab Elkhalil",
-      "https://www.awab.design",
-    ].join("\n");
 
-    const userResult = await sendEmail(
-      {
-        to: data.email,
-        replyTo: NOTIFICATION_RECIPIENT(),
-        subject: fill(m.email.subject, { score }),
-        text: userText,
-        attachments: csv ? [{ filename: csv.filename, content: csv.content, contentType: "text/csv; charset=utf-8" }] : undefined,
-      },
-      transporter,
-    );
-    confirmed = userResult.sent;
+    // Rendering is best effort like sending: a template error never fails the request.
+    try {
+      const admin = await buildAdminAuditAlert({
+        tier,
+        provisional: !qualification,
+        score,
+        band,
+        website,
+        clinic: data.clinic,
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        markets,
+        treatments: data.treatments ?? null,
+        volume: data.volume ?? null,
+        qualification,
+        answers,
+        fixes,
+        scanFacts: scan ? scanFacts : null,
+        locale,
+        leadId,
+        auditVersion: AUDIT_VERSION,
+      });
+      const adminResult = await sendEmail(
+        { to: NOTIFICATION_RECIPIENT(), replyTo: data.email, subject: admin.subject, text: admin.text, html: admin.html },
+        transporter,
+      );
+      notified = adminResult.sent;
+    } catch (error) {
+      console.error("[audit] failed to render the admin alert:", error);
+    }
+
+    try {
+      const report = await buildAuditReportEmail({
+        locale,
+        name: data.name,
+        website,
+        score,
+        band,
+        answers,
+        fixes,
+        playbookUrl,
+        playbook,
+        hot,
+        csvAttached: Boolean(csv),
+      });
+      const userResult = await sendEmail(
+        {
+          to: data.email,
+          replyTo: NOTIFICATION_RECIPIENT(),
+          subject: report.subject,
+          text: report.text,
+          html: report.html,
+          attachments: csv ? [{ filename: csv.filename, content: csv.content, contentType: "text/csv; charset=utf-8" }] : undefined,
+        },
+        transporter,
+      );
+      confirmed = userResult.sent;
+    } catch (error) {
+      console.error("[audit] failed to render the audit report email:", error);
+    }
   } else {
     console.warn("[audit] email not configured; lead saved without notification", { leadId, score });
   }

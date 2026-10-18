@@ -464,7 +464,18 @@
       "Votre site et vos marchés, en 15 minutes",
       "Ce que je corrigerais en premier, et à quel prix",
       "Un devis ferme ensuite, si vous le souhaitez"
-    ]
+    ],
+    "email": {
+      "subject": "Merci {name}, j'ai bien reçu votre message",
+      "subjectNoName": "Merci, j'ai bien reçu votre message",
+      "preheader": "Je réponds sous 24 heures, souvent plus vite.",
+      "kicker": "Message reçu",
+      "heading": "Merci, j'ai bien reçu votre message",
+      "text": "Je lis chaque message moi-même et je vous réponds sous 24 heures, souvent plus vite, avec mes questions ou un devis fixe.",
+      "yourMessage": "Votre message",
+      "button": "Voir des projets de cliniques récents",
+      "footer": "Vous recevez cet email parce que vous avez envoyé un message via awab.design. Si ce n'était pas vous, ignorez-le."
+    }
   },
   "thankYou": {
     "quoteHeading": "Demande de devis reçue",
@@ -773,24 +784,16 @@
     "resultOutOf": "sur 100",
     "bands": {
       "losing": {
-        "name": "Vous perdez des patients",
-        "text": "Les patients qui vous trouvent aujourd'hui partent pour la plupart avant d'écrire. La bonne nouvelle : les premières corrections sont celles qui ont le plus d'effet.",
-        "meaning": "La plupart des patients que vos publicités et Google vous envoient partent avant d'écrire. Chaque semaine où rien ne change, ce budget achète des clics, pas des patients."
+        "name": "Vous perdez des patients"
       },
       "starting": {
-        "name": "En cours de route",
-        "text": "Les bases existent, mais il y a des trous dans le chemin entre lire et demander. Combler les trois ci-dessous se verra dans vos demandes en quelques semaines.",
-        "meaning": "Vous recevez des demandes, mais vous payez bien plus de visites que vous ne transformez en patients. Les trois corrections ci-dessous comblent le trou par lequel la plupart s'échappent."
+        "name": "En cours de route"
       },
       "competitive": {
-        "name": "Compétitif",
-        "text": "Votre site tient face à la plupart des cliniques qui visent les mêmes patients. Les corrections restantes concernent la mesure et l'alimentation de vos publicités.",
-        "meaning": "Les patients qui arrivent sur votre site écrivent. L'argent laissé sur la table est dans ce qui vient après : savoir d'où vient chaque patient, et apprendre à vos publicités à en trouver davantage."
+        "name": "Compétitif"
       },
       "ready": {
-        "name": "Prêt",
-        "text": "Votre site fait le travail. Les gains viennent maintenant du réglage : des pages plus rapides, un meilleur suivi et le renvoi des patients réservés vers vos publicités.",
-        "meaning": "Votre site fait son travail. À partir d'ici, la croissance vient du système autour : suivre chaque demande jusqu'à la réservation et laisser votre budget publicitaire suivre les patients qui viennent vraiment."
+        "name": "Prêt"
       }
     },
     "fixesHeading": "Vos 3 corrections, dans l'ordre",
@@ -829,7 +832,7 @@
       "rateLimited": "Trop de demandes depuis cette connexion. Réessayez dans une heure ou écrivez-moi sur WhatsApp."
     },
     "email": {
-      "subject": "Votre score : {score}/100, et les 3 corrections qui apporteront plus de patients",
+      "subject": "{domain} obtient {score}/100 : 3 corrections de la part d'Awab",
       "greeting": "Bonjour,",
       "greetingNamed": "Bonjour {name},",
       "scoreLine": "Votre site {website} a obtenu {score}/100 : {band}.",
@@ -837,7 +840,59 @@
       "promise": "Je passe votre site en revue moi-même et vous envoie un audit écrit sous 48 heures, avec ce que chaque correction vaut pour vous et par quoi commencer.",
       "diy": "Vous préférez corriger vous-même ? Les 3 corrections ci-dessus suffisent pour commencer. Si vous voulez que ce soit fait pour vous, le pack Site de clinique démarre à 2 500 $.",
       "whatsapp": "Des questions entre-temps ? WhatsApp : {number}",
-      "signoff": "Cordialement,"
+      "signoff": "Cordialement,",
+      "preheader": "Votre playbook gratuit est à l'intérieur. Audit personnel sous 48 heures.",
+      "kicker": "Check de clinique",
+      "introLabel": "Un mot d'Awab",
+      "askLabel": "À vous",
+      "scoreKicker": "Score de préparation",
+      "checksHeading": "Vos 10 points de contrôle",
+      "legendYes": "En place",
+      "legendPartly": "Partiel",
+      "legendNo": "Absent",
+      "readChapter": "Lire le chapitre {n} ({minutes} min)",
+      "whatsappLink": "Écrivez-moi sur WhatsApp à propos de {domain}",
+      "whatsappPrefill": "Bonjour Awab, je viens de faire le check de clinique pour {website}. J'ai une question :",
+      "bookLink": "Réserver un appel de 15 minutes",
+      "nextHeading": "La suite",
+      "nextToday": "Aujourd'hui",
+      "nextTodayText": "Votre playbook, disponible dès maintenant. Commencez par le chapitre de la correction 1.",
+      "next48": "Sous 48 heures",
+      "next48Text": "Un audit écrit de votre site, fait par moi : ce que vaut chaque correction et par quoi commencer.",
+      "next2days": "Dans 2 jours",
+      "next2daysText": "Le pack de modèles : les 17 modèles dans un seul PDF, prêts à partager avec votre équipe.",
+      "signatureRole": "Web designer pour cliniques, Istanbul",
+      "footer": "Vous recevez cet email parce que vous avez fait le check gratuit de clinique sur awab.design. Répondez simplement pour me joindre.",
+      "ack": "Vous avez vérifié {domain} sur les 10 points que les patients étrangers regardent avant d'écrire. Il obtient {score}/100.",
+      "complimentTwo": "Votre site fait déjà ce que la plupart des cliniques négligent : {a}, et {b}.",
+      "complimentOne": "Votre site fait déjà ce que la plupart des cliniques négligent : {a}.",
+      "complimentNone": "Vous avez pris deux minutes pour vérifier votre site, ce que la plupart des cliniques ne font jamais.",
+      "askIntro": "Une question avant que j'écrive votre audit :",
+      "askReply": "Répondez simplement à cet e-mail ; une ligne suffit.",
+      "compliments": {
+        "languages": "vous avez des pages complètes dans les langues de vos patients",
+        "journey": "vous expliquez tout le séjour, pas seulement le traitement",
+        "whatsapp": "les patients peuvent vous écrire sur WhatsApp depuis chaque page de traitement",
+        "speed": "vos pages se chargent vite sur un téléphone",
+        "treatments": "vos pages de traitement indiquent une fourchette de prix et la durée de récupération",
+        "credentials": "les qualifications de vos médecins sont faciles à trouver",
+        "gallery": "vous montrez des résultats avant-après avec consentement",
+        "booking": "un patient peut demander une consultation en deux clics",
+        "tracking": "vous savez de quel pays et de quelle source vient chaque demande",
+        "feedback": "vous remontez les patients réservés à vos campagnes publicitaires"
+      },
+      "asks": {
+        "languages": "Quel pays vous envoie le plus de patients en ce moment ?",
+        "journey": "Quelle question vos coordinateurs reçoivent-ils le plus souvent sur WhatsApp ?",
+        "whatsapp": "Quand un patient vous écrit sur WhatsApp à 23 h, qui répond, et quand ?",
+        "speed": "Votre site est-il construit sur WordPress, ou sur autre chose ?",
+        "treatments": "Quel traitement vous amène le plus de patients de l'étranger ?",
+        "credentials": "Quel médecin les patients demandent-ils par son nom ?",
+        "gallery": "Avez-vous un consentement signé pour les photos avant-après que vous avez déjà ?",
+        "booking": "Quand un patient remplit votre formulaire, qui le voit en premier, et en combien de temps ?",
+        "tracking": "Où arrivent vos demandes aujourd'hui : WhatsApp, e-mail ou un CRM ?",
+        "feedback": "Combien dépensez-vous en publicité par mois, à peu près ?"
+      }
     },
     "ctaBlock": {
       "eyebrow": "Playbook gratuit",
@@ -976,7 +1031,10 @@
         "subject": "Votre playbook : le Playbook 30 jours du site qui attire les patients internationaux",
         "summaryIntro": "Si vous ne lisez rien d'autre, commencez par ceci :",
         "checkLine": "Vous ne savez pas par quel chapitre commencer ? Le test gratuit de 2 minutes vous donne votre score et vos 3 corrections dans l'ordre : {url}",
-        "packLine": "Dans 2 jours, je vous envoie par email le pack de modèles : les 17 modèles dans un seul PDF, prêts à imprimer ou à partager avec votre équipe."
+        "packLine": "Dans 2 jours, je vous envoie par email le pack de modèles : les 17 modèles dans un seul PDF, prêts à imprimer ou à partager avec votre équipe.",
+        "preheader": "10 chapitres, 17 modèles et un suivi des demandes. Votre lien personnel est à l'intérieur.",
+        "nextTodayText": "Votre playbook, disponible dès maintenant.",
+        "footer": "Vous recevez cet email parce que vous avez demandé le playbook sur awab.design. Répondez simplement pour me joindre."
       }
     },
     "inside": {
@@ -1148,7 +1206,25 @@
       "startWith": "Commencez par trois : les messages WhatsApp pré-remplis, les scripts de première réponse et le tableau de fourchettes de prix. Un après-midi suffit, et ce sont eux qui décident si le patient réserve.",
       "auditCta": "Vous ne savez pas où votre site perd des patients ? Le check gratuit de 2 minutes vous le montre : {url}",
       "callCta": "Vous préférez en parler ? Réservez un appel de 15 minutes avec moi : {url}",
-      "stop": "Pas utile ? Répondez « stop » et je ne vous écrirai plus."
+      "stop": "Pas utile ? Répondez « stop » et je ne vous écrirai plus.",
+      "preheader": "Les 17 modèles dans un seul PDF. Commencez par ces trois-là.",
+      "kicker": "Pack de modèles",
+      "button": "Télécharger le pack de modèles (PDF)",
+      "footer": "Vous recevez cet email parce que vous avez reçu le playbook sur awab.design."
+    },
+    "summaryLine": "{yes} points sur 10 en place. Plus grande lacune : {gap}.",
+    "summaryAllDone": "Les 10 points sont en place.",
+    "gaps": {
+      "languages": "des pages dans les langues de vos patients",
+      "journey": "une page qui explique tout le séjour",
+      "whatsapp": "WhatsApp sur vos pages de traitement",
+      "speed": "la vitesse de chargement sur mobile",
+      "treatments": "les prix et la récupération sur les pages de traitement",
+      "credentials": "des qualifications de médecins vérifiables",
+      "gallery": "des résultats avant-après avec consentement",
+      "booking": "un chemin court vers une demande de consultation",
+      "tracking": "savoir d'où vient chaque demande",
+      "feedback": "remonter les patients réservés à vos publicités"
     }
   },
   "related": {

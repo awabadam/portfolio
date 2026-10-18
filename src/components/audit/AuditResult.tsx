@@ -5,7 +5,7 @@ import { animate, motion, useReducedMotion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { Lock, RotateCcw } from "lucide-react";
 import { ScrollReveal, StaggerContainer, StaggerItem } from "@/components/effects";
-import { computeResult, type Answer, type ClinicProfile, type QuestionId } from "@/lib/audit";
+import { QUESTION_IDS, computeResult, type Answer, type ClinicProfile, type QuestionId } from "@/lib/audit";
 import type { ScanChecks } from "@/lib/auditScan";
 import type { ChapterPreview } from "@/lib/playbook";
 import { PLAYBOOK_META } from "@/lib/playbookMeta";
@@ -50,6 +50,11 @@ export default function AuditResult({
   const reduceMotion = useReducedMotion();
   const result = useMemo(() => computeResult(answers), [answers]);
   const { score, band, fixes } = result;
+  const yes = QUESTION_IDS.filter((id) => answers[id] === "yes").length;
+  const summary =
+    yes === QUESTION_IDS.length || !fixes[0]
+      ? t("summaryAllDone")
+      : t("summaryLine", { yes, gap: t(`gaps.${fixes[0]}`) });
   const previewChapters = fixes
     .map((id) => ({ id, chapter: chapters.find((c) => c.id === id), n: chapters.findIndex((c) => c.id === id) + 1 }))
     .filter((x): x is { id: QuestionId; chapter: ChapterPreview; n: number } => x.chapter !== undefined);
@@ -133,22 +138,14 @@ export default function AuditResult({
               >
                 {t(`bands.${band}.name`)}
               </motion.h1>
+              {/* What's in place and the one gap that costs the most. */}
               <motion.p
                 initial={{ opacity: 0, y: reduceMotion ? 0 : 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
-                className="mt-5 max-w-xl text-base leading-relaxed text-white/75 md:mt-6 md:text-lg"
+                className="mt-5 max-w-xl border-s-2 border-white/30 ps-4 text-base leading-relaxed text-white/90 md:mt-6 md:text-lg"
               >
-                {t(`bands.${band}.text`)}
-              </motion.p>
-              {/* What this means for the clinic, in patients and budget. */}
-              <motion.p
-                initial={{ opacity: 0, y: reduceMotion ? 0 : 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.45, ease: [0.22, 1, 0.36, 1] }}
-                className="mt-5 max-w-xl border-s-2 border-white/30 ps-4 text-base leading-relaxed text-white/90"
-              >
-                {t(`bands.${band}.meaning`)}
+                {summary}
               </motion.p>
               <motion.button
                 type="button"

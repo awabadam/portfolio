@@ -464,7 +464,18 @@
       "15 dakikada siteniz ve hedef pazarlarınız",
       "İlk neyi düzelteceğim ve maliyeti ne olur",
       "İsterseniz ardından sabit fiyatlı teklif"
-    ]
+    ],
+    "email": {
+      "subject": "Teşekkürler {name}, mesajınızı aldım",
+      "subjectNoName": "Teşekkürler, mesajınızı aldım",
+      "preheader": "24 saat içinde, çoğu zaman daha erken dönerim.",
+      "kicker": "Mesaj alındı",
+      "heading": "Teşekkürler, mesajınızı aldım",
+      "text": "Her mesajı bizzat okuyorum; 24 saat içinde, çoğu zaman daha erken, sorularımla ya da sabit bir fiyat teklifiyle dönerim.",
+      "yourMessage": "Mesajınız",
+      "button": "Son klinik projelerine göz atın",
+      "footer": "Bu e-postayı awab.design üzerinden mesaj gönderdiğiniz için aldınız. Siz değilseniz dikkate almayın."
+    }
   },
   "thankYou": {
     "quoteHeading": "Teklif talebiniz alındı",
@@ -773,24 +784,16 @@
     "resultOutOf": "/ 100",
     "bands": {
       "losing": {
-        "name": "Hasta kaybediyorsunuz",
-        "text": "Bugün sizi bulan hastaların çoğu yazmadan gidiyor. İyi haber: ilk düzeltmeler en büyük etkiyi yapanlar.",
-        "meaning": "Reklamlarınızın ve Google'ın size gönderdiği hastaların çoğu yazmadan gidiyor. Bu böyle kaldığı her hafta, o bütçe hasta değil tıklama satın alıyor."
+        "name": "Hasta kaybediyorsunuz"
       },
       "starting": {
-        "name": "Yolun başında",
-        "text": "Temeller var, ama okumaktan sormaya giden yolda boşluklar var. Aşağıdaki üçünü kapatmak birkaç hafta içinde başvurularınızda görünür.",
-        "meaning": "Başvuru alıyorsunuz, ama hastaya çevirdiğinizden çok daha fazla ziyaretin parasını ödüyorsunuz. Aşağıdaki üç düzeltme, çoğunun kaçtığı boşluğu kapatır."
+        "name": "Yolun başında"
       },
       "competitive": {
-        "name": "Rekabetçi",
-        "text": "Siteniz aynı hastalar için yarışan kliniklerin çoğuna karşı ayakta duruyor. Kalan düzeltmeler ölçmek ve reklamlarınızı beslemekle ilgili.",
-        "meaning": "Sitenize gelen hastalar yazıyor. Masada bırakılan para, sonrasında olanlarda: hangi hastanın nereden geldiğini bilmek ve reklamlarınıza onlardan daha fazlasını bulmayı öğretmek."
+        "name": "Rekabetçi"
       },
       "ready": {
-        "name": "Hazır",
-        "text": "Siteniz işini yapıyor. Kazanç artık ince ayardan geliyor: daha hızlı sayfalar, daha iyi takip ve rezervasyon yapan hastaları reklamlarınıza geri bildirmek.",
-        "meaning": "Siteniz görevini yapıyor. Buradan sonra büyüme etrafındaki sistemden gelir: her başvuruyu rezervasyona kadar izlemek ve reklam bütçenizin gerçekten gelen hastaları takip etmesine izin vermek."
+        "name": "Hazır"
       }
     },
     "fixesHeading": "3 düzeltmeniz, sırasıyla",
@@ -829,7 +832,7 @@
       "rateLimited": "Bu bağlantıdan çok fazla istek geldi. Bir saat sonra tekrar deneyin ya da WhatsApp'tan yazın."
     },
     "email": {
-      "subject": "Puanınız: {score}/100 ve daha fazla hasta getirecek 3 düzeltme",
+      "subject": "{domain} {score}/100 aldı: Awab'dan 3 düzeltme",
       "greeting": "Merhaba,",
       "greetingNamed": "Merhaba {name},",
       "scoreLine": "Web siteniz {website} {score}/100 aldı: {band}.",
@@ -837,7 +840,59 @@
       "promise": "Sitenizi bizzat inceleyip 48 saat içinde, her düzeltmenin size ne kazandıracağını ve neyle başlayacağınızı içeren yazılı bir analiz göndereceğim.",
       "diy": "Kendiniz düzeltmeyi mi tercih edersiniz? Yukarıdaki 3 düzeltme başlamak için yeterli. Yapılmasını isterseniz Klinik Web Sitesi paketi 2.500 $'dan başlar.",
       "whatsapp": "Bu arada sorunuz olursa WhatsApp: {number}",
-      "signoff": "Saygılarımla,"
+      "signoff": "Saygılarımla,",
+      "preheader": "Ücretsiz rehberiniz içeride. 48 saat içinde kişisel analiz.",
+      "kicker": "Klinik kontrolü",
+      "introLabel": "Awab'dan bir not",
+      "askLabel": "Sıra sizde",
+      "scoreKicker": "Hazırlık puanı",
+      "checksHeading": "10 kontrolünüz",
+      "legendYes": "Mevcut",
+      "legendPartly": "Kısmen",
+      "legendNo": "Eksik",
+      "readChapter": "{n}. bölümü okuyun ({minutes} dk)",
+      "whatsappLink": "{domain} hakkında WhatsApp'tan sorun",
+      "whatsappPrefill": "Merhaba Awab, {website} için klinik kontrolünü az önce yaptım. Bir sorum var:",
+      "bookLink": "15 dakikalık görüşme ayarlayın",
+      "nextHeading": "Sırada ne var",
+      "nextToday": "Bugün",
+      "nextTodayText": "Rehberiniz hazır. 1. düzeltmenin bölümüyle başlayın.",
+      "next48": "48 saat içinde",
+      "next48Text": "Sitenize özel, benim hazırladığım yazılı analiz: her düzeltmenin size ne kazandıracağı ve neyle başlayacağınız.",
+      "next2days": "2 gün sonra",
+      "next2daysText": "Şablon paketi: 17 şablonun hepsi tek bir PDF'te, ekibinizle paylaşmaya hazır.",
+      "signatureRole": "Klinikler için web tasarımcısı, İstanbul",
+      "footer": "Bu e-postayı awab.design'da ücretsiz klinik kontrolünü yaptığınız için aldınız. Bana ulaşmak için yanıtlamanız yeterli.",
+      "ack": "{domain} sitesini, yurt dışındaki hastaların yazmadan önce baktığı 10 noktaya göre kontrol ettiniz. Sonuç: {score}/100.",
+      "complimentTwo": "Siteniz çoğu kliniğin atladığı şeyi zaten yapıyor: {a} ve {b}.",
+      "complimentOne": "Siteniz çoğu kliniğin atladığı şeyi zaten yapıyor: {a}.",
+      "complimentNone": "Sitenizi kontrol etmek için iki dakika ayırdınız; çoğu klinik bunu hiç yapmaz.",
+      "askIntro": "Denetiminizi yazmadan önce bir sorum var:",
+      "askReply": "Bu e-postayı yanıtlamanız yeterli; tek satır yeter.",
+      "compliments": {
+        "languages": "hastalarınızın dillerinde tam sayfalarınız var",
+        "journey": "sadece tedaviyi değil, tüm yolculuğu anlatıyorsunuz",
+        "whatsapp": "hastalar her tedavi sayfasından size WhatsApp'tan ulaşabiliyor",
+        "speed": "sayfalarınız telefonda hızlı açılıyor",
+        "treatments": "tedavi sayfalarınız fiyat aralığını ve iyileşme süresini gösteriyor",
+        "credentials": "doktorlarınızın yeterlilikleri kolayca bulunuyor",
+        "gallery": "öncesi-sonrası sonuçlarını hasta onayıyla gösteriyorsunuz",
+        "booking": "bir hasta iki dokunuşla konsültasyon isteyebiliyor",
+        "tracking": "her talebin hangi ülkeden ve kaynaktan geldiğini biliyorsunuz",
+        "feedback": "randevu alan hastaları reklamlarınıza geri bildiriyorsunuz"
+      },
+      "asks": {
+        "languages": "Şu anda size en çok hastayı hangi ülke gönderiyor?",
+        "journey": "Koordinatörleriniz WhatsApp'ta en sık hangi soruyu yanıtlıyor?",
+        "whatsapp": "Bir hasta gece 23.00'te WhatsApp'tan yazdığında kim, ne zaman yanıt veriyor?",
+        "speed": "Siteniz WordPress ile mi yapıldı, yoksa başka bir şeyle mi?",
+        "treatments": "Yurt dışından en çok hastayı hangi tedavi getiriyor?",
+        "credentials": "Hastalar hangi doktorunuzu adıyla soruyor?",
+        "gallery": "Elinizdeki öncesi-sonrası fotoğraflar için imzalı onayınız var mı?",
+        "booking": "Bir hasta formunuzu doldurduğunda onu ilk kim görüyor, ne kadar hızlı?",
+        "tracking": "Talepleriniz bugün nereye düşüyor: WhatsApp, e-posta ya da bir CRM?",
+        "feedback": "Aylık reklam harcamanız kabaca ne kadar?"
+      }
     },
     "ctaBlock": {
       "eyebrow": "Ücretsiz rehber",
@@ -976,7 +1031,10 @@
         "subject": "Rehberiniz: 30 Günde Uluslararası Hasta Getiren Web Sitesi Rehberi",
         "summaryIntro": "Başka hiçbir şey okumazsanız, bunlarla başlayın:",
         "checkLine": "Hangi bölümle başlayacağınızdan emin değil misiniz? Ücretsiz 2 dakikalık kontrol size puanınızı ve sırasıyla 3 düzeltmenizi verir: {url}",
-        "packLine": "2 gün sonra size şablon paketini e-postayla göndereceğim: 17 şablonun hepsi tek bir PDF'te, yazdırmaya veya ekibinizle paylaşmaya hazır."
+        "packLine": "2 gün sonra size şablon paketini e-postayla göndereceğim: 17 şablonun hepsi tek bir PDF'te, yazdırmaya veya ekibinizle paylaşmaya hazır.",
+        "preheader": "10 bölüm, 17 şablon ve başvuru takip tablosu. Kişisel bağlantınız içeride.",
+        "nextTodayText": "Rehberiniz hazır.",
+        "footer": "Bu e-postayı awab.design'da rehberi istediğiniz için aldınız. Bana ulaşmak için yanıtlamanız yeterli."
       }
     },
     "inside": {
@@ -1148,7 +1206,25 @@
       "startWith": "Üçüyle başlayın: hazır WhatsApp mesajları, ilk cevap metinleri ve fiyat aralığı tablosu. Bir öğleden sonranızı alır ve hastanın randevu alıp almayacağını bunlar belirler.",
       "auditCta": "Sitenizin hastaları nerede kaybettiğinden emin değil misiniz? Ücretsiz 2 dakikalık kontrol gösterir: {url}",
       "callCta": "Konuşmayı mı tercih edersiniz? Benimle 15 dakikalık bir görüşme ayarlayın: {url}",
-      "stop": "İşinize yaramadı mı? \"stop\" yazıp yanıtlayın, bir daha e-posta göndermem."
+      "stop": "İşinize yaramadı mı? \"stop\" yazıp yanıtlayın, bir daha e-posta göndermem.",
+      "preheader": "17 şablonun hepsi tek bir PDF'te. Bu üçüyle başlayın.",
+      "kicker": "Şablon paketi",
+      "button": "Şablon paketini indirin (PDF)",
+      "footer": "Bu e-postayı awab.design'dan rehberi aldığınız için aldınız."
+    },
+    "summaryLine": "10 kontrolden {yes} tanesi tamam. En büyük eksik: {gap}.",
+    "summaryAllDone": "10 kontrolün hepsi tamam.",
+    "gaps": {
+      "languages": "hastalarınızın dillerinde sayfalar",
+      "journey": "tüm yolculuğu anlatan bir sayfa",
+      "whatsapp": "tedavi sayfalarında WhatsApp",
+      "speed": "telefonda yüklenme hızı",
+      "treatments": "tedavi sayfalarında fiyat ve iyileşme süresi",
+      "credentials": "doğrulanabilir doktor yeterlilikleri",
+      "gallery": "onaylı öncesi-sonrası sonuçlar",
+      "booking": "konsültasyon talebine kısa bir yol",
+      "tracking": "her talebin nereden geldiğini bilmek",
+      "feedback": "randevuları reklamlarınıza geri bildirmek"
     }
   },
   "related": {

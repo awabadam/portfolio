@@ -4,8 +4,8 @@ import { z } from "zod";
 import { db } from "@/db";
 import { createEmailTransport, isEmailConfigured, sendEmail, NOTIFICATION_RECIPIENT } from "@/lib/email";
 import { locales, defaultLocale, type Locale } from "@/i18n/config";
-import { localeUrl, SITE_URL } from "@/lib/seo";
-import { CAL_BOOKING_URL } from "@/lib/contactLinks";
+import { SITE_URL } from "@/lib/seo";
+import { buildTemplatePackEmail } from "@/emails/TemplatePack";
 
 /**
  * GET /api/cron/template-pack: daily Vercel cron (see vercel.json).
@@ -44,28 +44,6 @@ const PACK_LOCALES: readonly Locale[] = ["en"];
 function packUrl(locale: Locale): string {
   const file = PACK_LOCALES.includes(locale) ? locale : "en";
   return `${SITE_URL}/downloads/playbook/template-pack-${file}.pdf`;
-}
-
-type Messages = {
-  email: { greeting: string; whatsapp: string; signoff: string };
-  templatePack: {
-    subject: string;
-    reminder: string;
-    linkIntro: string;
-    startWith: string;
-    auditCta: string;
-    callCta: string;
-    stop: string;
-  };
-};
-
-async function loadMessages(locale: Locale): Promise<Messages> {
-  const mod = (await import(`@/messages/${locale}.json`)) as { default: { audit: Messages } };
-  return mod.default.audit;
-}
-
-function fill(template: string, values: Record<string, string | number>) {
-  return template.replace(/\{(\w+)\}/g, (_, k) => (k in values ? String(values[k]) : `{${k}}`));
 }
 
 const emailSchema = z.string().trim().email().max(200);
@@ -141,7 +119,6 @@ export async function GET(request: NextRequest) {
   }
 
   const transporter = createEmailTransport();
-  const messages = new Map<Locale, Messages>();
   let sent = 0;
   let failed = 0;
   let skipped = 0;
@@ -159,39 +136,19 @@ export async function GET(request: NextRequest) {
     }
 
     const locale = toLocale(row.locale);
-    let m = messages.get(locale);
-    if (!m) {
-      m = await loadMessages(locale);
-      messages.set(locale, m);
-    }
     const url = packUrl(locale);
-    const t = m.templatePack;
 
-    const text = [
-      m.email.greeting,
-      "",
-      t.reminder,
-      "",
-      t.linkIntro,
-      url,
-      "",
-      t.startWith,
-      "",
-      // Audit leads already took the check; offer them the call only.
-      ...(row.source === "playbook" ? [fill(t.auditCta, { url: localeUrl("/audit", locale) })] : []),
-      fill(t.callCta, { url: CAL_BOOKING_URL }),
-      "",
-      fill(m.email.whatsapp, { number: "+90 554 175 9945" }),
-      "",
-      m.email.signoff,
-      "Awab Elkhalil",
-      "https://www.awab.design",
-      "",
-      t.stop,
-    ].join("\n");
+    let email;
+    try {
+      email = await buildTemplatePackEmail({ locale, packUrl: url, source: row.source });
+    } catch (error) {
+      failed++;
+      console.error("[template-pack] failed to render, will retry next run:", row.id, error);
+      continue;
+    }
 
     const result = await sendEmail(
-      { to: parsed.data, replyTo: NOTIFICATION_RECIPIENT(), subject: t.subject, text },
+      { to: parsed.data, replyTo: NOTIFICATION_RECIPIENT(), subject: email.subject, text: email.text, html: email.html },
       transporter,
     );
     if (!result.sent) {
