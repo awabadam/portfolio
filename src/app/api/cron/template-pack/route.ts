@@ -28,10 +28,12 @@ import { CAL_BOOKING_URL } from "@/lib/contactLinks";
  * Auth: Authorization: Bearer CRON_SECRET (Vercel sends it automatically).
  */
 
-export const maxDuration = 300;
+// Hobby plan caps functions at 60s.
+export const maxDuration = 60;
 
 const SOURCES = ["playbook", "clinic_audit"] as const;
-const BATCH_LIMIT = 50;
+// About 1-2s per email; 20 keeps a run well under 60s. The rest go next day.
+const BATCH_LIMIT = 20;
 
 /**
  * Locales with a published PDF at public/downloads/playbook/template-pack-<locale>.pdf.
