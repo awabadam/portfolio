@@ -1,3 +1,5 @@
+// Cron disabled 2026-10-17 (removed from vercel.json): generic auto-generated
+// posts dilute the clinic positioning. Route kept so it can be re-enabled.
 import { NextRequest, NextResponse } from "next/server";
 import { pickTopic } from "@/lib/blog/topics";
 import { generateAndSaveAllLocales } from "@/lib/blog/generator";

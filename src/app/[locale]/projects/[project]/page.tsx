@@ -5,6 +5,8 @@ import { getTranslations, getLocale } from "next-intl/server";
 import ProjectDetail from "@/components/projects/ProjectDetail";
 import Breadcrumbs from "@/components/seo/Breadcrumbs";
 import CreativeWorkSchema from "@/components/seo/CreativeWorkSchema";
+import { CLIENT_WORK, isClientWork, pickInOrder, getCaseStudy } from "@/data/case-studies";
+import { ogLocale, pageAlternates, localeUrl } from "@/lib/seo";
 
 export const revalidate = 60;
 
@@ -28,27 +30,29 @@ export async function generateMetadata({
 
   if (!project) return {};
 
-  const ogLocale =
-    locale === "ar" ? "ar_SA" : locale === "tr" ? "tr_TR" : "en_US";
+  // Case studies lead with the clinic outcome; Lab projects fall back to the
+  // project description. The OG image is ./opengraph-image.tsx.
+  const study = getCaseStudy(project.id);
+  const title = study ? `${project.title}: Clinic Website Case Study` : project.title;
+  const description = (study?.headline ?? project.description).slice(0, 155);
+  const path = `/projects/${project.id}`;
 
   return {
-    title: `${project.title} | Awab Elkhalil`,
-    description: project.description,
+    title,
+    description,
     openGraph: {
-      title: `${project.title} | Awab Elkhalil`,
-      description: project.description,
-      url: `https://www.awab.design/projects/${project.id}`,
-      locale: ogLocale,
+      title,
+      description,
+      url: localeUrl(path, locale),
+      locale: ogLocale(locale),
+      type: "article",
     },
-    alternates: {
-      canonical: `/projects/${project.id}`,
-      languages: {
-        en: `/projects/${project.id}`,
-        ar: `/ar/projects/${project.id}`,
-        tr: `/tr/projects/${project.id}`,
-        fr: `/fr/projects/${project.id}`,
-      },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
     },
+    alternates: pageAlternates(path, locale),
   };
 }
 
@@ -61,8 +65,16 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
     notFound();
   }
 
-  const currentIndex = allProjects.findIndex((p) => p.id === project.id);
-  const nextProject = allProjects[(currentIndex + 1) % allProjects.length];
+  // "Next case study" cycles through client work only; Lab projects hand off
+  // to the first client project so the path always leads back to proof.
+  const clientProjects = pickInOrder(allProjects, CLIENT_WORK);
+  const clientIndex = clientProjects.findIndex((p) => p.id === project.id);
+  const nextProject =
+    clientIndex >= 0
+      ? clientProjects[(clientIndex + 1) % clientProjects.length]
+      : (clientProjects[0] ??
+        allProjects.filter((p) => !isClientWork(p.id) && p.id !== project.id)[0] ??
+        project);
 
   return (
     <>

@@ -4,6 +4,9 @@ const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
+    // Next 16 only serves qualities listed here. 85 for photos and case-study
+    // shots (75 was visibly soft on retina), 90 for the portrait.
+    qualities: [75, 85, 90],
     remotePatterns: [
       {
         protocol: "https",
@@ -35,6 +38,7 @@ const nextConfig = {
       ["app-development", "/services"],
       ["brand-identity", "/services"],
       ["ai-chatbot-integration", "/pricing"],
+      ["clinic-websites", "/services"],
     ];
     return retired.flatMap(([slug, dest]) => [
       { source: `/services/${slug}`, destination: dest, permanent: true },

@@ -66,6 +66,7 @@ const Navbar = () => {
   const desktopItems = [
     { id: "work", href: "/projects", label: t("work") },
     { id: "services", href: "/services", label: t("services") },
+    { id: "audit", href: "/audit", label: t("audit") },
     { id: "about", href: "/about", label: t("about") },
     { id: "journal", href: "/blog", label: t("journal") },
   ] as const;
@@ -74,6 +75,7 @@ const Navbar = () => {
     { id: "work", href: "/projects", label: t("work") },
     { id: "services", href: "/services", label: t("services") },
     { id: "pricing", href: "/pricing", label: t("pricing") },
+    { id: "audit", href: "/audit", label: t("audit") },
     { id: "about", href: "/about", label: t("about") },
     { id: "journal", href: "/blog", label: t("journal") },
     { id: "contact", href: "/contact", label: t("contact") },

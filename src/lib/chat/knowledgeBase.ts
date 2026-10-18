@@ -1,5 +1,5 @@
 // 💰 Pricing source of truth: edit prices in src/lib/pricing.ts
-import { intlPriceMap } from "@/lib/pricing";
+import { getTier, getCarePlan, formatPrice } from "@/lib/pricing";
 
 export interface Service {
   name: string;
@@ -24,44 +24,31 @@ export interface FAQ {
 
 export const services: Service[] = [
   {
-    name: "Web Design & Development",
+    name: "Clinic Website",
     description:
-      "Modern, responsive websites built with Next.js, React, and Tailwind CSS. Mobile-first, SEO-optimized, conversion-focused.",
-    pricing: `Landing pages from $${intlPriceMap.landing.toLocaleString()}, business websites from $${intlPriceMap.business.toLocaleString()}, custom builds from $${intlPriceMap.custom.toLocaleString()} (international rates; lower local/regional pricing available). Each package bundles premium extras free (SEO on every tier; blog and multi-language from Business; CMS and AI chatbot on Custom).`,
-    link: "/services",
-  },
-  {
-    name: "UI/UX Design",
-    description:
-      "User-centered interfaces that feel intuitive. Research, wireframes, prototypes, and design systems.",
-    link: "/services",
-  },
-  {
-    name: "SEO Setup",
-    description:
-      "Optimized site structure, meta tags, fast loading, and sitemaps to rank higher on search engines.",
-    pricing: `Included free with every package ($${intlPriceMap.seo.toLocaleString()} value)`,
+      "Multilingual site for clinics that treat international patients: up to 3 languages, a page for each treatment, a WhatsApp button on every treatment page, and tracking for WhatsApp clicks, forms and calls. SEO setup with medical schema included.",
+    pricing: `From ${formatPrice(getTier("business").price)}`,
     link: "/pricing",
   },
   {
-    name: "AI Chatbot Integration",
+    name: "Clinic Growth System",
     description:
-      "24/7 automated support for visitors. AI-powered conversation flows, lead qualification, and CRM integration.",
-    pricing: "Included free with the Custom Website package",
+      "Everything in Clinic Website, plus 6+ languages including Arabic (right-to-left), an admin panel for the clinic team, an AI patient assistant, every inquiry saved with the patient's country, CRM handoff, and Google Ads offline-conversion export so the clinic can see which ads bring patients.",
+    pricing: `From ${formatPrice(getTier("custom").price)}`,
     link: "/pricing",
   },
   {
-    name: "Domain & Hosting Management",
+    name: "Site Care",
     description:
-      "Managed domain registration & renewal, SSL, and reliable hosting — handled for you as part of a monthly Care Plan. You own your domain and can request a full transfer anytime (handover within 3 business days, no lock-in).",
-    pricing: "Included in Care Plans from $29/month",
+      "Monthly plan: hosting, domain, SSL, security updates and small content changes. You own your domain and can transfer it anytime (handover within 3 business days, no lock-in).",
+    pricing: `${formatPrice(getCarePlan("careStandard").price)}/month`,
     link: "/services/website-maintenance",
   },
   {
-    name: "Care Plans (Hosting, Domain & Maintenance)",
+    name: "Growth Retainer",
     description:
-      "One managed monthly plan per site tier: hosting + domain + SSL + security/monitoring + a change allowance that scales with the site. Care Lite (landing), Care Standard (business), Care Pro (custom).",
-    pricing: "From $29/month (Lite $29 · Standard $79 · Pro $149)",
+      "Site Care plus a monthly lead report (inquiries by country and source), upkeep of Google Ads conversion tracking, landing pages for new treatments or campaigns, and priority changes.",
+    pricing: `${formatPrice(getCarePlan("carePro").price)}/month`,
     link: "/services/website-maintenance",
   },
 ];
@@ -85,14 +72,14 @@ export const projects: ProjectInfo[] = [
     name: "Omar Marketing",
     category: "Marketing Agency",
     description: "ROI-driven marketing agency website with bold dark theme and scroll animations.",
-    results: ["ROI-driven with conversion tracking", "Bilingual (EN/AR)", "95+ Lighthouse score"],
+    results: ["Conversion tracking built in", "Bilingual (EN/AR)", "Fast-loading dark theme"],
     link: "/projects/omar-marketing",
   },
   {
     name: "SaphireDent",
     category: "Healthcare / Dental",
-    description: "Modern dental clinic website with a clean, professional aesthetic.",
-    results: ["40% increase in patient inquiries", "Optimized for Istanbul dental search terms"],
+    description: "Nine-language dental clinic site that captures every inquiry and sends it to the clinic's CRM and Google Ads.",
+    results: ["Nine languages with right-to-left Arabic", "Every inquiry recorded with country and source, sent to the CRM and Google Ads"],
     link: "/projects/saphiredent",
   },
   {
@@ -107,8 +94,6 @@ export const businessInfo = {
   name: "Awab Design",
   owner: "Awab Elkhalil",
   location: "Istanbul, Turkey",
-  experience: "5+ years",
-  projectCount: "50+ projects completed",
   responseTime: "24 hours",
   email: "awabe.adam@gmail.com",
   phone: "+90 554 175 9945",
@@ -124,13 +109,13 @@ export const faqs: FAQ[] = [
   {
     question: "What services do you offer?",
     answer:
-      "I design and build websites for small businesses — especially clinics — with SEO, multi-language, AI chatbots, and managed hosting & maintenance via Care Plans. Check /services for details or /pricing to see packages.",
+      "I build websites for Istanbul clinics that treat international patients — dental, aesthetic, hair and medical tourism. Two packages: Clinic Website and Clinic Growth System, plus monthly Site Care or a Growth Retainer. See /services or /pricing.",
     keywords: ["services", "what do you do", "offer", "provide", "help"],
   },
   {
     question: "How much does a website cost?",
     answer:
-      "Pricing depends on the package you choose — every package is fixed-price with extras bundled in. See /pricing for package details, or reach out at /contact for a personalized quote.",
+      "There are two fixed-price packages: Clinic Website and Clinic Growth System. Prices are in USD on /pricing, the same in every country. Or reach out at /contact for a quote for your clinic.",
     keywords: ["price", "cost", "pricing", "how much", "fee", "budget", "rate", "quote"],
   },
   {
@@ -142,7 +127,7 @@ export const faqs: FAQ[] = [
   {
     question: "What's your experience?",
     answer:
-      "5+ years of experience, 50+ projects completed. I've worked with clinics, marketing agencies, restaurants, and startups. Check out my portfolio at /projects.",
+      "I work mostly with clinics that treat international patients: SaphireDent (dental), Jouvence (aesthetics) and EsteExpert (medical aesthetics). See /projects.",
     keywords: ["experience", "years", "projects", "portfolio", "background", "work"],
   },
   {
@@ -154,13 +139,13 @@ export const faqs: FAQ[] = [
   {
     question: "Can I see your portfolio?",
     answer:
-      "Yes! Visit /projects to see my work. Featured projects include Jouvence (aesthetics clinic), EsteExpert (medical aesthetics), Omar Marketing (agency), and SaphireDent (dental clinic, 40% more inquiries).",
+      "Yes! Visit /projects to see my work. Featured projects include Jouvence (aesthetics clinic), EsteExpert (medical aesthetics), Omar Marketing (agency), and SaphireDent (dental clinic, nine languages).",
     keywords: ["portfolio", "work", "projects", "examples", "showcase", "case study"],
   },
   {
     question: "How long does a project take?",
     answer:
-      "Landing pages take about 1 week, business websites 2-4 weeks, custom projects 4-8 weeks depending on complexity.",
+      "A Clinic Website takes 3-4 weeks. A Clinic Growth System takes 6-8 weeks, depending on how many treatments and languages you need.",
     keywords: ["timeline", "how long", "duration", "time", "deadline", "delivery"],
   },
   {
@@ -172,13 +157,13 @@ export const faqs: FAQ[] = [
   {
     question: "Do you offer SEO?",
     answer:
-      "Every website includes basic SEO — optimized structure, meta tags, fast loading, sitemap. Every package also bundles a full SEO setup for free. Check /pricing for details.",
+      "Yes. Both packages include SEO setup with medical schema, so Google understands your treatments, doctors and location. Check /pricing for details.",
     keywords: ["seo", "search engine", "google", "ranking", "search"],
   },
   {
     question: "Can you add a chatbot to my site?",
     answer:
-      "Yes! An AI chatbot comes bundled free with the Custom Website package. It provides 24/7 automated support, lead qualification, and CRM integration. See /pricing for details.",
+      "Yes. An AI patient assistant is included in the Clinic Growth System. It answers patient questions in their language at any hour and passes the inquiry to your team. See /pricing for details.",
     keywords: ["chatbot", "bot", "ai", "automation", "support", "chat"],
   },
   {
@@ -190,13 +175,13 @@ export const faqs: FAQ[] = [
   {
     question: "Can my website be in multiple languages?",
     answer:
-      "Yes! Multi-language support is available as an add-on. I can build your site in English, Turkish, Arabic, French, or any language your audience needs. See /pricing for details.",
+      "Yes. The Clinic Website covers up to 3 languages and the Clinic Growth System 6 or more, including Arabic (right-to-left). See /pricing for details.",
     keywords: ["language", "multilingual", "translation", "bilingual", "multi-language"],
   },
   {
     question: "What happens after launch?",
     answer:
-      "I offer ongoing maintenance plans covering security updates, performance optimization, and content changes. You're never left on your own. Check /services/website-maintenance for plan details.",
+      "Two monthly plans: Site Care (hosting, domain, SSL, security and small changes) and the Growth Retainer, which adds a monthly lead report and keeps your Google Ads conversion tracking working. See /services/website-maintenance.",
     keywords: ["after", "launch", "maintenance", "support", "updates", "ongoing"],
   },
 ];

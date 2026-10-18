@@ -4,6 +4,8 @@ import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from "re
 import Image from "next/image";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useLocale, useTranslations } from "next-intl";
+import { ArrowUpRight } from "lucide-react";
+import { Link } from "@/i18n/routing";
 import { isRtl, type Locale } from "@/i18n/config";
 import { GlassPill } from "@/components/ui/glass-pill";
 import { trackCTAClick } from "@/lib/analytics/gtm";
@@ -119,12 +121,6 @@ export default function HeroSlider() {
     }
   };
 
-  const scrollToWork = () => {
-    const target = document.getElementById("work");
-    if (!target) return;
-    target.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
-  };
-
   const slide = SLIDES[index];
 
   return (
@@ -135,7 +131,7 @@ export default function HeroSlider() {
       aria-label={t("heroKicker")}
       className="relative isolate flex min-h-[100svh] flex-col overflow-hidden bg-black text-white outline-none"
     >
-      {/* Media */}
+      {/* Media: project showreels, darkened so the message reads on top. */}
       <div className="absolute inset-0 -z-10" aria-hidden="true">
         <AnimatePresence initial={false}>
           <motion.div
@@ -151,6 +147,7 @@ export default function HeroSlider() {
               alt=""
               fill
               sizes="100vw"
+              quality={85}
               priority={index === 0}
               className="object-cover"
             />
@@ -181,85 +178,103 @@ export default function HeroSlider() {
             )}
           </motion.div>
         </AnimatePresence>
-        {/* Bottom scrim */}
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/60" />
+        {/* Scrim: flat darkening plus a heavier band behind the copy and the bottom bar. */}
+        <div className="pointer-events-none absolute inset-0 bg-black/45" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/40 via-black/10 to-black/75" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-black/55 via-black/15 to-transparent rtl:bg-gradient-to-l" />
       </div>
 
-      {/* Kicker — the page's only h1 */}
-      <div className="container px-5 pt-28 md:px-8">
-        <h1 className="font-mono text-label text-white/70">{t("heroKicker")}</h1>
+      {/* Message */}
+      <div className="container flex flex-1 flex-col justify-center px-5 pb-10 pt-32 md:px-8 md:pb-16 md:pt-40">
+        <div className="max-w-4xl">
+          <p className="font-mono text-label text-white/70">{t("heroKicker")}</p>
+          <h1 className="mt-5 max-w-[16ch] font-display text-hero text-white [text-wrap:balance]">
+            {t("heroHeadline")}
+          </h1>
+          <p className="mt-6 max-w-xl text-base leading-relaxed text-white/85 md:text-lg">{t("heroSubline")}</p>
+          <div className="mt-8 flex flex-col items-start gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
+            <GlassPill
+              href="/audit"
+              tone="light"
+              arrow
+              onClick={() => trackCTAClick("free_audit", "hero")}
+            >
+              {t("heroPrimary")}
+            </GlassPill>
+            <GlassPill
+              href="/projects"
+              arrow
+              onClick={() => trackCTAClick("view_work", "hero")}
+            >
+              {t("heroSecondary")}
+            </GlassPill>
+          </div>
+        </div>
       </div>
 
-      {/* Bottom content: stacked on phones, title/controls side by side from md. */}
-      <div className="container mt-auto flex flex-col items-start gap-8 px-5 pb-10 md:flex-row md:items-end md:justify-between md:gap-6 md:px-8 md:pb-14">
+      {/* Bottom bar: demoted project caption on the start side, slide controls on the end side. */}
+      {/* Physical right padding keeps the bar clear of the fixed chat bubble (bottom-4 right-4, 64px) in both directions. */}
+      <div className="container flex items-end justify-between gap-6 px-5 pb-7 pr-24 md:px-8 md:pb-10 md:pr-28">
         <div className="min-w-0">
           <AnimatePresence mode="wait" initial={false}>
             <motion.div
               key={slide.id}
-              initial={{ opacity: 0, y: reducedMotion ? 0 : 12 }}
+              initial={{ opacity: 0, y: reducedMotion ? 0 : 8 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 0 }}
               transition={{ duration: reducedMotion ? 0 : 0.45, ease: "easeOut" }}
+              className="flex flex-col gap-1.5"
             >
-              <p className="text-label text-white/80">{t(`heroSlides.${slide.categoryKey}`)}</p>
-              <h2 className="mt-3 font-display text-hero text-white">{slide.title}</h2>
-              <div className="mt-6">
-                <GlassPill
-                  href={`/projects/${slide.id}`}
-                  arrow
-                  onClick={() => trackCTAClick("view_project", "hero")}
-                >
-                  {t("viewProject")}
-                </GlassPill>
-              </div>
+              <p className="truncate font-mono text-[11px] uppercase tracking-wide text-white/55">
+                {t(`heroSlides.${slide.categoryKey}`)}
+              </p>
+              <Link
+                href={`/projects/${slide.id}`}
+                onClick={() => trackCTAClick("view_project", "hero")}
+                className="inline-flex items-center gap-1.5 text-sm font-medium text-white/85 transition-colors hover:text-white"
+              >
+                <span className="truncate">{slide.title}</span>
+                <span className="hidden text-white/55 sm:inline">· {t("viewProject")}</span>
+                <ArrowUpRight aria-hidden="true" className="h-3.5 w-3.5 shrink-0 rtl:-scale-x-100" />
+              </Link>
             </motion.div>
           </AnimatePresence>
         </div>
 
-        <div className="flex w-full shrink-0 items-center justify-between gap-5 md:w-auto md:flex-col md:items-end">
-          <div className="flex items-center gap-2" role="tablist" aria-label={t("slides")}>
-            {SLIDES.map((s, i) => {
-              const active = i === index;
-              return (
-                <button
-                  key={s.id}
-                  type="button"
-                  role="tab"
-                  aria-selected={active}
-                  aria-label={`${s.title} (${i + 1}/${count})`}
-                  onClick={() => goTo(i)}
-                  className="group flex h-6 w-8 items-center focus-visible:outline-none md:w-10"
-                >
-                  <span className="relative block h-0.5 w-full overflow-hidden bg-white/20 group-focus-visible:ring-2 group-focus-visible:ring-white/60">
-                    {active && videoMode && (
-                      <span
-                        key={`${i}-video`}
-                        ref={progressRef}
-                        className="absolute inset-0 origin-left scale-x-0 bg-white rtl:origin-right"
-                      />
-                    )}
-                    {active && !videoMode && (
-                      <motion.span
-                        key={`${i}-${timerKey}`}
-                        className="absolute inset-0 origin-left bg-white rtl:origin-right"
-                        initial={{ scaleX: paused ? 1 : 0 }}
-                        animate={{ scaleX: 1 }}
-                        transition={{ duration: paused ? 0 : AUTO_ADVANCE_MS / 1000, ease: "linear" }}
-                      />
-                    )}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-          <button
-            type="button"
-            onClick={scrollToWork}
-            aria-label={t("scrollToWork")}
-            className="order-first font-mono text-sm text-white/70 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 md:order-none"
-          >
-            ↓
-          </button>
+        <div className="flex shrink-0 items-center gap-2" role="tablist" aria-label={t("slides")}>
+          {SLIDES.map((s, i) => {
+            const active = i === index;
+            return (
+              <button
+                key={s.id}
+                type="button"
+                role="tab"
+                aria-selected={active}
+                aria-label={`${s.title} (${i + 1}/${count})`}
+                onClick={() => goTo(i)}
+                className="group flex h-6 w-8 items-center focus-visible:outline-none md:w-10"
+              >
+                <span className="relative block h-0.5 w-full overflow-hidden bg-white/20 group-focus-visible:ring-2 group-focus-visible:ring-white/60">
+                  {active && videoMode && (
+                    <span
+                      key={`${i}-video`}
+                      ref={progressRef}
+                      className="absolute inset-0 origin-left scale-x-0 bg-white rtl:origin-right"
+                    />
+                  )}
+                  {active && !videoMode && (
+                    <motion.span
+                      key={`${i}-${timerKey}`}
+                      className="absolute inset-0 origin-left bg-white rtl:origin-right"
+                      initial={{ scaleX: paused ? 1 : 0 }}
+                      animate={{ scaleX: 1 }}
+                      transition={{ duration: paused ? 0 : AUTO_ADVANCE_MS / 1000, ease: "linear" }}
+                    />
+                  )}
+                </span>
+              </button>
+            );
+          })}
         </div>
       </div>
     </section>

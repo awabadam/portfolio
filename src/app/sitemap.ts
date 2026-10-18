@@ -14,13 +14,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   function withAlternates(path: string, opts: { changeFrequency: 'weekly' | 'monthly' | 'daily'; priority: number; lastModified?: Date }) {
     return locales.map((locale) => ({
       url: localeUrl(path, locale),
-      lastModified: opts.lastModified ?? new Date('2026-04-16'),
+      lastModified: opts.lastModified ?? new Date('2026-10-17'),
       changeFrequency: opts.changeFrequency,
       priority: opts.priority,
       alternates: {
-        languages: Object.fromEntries(
-          locales.map((l) => [l, localeUrl(path, l)])
-        ),
+        languages: {
+          ...Object.fromEntries(locales.map((l) => [l, localeUrl(path, l)])),
+          'x-default': localeUrl(path, defaultLocale),
+        },
       },
     }))
   }
@@ -30,9 +31,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...withAlternates('/about', { changeFrequency: 'monthly', priority: 0.8 }),
     ...withAlternates('/projects', { changeFrequency: 'weekly', priority: 0.8 }),
     ...withAlternates('/services', { changeFrequency: 'monthly', priority: 0.8 }),
+    ...withAlternates('/pricing', { changeFrequency: 'monthly', priority: 0.8 }),
     ...withAlternates('/contact', { changeFrequency: 'monthly', priority: 0.7 }),
+    ...withAlternates('/audit', { changeFrequency: 'monthly', priority: 0.9 }),
     ...withAlternates('/blog', { changeFrequency: 'weekly', priority: 0.8 }),
-    ...['webdesign-istanbul', 'website-maintenance', 'clinic-websites'].flatMap(
+    ...['webdesign-istanbul', 'website-maintenance'].flatMap(
       slug => withAlternates(`/services/${slug}`, { changeFrequency: 'monthly', priority: 0.8 })
     ),
   ]
@@ -54,9 +57,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         changeFrequency: 'monthly' as const,
         priority: 0.6,
         alternates: {
-          languages: Object.fromEntries(
-            locales.map((l) => [l, localeUrl(`/blog/${post.slug}`, l)])
-          ),
+          languages: {
+            ...Object.fromEntries(locales.map((l) => [l, localeUrl(`/blog/${post.slug}`, l)])),
+            'x-default': localeUrl(`/blog/${post.slug}`, defaultLocale),
+          },
         },
       }))
     )

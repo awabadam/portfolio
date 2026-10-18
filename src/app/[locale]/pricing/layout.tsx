@@ -2,104 +2,91 @@ import type { Metadata } from "next";
 import { getTranslations, getLocale } from "next-intl/server";
 import Breadcrumbs from "@/components/seo/Breadcrumbs";
 // 💰 Pricing source of truth: edit prices in src/lib/pricing.ts
-// The OfferCatalog JSON-LD below is generated from projectTiers.
-import { projectTiers, intlPriceMap } from "@/lib/pricing";
+// The OfferCatalog JSON-LD below is generated from projectTiers + carePlans.
+import { projectTiers, carePlans, getTier, formatPrice } from "@/lib/pricing";
+import { ogLocale, pageAlternates, localeUrl } from "@/lib/seo";
 
+// OG image: ./opengraph-image.tsx
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("metadata.pricing");
   const locale = await getLocale();
-  const ogLocale = locale === "ar" ? "ar_SA" : locale === "tr" ? "tr_TR" : locale === "fr" ? "fr_FR" : "en_US";
+  // The description quotes both package prices from pricing.ts.
+  const prices = {
+    clinicPrice: formatPrice(getTier("business").price),
+    growthPrice: formatPrice(getTier("custom").price),
+  };
+  const description = t("description", prices);
 
   return {
     title: t("title"),
-    description: t("description"),
+    description,
     keywords: [
-      "web design pricing istanbul",
-      "freelance web designer rates",
-      "web tasarım fiyatları istanbul",
-      "website cost istanbul",
-      "next.js developer pricing",
-      "multilingual website price",
-      "ai chatbot website cost",
-      "clinic website design price",
-      "transparent web design pricing",
+      "clinic website price istanbul",
+      "dental clinic website cost",
+      "medical tourism website price",
+      "hair transplant clinic website",
+      "aesthetic clinic website istanbul",
+      "klinik web sitesi fiyatları",
+      "multilingual clinic website",
+      "google ads offline conversions clinic",
+      "clinic lead tracking",
     ],
     openGraph: {
       title: t("title"),
-      description: t("description"),
-      url: "https://www.awab.design/pricing",
-      locale: ogLocale,
+      description,
+      url: localeUrl("/pricing", locale),
+      locale: ogLocale(locale),
       type: "website",
-      images: [
-        {
-          url: "/img/hero-image.jpg",
-          width: 1200,
-          height: 630,
-          alt: "Awab Design — Pricing",
-        },
-      ],
     },
     twitter: {
       card: "summary_large_image",
       title: t("title"),
-      description: t("description"),
+      description,
     },
-    alternates: {
-      canonical: "/pricing",
-      languages: {
-        en: "/pricing",
-        ar: "/ar/pricing",
-        tr: "/tr/pricing",
-        fr: "/fr/pricing",
-      },
-    },
+    alternates: pageAlternates("/pricing", locale),
   };
 }
 
-// Human-readable labels for schema (keyed by pricing.ts tier and add-on ids).
-// These intentionally mirror the English `rateCalculator` namespace so the
-// JSON-LD stays stable across locales while the UI itself is localized.
-const tierSchemaLabels: Record<string, { name: string; description: string }> = {
-  landing: {
-    name: "Landing Page",
-    description: "One focused page to showcase your product or service",
-  },
-  business: {
-    name: "Business Website",
-    description: "A complete 3-5 page site for your business, mobile-ready and SEO-optimized",
-  },
-  custom: {
-    name: "Custom Website",
-    description: "Tailored Next.js build with custom features, integrations, and advanced SEO",
-  },
-};
+export default async function PricingLayout({ children }: { children: React.ReactNode }) {
+  // Schema labels come from the English `packages` namespace (the same strings
+  // the cards render), so the JSON-LD stays stable across locales while the UI
+  // itself is localized. Prices are USD (the only currency we quote).
+  const tEn = await getTranslations({ locale: "en", namespace: "packages" });
 
-export default function PricingLayout({ children }: { children: React.ReactNode }) {
-  // Build the OfferCatalog from the shared pricing source of truth so the
-  // schema can never drift from what the calculator shows.
-  const tierOffers = projectTiers.map((tier) => {
-    const labels = tierSchemaLabels[tier.id];
-    const price = intlPriceMap[tier.id] ?? tier.basePrice;
-    return {
-      "@type": "Offer",
-      itemOffered: {
-        "@type": "Service",
-        name: labels?.name ?? tier.id,
-        description: labels?.description,
-      },
-      priceSpecification: {
-        "@type": "UnitPriceSpecification",
-        price: String(price),
-        priceCurrency: "USD",
-        unitText: "project",
-      },
-    };
-  });
+  const tierOffers = projectTiers.map((tier) => ({
+    "@type": "Offer",
+    itemOffered: {
+      "@type": "Service",
+      name: tEn(tier.nameKey),
+      description: tEn(tier.descKey),
+    },
+    priceSpecification: {
+      "@type": "UnitPriceSpecification",
+      price: String(tier.price),
+      priceCurrency: "USD",
+      unitText: "project",
+    },
+  }));
+
+  const planOffers = carePlans.map((plan) => ({
+    "@type": "Offer",
+    itemOffered: {
+      "@type": "Service",
+      name: tEn(plan.nameKey),
+      description: tEn(plan.descKey),
+    },
+    priceSpecification: {
+      "@type": "UnitPriceSpecification",
+      price: String(plan.price),
+      priceCurrency: "USD",
+      unitText: "month",
+    },
+  }));
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Service",
-    name: "Web Design & Development Packages",
+    name: "Patient-Acquisition Websites for Clinics",
     provider: {
       "@type": "Person",
       name: "Awab Design",
@@ -113,8 +100,8 @@ export default function PricingLayout({ children }: { children: React.ReactNode 
     areaServed: "Worldwide",
     hasOfferCatalog: {
       "@type": "OfferCatalog",
-      name: "Web Design Packages",
-      itemListElement: tierOffers,
+      name: "Clinic Website Packages",
+      itemListElement: [...tierOffers, ...planOffers],
     },
   };
 

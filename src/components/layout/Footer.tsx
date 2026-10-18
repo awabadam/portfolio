@@ -14,6 +14,9 @@ import {
 const SOCIAL_LINKS = [
   { id: "linkedin", href: "https://www.linkedin.com/in/awab-adam/" },
   { id: "instagram", href: "https://www.instagram.com/awabeladam/" },
+  // TODO: add the Google Business Profile link ("Awab Elkhalil - Web Designer &
+  // Developer") once the public URL is known, plus a `footer.googleBusiness`
+  // label in all four message files.
 ] as const;
 
 const Footer = () => {

@@ -12,8 +12,10 @@ const config: Config = {
     container: {
       center: true,
       padding: "2rem",
+      // One cap for every page: ~1250px of content (1312 minus the px-8
+      // gutters), so lines and grids stay readable on laptops and wide screens.
       screens: {
-        "2xl": "1600px",
+        xl: "1312px",
       },
     },
     extend: {

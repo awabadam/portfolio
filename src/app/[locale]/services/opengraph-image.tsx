@@ -4,7 +4,7 @@ export { size, contentType };
 
 export default function Image() {
   return generateOGImage(
-    "Web Design & Development Services",
-    "Modern websites, UI/UX, SEO, chatbots, and more"
+    "Websites that bring international patients to your clinic",
+    "Multilingual clinic sites with lead tracking to your CRM and Google Ads. Istanbul."
   );
 }

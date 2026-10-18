@@ -2,7 +2,7 @@ import { ChatMessage, ChatContext } from "./chatBot";
 import { services, projects, businessInfo, faqs } from "./knowledgeBase";
 // 💰 Pricing source of truth: edit prices in src/lib/pricing.ts
 // The chat assistant's pricing answers are generated from this data.
-import { projectTiers, carePlans, getPrice, formatPrice, getIncludedAddOns } from "@/lib/pricing";
+import { projectTiers, carePlans, formatPrice, getIncludedAddOns } from "@/lib/pricing";
 
 export interface OpenRouterResponse {
   id: string;
@@ -31,23 +31,32 @@ const PRIORITY_MESSAGE_COUNT = 4; // Always keep the last N messages
 function buildSystemPrompt(context: ChatContext, locale?: string): string {
   const loc = locale || "en";
 
-  // Build locale-aware pricing
-  const tierPrices = projectTiers.map((t) => {
-    const price = getPrice(t.id, t.basePrice, loc);
-    return `${t.nameKey === "landingPage" ? "Landing Page" : t.nameKey === "businessWebsite" ? "Business Website" : "Custom Website"}: from ${formatPrice(price, loc)}`;
-  }).join(", ");
+  // Build pricing (one USD price list for every locale). English names match the `packages` namespace.
+  const tierNames: Record<string, string> = {
+    business: "Clinic Website",
+    custom: "Clinic Growth System",
+  };
+  const planNames: Record<string, string> = {
+    careStandard: "Site Care",
+    carePro: "Growth Retainer",
+  };
+  const tierPrices = projectTiers.map((t) =>
+    `${tierNames[t.id] ?? t.id}: from ${formatPrice(t.price)}`
+  ).join(", ");
+  const planPrices = carePlans.map((p) =>
+    `${planNames[p.id] ?? p.id}: ${formatPrice(p.price)}/mo`
+  ).join(", ");
 
   const addOnLabels: Record<string, string> = {
-    seo: "SEO Setup",
+    seo: "SEO setup with medical schema",
     blog: "Blog",
-    cms: "CMS",
-    chatbot: "AI Chatbot",
-    multilang: "Multi-language",
+    cms: "Admin panel (CMS)",
+    chatbot: "AI patient assistant",
+    multilang: "Multilingual setup",
   };
   const bundles = projectTiers.map((t) =>
-    `${t.id}: ${getIncludedAddOns(t.id).map((a) => addOnLabels[a.id] ?? a.id).join(", ")}`
+    `${tierNames[t.id] ?? t.id}: ${getIncludedAddOns(t.id).map((a) => addOnLabels[a.id] ?? a.id).join(", ")}`
   ).join("; ");
-  const careFrom = formatPrice(getPrice(carePlans[0].id, carePlans[0].basePrice, loc), loc);
 
   // Build project showcase
   const projectList = projects
@@ -66,24 +75,25 @@ function buildSystemPrompt(context: ChatContext, locale?: string): string {
 
   return `You are Awab Design's assistant. Brief, friendly, helpful. 2-3 sentences max. Plain text only.
 ${langInstruction ? `\n${langInstruction}` : ""}
-About: Web designer/developer in Istanbul. 5+ years, 50+ projects. Speaks English, Arabic, Turkish, French.
+About: Builds patient-acquisition websites for Istanbul clinics that treat international patients (dental, aesthetic, hair, medical tourism). Based in Istanbul. Speaks English, Arabic, Turkish, French.
 Email: ${businessInfo.email} | WhatsApp: ${businessInfo.phone}
 
-PRICING (${loc.toUpperCase()} locale):
-${tierPrices}
+PRICING (USD, same prices in every language and country):
+Packages: ${tierPrices}
+Monthly plans: ${planPrices}
 Bundled free (no paid add-ons): ${bundles}
 Pricing details: /pricing
 
-SERVICES: Websites for small businesses (especially clinics) — Landing, Business, Custom packages. Care Plans for hosting, domain & maintenance (from ${careFrom}/mo). No app development or brand identity work.
+SERVICES: Two packages for clinics. Clinic Website: site in up to 3 languages, a page per treatment, WhatsApp button on every treatment page, tracking for WhatsApp clicks, forms and calls. Clinic Growth System: everything in Clinic Website plus 6+ languages including Arabic (RTL), admin panel for the clinic team, AI patient assistant, every inquiry saved with the patient's country, CRM handoff, and Google Ads offline-conversion export so the clinic sees which ads bring patients. Site Care covers hosting, domain, SSL, security and small changes; Growth Retainer adds a monthly lead report, ads-tracking upkeep and new treatment/campaign pages. No app development, brand identity, or non-clinic websites.
 Details: /services
 
 PORTFOLIO: ${projectList}
 All projects: /projects
 
 BEHAVIOR:
-- When asked about pricing, give locale-specific prices above and link to /pricing.
+- When asked about pricing, give the USD prices above (never convert or quote other currencies) and link to /pricing.
 - When asked about portfolio or examples, recommend relevant projects from the list above based on their industry.
-- For healthcare/clinic inquiries, recommend Jouvence, EsteExpert, or SaphireDent.
+- For clinic inquiries, lead with SaphireDent (lead tracking and Google Ads offline conversions), then Jouvence or EsteExpert.
 - For marketing/agency inquiries, recommend Omar Marketing.
 - To collect leads: ask name → email → phone (optional). Confirm 24hr response.
 - Always suggest /contact for a personalized quote.${contextInfo ? `\nVisitor info:${contextInfo}` : ""}`;

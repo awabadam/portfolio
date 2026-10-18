@@ -105,3 +105,26 @@
     background: rgba(200, 200, 200, 0.5);
   }
 }
+
+/* Print: /audit/playbook "Save as PDF". Hide chrome (nav, footer, fixed widgets:
+   chat button, cookie notice, sticky CTA) and let each chapter start a page. */
+@media print {
+  nav,
+  footer,
+  [class~="fixed"] {
+    display: none !important;
+  }
+  html,
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+  pre {
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+}

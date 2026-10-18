@@ -56,14 +56,6 @@ const Header = () => {
                 Linkedin
               </a>
             </li>
-            <li>
-              <a
-                href="https://www.behance.net/awab-elkhalil"
-                className="hover:text-neutral-800 dark:hover:text-white"
-              >
-                Behance
-              </a>
-            </li>
 
             <li>
               <a

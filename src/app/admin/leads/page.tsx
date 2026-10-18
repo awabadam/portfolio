@@ -57,6 +57,7 @@ import {
   Mail,
   MessageSquare,
   FileText,
+  ClipboardCheck,
   Users,
   UserPlus,
   RefreshCw,
@@ -67,7 +68,7 @@ import { WhatsAppIcon } from "@/components/icons/WhatsAppIcon";
 
 interface Lead {
   id: string;
-  source: "whatsapp" | "contact_form" | "newsletter" | "chat";
+  source: "whatsapp" | "contact_form" | "newsletter" | "chat" | "clinic_audit" | "playbook";
   name: string | null;
   email: string | null;
   phone: string | null;
@@ -75,7 +76,106 @@ interface Lead {
   project_type: string | null;
   status: "new" | "contacted" | "qualified" | "converted" | "lost";
   notes: string | null;
+  metadata: Record<string, unknown> | null;
   created_at: string;
+}
+
+const tierLabels: Record<string, { label: string; color: string }> = {
+  hot: { label: "Hot", color: "bg-red-600 text-white" },
+  warm: { label: "Warm", color: "bg-amber-100 text-amber-800" },
+  cold: { label: "Cold", color: "bg-slate-100 text-slate-700" },
+};
+
+const stageLabels: Record<string, string> = {
+  website: "website step",
+  review: "review of the scan",
+  questions: "questions",
+  result: "result (score shown, form not sent)",
+};
+
+/**
+ * "Stopped at" line for a partial clinic audit lead: the visitor left an email on the
+ * website step and has not sent the result form (yet). metadata.progress comes from
+ * /api/audit/progress.
+ */
+function AuditPartialProgress({ metadata }: { metadata: Record<string, unknown> }) {
+  const p = (metadata.progress ?? null) as Record<string, unknown> | null;
+  const stage = typeof p?.stage === "string" ? p.stage : "website";
+  const last = (p?.lastStep ?? null) as { n?: unknown; id?: unknown } | null;
+  const total = typeof p?.total === "number" ? p.total : null;
+  const answered = typeof p?.answered === "number" ? p.answered : 0;
+  const where =
+    stage === "questions" && last && typeof last.n === "number"
+      ? `Question ${last.n}${total ? ` of ${total}` : ""}${typeof last.id === "string" ? ` (${last.id})` : ""}`
+      : (stageLabels[stage] ?? stage);
+  const at = typeof p?.at === "string" ? new Date(p.at) : null;
+  const score = typeof metadata.score === "number" ? metadata.score : null;
+  const website = typeof metadata.website === "string" ? metadata.website.replace(/^https?:\/\//, "").replace(/\/$/, "") : null;
+
+  return (
+    <div className="mt-2 flex max-w-[360px] flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
+      <Badge variant="outline" className="border-amber-500 text-amber-700" title="Left an email, did not send the result form">
+        Partial
+      </Badge>
+      <span>
+        <span className="font-medium text-foreground">Stopped at:</span> {where}
+      </span>
+      {total !== null && (
+        <span>
+          {answered}/{total} answered
+        </span>
+      )}
+      {score !== null && <span>Score {score}/100</span>}
+      {website && <span>{website}</span>}
+      {at && !Number.isNaN(at.getTime()) && (
+        <span title={at.toISOString()}>
+          last seen {at.toLocaleString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
+        </span>
+      )}
+    </div>
+  );
+}
+
+/** Compact profile + qualification line for clinic audit leads (stored in leads.metadata). */
+function AuditQualification({ metadata }: { metadata: Record<string, unknown> | null }) {
+  if (!metadata) return null;
+  const q = (metadata.qualification ?? null) as Record<string, unknown> | null;
+  const partial = metadata.partial === true;
+  const list = (v: unknown) => (Array.isArray(v) && v.length ? v.join(", ") : null);
+  const text = (v: unknown) => (typeof v === "string" && v ? v : null);
+  const fields: [string, string | null][] = [
+    ["Treats", text(metadata.treatments)],
+    ["Markets", list(metadata.markets)],
+    ["Volume", text(metadata.volume)],
+    ["Role", text(q?.role)],
+    ["Channel", list(q?.channel)],
+    ["Timeline", text(q?.timeline)],
+    ["Budget", text(q?.budgetFit)],
+  ];
+  const shown = fields.filter((f): f is [string, string] => f[1] !== null);
+  const tier = typeof metadata.tier === "string" ? tierLabels[metadata.tier] : undefined;
+  // A partial lead may carry only some qualification answers: provisional until all four are in.
+  const provisional = partial ? metadata.tierProvisional !== false : !q;
+  if (!tier && shown.length === 0) return null;
+
+  return (
+    <div className="mt-2 flex max-w-[360px] flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
+      {tier && (
+        <Badge
+          className={tier.color}
+          title={provisional ? (partial ? "Provisional (stopped before all qualification answers)" : "Provisional (no qualification answers)") : "Qualified"}
+        >
+          {tier.label}
+          {provisional && "?"}
+        </Badge>
+      )}
+      {shown.map(([label, value]) => (
+        <span key={label}>
+          <span className="font-medium text-foreground">{label}</span> {value}
+        </span>
+      ))}
+    </div>
+  );
 }
 
 const sourceLabels = {
@@ -83,7 +183,12 @@ const sourceLabels = {
   contact_form: { label: "Contact Form", icon: FileText, color: "bg-blue-500 text-white" },
   newsletter: { label: "Newsletter", icon: Mail, color: "bg-purple-500 text-white" },
   chat: { label: "Chat", icon: MessageSquare, color: "bg-orange-500 text-white" },
+  clinic_audit: { label: "Clinic Audit", icon: ClipboardCheck, color: "bg-emerald-600 text-white" },
+  playbook: { label: "Playbook", icon: FileText, color: "bg-teal-600 text-white" },
 };
+
+// Unknown/new sources must never crash the table.
+const fallbackSource = { label: "Other", icon: FileText, color: "bg-gray-500 text-white" };
 
 const statusLabels = {
   new: { label: "New", color: "bg-blue-100 text-blue-800" },
@@ -400,6 +505,8 @@ export default function LeadsPage() {
                   <SelectItem value="contact_form">Contact Form</SelectItem>
                   <SelectItem value="newsletter">Newsletter</SelectItem>
                   <SelectItem value="chat">Chat</SelectItem>
+                  <SelectItem value="clinic_audit">Clinic Audit</SelectItem>
+                  <SelectItem value="playbook">Playbook</SelectItem>
                 </SelectContent>
               </Select>
 
@@ -502,7 +609,7 @@ export default function LeadsPage() {
                     </TableHeader>
                     <TableBody>
                       {paginatedLeads.map((lead) => {
-                        const source = sourceLabels[lead.source];
+                        const source = sourceLabels[lead.source] ?? fallbackSource;
                         const status = statusLabels[lead.status];
                         const SourceIcon = source.icon;
 
@@ -544,6 +651,10 @@ export default function LeadsPage() {
                               <p className="max-w-[300px] truncate text-sm text-muted-foreground">
                                 {lead.message || lead.project_type || "—"}
                               </p>
+                              {lead.source === "clinic_audit" && lead.metadata?.partial === true && (
+                                <AuditPartialProgress metadata={lead.metadata} />
+                              )}
+                              {lead.source === "clinic_audit" && <AuditQualification metadata={lead.metadata} />}
                             </TableCell>
                             <TableCell>
                               <Select

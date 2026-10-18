@@ -5,6 +5,9 @@ import Script from "next/script";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import CookieConsent from "@/components/ui/CookieConsent";
+// 💰 Pricing source of truth: edit prices in src/lib/pricing.ts
+import { getTier, formatPrice, projectTiers, carePlans } from "@/lib/pricing";
+import { SITE_URL } from "@/lib/seo";
 
 const fontSans = FontSans({
   subsets: ["latin", "latin-ext"],
@@ -50,26 +53,23 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: {
-    default: "Awab Design | Web Designer & Developer | Istanbul",
+    default: "Clinic Website Design Istanbul | Awab Design",
     template: "%s | Awab Design",
   },
   description:
-    "Professional web designer and developer in Istanbul. Specializing in modern, conversion-focused websites using Next.js, React, and Tailwind CSS. View portfolio and get in touch.",
+    "Multilingual websites for dental, aesthetic and hair transplant clinics in Istanbul, with lead tracking to your CRM. Fixed USD pricing.",
   keywords: [
-    "web designer",
-    "web developer",
-    "UI/UX designer",
-    "Istanbul web designer",
-    "Next.js developer",
-    "React developer",
-    "Tailwind CSS",
-    "responsive web design",
-    "conversion optimization",
-    "brand identity design",
-    "portfolio",
-    "freelance web designer",
+    "clinic website design Istanbul",
+    "dental clinic website",
+    "aesthetic clinic website",
+    "hair transplant clinic website",
+    "medical tourism website design",
+    "multilingual clinic website",
+    "Arabic clinic website",
+    "web designer Istanbul",
+    "klinik web sitesi tasarımı İstanbul",
   ],
-  authors: [{ name: "Awab Design" }],
+  authors: [{ name: "Awab Elkhalil", url: SITE_URL }],
   creator: "Awab Elkhalil",
   publisher: "Awab Elkhalil",
   formatDetection: {
@@ -77,7 +77,8 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL("https://www.awab.design"),
+  metadataBase: new URL(SITE_URL),
+  // Pages override these with self-referencing alternates via pageAlternates().
   alternates: {
     canonical: "/",
     languages: {
@@ -85,13 +86,14 @@ export const metadata: Metadata = {
       ar: "/ar",
       tr: "/tr",
       fr: "/fr",
+      "x-default": "/",
     },
   },
   openGraph: {
-    title: "Awab Design | Web Designer & Developer | Istanbul",
+    title: "Clinic Website Design Istanbul | Awab Design",
     description:
-      "Professional web design and development services that help businesses stand out online and convert visitors into customers.",
-    url: "https://www.awab.design",
+      "Multilingual websites for dental, aesthetic and hair transplant clinics in Istanbul, with lead tracking to your CRM.",
+    url: SITE_URL,
     siteName: "Awab Design",
     locale: "en_US",
     type: "website",
@@ -100,15 +102,15 @@ export const metadata: Metadata = {
         url: "/img/hero-image.jpg",
         width: 1200,
         height: 630,
-        alt: "Awab Design - Web Designer & Developer",
+        alt: "Awab Design, clinic website design in Istanbul",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Awab Design | Web Designer & Developer | Istanbul",
+    title: "Clinic Website Design Istanbul | Awab Design",
     description:
-      "Professional web design and development services that help businesses stand out online and convert visitors into customers.",
+      "Multilingual websites for dental, aesthetic and hair transplant clinics in Istanbul, with lead tracking to your CRM.",
     images: ["/img/hero-image.jpg"],
     creator: "@awabeladam",
   },
@@ -123,6 +125,187 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
+};
+
+// Site-wide structured data. Prices come from pricing.ts; no ratings or
+// reviews are claimed here because none are collected on the site.
+const SAME_AS = [
+  "https://www.linkedin.com/in/awab-adam/",
+  "https://www.instagram.com/awabeladam/",
+  "https://github.com/awabadam",
+];
+
+const AREA_SERVED = [
+  {
+    "@type": "City",
+    name: "Istanbul",
+    containedInPlace: { "@type": "Country", name: "Turkey" },
+  },
+  { "@type": "Country", name: "Turkey" },
+  { "@type": "Country", name: "France" },
+  { "@type": "AdministrativeArea", name: "Middle East" },
+];
+
+const PACKAGE_NAMES: Record<string, string> = {
+  business: "Clinic Website",
+  custom: "Clinic Growth System",
+};
+const PLAN_NAMES: Record<string, string> = {
+  careStandard: "Site Care",
+  carePro: "Growth Retainer",
+};
+
+const OFFER_CATALOG = {
+  "@type": "OfferCatalog",
+  name: "Clinic website services, Istanbul",
+  itemListElement: [
+    {
+      "@type": "OfferCatalog",
+      name: "Clinic website packages",
+      itemListElement: projectTiers.map((tier) => ({
+        "@type": "Offer",
+        itemOffered: {
+          "@type": "Service",
+          name: PACKAGE_NAMES[tier.id] ?? tier.id,
+          url: `${SITE_URL}/pricing`,
+          serviceType: "Clinic website design",
+        },
+        price: String(tier.price),
+        priceCurrency: "USD",
+        priceSpecification: {
+          "@type": "UnitPriceSpecification",
+          price: String(tier.price),
+          priceCurrency: "USD",
+          unitText: "project",
+        },
+      })),
+    },
+    {
+      "@type": "OfferCatalog",
+      name: "Hosting and care plans",
+      itemListElement: carePlans.map((plan) => ({
+        "@type": "Offer",
+        itemOffered: {
+          "@type": "Service",
+          name: PLAN_NAMES[plan.id] ?? plan.id,
+          url: `${SITE_URL}/services/website-maintenance`,
+          serviceType: "Clinic website maintenance",
+        },
+        price: String(plan.price),
+        priceCurrency: "USD",
+        priceSpecification: {
+          "@type": "UnitPriceSpecification",
+          price: String(plan.price),
+          priceCurrency: "USD",
+          unitText: "month",
+        },
+      })),
+    },
+  ],
+};
+
+const PRICE_RANGE = `${formatPrice(getTier("business").price)} - ${formatPrice(getTier("custom").price)}`;
+
+const PERSON_JSON_LD = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "@id": `${SITE_URL}/#person`,
+  name: "Awab Elkhalil",
+  alternateName: "Awab Design",
+  jobTitle: "Web Designer & Developer",
+  description:
+    "Web designer and developer in Istanbul who builds multilingual websites for dental, aesthetic and hair transplant clinics, with lead tracking to the clinic's CRM.",
+  url: SITE_URL,
+  email: "awabe.adam@gmail.com",
+  telephone: "+905541759945",
+  image: `${SITE_URL}/img/awab-portrait.webp`,
+  sameAs: SAME_AS,
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Istanbul",
+    addressCountry: "TR",
+  },
+  areaServed: AREA_SERVED,
+  worksFor: { "@id": `${SITE_URL}/#business` },
+  knowsLanguage: ["en", "ar", "tr", "fr"],
+  knowsAbout: [
+    "Clinic Website Design",
+    "Medical Tourism Website Design",
+    "Dental Clinic Websites",
+    "Aesthetic Clinic Websites",
+    "Hair Transplant Clinic Websites",
+    "Multilingual Website Development",
+    "Arabic Website Design",
+    "SEO",
+    "Conversion Rate Optimization",
+    "Next.js",
+    "React",
+    "TypeScript",
+    "Web Design Istanbul",
+    "Klinik Web Tasarım",
+  ],
+};
+
+const WEBSITE_JSON_LD = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": `${SITE_URL}/#website`,
+    name: "Awab Design",
+    alternateName: ["Awab Elkhalil", "awab.design"],
+    url: SITE_URL,
+    publisher: { "@id": `${SITE_URL}/#person` },
+    inLanguage: ["en", "ar", "tr", "fr"],
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "SiteNavigationElement",
+    "@id": `${SITE_URL}/#navigation`,
+    name: "Main Navigation",
+    hasPart: [
+      { "@type": "WebPage", name: "Services", url: `${SITE_URL}/services` },
+      { "@type": "WebPage", name: "Pricing", url: `${SITE_URL}/pricing` },
+      { "@type": "WebPage", name: "Case Studies", url: `${SITE_URL}/projects` },
+      { "@type": "WebPage", name: "Web Design Istanbul", url: `${SITE_URL}/services/webdesign-istanbul` },
+      { "@type": "WebPage", name: "Free Clinic Website Check", url: `${SITE_URL}/audit` },
+    ],
+  },
+];
+
+const BUSINESS_JSON_LD = {
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  "@id": `${SITE_URL}/#business`,
+  name: "Awab Design",
+  description:
+    "Clinic website design studio in Istanbul. Multilingual websites for dental, aesthetic and hair transplant clinics, with lead tracking, hosting and care plans. Fixed USD pricing.",
+  url: SITE_URL,
+  telephone: "+905541759945",
+  email: "awabe.adam@gmail.com",
+  image: `${SITE_URL}/img/hero-image.jpg`,
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Istanbul",
+    addressCountry: "TR",
+  },
+  geo: {
+    "@type": "GeoCoordinates",
+    latitude: 41.00824,
+    longitude: 28.97836,
+  },
+  openingHoursSpecification: {
+    "@type": "OpeningHoursSpecification",
+    dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+    opens: "09:00",
+    closes: "18:00",
+  },
+  priceRange: PRICE_RANGE,
+  currenciesAccepted: "USD",
+  areaServed: AREA_SERVED,
+  availableLanguage: ["en", "ar", "tr", "fr"],
+  hasOfferCatalog: OFFER_CATALOG,
+  founder: { "@id": `${SITE_URL}/#person` },
+  sameAs: SAME_AS,
 };
 
 export default function RootLayout({
@@ -200,226 +383,18 @@ export default function RootLayout({
           `}
         </Script>
 
-        {/* All JSON-LD structured data — must be <script> tags, not <meta> */}
+        {/* All JSON-LD structured data: must be <script> tags, not <meta> */}
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "Person",
-              "@id": "https://www.awab.design/#person",
-              name: "Awab Design",
-              jobTitle: "Web Designer & Developer",
-              description:
-                "Professional web designer and developer in Istanbul specializing in modern, conversion-focused websites, UI/UX design, SEO, and AI chatbot integration.",
-              url: "https://www.awab.design",
-              email: "awabe.adam@gmail.com",
-              telephone: "+905541759945",
-              image: "https://www.awab.design/img/hero-image.jpg",
-              sameAs: [
-                "https://www.linkedin.com/in/awab-adam/",
-                "https://www.instagram.com/awabeladam/",
-              ],
-              address: {
-                "@type": "PostalAddress",
-                addressLocality: "Istanbul",
-                addressCountry: "TR",
-              },
-              areaServed: [
-                {
-                  "@type": "City",
-                  "name": "Istanbul",
-                  "containedInPlace": { "@type": "Country", "name": "Turkey" },
-                },
-                { "@type": "AdministrativeArea", "name": "Beşiktaş, Istanbul" },
-                { "@type": "AdministrativeArea", "name": "Kadıköy, Istanbul" },
-                { "@type": "AdministrativeArea", "name": "Şişli, Istanbul" },
-                { "@type": "AdministrativeArea", "name": "Ataşehir, Istanbul" },
-                { "@type": "AdministrativeArea", "name": "Bakırköy, Istanbul" },
-                { "@type": "AdministrativeArea", "name": "Beyoğlu, Istanbul" },
-                { "@type": "AdministrativeArea", "name": "Üsküdar, Istanbul" },
-                { "@type": "AdministrativeArea", "name": "Fatih, Istanbul" },
-                { "@type": "AdministrativeArea", "name": "Sarıyer, Istanbul" },
-                { "@type": "AdministrativeArea", "name": "Maltepe, Istanbul" },
-                { "@type": "Country", "name": "Turkey" },
-                { "@type": "Country", "name": "France" },
-                { "@type": "AdministrativeArea", "name": "Middle East" },
-              ],
-              knowsLanguage: ["en", "ar", "tr", "fr"],
-              knowsAbout: [
-                "Web Design", "Web Development", "UI/UX Design", "SEO",
-                "AI Chatbot Integration", "Brand Identity", "Next.js", "React", "TypeScript",
-                "Tailwind CSS", "Responsive Web Design", "E-Commerce Development",
-                "Medical Website Design", "Multilingual Website Development",
-                "Web Design Istanbul", "Kurumsal Web Tasarım", "Istanbul Web Tasarım",
-                "Performance Optimization", "Conversion Rate Optimization",
-              ],
-              priceRange: "$200 - $3000+",
-              makesOffer: [
-                {
-                  "@type": "Offer",
-                  itemOffered: { "@type": "Service", name: "Landing Page Design" },
-                  priceSpecification: { "@type": "UnitPriceSpecification", price: "150", priceCurrency: "USD" },
-                },
-                {
-                  "@type": "Offer",
-                  itemOffered: { "@type": "Service", name: "Business Website Design & Development" },
-                  priceSpecification: { "@type": "UnitPriceSpecification", price: "500", priceCurrency: "USD" },
-                },
-                {
-                  "@type": "Offer",
-                  itemOffered: { "@type": "Service", name: "Custom Website Development" },
-                  priceSpecification: { "@type": "UnitPriceSpecification", price: "1500", priceCurrency: "USD" },
-                },
-              ],
-              aggregateRating: {
-                "@type": "AggregateRating",
-                ratingValue: "5.0",
-                reviewCount: "4",
-                bestRating: "5",
-              },
-              review: [
-                {
-                  "@type": "Review",
-                  author: { "@type": "Person", name: "Dr. Ahmed Hassan" },
-                  reviewRating: { "@type": "Rating", ratingValue: "5" },
-                  reviewBody: "Awab transformed our clinic's online presence completely. Our new website has increased our patient inquiries by 40%.",
-                },
-                {
-                  "@type": "Review",
-                  author: { "@type": "Person", name: "Sarah Johnson" },
-                  reviewRating: { "@type": "Rating", ratingValue: "5" },
-                  reviewBody: "Working with Awab was a game-changer for our aesthetic clinic. The SEO optimization has significantly improved our search rankings.",
-                },
-                {
-                  "@type": "Review",
-                  author: { "@type": "Person", name: "Mehmet Yılmaz" },
-                  reviewRating: { "@type": "Rating", ratingValue: "5" },
-                  reviewBody: "Awab created a stunning website for our restaurant. The online ordering integration was seamless.",
-                },
-                {
-                  "@type": "Review",
-                  author: { "@type": "Person", name: "Fatima Al-Zahra" },
-                  reviewRating: { "@type": "Rating", ratingValue: "5" },
-                  reviewBody: "Awab's expertise helped us establish a strong online presence. His attention to detail made all the difference.",
-                },
-              ],
-            }),
-          }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(PERSON_JSON_LD) }}
         />
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify([
-              {
-                "@context": "https://schema.org",
-                "@type": "WebSite",
-                "@id": "https://www.awab.design/#website",
-                name: "Awab Design",
-                alternateName: ["Awab Elkhalil", "awab.design"],
-                url: "https://www.awab.design",
-                publisher: { "@id": "https://www.awab.design/#person" },
-                inLanguage: ["en", "ar", "tr", "fr"],
-              },
-              {
-                "@context": "https://schema.org",
-                "@type": "SiteNavigationElement",
-                "@id": "https://www.awab.design/#navigation",
-                name: "Main Navigation",
-                hasPart: [
-                  { "@type": "WebPage", name: "Services", url: "https://www.awab.design/services" },
-                  { "@type": "WebPage", name: "Web Design Istanbul", url: "https://www.awab.design/services/webdesign-istanbul" },
-                  { "@type": "WebPage", name: "Clinic Websites", url: "https://www.awab.design/services/clinic-websites" },
-                ],
-              },
-            ]),
-          }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(WEBSITE_JSON_LD) }}
         />
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "ProfessionalService",
-              "@id": "https://www.awab.design/#business",
-              name: "Awab Design",
-              url: "https://www.awab.design",
-              telephone: "+905541759945",
-              email: "awabe.adam@gmail.com",
-              image: "https://www.awab.design/img/hero-image.jpg",
-              address: {
-                "@type": "PostalAddress",
-                addressLocality: "Istanbul",
-                addressCountry: "TR",
-              },
-              geo: {
-                "@type": "GeoCoordinates",
-                latitude: 41.00824,
-                longitude: 28.97836,
-              },
-              openingHoursSpecification: {
-                "@type": "OpeningHoursSpecification",
-                dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-                opens: "09:00",
-                closes: "18:00",
-              },
-              priceRange: "$200 - $3000+",
-              areaServed: [
-                {
-                  "@type": "City",
-                  "name": "Istanbul",
-                  "containedInPlace": { "@type": "Country", "name": "Turkey" },
-                },
-                { "@type": "AdministrativeArea", "name": "Beşiktaş, Istanbul" },
-                { "@type": "AdministrativeArea", "name": "Kadıköy, Istanbul" },
-                { "@type": "AdministrativeArea", "name": "Şişli, Istanbul" },
-                { "@type": "AdministrativeArea", "name": "Ataşehir, Istanbul" },
-                { "@type": "AdministrativeArea", "name": "Bakırköy, Istanbul" },
-                { "@type": "AdministrativeArea", "name": "Beyoğlu, Istanbul" },
-                { "@type": "AdministrativeArea", "name": "Üsküdar, Istanbul" },
-                { "@type": "AdministrativeArea", "name": "Fatih, Istanbul" },
-                { "@type": "AdministrativeArea", "name": "Sarıyer, Istanbul" },
-                { "@type": "AdministrativeArea", "name": "Maltepe, Istanbul" },
-                { "@type": "Country", "name": "Turkey" },
-                { "@type": "Country", "name": "France" },
-                { "@type": "AdministrativeArea", "name": "Middle East" },
-              ],
-              hasOfferCatalog: {
-                "@type": "OfferCatalog",
-                "name": "Web Design Services Istanbul",
-                "itemListElement": [
-                  {
-                    "@type": "OfferCatalog",
-                    "name": "Website Design",
-                    "itemListElement": [
-                      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Landing Page Design Istanbul", "url": "https://www.awab.design/services/webdesign-istanbul" } },
-                      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Business Website Design Istanbul", "url": "https://www.awab.design/services/webdesign-istanbul" } },
-                      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "E-Commerce Website Istanbul", "url": "https://www.awab.design/services/webdesign-istanbul" } },
-                      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Medical Clinic Website Istanbul", "url": "https://www.awab.design/services/clinic-websites" } },
-                    ],
-                  },
-                  {
-                    "@type": "OfferCatalog",
-                    "name": "Digital Services",
-                    "itemListElement": [
-                      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Website Maintenance", "url": "https://www.awab.design/services/website-maintenance" } },
-                    ],
-                  },
-                ],
-              },
-              founder: { "@id": "https://www.awab.design/#person" },
-              sameAs: [
-                "https://www.linkedin.com/in/awab-adam/",
-                "https://www.instagram.com/awabeladam/",
-              ],
-              aggregateRating: {
-                "@type": "AggregateRating",
-                ratingValue: "5.0",
-                reviewCount: "4",
-                bestRating: "5",
-              },
-            }),
-          }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(BUSINESS_JSON_LD) }}
         />
 
         {children}

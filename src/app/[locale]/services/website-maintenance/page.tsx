@@ -5,58 +5,61 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, CheckCircle, Clock, DollarSign } from "lucide-react";
 import { getTranslations, getLocale } from "next-intl/server";
 // 💰 Pricing source of truth: edit prices in src/lib/pricing.ts
-import { carePlans, getPrice, formatPrice } from "@/lib/pricing";
+// Plan cards are shared with /pricing (names/features from the `packages` namespace).
+import { getCarePlan, formatPrice } from "@/lib/pricing";
+import CarePlanCards from "@/components/pricing/CarePlanCards";
+import StockPhoto from "@/components/ui/stock-photo";
+import RelatedLinks from "@/components/seo/RelatedLinks";
+import { ogLocale, pageAlternates, localeUrl } from "@/lib/seo";
+import ClosingCard from "@/components/cta/ClosingCard";
+import BookCallLink from "@/components/cta/BookCallLink";
+import { GlassPill } from "@/components/ui/glass-pill";
 
+const PAGE_PATH = "/services/website-maintenance";
+
+// OG image: ./opengraph-image.tsx
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('metadata.websiteMaintenance');
   const locale = await getLocale();
-  const ogLocale = locale === 'ar' ? 'ar_SA' : locale === 'tr' ? 'tr_TR' : 'en_US';
+  // The description quotes the Site Care price from pricing.ts.
+  const description = t('description', { carePrice: formatPrice(getCarePlan("careStandard").price) });
 
   return {
-    title: t('title'),
-    description: t('description'),
+    // Title already ends in "| Awab Design"; skip the root template.
+    title: { absolute: t('title') },
+    description,
     keywords: [
+      "clinic website maintenance",
+      "clinic website hosting",
       "website maintenance Istanbul",
-      "webdesign Istanbul maintenance",
-      "website updates Istanbul",
-      "Istanbul website support",
-      "website security Istanbul",
-      "website optimization Istanbul",
-      "content management Istanbul",
-      "SEO maintenance Istanbul",
+      "website care plan",
+      "clinic lead report",
+      "klinik web sitesi bakım",
     ],
     openGraph: {
       title: t('title'),
-      description: t('description'),
-      url: "https://www.awab.design/services/website-maintenance",
-      locale: ogLocale,
+      description,
+      url: localeUrl(PAGE_PATH, locale),
+      locale: ogLocale(locale),
+      type: "website",
     },
-    alternates: {
-      canonical: "/services/website-maintenance",
-      languages: { en: '/services/website-maintenance', ar: '/ar/services/website-maintenance', tr: '/tr/services/website-maintenance', fr: '/fr/services/website-maintenance' },
+    twitter: {
+      card: "summary_large_image",
+      title: t('title'),
+      description,
     },
+    alternates: pageAlternates(PAGE_PATH, locale),
   };
 }
 
 const WebsiteMaintenancePage = async () => {
   const t = await getTranslations('services');
-  const tCalc = await getTranslations('rateCalculator');
-  const locale = await getLocale();
   const inclusions = t.raw('websiteMaintenance.inclusions') as string[];
-  const perMonth = t('websiteMaintenance.perMonth');
 
-  // Care Plans sourced from lib/pricing.ts — one per site tier.
-  const plans = carePlans.map((p) => ({
-    id: p.id,
-    name: t(`websiteMaintenance.${p.nameKey}`),
-    price: formatPrice(getPrice(p.id, p.basePrice, locale), locale) + perMonth,
-    features: t.raw(`websiteMaintenance.${p.featuresKey}`) as string[],
-    popular: !!p.popular,
-  }));
-  const entryPlan = carePlans[0];
-  const fromPrice = formatPrice(getPrice(entryPlan.id, entryPlan.basePrice, locale), locale);
-  // Structured data stays in USD at the international rate (matches pricing/layout.tsx).
-  const schemaPrice = String(getPrice(entryPlan.id, entryPlan.basePrice, "en"));
+  // Entry plan (Site Care) drives the "from" price and the JSON-LD offer.
+  const entryPlan = getCarePlan("careStandard");
+  const fromPrice = formatPrice(entryPlan.price);
+  const schemaPrice = String(entryPlan.price);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -108,75 +111,67 @@ const WebsiteMaintenancePage = async () => {
           </div>
         </div>
 
-        <section className="mb-16">
-          <h2 className="mb-8 font-display text-3xl font-bold">
-            {t('whatsIncluded')}
-          </h2>
-          <div className="grid gap-6 md:grid-cols-2">
-            {inclusions.map((benefit: string) => (
-              <div key={benefit} className="flex items-start gap-3">
-                <CheckCircle className="h-5 w-5 shrink-0 text-primary" />
-                <span>{benefit}</span>
-              </div>
-            ))}
+        <section className="mb-16 grid items-center gap-10 lg:grid-cols-12 lg:gap-14">
+          <div className="lg:col-span-7">
+            <h2 className="mb-8 font-display text-3xl font-bold">
+              {t('whatsIncluded')}
+            </h2>
+            <div className="grid gap-6 md:grid-cols-2">
+              {inclusions.map((benefit: string) => (
+                <div key={benefit} className="flex items-start gap-3">
+                  <CheckCircle className="h-5 w-5 shrink-0 text-primary" />
+                  <span>{benefit}</span>
+                </div>
+              ))}
+            </div>
           </div>
+          <StockPhoto
+            slot="workspace"
+            sizes="(min-width: 1024px) 46vw, 100vw"
+            className="aspect-[16/10] lg:col-span-5 lg:aspect-[4/3]"
+          />
         </section>
 
         <section className="mb-16">
           <h2 className="mb-8 font-display text-3xl font-bold">
             {t('websiteMaintenance.maintenancePlans')}
           </h2>
-          <div className="grid gap-8 md:grid-cols-3">
-            {plans.map((plan) => (
-              <div
-                key={plan.id}
-                className={`relative rounded-2xl border-2 p-8 ${
-                  plan.popular ? "border-primary bg-primary/5" : "border-border bg-card"
-                }`}
-              >
-                {plan.popular && (
-                  <span className="absolute -top-3 right-6 rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground">
-                    {tCalc('popular')}
-                  </span>
-                )}
-                <h3 className="mb-2 font-display text-2xl font-bold">{plan.name}</h3>
-                <p className="mb-6 text-2xl font-semibold text-primary">{plan.price}</p>
-                <ul className="space-y-3">
-                  {plan.features.map((feature: string) => (
-                    <li key={feature} className="flex items-start gap-2 text-sm">
-                      <CheckCircle className="h-4 w-4 shrink-0 text-primary" />
-                      <span>{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
+          <CarePlanCards />
         </section>
 
         {/* Ownership / transfer — no lock-in */}
-        <section className="mb-16 rounded-2xl border-2 border-primary/30 bg-primary/5 p-8 md:p-10">
-          <h2 className="mb-3 font-display text-2xl font-bold md:text-3xl">
-            {t('websiteMaintenance.transferTitle')}
-          </h2>
-          <p className="max-w-3xl leading-relaxed text-muted-foreground">
-            {t('websiteMaintenance.transferText')}
-          </p>
-        </section>
-
-        <section className="rounded-2xl border border-border bg-muted/30 p-12 text-center">
-          <h2 className="mb-4 font-display text-3xl font-bold">
-            {t('websiteMaintenance.ctaHeading')}
-          </h2>
-          <p className="mb-8 text-muted-foreground">
-            {t('websiteMaintenance.ctaDescription')}
-          </p>
-          <div className="flex flex-col justify-center gap-4 sm:flex-row">
-            <Button asChild size="lg" className="h-14 px-8 text-lg">
-              <Link href="/contact">{t('contactMe')}</Link>
-            </Button>
+        <section className="mb-16 grid items-center gap-8 rounded-2xl border-2 border-primary/30 bg-primary/5 p-5 md:p-6 lg:grid-cols-12 lg:gap-12">
+          <StockPhoto
+            slot="analytics"
+            // 3:2 photo in a 16:10 frame: renders at about the frame width.
+            sizes="(min-width: 1024px) 40vw, 100vw"
+            className="aspect-[16/10] lg:col-span-5"
+          />
+          <div className="px-3 pb-3 md:px-4 lg:col-span-7 lg:p-0">
+            <h2 className="mb-3 font-display text-2xl font-bold md:text-3xl">
+              {t('websiteMaintenance.transferTitle')}
+            </h2>
+            <p className="max-w-3xl leading-relaxed text-muted-foreground">
+              {t('websiteMaintenance.transferText')}
+            </p>
           </div>
         </section>
+
+        <RelatedLinks items={["services", "pricing", "audit"]} className="mb-16" />
+
+        <ClosingCard
+          contained={false}
+          heading={t('websiteMaintenance.ctaHeading')}
+          text={t('websiteMaintenance.ctaDescription')}
+          actions={
+            <>
+              <GlassPill href="/contact" tone="dark" arrow>
+                {t('contactMe')}
+              </GlassPill>
+              <BookCallLink location="maintenance_cta" />
+            </>
+          }
+        />
       </div>
     </main>
     </>

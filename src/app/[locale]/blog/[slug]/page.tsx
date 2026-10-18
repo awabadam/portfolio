@@ -12,7 +12,9 @@ import BlogCTA from "@/components/blog/BlogCTA";
 import RelatedPosts from "@/components/blog/RelatedPosts";
 import Breadcrumbs from "@/components/seo/Breadcrumbs";
 import ArticleSchema from "@/components/seo/ArticleSchema";
+import RelatedLinks from "@/components/seo/RelatedLinks";
 import { getTranslations, getLocale } from 'next-intl/server';
+import { ogLocale, pageAlternates, localeUrl } from "@/lib/seo";
 
 // Revalidate every 60 seconds to show fresh blog content
 export const revalidate = 60;
@@ -29,11 +31,11 @@ export async function generateMetadata({
   const { slug } = await params;
   const post = await getBlogPostBySlug(slug);
   const locale = await getLocale();
-  const ogLocale = locale === 'ar' ? 'ar_SA' : locale === 'tr' ? 'tr_TR' : locale === 'fr' ? 'fr_FR' : 'en_US';
 
   if (!post) {
     return {
       title: "Post Not Found",
+      robots: { index: false, follow: false },
     };
   }
 
@@ -44,9 +46,9 @@ export async function generateMetadata({
     openGraph: {
       title: post.meta_title || post.title,
       description: post.meta_description || post.excerpt,
-      url: `https://www.awab.design/blog/${post.slug}`,
+      url: localeUrl(`/blog/${post.slug}`, locale),
       type: "article",
-      locale: ogLocale,
+      locale: ogLocale(locale),
       publishedTime: post.published_at,
       modifiedTime: post.updated_at,
       authors: ["Awab Elkhalil"],
@@ -68,10 +70,7 @@ export async function generateMetadata({
       description: post.meta_description || post.excerpt,
       images: post.featured_image_url ? [post.featured_image_url] : [],
     },
-    alternates: {
-      canonical: `/blog/${post.slug}`,
-      languages: { en: `/blog/${post.slug}`, ar: `/ar/blog/${post.slug}`, tr: `/tr/blog/${post.slug}`, fr: `/fr/blog/${post.slug}` },
-    },
+    alternates: pageAlternates(`/blog/${post.slug}`, locale),
   };
 }
 
@@ -195,6 +194,7 @@ const BlogPostPage = async ({ params }: BlogPostPageProps) => {
           </div>
 
           <BlogCTA />
+          <RelatedLinks items={["services", "audit", "caseStudies"]} className="mt-16" />
           <RelatedPosts posts={relatedPosts} heading={t('relatedPosts')} />
         </div>
       </div>

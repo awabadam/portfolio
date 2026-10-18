@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import { getTranslations, getLocale } from "next-intl/server";
 import Breadcrumbs from "@/components/seo/Breadcrumbs";
+import { ogLocale, pageAlternates, localeUrl } from "@/lib/seo";
 
+// OG image: ./opengraph-image.tsx
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("metadata.about");
   const locale = await getLocale();
-  const ogLocale = locale === "ar" ? "ar_SA" : locale === "tr" ? "tr_TR" : locale === "fr" ? "fr_FR" : "en_US";
 
   return {
     title: t("title"),
@@ -13,32 +14,16 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       title: t("title"),
       description: t("description"),
-      url: "https://www.awab.design/about",
-      locale: ogLocale,
+      url: localeUrl("/about", locale),
+      locale: ogLocale(locale),
       type: "profile",
-      images: [
-        {
-          url: "/img/hero-image.jpg",
-          width: 1200,
-          height: 630,
-          alt: "Awab Design — About",
-        },
-      ],
     },
     twitter: {
       card: "summary_large_image",
       title: t("title"),
       description: t("description"),
     },
-    alternates: {
-      canonical: "/about",
-      languages: {
-        en: "/about",
-        ar: "/ar/about",
-        tr: "/tr/about",
-        fr: "/fr/about",
-      },
-    },
+    alternates: pageAlternates("/about", locale),
   };
 }
 
@@ -56,29 +41,33 @@ export default function AboutLayout({ children }: { children: React.ReactNode })
             "@context": "https://schema.org",
             "@type": "ProfilePage",
             dateCreated: "2024-01-01",
-            dateModified: "2026-04-16",
+            dateModified: "2026-10-17",
             mainEntity: {
               "@type": "Person",
               "@id": "https://www.awab.design/#person",
               name: "Awab Elkhalil",
               jobTitle: "Web Designer & Developer",
               description:
-                "Professional web designer and developer in Istanbul specializing in modern, conversion-focused websites, UI/UX design, SEO, and AI chatbot integration.",
-              image: "https://www.awab.design/img/hero-image.jpg",
+                "Web designer and developer in Istanbul building multilingual websites for clinics that treat international patients, with lead tracking, CRM handoff and Google Ads offline conversions.",
+              image: "https://www.awab.design/img/awab-portrait.webp",
+              workLocation: {
+                "@type": "Place",
+                name: "Istanbul, Türkiye",
+              },
               url: "https://www.awab.design",
               sameAs: [
                 "https://www.linkedin.com/in/awab-adam/",
                 "https://www.instagram.com/awabeladam/",
+                "https://github.com/awabadam",
               ],
               knowsAbout: [
-                "Web Design",
-                "Web Development",
-                "UI/UX Design",
-                "SEO",
-                "AI Chatbot Integration",
+                "Clinic Website Design",
+                "Multilingual Websites",
+                "Medical Tourism Marketing",
+                "Lead Tracking",
+                "Google Ads Offline Conversions",
+                "CRM Integration",
                 "Next.js",
-                "React",
-                "TypeScript",
               ],
             },
           }),

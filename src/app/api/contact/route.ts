@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import nodemailer from 'nodemailer';
+import { createEmailTransport } from '@/lib/email';
 import { db } from "@/db";
 import { leads } from "@/db/schema";
 
@@ -125,20 +125,8 @@ export async function POST(request: Request) {
       );
     }
     
-    // Create transporter
-    const transporter = nodemailer.createTransport({
-      host: process.env.EMAIL_HOST,
-      port: Number(process.env.EMAIL_PORT || 587),
-      secure: false, // true for 465, false for other ports
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-      // Add timeout and connection settings
-      connectionTimeout: 10000, // 10 seconds
-      greetingTimeout: 10000,
-      socketTimeout: 10000,
-    });
+    // Create transporter (shared SMTP config lives in src/lib/email.ts)
+    const transporter = createEmailTransport();
     
     // Verify SMTP connection (optional - can skip if causing issues)
     if (process.env.NODE_ENV === 'development') {

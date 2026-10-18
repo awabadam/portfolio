@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState, type PointerEvent } from "react";
+import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/routing";
@@ -91,17 +92,15 @@ export default function WorkCard({
           </span>
         </div>
 
-        {/* Layer 1: Local thumbnail -> screenshot API fallback */}
+        {/* Layer 1: Local thumbnail (optimized, 2x-ready) -> screenshot API fallback */}
         {!useFallback ? (
-          /* eslint-disable-next-line @next/next/no-img-element */
-          <img
+          <Image
             src={thumbnailSrc}
             alt={project.title}
-            width={1600}
-            height={1100}
-            loading={priority ? "eager" : "lazy"}
-            fetchPriority={priority ? "high" : "auto"}
-            decoding="async"
+            fill
+            sizes="(min-width: 768px) 50vw, 100vw"
+            quality={85}
+            priority={priority}
             className={IMAGE_CLASS}
             onError={() => setUseFallback(true)}
           />
@@ -144,7 +143,7 @@ export default function WorkCard({
           className="pointer-events-none absolute inset-0 z-[2]"
           style={{
             background:
-              "linear-gradient(180deg, rgba(84,84,84,0) 35%, rgba(0,0,0,0.4) 100%)",
+              "linear-gradient(180deg, rgba(0,0,0,0) 30%, rgba(0,0,0,0.55) 100%)",
           }}
         />
 

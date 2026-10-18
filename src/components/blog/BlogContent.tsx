@@ -23,7 +23,7 @@ export default function BlogContent({ content }: { content: string }) {
       )
       .replace(
         /^# (.*$)/gim,
-        '<h1 class="text-4xl font-bold mt-16 mb-8 font-display tracking-tight">$1</h1>',
+        '<h2 class="text-4xl font-bold mt-16 mb-8 font-display tracking-tight">$1</h2>',
       )
       .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-foreground">$1</strong>')
       .replace(/\*(.*?)\*/g, '<em class="italic">$1</em>')

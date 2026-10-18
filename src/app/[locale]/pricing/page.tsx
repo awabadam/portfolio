@@ -1,69 +1,25 @@
 "use client";
 
+import Image from "next/image";
 import { Link } from "@/i18n/routing";
 import { Button } from "@/components/ui/button";
-import {
-  Check,
-  X,
-  ChevronDown,
-  ArrowRight,
-  Globe,
-  Code,
-  Layout,
-  Quote,
-  Star,
-} from "lucide-react";
+import { Check, X, ChevronDown, ArrowRight } from "lucide-react";
+import { GlassPill } from "@/components/ui/glass-pill";
 import { testimonials } from "@/data/testimonials";
-import { useTranslations, useLocale } from "next-intl";
-import { ScrollReveal, StaggerContainer, StaggerItem } from "@/components/effects";
+import { useTranslations } from "next-intl";
+import { ScrollReveal } from "@/components/effects";
 import FAQSchema from "@/components/seo/FAQSchema";
+import RelatedLinks from "@/components/seo/RelatedLinks";
+import StockPhoto from "@/components/ui/stock-photo";
 // 💰 Pricing source of truth: edit prices in src/lib/pricing.ts
-// This page only defines feature lists + icons; all prices and tier
-// names/descriptions come from lib/pricing + the rateCalculator namespace.
-import {
-  projectTiers,
-  getPrice,
-  formatPrice,
-  getIncludedAddOns,
-} from "@/lib/pricing";
-
-// Feature list keys per tier id — defined in the `pricing` translation namespace
-const tierFeatureKeys: Record<string, string[]> = {
-  landing: [
-    "landingFeature1",
-    "landingFeature2",
-    "landingFeature3",
-    "landingFeature4",
-    "landingFeature5",
-    "landingFeature6",
-  ],
-  business: [
-    "businessFeature1",
-    "businessFeature2",
-    "businessFeature3",
-    "businessFeature4",
-    "businessFeature5",
-    "businessFeature6",
-    "businessFeature7",
-  ],
-  custom: [
-    "customFeature1",
-    "customFeature2",
-    "customFeature3",
-    "customFeature4",
-    "customFeature5",
-    "customFeature6",
-    "customFeature7",
-    "customFeature8",
-  ],
-};
-
-// Icons for the 3 project tiers (keyed by pricing.ts tier id)
-const tierIcons: Record<string, React.ReactNode> = {
-  landing: <Globe className="h-6 w-6" />,
-  business: <Code className="h-6 w-6" />,
-  custom: <Layout className="h-6 w-6" />,
-};
+// Package + plan cards are shared with /services and
+// /services/website-maintenance (names, features and prices come from
+// lib/pricing + the `packages` namespace).
+import PackageCards from "@/components/pricing/PackageCards";
+import CarePlanCards from "@/components/pricing/CarePlanCards";
+import { getCarePlan, formatPrice } from "@/lib/pricing";
+import ClosingCard from "@/components/cta/ClosingCard";
+import BookCallLink from "@/components/cta/BookCallLink";
 
 const includedItems = [
   "included1",
@@ -89,117 +45,71 @@ const faqKeys = ["faq1", "faq2", "faq3", "faq4", "faq5", "faq6", "faq7"];
 
 export default function PricingPage() {
   const t = useTranslations("pricing");
-  const tCalc = useTranslations("rateCalculator");
-  const locale = useLocale();
+  // One real client quote, shown full width. Add more to data/testimonials.ts
+  // and this becomes a list.
+  const quote = testimonials[0];
+  // Copy that quotes the entry monthly price ("Site Care from {carePrice}/mo")
+  const siteCare = getCarePlan("careStandard");
+  const priceValues = {
+    carePrice: formatPrice(siteCare.price),
+  };
 
   return (
     <main className="min-h-screen bg-background pt-32">
       {/* Hero */}
-      <section className="container mx-auto px-4 pb-16 text-center">
-        <ScrollReveal animation="blurUp">
-          <p className="mb-4 font-mono text-sm uppercase tracking-widest text-muted-foreground">
-            {t("heroEyebrow")}
-          </p>
-          <h1 className="mx-auto max-w-4xl font-display text-hero">
-            {t("heroHeading")}
-          </h1>
-        </ScrollReveal>
-        <ScrollReveal animation="blurUp" delay={0.1}>
-          <p className="mx-auto mt-8 max-w-2xl text-xl leading-relaxed text-muted-foreground">
-            {t("heroSubtitle")}
-          </p>
+      <section className="container mx-auto grid items-end gap-10 px-5 pb-12 md:px-8 md:pb-16 lg:grid-cols-12 lg:gap-14">
+        <div className="lg:col-span-7">
+          <ScrollReveal animation="fadeUp">
+            <p className="mb-5 font-mono text-label text-muted-foreground">
+              {t("heroEyebrow")}
+            </p>
+            <h1 className="max-w-4xl font-display text-hero text-balance">
+              {t("heroHeading")}
+            </h1>
+          </ScrollReveal>
+          <ScrollReveal animation="fadeUp" delay={0.1}>
+            <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground md:text-xl">
+              {t("heroSubtitle")}
+            </p>
+          </ScrollReveal>
+        </div>
+        <ScrollReveal animation="fade" delay={0.15} className="lg:col-span-5">
+          <StockPhoto
+            slot="analytics-alt"
+            priority
+            // 3:2 photo in a 4:3 frame renders ~1.13x the frame width.
+            sizes="(min-width: 1024px) 40vw, 113vw"
+            className="aspect-[4/3]"
+            imageClassName="object-[50%_55%]"
+          />
         </ScrollReveal>
       </section>
 
-      {/* Pricing Tiers — sourced from lib/pricing.ts */}
-      <section className="container mx-auto px-4 py-16">
-        <StaggerContainer className="grid gap-6 md:grid-cols-3" staggerDelay={0.1}>
-          {projectTiers.map((tier) => {
-            const price = getPrice(tier.id, tier.basePrice, locale);
-            const featureKeys = tierFeatureKeys[tier.id] ?? [];
-            const timeframeKey = `${tier.id}Timeframe`;
-            return (
-              <StaggerItem key={tier.id} animation="fadeUp">
-                <div
-                  className={`relative flex h-full flex-col rounded-2xl border-2 p-8 transition-all duration-300 hover:shadow-lg ${
-                    tier.popular
-                      ? "border-primary bg-primary/5 shadow-lg md:scale-105"
-                      : "border-border bg-card hover:border-primary/30"
-                  }`}
-                >
-                  {tier.popular && (
-                    <span className="absolute -top-3 right-6 rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground">
-                      {tCalc("popular")}
-                    </span>
-                  )}
-                  <div className="mb-4 text-primary">{tierIcons[tier.id]}</div>
-                  <h2 className="font-display text-2xl font-bold">{tCalc(tier.nameKey)}</h2>
-                  <p className="mt-1 text-sm text-muted-foreground">{tCalc(tier.descKey)}</p>
-                  <div className="mt-6 border-t border-border pt-6">
-                    <span
-                      className={`font-display text-4xl font-bold ${
-                        tier.popular ? "text-primary" : ""
-                      }`}
-                    >
-                      {formatPrice(price, locale)}
-                      {t("tierPriceSuffix")}
-                    </span>
-                    <p className="mt-1 text-xs text-muted-foreground">{t(timeframeKey)}</p>
-                  </div>
-                  <ul className="mt-6 flex-1 space-y-3">
-                    {featureKeys.map((key) => (
-                      <li key={key} className="flex items-start gap-2 text-sm">
-                        <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                        <span>{t(key)}</span>
-                      </li>
-                    ))}
-                    {getIncludedAddOns(tier.id).map((addOn) => (
-                      <li key={addOn.id} className="flex items-start gap-2 text-sm">
-                        <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                        <span>
-                          <span className="font-medium">{tCalc(addOn.nameKey)}</span>
-                          <span className="text-muted-foreground">
-                            {" — "}
-                            {tCalc("valuedAt", {
-                              value: formatPrice(getPrice(addOn.id, addOn.price, locale), locale),
-                            })}
-                          </span>
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                  <Button
-                    asChild
-                    className="mt-8 rounded-full"
-                    size="lg"
-                    variant={tier.popular ? "default" : "outline"}
-                  >
-                    <Link href="/contact">
-                      {t("tierCTA")}
-                      <ArrowRight className="ml-2 rtl:ml-0 rtl:mr-2 rtl:rotate-180 h-4 w-4" />
-                    </Link>
-                  </Button>
-                </div>
-              </StaggerItem>
-            );
-          })}
-        </StaggerContainer>
+      {/* Packages — sourced from lib/pricing.ts */}
+      <section className="container mx-auto px-5 py-16 md:px-8">
+        <PackageCards headingLevel="h2" />
+      </section>
 
+      {/* Monthly plans — sourced from lib/pricing.ts */}
+      <section className="border-t border-border py-20 md:py-28">
+        <div className="container mx-auto px-5 md:px-8">
+          <ScrollReveal animation="fadeUp" className="mb-10 md:mb-12">
+            <h2 className="max-w-3xl font-display text-heading text-balance">{t("plansHeading")}</h2>
+            <p className="mt-4 max-w-xl text-lg text-muted-foreground">{t("plansSubtitle")}</p>
+          </ScrollReveal>
+          <CarePlanCards />
+        </div>
       </section>
 
       {/* What's Included / Not Included Comparison */}
-      <section className="border-t border-border py-24">
-        <div className="container mx-auto px-4">
-          <ScrollReveal animation="fadeUp">
-            <h2 className="mb-2 text-center font-display text-3xl font-bold md:text-4xl">
-              {t("comparisonHeading")}
-            </h2>
-            <p className="mb-12 text-center text-muted-foreground">
-              {t("comparisonSubtitle")}
-            </p>
+      <section className="border-t border-border py-20 md:py-28">
+        <div className="container mx-auto px-5 md:px-8">
+          <ScrollReveal animation="fadeUp" className="mb-10 md:mb-12">
+            <h2 className="max-w-3xl font-display text-heading text-balance">{t("comparisonHeading")}</h2>
+            <p className="mt-4 max-w-xl text-lg text-muted-foreground">{t("comparisonSubtitle")}</p>
           </ScrollReveal>
 
-          <div className="mx-auto grid max-w-4xl gap-8 md:grid-cols-2">
+          <div className="grid gap-5 md:grid-cols-2">
             <ScrollReveal animation="fadeUp">
               <div className="rounded-2xl border border-border bg-card p-8">
                 <h3 className="mb-6 flex items-center gap-2 font-display text-xl font-bold text-primary">
@@ -210,7 +120,7 @@ export default function PricingPage() {
                   {includedItems.map((key) => (
                     <li key={key} className="flex items-start gap-2 text-sm">
                       <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                      <span>{t(key)}</span>
+                      <span>{t(key, priceValues)}</span>
                     </li>
                   ))}
                 </ul>
@@ -230,81 +140,81 @@ export default function PricingPage() {
                       className="flex items-start gap-2 text-sm text-muted-foreground"
                     >
                       <X className="mt-0.5 h-4 w-4 shrink-0" />
-                      <span>{t(key)}</span>
+                      <span>{t(key, priceValues)}</span>
                     </li>
                   ))}
                 </ul>
               </div>
             </ScrollReveal>
           </div>
+
         </div>
       </section>
 
-      {/* Testimonials — real client quotes */}
-      <section className="border-t border-border py-24">
-        <div className="container mx-auto px-4">
-          <ScrollReveal animation="fadeUp">
-            <div className="mx-auto mb-12 max-w-3xl text-center">
-              <h2 className="mb-2 font-display text-3xl font-bold md:text-4xl">
-                {t("testimonialHeading")}
-              </h2>
-              <p className="text-muted-foreground">{t("testimonialSubtitle")}</p>
-            </div>
-          </ScrollReveal>
-          <StaggerContainer className="mx-auto grid max-w-5xl gap-6 md:grid-cols-3" staggerDelay={0.1}>
-            {testimonials.slice(0, 3).map((testimonial) => (
-              <StaggerItem key={testimonial.id} animation="fadeUp">
-                <div className="flex h-full flex-col rounded-2xl border border-border bg-card p-6">
-                  <Quote className="h-7 w-7 text-primary/30" />
-                  <div className="mt-3 flex gap-1">
-                    {Array.from({ length: testimonial.rating }).map((_, i) => (
-                      <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                    ))}
-                  </div>
-                  <p className="mt-4 flex-1 text-sm leading-relaxed text-muted-foreground">
-                    &ldquo;{testimonial.content}&rdquo;
-                  </p>
-                  <div className="mt-6 flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
-                      {testimonial.name.split(" ").map((n) => n[0]).join("").slice(0, 2)}
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium">{testimonial.name}</p>
-                      <p className="text-xs text-muted-foreground">{testimonial.role}, {testimonial.company}</p>
-                    </div>
-                  </div>
+      {/* Testimonial: a single real quote, centred, no star rating (no rating source) */}
+      {quote && (
+        <section className="border-t border-border py-24">
+          <div className="container mx-auto grid items-center gap-10 px-5 md:px-8 lg:grid-cols-12 lg:gap-14">
+            {/* The quoted client's live site (real work, not stock) */}
+            <ScrollReveal animation="fade" className="lg:col-span-5">
+              <Link href="/projects/saphiredent" className="group block">
+                <div className="relative aspect-[16/10] overflow-hidden rounded-[10px] bg-neutral-900">
+                  <Image
+                    src="/img/projects/saphiredent/home.webp"
+                    alt={`${quote.company} website`}
+                    fill
+                    sizes="(min-width: 1024px) 40vw, 100vw"
+                    quality={85}
+                    className="object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+                  />
                 </div>
-              </StaggerItem>
-            ))}
-          </StaggerContainer>
-          <ScrollReveal animation="fadeUp" delay={0.2} className="mt-10 text-center">
-            <Button asChild variant="outline" className="rounded-full">
-              <Link href="/projects">
-                {t("testimonialViewWork")}
-                <ArrowRight className="ml-2 rtl:ml-0 rtl:mr-2 rtl:rotate-180 h-4 w-4" />
               </Link>
-            </Button>
-          </ScrollReveal>
-        </div>
-      </section>
+            </ScrollReveal>
+            <ScrollReveal animation="fadeUp" className="lg:col-span-7">
+              <p className="mb-6 font-mono text-label text-muted-foreground">
+                {t("testimonialHeading")}
+              </p>
+              <figure>
+                <blockquote
+                  className="font-display text-2xl leading-snug text-foreground md:text-3xl"
+                  lang="en"
+                  dir="ltr"
+                >
+                  &ldquo;{quote.content}&rdquo;
+                </blockquote>
+                <figcaption className="mt-6 text-sm text-muted-foreground">
+                  <span className="font-medium text-foreground">{quote.name}</span>, {quote.role}, {quote.company}
+                </figcaption>
+              </figure>
+              <div className="mt-8">
+                <Link
+                  href="/projects"
+                  className="inline-flex items-center gap-1.5 text-sm font-medium text-foreground/70 transition-colors hover:text-foreground"
+                >
+                  {t("testimonialViewWork")}
+                  <ArrowRight className="h-4 w-4 rtl:rotate-180" />
+                </Link>
+              </div>
+            </ScrollReveal>
+          </div>
+        </section>
+      )}
 
       {/* FAQ */}
-      <section className="border-t border-border py-24">
-        <div className="container mx-auto px-4">
-          <ScrollReveal animation="fadeUp">
-            <h2 className="mb-2 text-center font-display text-3xl font-bold md:text-4xl">
-              {t("faqHeading")}
-            </h2>
-            <p className="mb-12 text-center text-muted-foreground">{t("faqSubtitle")}</p>
+      <section className="border-t border-border py-20 md:py-28">
+        <div className="container mx-auto px-5 md:px-8">
+          <ScrollReveal animation="fadeUp" className="mb-10 md:mb-12">
+            <h2 className="max-w-3xl font-display text-heading text-balance">{t("faqHeading")}</h2>
+            <p className="mt-4 max-w-xl text-lg text-muted-foreground">{t("faqSubtitle")}</p>
           </ScrollReveal>
-          <div className="mx-auto max-w-3xl divide-y divide-border">
+          <div className="max-w-3xl divide-y divide-border">
             {faqKeys.map((key) => (
               <details key={key} className="group py-5">
                 <summary className="flex cursor-pointer items-center justify-between text-lg font-medium">
                   <span>{t(`${key}Q`)}</span>
                   <ChevronDown className="h-5 w-5 shrink-0 text-muted-foreground transition-transform duration-200 group-open:rotate-180" />
                 </summary>
-                <p className="mt-3 text-muted-foreground">{t(`${key}A`)}</p>
+                <p className="mt-3 text-muted-foreground">{t(`${key}A`, priceValues)}</p>
               </details>
             ))}
           </div>
@@ -315,39 +225,29 @@ export default function PricingPage() {
       <FAQSchema
         items={faqKeys.map((key) => ({
           question: t(`${key}Q`),
-          answer: t(`${key}A`),
+          answer: t(`${key}A`, priceValues),
         }))}
       />
 
-      {/* CTA */}
-      <section className="border-t border-border py-24">
-        <div className="container mx-auto px-4 text-center">
-          <ScrollReveal animation="fadeUp">
-            <h2 className="mb-4 font-display text-3xl font-bold md:text-4xl">
-              {t("ctaHeading")}
-            </h2>
-            <p className="mx-auto mb-8 max-w-xl text-lg text-muted-foreground">
-              {t("ctaSubtitle")}
-            </p>
-            <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-              <Button asChild size="lg" className="h-14 rounded-full px-8 text-base">
-                <Link href="/contact">
-                  {t("ctaPrimary")}
-                  <ArrowRight className="ml-2 rtl:ml-0 rtl:mr-2 rtl:rotate-180 h-4 w-4" />
-                </Link>
-              </Button>
-              <Button
-                asChild
-                size="lg"
-                variant="outline"
-                className="h-14 rounded-full px-8 text-base"
-              >
-                <Link href="/contact">{t("ctaSecondary")}</Link>
-              </Button>
-            </div>
-          </ScrollReveal>
-        </div>
-      </section>
+      {/* Internal links: what is included, free check, proof */}
+      <div className="container mx-auto px-5 pb-20 md:px-8">
+        <RelatedLinks items={["services", "audit", "caseStudies"]} />
+      </div>
+
+      {/* CTA: dark closing band, same voice as the home "Work with me" section */}
+      <ClosingCard
+        className="pt-0 md:pt-0"
+        heading={t("ctaHeading")}
+        text={t("ctaSubtitle")}
+        actions={
+          <>
+            <GlassPill href="/contact" tone="dark" arrow>
+              {t("ctaPrimary")}
+            </GlassPill>
+            <BookCallLink location="pricing_cta" />
+          </>
+        }
+      />
     </main>
   );
 }

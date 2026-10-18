@@ -4,7 +4,7 @@ export { size, contentType };
 
 export default function Image() {
   return generateOGImage(
-    "Get in Touch",
-    "Let's build something amazing together"
+    "Talk to a clinic web designer in Istanbul",
+    "Reply within one business day. No sales calls."
   );
 }

@@ -1,3 +1,6 @@
+// Topic pool for AI-generated drafts. Unused on a schedule since the blog-draft
+// cron was disabled on 2026-10-17; only the manual admin "generate" route still
+// calls pickTopic(). These generic topics don't fit the clinic focus.
 import { blogPosts } from "@/db/schema";
 
 export interface TopicTemplate {

@@ -4,7 +4,7 @@ export { size, contentType };
 
 export default function Image() {
   return generateOGImage(
-    "Portfolio — Selected Works",
-    "Web design and development projects"
+    "Clinic website case studies from Istanbul",
+    "Dental, aesthetic and hair transplant clinic sites, with results."
   );
 }

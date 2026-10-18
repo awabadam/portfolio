@@ -1,57 +1,41 @@
 import type { Metadata } from "next";
 import { getTranslations, getLocale } from "next-intl/server";
+import { ogLocale, pageAlternates, localeUrl } from "@/lib/seo";
 import HomePageContent from "./HomePageContent";
 
+// OG/Twitter image comes from ./opengraph-image.tsx (file-based metadata wins).
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("metadata.home");
   const locale = await getLocale();
-  const ogLocale = locale === "ar" ? "ar_SA" : locale === "tr" ? "tr_TR" : locale === "fr" ? "fr_FR" : "en_US";
 
   return {
     title: { absolute: t("title") },
     description: t("description"),
     keywords: [
-      "web designer istanbul",
-      "freelance web designer istanbul",
-      "next.js developer istanbul",
-      "multilingual website design",
-      "ai chatbot integration",
       "clinic website design istanbul",
-      "medical tourism website",
-      "web tasarım istanbul",
-      "web sitesi yaptırmak",
-      "React developer istanbul",
+      "dental clinic website",
+      "aesthetic clinic website",
+      "hair transplant clinic website",
+      "medical tourism website design",
+      "multilingual clinic website",
+      "arabic clinic website",
+      "klinik web sitesi tasarımı istanbul",
+      "تصميم موقع عيادة اسطنبول",
+      "site web clinique istanbul",
     ],
     openGraph: {
       title: t("title"),
       description: t("description"),
-      url: "https://www.awab.design",
-      locale: ogLocale,
+      url: localeUrl("/", locale),
+      locale: ogLocale(locale),
       type: "website",
-      images: [
-        {
-          url: "/img/hero-image.jpg",
-          width: 1200,
-          height: 630,
-          alt: "Awab Design - Web Designer & Developer in Istanbul",
-        },
-      ],
     },
     twitter: {
       card: "summary_large_image",
       title: t("title"),
       description: t("description"),
-      images: ["/img/hero-image.jpg"],
     },
-    alternates: {
-      canonical: "/",
-      languages: {
-        en: "/",
-        ar: "/ar",
-        tr: "/tr",
-        fr: "/fr",
-      },
-    },
+    alternates: pageAlternates("/", locale),
   };
 }
 

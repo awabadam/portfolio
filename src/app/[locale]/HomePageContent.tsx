@@ -8,21 +8,28 @@ import { useTranslations } from "next-intl";
 import { Project } from "@/types";
 import HeroSlider from "@/components/home/HeroSlider";
 import CtaSection from "@/components/home/CtaSection";
-import ClientMarquee, { CLIENT_LOGOS } from "@/components/home/ClientMarquee";
 import WorkCard from "@/components/cards/WorkCard";
 import { GlassPill } from "@/components/ui/glass-pill";
 import ScrollReveal from "@/components/effects/ScrollReveal";
 import { trackCTAClick } from "@/lib/analytics/gtm";
+import { CASE_STUDIES, CLIENT_WORK, HOME_FEATURED, pickInOrder } from "@/data/case-studies";
+import { IMAGE_CREDITS } from "@/data/image-credits";
 
 // dubs-style grey inline link: muted at rest, full foreground on hover.
 const GREY_LINK =
   "inline-flex items-center gap-1.5 text-sm font-medium text-foreground/60 transition-colors hover:text-foreground";
 
+// Thin proof strip under the hero. Every line is backed by src/data/case-studies.ts
+// (Saphiredent: nine languages, leads mapped by country, Google Ads offline
+// conversions; Jouvence: WhatsApp on every treatment page). No invented numbers.
+const PROOF = ["languages", "countries", "ads", "whatsapp"] as const;
+
 // The two "doorway" cards under the intro — one to services, one to pricing.
+// Stock photos rather than project shots, which already appear in the work grid.
 const DOOR_CARDS = [
   {
     href: "/services",
-    image: "/img/projects/esteexpert-thumbnail.webp",
+    image: IMAGE_CREDITS["phone-message-alt"],
     kicker: "card1Kicker",
     heading: "card1Heading",
     link: "card1Link",
@@ -30,13 +37,22 @@ const DOOR_CARDS = [
   },
   {
     href: "/pricing",
-    image: "/img/projects/omar-marketing-thumbnail.webp",
+    image: IMAGE_CREDITS["clinic-interior-alt"],
     kicker: "card2Kicker",
     heading: "card2Heading",
     link: "card2Link",
     cta: "pricing",
   },
 ] as const;
+
+// Display names for the client row (the projects table is fetched async, and
+// this row should not wait on it).
+const CLIENT_NAMES: Record<(typeof CLIENT_WORK)[number], string> = {
+  saphiredent: "SaphireDent",
+  jouvence: "Jouvence",
+  esteexpert: "EsteExpert",
+  "omar-marketing": "Omar Marketing",
+};
 
 export default function HomePageContent() {
   const t = useTranslations("home");
@@ -48,10 +64,10 @@ export default function HomePageContent() {
     // Fetch via the API route instead of importing the DB helper directly —
     // that would pull the whole server data layer into the homepage bundle.
     const controller = new AbortController();
-    fetch("/api/projects?limit=4", { signal: controller.signal })
+    fetch("/api/projects", { signal: controller.signal })
       .then((r) => (r.ok ? r.json() : { projects: [] }))
       .then((data) => {
-        setProjects((data.projects ?? []).slice(0, 4));
+        setProjects(pickInOrder<Project>(data.projects ?? [], HOME_FEATURED));
         setLoading(false);
       })
       .catch((err) => {
@@ -64,6 +80,18 @@ export default function HomePageContent() {
   return (
     <div className="relative bg-background">
       <HeroSlider />
+
+      {/* Proof strip */}
+      <section className="border-b border-border/40 bg-background">
+        <ul className="container grid grid-cols-2 gap-x-6 gap-y-4 px-5 py-5 md:grid-cols-4 md:px-8 md:py-6">
+          {PROOF.map((key, i) => (
+            <li key={key} className="flex items-baseline gap-3">
+              <span className="shrink-0 font-mono text-[11px] text-muted-foreground">0{i + 1}</span>
+              <span className="text-sm font-medium leading-snug text-foreground/80">{t(`proof.${key}`)}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
 
       {/* Featured work */}
       <section id="work" className="bg-background py-20 md:py-28">
@@ -98,16 +126,14 @@ export default function HomePageContent() {
       {/* Who I am */}
       <section className="container grid items-center gap-10 px-5 py-20 md:grid-cols-12 md:px-8 md:py-28">
         <div className="md:col-span-5">
-          {/* /img/hero-image.jpg is a 1200x630 landscape — the frame matches it
-              so the portrait isn't cropped away. Swap for a real 4/5 portrait
-              asset when one exists. */}
-          <div className="relative aspect-[16/10] overflow-hidden rounded-[10px] bg-muted">
+          <div className="relative aspect-[4/5] overflow-hidden rounded-[10px] bg-muted max-w-sm md:max-w-md">
             <Image
-              src="/img/hero-image.jpg"
+              src="/img/awab-portrait.webp"
               alt={t("whoImageAlt")}
               fill
-              sizes="(min-width: 768px) 40vw, 100vw"
-              className="object-cover"
+              sizes="(min-width: 768px) 28rem, 100vw"
+              quality={90}
+              className="object-cover object-[50%_30%]"
             />
           </div>
         </div>
@@ -140,16 +166,18 @@ export default function HomePageContent() {
             className="group relative isolate block aspect-[4/3] overflow-hidden rounded-[10px] bg-black text-white md:aspect-[16/10]"
           >
             <Image
-              src={card.image}
+              src={card.image.src}
               alt=""
               fill
-              sizes="(min-width: 768px) 50vw, 100vw"
-              className="object-cover object-top opacity-80 transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+              // 3:2 photos: on phones the 4:3 frame crops them, so they render ~1.13x wide.
+              sizes="(min-width: 768px) 50vw, 113vw"
+              quality={85}
+              className="object-cover opacity-80 transition-transform duration-700 ease-out group-hover:scale-[1.03]"
             />
             <div
               aria-hidden="true"
               className="pointer-events-none absolute inset-0"
-              style={{ background: "linear-gradient(180deg, rgba(84,84,84,0) 35%, rgba(0,0,0,0.4) 100%)" }}
+              style={{ background: "linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.25) 45%, rgba(0,0,0,0.75) 100%)" }}
             />
             <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 p-5 md:p-6">
               <div className="min-w-0">
@@ -164,14 +192,38 @@ export default function HomePageContent() {
         ))}
       </section>
 
-      {/* Client logos */}
-      <section className="border-y border-border/40 bg-background py-12">
+      {/* Clients: the four case studies by name. No logos, nothing invented. */}
+      <section className="border-y border-border/40 bg-background py-14 md:py-20">
         <div className="container px-5 md:px-8">
           <ScrollReveal animation="fadeUp">
-            <p className="mb-8 font-mono text-label text-muted-foreground">{t("clientsHeading")}</p>
+            <p className="mb-8 font-mono text-label text-muted-foreground md:mb-10">{t("clientsHeading")}</p>
           </ScrollReveal>
+          <ul className="grid grid-cols-1 gap-x-8 sm:grid-cols-2 lg:grid-cols-4">
+            {CLIENT_WORK.map((id) => {
+              const study = CASE_STUDIES[id];
+              return (
+                <li key={id} className="border-t border-border/60">
+                  <Link
+                    href={`/projects/${id}`}
+                    onClick={() => trackCTAClick("view_project", "home_clients")}
+                    className="group flex h-full flex-col gap-3 py-5 md:py-6"
+                  >
+                    <span className="flex items-start justify-between gap-3">
+                      <span className="font-display text-card-title text-foreground">{CLIENT_NAMES[id]}</span>
+                      <ArrowUpRight
+                        aria-hidden="true"
+                        className="mt-1.5 h-4 w-4 shrink-0 text-foreground/40 transition-all group-hover:text-foreground rtl:-scale-x-100 ltr:group-hover:translate-x-0.5"
+                      />
+                    </span>
+                    <span className="font-mono text-[11px] uppercase tracking-wide text-muted-foreground">
+                      {t(`clients.${study.market}`)} · {t("clients.languages", { count: study.languages.length })}
+                    </span>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
         </div>
-        <ClientMarquee logos={CLIENT_LOGOS} />
       </section>
 
       <CtaSection />

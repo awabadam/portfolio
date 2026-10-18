@@ -1,145 +1,140 @@
+import Image from "next/image";
 import React from "react";
 import { Metadata } from "next";
 import { Link } from "@/i18n/routing";
-import { Button } from "@/components/ui/button";
-import {
-  ArrowLeft,
-  CheckCircle,
-  Clock,
-  DollarSign,
-  Zap,
-  Globe,
-  Shield,
-  TrendingUp,
-  ExternalLink,
-} from "lucide-react";
+import { ArrowLeft, ArrowUpRight, CheckCircle, Clock, DollarSign } from "lucide-react";
 import { getTranslations, getLocale } from "next-intl/server";
 // 💰 Pricing source of truth: edit prices in src/lib/pricing.ts
-import { projectTiers, carePlans, getPrice, formatPrice } from "@/lib/pricing";
+import { getTier, getCarePlan, formatPrice } from "@/lib/pricing";
+import StockPhoto from "@/components/ui/stock-photo";
+import { GlassPill } from "@/components/ui/glass-pill";
+import RelatedLinks from "@/components/seo/RelatedLinks";
+import { ogLocale, pageAlternates, localeUrl } from "@/lib/seo";
+import ClosingCard from "@/components/cta/ClosingCard";
+import BookCallLink from "@/components/cta/BookCallLink";
 
+const PAGE_PATH = "/services/webdesign-istanbul";
+
+// OG image: ./opengraph-image.tsx
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("metadata.webdesign");
   const locale = await getLocale();
-  const ogLocale =
-    locale === "ar" ? "ar_SA" : locale === "tr" ? "tr_TR" : "en_US";
+  // The description quotes the entry package price from pricing.ts.
+  const description = t("description", { clinicPrice: formatPrice(getTier("business").price) });
 
   return {
-    title: t("title"),
-    description: t("description"),
+    // Title already ends in "| Awab Design"; skip the root template.
+    title: { absolute: t("title") },
+    description,
     keywords: [
-      "webdesign Istanbul",
-      "website design Istanbul",
-      "web development Istanbul",
-      "responsive web design Istanbul",
-      "Istanbul web designer",
-      "professional website Istanbul",
-      "custom website Istanbul",
+      "web design istanbul",
+      "webdesign istanbul",
+      "clinic website design istanbul",
+      "dental clinic website istanbul",
+      "aesthetic clinic website istanbul",
+      "hair transplant clinic website",
+      "medical tourism website turkey",
       "web tasarım istanbul",
-      "istanbul web sitesi",
-      "kurumsal web tasarım",
-      "profesyonel web sitesi",
-      "web designer turkey",
-      "freelance web designer istanbul",
-      "web agency istanbul",
-      "website development turkey",
-      "modern web design istanbul",
-      "Next.js developer Istanbul",
-      "React developer Istanbul",
+      "klinik web sitesi tasarımı istanbul",
+      "sağlık turizmi web sitesi",
     ],
     openGraph: {
       title: t("title"),
-      description: t("description"),
-      url: "https://www.awab.design/services/webdesign-istanbul",
-      locale: ogLocale,
+      description,
+      url: localeUrl(PAGE_PATH, locale),
+      locale: ogLocale(locale),
+      type: "website",
     },
-    alternates: {
-      canonical: "/services/webdesign-istanbul",
-      languages: {
-        en: "/services/webdesign-istanbul",
-        ar: "/ar/services/webdesign-istanbul",
-        tr: "/tr/services/webdesign-istanbul",
-        fr: "/fr/services/webdesign-istanbul",
-      },
+    twitter: {
+      card: "summary_large_image",
+      title: t("title"),
+      description,
     },
+    alternates: pageAlternates(PAGE_PATH, locale),
   };
 }
 
-// FAQ copy is English-only (also emitted as FAQPage JSON-LD), so it quotes the
-// international USD prices from lib/pricing.ts.
-const usd = (id: string, basePrice: number) => formatPrice(getPrice(id, basePrice, "en"), "en");
-const [landingTier, businessTier, customTier] = projectTiers;
-const entryCarePlan = carePlans[0];
+// FAQ copy is English-only (also emitted as FAQPage JSON-LD); prices come from
+// lib/pricing.ts (USD in every locale).
+const clinicTier = getTier("business");
+const growthTier = getTier("custom");
+const siteCarePlan = getCarePlan("careStandard");
 
 const faqItems = [
   {
-    question: "How much does web design cost in Istanbul?",
-    answer:
-      `At Awab Design, a landing page starts at ${usd(landingTier.id, landingTier.basePrice)}, a business website at ${usd(businessTier.id, businessTier.basePrice)}, and custom projects at ${usd(customTier.id, customTier.basePrice)}+. Every package is fixed-price with no hidden fees — see the pricing page for what each one includes, or get in touch for a free quote.`,
+    question: "How much does a clinic website cost in Istanbul?",
+    answer: `The Clinic Website starts at ${formatPrice(clinicTier.price)}: up to 3 languages, a page for each treatment, WhatsApp on every page, lead tracking and medical SEO. The Clinic Growth System starts at ${formatPrice(growthTier.price)} and adds 6 or more languages, an admin panel, an AI patient assistant, CRM handoff and Google Ads offline conversions. Both are fixed prices in US dollars with no hourly billing.`,
   },
   {
-    question: "How long does it take to build a website in Istanbul?",
+    question: "How long does it take to build a clinic website?",
     answer:
-      "A landing page takes about 1 week, a business website 2-4 weeks, and custom projects 4-8 weeks. We use Next.js for faster development and better performance than traditional WordPress sites.",
+      "A Clinic Website takes 3-4 weeks and a Clinic Growth System 6-8 weeks, depending on how many treatments and languages you need. You see the first designs in the first week.",
   },
   {
-    question: "Do you build websites in Turkish and English?",
+    question: "Which languages can the site be in?",
     answer:
-      "Yes. Every website we build supports multiple languages including Turkish, English, Arabic, and French. Multilingual sites are essential for Istanbul businesses targeting both local and international customers.",
+      "Any language your patients speak. Istanbul clinics usually start with English, Turkish and Arabic, then add Russian, German or French. Arabic gets a true right-to-left layout, not a mirrored English page. Saphiredent, a dental clinic in Istanbul, runs in nine languages on this setup.",
   },
   {
-    question:
-      "What makes your web design different from other Istanbul agencies?",
+    question: "Do you only work with clinics?",
     answer:
-      "We build with Next.js instead of WordPress, delivering sites that load in under 1 second vs 3-8 seconds. No templates, no plugins — custom code that's faster, more secure, and ranks better on Google.",
+      "Yes. Dental, aesthetic, hair transplant and medical tourism clinics that treat patients from abroad. Working in one niche means each project starts from what already worked for the last clinic, not from a blank page.",
   },
   {
-    question: "Do you provide SEO services with web design?",
+    question: "What is different from an Istanbul web agency?",
     answer:
-      "Yes, every website includes SEO setup: optimized structure, meta tags, fast loading speeds, sitemap, and Google Search Console configuration. Advanced SEO packages are available for ongoing optimization.",
+      "One person designs, builds and supports the site, and that is the person you talk to. Every WhatsApp click, form and call is tracked, inquiries are saved with the patient's country and passed to your CRM, and the code, domain and hosting are in your clinic's name. Prices are published, not quoted on request.",
   },
   {
-    question: "Can you build a website for my clinic in Istanbul?",
+    question: "Why Next.js instead of WordPress for a clinic site?",
     answer:
-      "Absolutely. Medical clinic websites are our specialty. We've built multilingual sites for aesthetic clinics, dental clinics, and medical tourism businesses with KVKK compliance, WhatsApp booking, and patient galleries.",
+      "A clinic site has to open fast on a phone in another country, read properly in Arabic and keep working without plugin updates. A site built with Next.js does that without page builders, translation plugins or a WordPress login that attackers target.",
   },
   {
-    question: "Do you work with businesses outside Istanbul?",
+    question: "Is SEO included?",
     answer:
-      "Yes, we work remotely with clients worldwide including Turkey, Middle East, Europe, and North America. All communication via email, WhatsApp, and video calls.",
+      "Yes. Every clinic site includes a page per treatment with the right structure, medical schema for treatments and doctors, hreflang for each language, a sitemap and Google Search Console setup. Ongoing content and landing pages for new treatments are part of the Growth Retainer.",
   },
   {
-    question:
-      "Why should I choose Next.js over WordPress for my Istanbul business?",
+    question: "Do you work with clinics outside Istanbul?",
     answer:
-      "Next.js sites load 3-5x faster, have zero plugin vulnerabilities, cost less to maintain, and rank better on Google. For Istanbul's competitive market, speed and SEO advantages give you a significant edge over WordPress competitors.",
+      "Yes. Everything happens over WhatsApp, email and video calls, and most clients I met online first. Clinics across Turkey and abroad use the same process.",
   },
   {
-    question: "What is included in your web design packages?",
-    answer:
-      "Every package includes custom responsive design, SEO optimization, SSL certificate, contact forms, analytics setup, mobile optimization, and 2-3 revision rounds. Hosting, domain, and maintenance plans also available.",
+    question: "What happens after launch?",
+    answer: `Site Care costs ${formatPrice(siteCarePlan.price)}/month and covers hosting, domain, SSL, security updates and small content changes. The Growth Retainer adds a monthly lead report by country and source and keeps your Google Ads conversion tracking working. You own everything and can transfer it at any time.`,
   },
   {
-    question: "Do you offer website maintenance after launch?",
+    question: "Can I see clinic websites you have built?",
     answer:
-      `Yes, our monthly Care Plans start at ${usd(entryCarePlan.id, entryCarePlan.basePrice)}/month and cover hosting, domain, SSL, security updates, and content changes. You're never left alone after launch.`,
+      "Yes. The services page shows three Istanbul clinic case studies: Saphiredent (dental, nine languages, CRM and Google Ads integration), Jouvence (aesthetics, English, French and Arabic) and EsteExpert (medical tourism, four languages). Each case study explains what was built and why.",
   },
 ];
 
+type CompareRow = { feature: string; us: string; wp: string };
+
 const WebdesignIstanbulPage = async () => {
   const t = await getTranslations("services");
-  const locale = await getLocale();
   const inclusions = t.raw("webdesign.inclusions") as string[];
-  const fromPrice = formatPrice(getPrice(landingTier.id, landingTier.basePrice, locale), locale);
+  const compareRows = t.raw("webdesign.compareRows") as CompareRow[];
+  const fromPrice = formatPrice(clinicTier.price);
+  const schemaPrice = String(clinicTier.price);
 
   const serviceJsonLd = {
     "@context": "https://schema.org",
     "@type": "Service",
     name: t("webdesign.title"),
+    serviceType: "Medical Clinic Website Design",
     description: t("webdesign.lead"),
+    url: "https://www.awab.design/services/webdesign-istanbul",
     provider: {
       "@type": "Person",
-      name: "Awab Design",
+      name: "Awab Elkhalil",
       url: "https://www.awab.design",
+    },
+    audience: {
+      "@type": "BusinessAudience",
+      audienceType: "Dental, aesthetic, hair transplant and medical tourism clinics",
     },
     areaServed: [
       { "@type": "City", name: "Istanbul" },
@@ -155,11 +150,12 @@ const WebdesignIstanbulPage = async () => {
     ],
     offers: {
       "@type": "Offer",
-      price: "150",
+      price: schemaPrice,
       priceCurrency: "USD",
+      url: "https://www.awab.design/pricing",
       priceSpecification: {
         "@type": "UnitPriceSpecification",
-        price: "150",
+        price: schemaPrice,
         priceCurrency: "USD",
         unitText: "project",
       },
@@ -190,7 +186,7 @@ const WebdesignIstanbulPage = async () => {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
       <main className="min-h-screen bg-background pt-32">
-        <div className="container mx-auto px-4 py-16">
+        <div className="container px-5 py-16 md:px-8">
           <Link
             href="/services"
             className="mb-8 inline-flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
@@ -199,254 +195,136 @@ const WebdesignIstanbulPage = async () => {
             {t("backToServices")}
           </Link>
 
-          {/* Hero Section */}
+          {/* Hero */}
           <div className="mb-16">
-            <h1 className="mb-6 font-display text-5xl font-bold leading-tight tracking-tight md:text-6xl">
+            <p className="mb-5 font-mono text-label text-muted-foreground">{t("webdesign.eyebrow")}</p>
+            <h1 className="mb-6 max-w-4xl font-display text-hero text-balance">
               {t("webdesign.heading")}
             </h1>
-            <p className="lead mb-8 max-w-3xl text-2xl leading-relaxed text-muted-foreground md:text-3xl">
+            <p className="mb-8 max-w-2xl text-lg leading-relaxed text-muted-foreground md:text-xl">
               {t("webdesign.lead")}
             </p>
 
-            <div className="flex flex-wrap items-center gap-8">
+            <div className="flex flex-wrap items-center gap-x-8 gap-y-3">
               <div className="flex items-center gap-2">
-                <DollarSign className="h-5 w-5 text-primary" />
-                <span className="text-xl font-semibold text-primary">
+                <DollarSign className="h-5 w-5 text-foreground" />
+                <span className="text-lg font-medium">
                   {t("webdesign.pricing", { price: fromPrice })}
                 </span>
               </div>
               <div className="flex items-center gap-2">
                 <Clock className="h-5 w-5 text-muted-foreground" />
-                <span className="text-lg text-muted-foreground">
-                  {t("webdesign.deliveryTime")}
-                </span>
+                <span className="text-lg text-muted-foreground">{t("webdesign.deliveryTime")}</span>
               </div>
+            </div>
+
+            <div className="mt-9 flex flex-wrap items-center gap-x-6 gap-y-4">
+              <GlassPill href="/audit" tone="dark" arrow className="h-12 px-6 text-base">
+                {t("webdesign.ctaPrimary")}
+              </GlassPill>
+              <Link
+                href="/services"
+                className="inline-flex items-center gap-1.5 text-sm font-medium text-foreground/60 transition-colors hover:text-foreground"
+              >
+                {t("webdesign.ctaSecondary")}
+                <ArrowUpRight aria-hidden="true" className="h-4 w-4 rtl:-scale-x-100" />
+              </Link>
             </div>
           </div>
 
+          <StockPhoto
+            slot="istanbul-bosphorus-alt"
+            priority
+            sizes="(min-width: 1312px) 1248px, 100vw"
+            className="mb-16 aspect-[16/10] md:aspect-[21/9]"
+            imageClassName="object-[50%_60%]"
+          />
+
           {/* What's Included */}
-          <section className="mb-16">
-            <h2 className="mb-8 font-display text-3xl font-bold">
-              {t("whatsIncluded")}
-            </h2>
-            <div className="grid gap-6 md:grid-cols-2">
-              {inclusions.map((benefit: string) => (
-                <div key={benefit} className="flex items-start gap-3">
-                  <CheckCircle className="h-5 w-5 shrink-0 text-primary" />
-                  <span>{benefit}</span>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          {/* Why Choose Awab Design */}
-          <section className="mb-16">
-            <h2 className="mb-8 font-display text-3xl font-bold">
-              Why Choose Awab Design for Web Design in Istanbul
-            </h2>
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              <div className="rounded-xl border border-border bg-card p-6">
-                <Zap className="mb-4 h-8 w-8 text-primary" />
-                <h3 className="mb-2 font-display text-lg font-bold">
-                  Blazing Fast
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  Next.js sites load in under 1 second. 3-5x faster than
-                  WordPress.
-                </p>
-              </div>
-              <div className="rounded-xl border border-border bg-card p-6">
-                <Globe className="mb-4 h-8 w-8 text-primary" />
-                <h3 className="mb-2 font-display text-lg font-bold">
-                  Multilingual
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  Reach local and international audiences in TR/EN/AR/FR.
-                </p>
-              </div>
-              <div className="rounded-xl border border-border bg-card p-6">
-                <Shield className="mb-4 h-8 w-8 text-primary" />
-                <h3 className="mb-2 font-display text-lg font-bold">
-                  Secure & Maintained
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  No WordPress vulnerabilities. Ongoing security updates.
-                </p>
-              </div>
-              <div className="rounded-xl border border-border bg-card p-6">
-                <TrendingUp className="mb-4 h-8 w-8 text-primary" />
-                <h3 className="mb-2 font-display text-lg font-bold">
-                  SEO Optimized
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  Built for Google from day one. Structured data, fast loads,
-                  mobile-first.
-                </p>
+          <section className="mb-20 grid items-center gap-10 lg:grid-cols-12 lg:gap-14">
+            <div className="lg:col-span-7">
+              <h2 className="mb-8 font-display text-heading">{t("whatsIncluded")}</h2>
+              <div className="grid gap-5 md:grid-cols-2">
+                {inclusions.map((benefit: string) => (
+                  <div key={benefit} className="flex items-start gap-3">
+                    <CheckCircle className="mt-0.5 h-5 w-5 shrink-0 text-foreground" />
+                    <span>{benefit}</span>
+                  </div>
+                ))}
               </div>
             </div>
+            <StockPhoto
+              slot="istanbul-street"
+              sizes="(min-width: 1024px) 35vw, 100vw"
+              className="hidden aspect-[4/5] lg:col-span-4 lg:col-start-9 lg:block"
+            />
           </section>
 
-          {/* Istanbul Web Design Portfolio */}
-          <section className="mb-16">
-            <h2 className="mb-4 font-display text-3xl font-bold">
-              Istanbul Web Design Portfolio
-            </h2>
-            <p className="mb-8 max-w-2xl text-lg text-muted-foreground">
-              See how we have helped Istanbul businesses grow online with custom
-              websites that convert visitors into customers.
-            </p>
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              <Link
-                href="/projects"
-                className="group rounded-xl border border-border bg-card p-6 transition-colors hover:border-primary/50"
-              >
-                <div className="mb-3 flex items-center gap-2">
-                  <h3 className="font-display text-lg font-bold">
-                    Clinic Websites
-                  </h3>
-                  <ExternalLink className="h-4 w-4 text-muted-foreground transition-colors group-hover:text-primary" />
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  Multilingual medical and aesthetic clinic websites with patient
-                  booking, galleries, and KVKK compliance for Istanbul
-                  healthcare providers.
-                </p>
-              </Link>
-              <Link
-                href="/projects"
-                className="group rounded-xl border border-border bg-card p-6 transition-colors hover:border-primary/50"
-              >
-                <div className="mb-3 flex items-center gap-2">
-                  <h3 className="font-display text-lg font-bold">
-                    E-Commerce
-                  </h3>
-                  <ExternalLink className="h-4 w-4 text-muted-foreground transition-colors group-hover:text-primary" />
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  High-performance online stores with Turkish payment
-                  integrations, fast product pages, and mobile-first shopping
-                  experiences.
-                </p>
-              </Link>
-              <Link
-                href="/projects"
-                className="group rounded-xl border border-border bg-card p-6 transition-colors hover:border-primary/50"
-              >
-                <div className="mb-3 flex items-center gap-2">
-                  <h3 className="font-display text-lg font-bold">
-                    Corporate Sites
-                  </h3>
-                  <ExternalLink className="h-4 w-4 text-muted-foreground transition-colors group-hover:text-primary" />
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  Professional corporate websites for Istanbul businesses with
-                  brand storytelling, team pages, and lead generation forms.
-                </p>
-              </Link>
+          {/* Next.js vs WordPress, framed for clinic sites */}
+          <section className="mb-20">
+            <div className="mb-8 max-w-2xl">
+              <h2 className="mb-4 font-display text-heading text-balance">{t("webdesign.compareHeading")}</h2>
+              <p className="text-muted-foreground">{t("webdesign.compareIntro")}</p>
             </div>
-          </section>
-
-          {/* Next.js vs WordPress Comparison */}
-          <section className="mb-16">
-            <h2 className="mb-8 font-display text-3xl font-bold">
-              Web Design Istanbul: Next.js vs WordPress
-            </h2>
-            <div className="overflow-hidden rounded-xl border border-border">
-              <table className="w-full text-left">
+            <div className="overflow-x-auto rounded-[10px] border border-border">
+              <table className="w-full min-w-[560px] text-start">
                 <thead>
                   <tr className="border-b border-border bg-muted/50">
-                    <th className="px-6 py-4 font-display text-sm font-bold">
-                      Feature
+                    <th scope="col" className="px-4 py-4 text-start font-mono text-[11px] font-medium uppercase tracking-wide text-muted-foreground md:px-6">
+                      {t("webdesign.compareFeature")}
                     </th>
-                    <th className="px-6 py-4 font-display text-sm font-bold text-primary">
-                      Next.js (Awab Design)
+                    <th scope="col" className="px-4 py-4 text-start font-mono text-[11px] font-medium uppercase tracking-wide text-foreground md:px-6">
+                      {t("webdesign.compareUs")}
                     </th>
-                    <th className="px-6 py-4 font-display text-sm font-bold text-muted-foreground">
-                      WordPress
+                    <th scope="col" className="px-4 py-4 text-start font-mono text-[11px] font-medium uppercase tracking-wide text-muted-foreground md:px-6">
+                      {t("webdesign.compareWp")}
                     </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
-                  <tr>
-                    <td className="px-6 py-4 text-sm font-medium">
-                      Load Speed
-                    </td>
-                    <td className="px-6 py-4 text-sm text-primary">
-                      &lt;1 second
-                    </td>
-                    <td className="px-6 py-4 text-sm text-muted-foreground">
-                      3-8 seconds
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="px-6 py-4 text-sm font-medium">Security</td>
-                    <td className="px-6 py-4 text-sm text-primary">
-                      No plugins/vulnerabilities
-                    </td>
-                    <td className="px-6 py-4 text-sm text-muted-foreground">
-                      Regular exploits
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="px-6 py-4 text-sm font-medium">SEO</td>
-                    <td className="px-6 py-4 text-sm text-primary">
-                      Built-in optimization
-                    </td>
-                    <td className="px-6 py-4 text-sm text-muted-foreground">
-                      Plugin-dependent
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="px-6 py-4 text-sm font-medium">
-                      Maintenance Cost
-                    </td>
-                    <td className="px-6 py-4 text-sm text-primary">
-                      Lower long-term
-                    </td>
-                    <td className="px-6 py-4 text-sm text-muted-foreground">
-                      Ongoing plugin updates
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="px-6 py-4 text-sm font-medium">
-                      Custom Design
-                    </td>
-                    <td className="px-6 py-4 text-sm text-primary">
-                      100% custom
-                    </td>
-                    <td className="px-6 py-4 text-sm text-muted-foreground">
-                      Template-based
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="px-6 py-4 text-sm font-medium">Mobile</td>
-                    <td className="px-6 py-4 text-sm text-primary">
-                      Mobile-first responsive
-                    </td>
-                    <td className="px-6 py-4 text-sm text-muted-foreground">
-                      Often problematic
-                    </td>
-                  </tr>
+                  {compareRows.map((row) => (
+                    <tr key={row.feature}>
+                      <th scope="row" className="px-4 py-4 text-start align-top text-sm font-medium md:px-6">
+                        {row.feature}
+                      </th>
+                      <td className="px-4 py-4 align-top text-sm md:px-6">{row.us}</td>
+                      <td className="px-4 py-4 align-top text-sm text-muted-foreground md:px-6">{row.wp}</td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>
+
+            {/* Real client build: the same Next.js site in English and right-to-left Arabic */}
+            <Link href="/projects/saphiredent" className="group mt-8 grid gap-5 sm:grid-cols-2">
+              {(["home", "rtl"] as const).map((shot) => (
+                <div key={shot} className="relative aspect-[16/10] overflow-hidden rounded-[10px] bg-neutral-900">
+                  <Image
+                    src={`/img/projects/saphiredent/${shot}.webp`}
+                    alt={shot === "home" ? "Saphiredent clinic website, English home page" : "Saphiredent clinic website in Arabic, right-to-left layout"}
+                    fill
+                    sizes="(min-width: 1312px) 614px, (min-width: 640px) 50vw, 100vw"
+                    quality={85}
+                    className="object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.02]"
+                  />
+                </div>
+              ))}
+            </Link>
           </section>
 
           {/* Process */}
-          <section className="mb-16">
-            <h2 className="mb-8 font-display text-3xl font-bold">
-              {t("ourProcess")}
-            </h2>
-            <div className="grid gap-8 md:grid-cols-4">
+          <section className="mb-20">
+            <h2 className="mb-8 font-display text-heading">{t("ourProcess")}</h2>
+            <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-4">
               {[1, 2, 3, 4].map((n) => (
-                <div key={n} className="border-t border-border pt-6">
-                  <span className="mb-2 block font-mono text-sm text-muted-foreground">
+                <div key={n} className="border-t border-border pt-5">
+                  <span className="mb-3 block font-mono text-[11px] text-muted-foreground">
                     {t(`webdesign.phase${n}Step`)}
                   </span>
-                  <h3 className="mb-2 font-display text-xl font-bold">
+                  <h3 className="mb-2 font-display text-2xl leading-tight tracking-tight">
                     {t(`webdesign.phase${n}Title`)}
                   </h3>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm leading-relaxed text-muted-foreground">
                     {t(`webdesign.phase${n}Desc`)}
                   </p>
                 </div>
@@ -454,46 +332,42 @@ const WebdesignIstanbulPage = async () => {
             </div>
           </section>
 
-          {/* FAQ Section */}
-          <section className="mb-16">
-            <h2 className="mb-8 font-display text-3xl font-bold">
-              Frequently Asked Questions About Web Design in Istanbul
-            </h2>
-            <div className="divide-y divide-border rounded-xl border border-border">
+          {/* FAQ (English, also emitted as FAQPage JSON-LD) */}
+          <section className="mb-20">
+            <h2 className="mb-8 font-display text-heading">{t("webdesign.faqHeading")}</h2>
+            <div className="divide-y divide-border border-t border-border">
               {faqItems.map((item) => (
-                <div key={item.question} className="p-6">
-                  <h3 className="mb-3 font-display text-lg font-bold">
-                    {item.question}
-                  </h3>
-                  <p className="text-muted-foreground">{item.answer}</p>
+                <div key={item.question} className="py-6">
+                  <h3 className="mb-3 font-display text-xl leading-snug tracking-tight">{item.question}</h3>
+                  <p className="max-w-3xl leading-relaxed text-muted-foreground">{item.answer}</p>
                 </div>
               ))}
             </div>
           </section>
 
+          <RelatedLinks items={["pricing", "audit", "caseStudies"]} className="mb-20" />
 
           {/* CTA */}
-          <section className="rounded-2xl border border-border bg-muted/30 p-12 text-center">
-            <h2 className="mb-4 font-display text-3xl font-bold">
-              {t("webdesign.ctaHeading")}
-            </h2>
-            <p className="mb-8 text-muted-foreground">
-              {t("webdesign.ctaDescription")}
-            </p>
-            <div className="flex flex-col justify-center gap-4 sm:flex-row">
-              <Button asChild size="lg" className="h-14 px-8 text-lg">
-                <Link href="/contact">{t("getQuote")}</Link>
-              </Button>
-              <Button
-                asChild
-                variant="outline"
-                size="lg"
-                className="h-14 px-8 text-lg"
-              >
-                <Link href="/contact">{t("contactMe")}</Link>
-              </Button>
-            </div>
-          </section>
+          <ClosingCard
+            contained={false}
+            heading={t("webdesign.ctaHeading")}
+            text={t("webdesign.ctaDescription")}
+            actions={
+              <>
+                <GlassPill href="/audit" tone="dark" arrow>
+                  {t("webdesign.ctaPrimary")}
+                </GlassPill>
+                <BookCallLink location="webdesign_cta" />
+                <Link
+                  href="/contact"
+                  className="inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                >
+                  {t("contactMe")}
+                  <ArrowUpRight aria-hidden="true" className="h-4 w-4 rtl:-scale-x-100" />
+                </Link>
+              </>
+            }
+          />
         </div>
       </main>
     </>

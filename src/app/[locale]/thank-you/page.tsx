@@ -7,6 +7,7 @@ import { CheckCircle, ArrowLeft, Mail, Clock, Phone, Briefcase, MessageCircle } 
 import { Link } from '@/i18n/routing';
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from 'next-intl';
+import StockPhoto from "@/components/ui/stock-photo";
 
 export default function ThankYouPage() {
   const [mounted, setMounted] = useState(false);
@@ -27,15 +28,25 @@ export default function ThankYouPage() {
 
   return (
     <main className="flex min-h-screen w-full flex-col items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-black">
-      <div className="container mx-auto px-4 py-16">
+      <div className="container mx-auto px-4 pb-16 pt-28 md:pt-32">
         <div className="mx-auto max-w-2xl text-center">
-          {/* Success Icon */}
-          <div className="mb-8">
-            <CheckCircle className="mx-auto h-20 w-20 text-green-500" />
+          {/* Calm header photo with the success icon resting on its edge */}
+          <div className="relative mb-12">
+            <StockPhoto
+              slot="traveler-alt"
+              priority
+              sizes="(min-width: 768px) 42rem, 100vw"
+              className="aspect-[21/9]"
+            />
+            <div className="absolute inset-x-0 -bottom-8 flex justify-center">
+              <span className="rounded-full bg-gray-50 p-1 dark:bg-gray-900">
+                <CheckCircle className="h-14 w-14 text-green-500" />
+              </span>
+            </div>
           </div>
 
           {/* Main Heading */}
-          <h1 className="mb-4 text-4xl font-bold tracking-tight text-black dark:text-white sm:text-5xl">
+          <h1 className="mb-4 font-display text-hero text-balance text-black dark:text-white">
             {isQuoteRequest
               ? t('quoteHeading')
               : t('contactHeading')}

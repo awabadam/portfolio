@@ -1,162 +1,178 @@
 "use client";
 
 import Image from "next/image";
-import dynamic from "next/dynamic";
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef, useState, useEffect } from "react";
-import { ArrowDown } from "lucide-react";
-import { useTranslations } from "next-intl";
-import { ScrollReveal, StaggerContainer, StaggerItem, PerspectiveSection, ClipReveal, DepthFloat, ScrollVelocityText } from "@/components/effects";
+import { Link } from "@/i18n/routing";
+import { ArrowUpRight } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
+import { ScrollReveal, StaggerContainer, StaggerItem } from "@/components/effects";
+import { GlassPill } from "@/components/ui/glass-pill";
+import { CASE_STUDIES, CLIENT_WORK } from "@/data/case-studies";
+import { testimonials } from "@/data/testimonials";
+import { trackCTAClick } from "@/lib/analytics/gtm";
+import StockPhoto from "@/components/ui/stock-photo";
+import ClosingCard from "@/components/cta/ClosingCard";
+import BookCallLink from "@/components/cta/BookCallLink";
 
-// Dynamic import for Three.js component (no SSR)
-const InteractiveTetrahedrons = dynamic(
-  () => import("@/components/three/InteractiveTetrahedrons"),
-  { ssr: false, loading: () => null }
-);
+// Display names for client work. Facts (headline, market, languages) come
+// from src/data/case-studies.ts; only the names and thumbnails live here.
+const CLIENT_NAMES: Record<(typeof CLIENT_WORK)[number], string> = {
+  saphiredent: "Saphiredent",
+  jouvence: "Jouvence",
+  esteexpert: "EsteExpert",
+  "omar-marketing": "Omar Marketing",
+};
+
+const APPROACH = ["approach1", "approach2", "approach3"] as const;
 
 export default function AboutPage() {
-  const t = useTranslations('about');
-  const containerRef = useRef<HTMLDivElement>(null!);
-  const [shapesReady, setShapesReady] = useState(false);
-
-  // Skip Three.js on mobile / low-power / reduced-motion
-  useEffect(() => {
-    const isMobile = window.innerWidth < 768;
-    const isLowPower = navigator.hardwareConcurrency != null && navigator.hardwareConcurrency <= 2;
-    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-    if (isMobile || isLowPower || prefersReduced) return;
-
-    const ric = (window as unknown as { requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number }).requestIdleCallback;
-    const handle = ric
-      ? ric(() => setShapesReady(true), { timeout: 2000 })
-      : window.setTimeout(() => setShapesReady(true), 1000);
-    return () => {
-      const cic = (window as unknown as { cancelIdleCallback?: (id: number) => void }).cancelIdleCallback;
-      if (cic) cic(handle);
-      else window.clearTimeout(handle);
-    };
-  }, []);
-  const { scrollYProgress } = useScroll({
-    target: containerRef as any,
-    offset: ["start start", "end end"],
-  });
-
-  const heroScale = useTransform(scrollYProgress, [0, 0.15], [1, 1.1]);
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.15], [1, 0]);
-  const heroBgY = useTransform(scrollYProgress, [0, 0.2], ["0%", "15%"]);
-  const heroContentY = useTransform(scrollYProgress, [0, 0.2], ["0%", "25%"]);
-
-  const skills = [
-    "React", "Next.js", "TypeScript", "Generative AI", "Motion",
-    "LLMs", "Strategy", "UI/UX", "Development",
-    "Prompt Engineering", "AI Integration", "Tailwind", "Three.js"
-  ];
+  const t = useTranslations("about");
+  const tp = useTranslations("projects");
+  const locale = useLocale();
+  const languageNames = new Intl.DisplayNames([locale], { type: "language" });
+  // Only quotes from clinic clients belong here.
+  const quote = testimonials.find((item) => item.company === "Saphiredent");
 
   return (
-    <div ref={containerRef} className="relative bg-background">
-      {/* Cinematic Hero */}
-      <motion.section
-        className="relative h-screen w-full overflow-hidden"
-        style={{ scale: heroScale, opacity: heroOpacity }}
-      >
-        <motion.div className="absolute inset-0 bg-black" style={{ y: heroBgY }}>
-          {shapesReady && <InteractiveTetrahedrons shapeCount={40} isDark={true} />}
-        </motion.div>
-
-        <motion.div className="absolute inset-0 flex items-center justify-center" style={{ y: heroContentY }}>
-          <motion.h1
-            initial={{ y: 100, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-            className="text-center font-display text-[15vw] font-bold leading-none tracking-tighter text-neutral-300 md:text-[12vw]"
-          >
-            {t('heroLine1')}
-            <br />
-            {t('heroLine2')}
-          </motion.h1>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1, duration: 1 }}
-          className="absolute bottom-12 left-1/2 -translate-x-1/2 text-neutral-500"
-        >
-          <div className="flex flex-col items-center gap-2">
-            <span className="text-xs uppercase tracking-widest">{t('scroll')}</span>
-            <ArrowDown className="h-4 w-4 animate-bounce" />
+    <div className="relative bg-background">
+      {/* Who I work with — dark lead section (navbar sits transparent over it) */}
+      <section className="bg-black pb-20 pt-32 text-white md:pb-28 md:pt-40">
+        <div className="container grid items-center gap-12 px-5 md:grid-cols-12 md:px-8">
+          <div className="md:col-span-7">
+            <p className="mb-5 font-mono text-label text-white/60">{t("kicker")}</p>
+            <h1 className="font-display text-hero text-white text-balance">{t("heading")}</h1>
+            <p className="mt-6 max-w-prose text-lg text-white/75">{t("intro")}</p>
+            <p className="mt-4 max-w-prose text-lg text-white/75">{t("intro2")}</p>
           </div>
-        </motion.div>
-      </motion.section>
+          <div className="md:col-span-4 md:col-start-9">
+            <div className="relative aspect-[4/5] max-w-sm overflow-hidden rounded-[10px] bg-white/10 md:max-w-md">
+              <Image
+                src="/img/awab-portrait.webp"
+                alt={t("portraitAlt")}
+                fill
+                priority
+                sizes="(min-width: 768px) 28rem, 100vw"
+                quality={90}
+                className="object-cover object-[50%_30%]"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
 
-      {/* The Story - Big Typography */}
-      <PerspectiveSection className="relative z-10 bg-background py-32 md:py-64">
-        <DepthFloat depth={0.3} maxOffset={25} className="pointer-events-none absolute top-32 right-[10%] hidden h-64 w-64 rounded-full bg-primary/[0.03] blur-3xl md:block" />
-        <div className="container mx-auto px-4">
-          <StaggerContainer className="space-y-32 md:space-y-64" staggerDelay={0.3}>
-            <StaggerItem animation="fadeUp">
-              <p className="font-display text-4xl font-medium leading-tight md:text-7xl lg:text-8xl">
-                {t('storyLine1')}
-              </p>
-            </StaggerItem>
+      {/* Client work */}
+      <section className="py-20 md:py-28">
+        <div className="container px-5 md:px-8">
+          <ScrollReveal animation="fadeUp" className="mb-10 max-w-3xl md:mb-14">
+            <p className="mb-4 font-mono text-label text-muted-foreground">{t("workKicker")}</p>
+            <h2 className="font-display text-heading text-foreground">{t("workHeading")}</h2>
+            <p className="mt-5 max-w-prose text-lg text-muted-foreground">{t("workIntro")}</p>
+          </ScrollReveal>
 
-            <StaggerItem animation="fadeUp">
-              <p className="ml-auto rtl:mr-auto rtl:ml-0 max-w-5xl text-right rtl:text-left font-display text-4xl font-medium leading-tight md:text-7xl lg:text-8xl">
-                {t('storyLine2')}
-              </p>
-            </StaggerItem>
-
-            <StaggerItem animation="fadeUp">
-              <p className="font-display text-4xl font-medium leading-tight md:text-7xl lg:text-8xl">
-                {t('storyLine3')}
-              </p>
-            </StaggerItem>
+          <StaggerContainer className="grid gap-5 md:grid-cols-2" staggerDelay={0.1}>
+            {CLIENT_WORK.map((id) => {
+              const study = CASE_STUDIES[id];
+              if (!study) return null;
+              return (
+                <StaggerItem key={id} animation="fadeUp">
+                  <Link
+                    href={`/projects/${id}`}
+                    onClick={() => trackCTAClick(`case_study_${id}`, "about_clients")}
+                    className="group flex h-full flex-col overflow-hidden rounded-[10px] border border-border/60 bg-card transition-colors hover:border-foreground/30"
+                  >
+                    <div className="relative aspect-[16/10] overflow-hidden bg-muted">
+                      <Image
+                        src={`/img/projects/${id}-thumbnail.webp`}
+                        alt=""
+                        fill
+                        sizes="(min-width: 768px) 50vw, 100vw"
+                        quality={85}
+                        className="object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+                      />
+                    </div>
+                    <div className="flex flex-1 flex-col p-5 md:p-6">
+                      <h3 className="font-display text-card-title text-foreground">{CLIENT_NAMES[id]}</h3>
+                      <p className="mt-3 text-muted-foreground">
+                        {locale === "en" ? study.headline : t(`clientHeadlines.${id}`)}
+                      </p>
+                      <dl className="mt-5 grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm">
+                        <dt className="font-mono text-label text-muted-foreground">{t("workMarket")}</dt>
+                        <dd>{tp(`markets.${study.market}`)}</dd>
+                        <dt className="font-mono text-label text-muted-foreground">{t("workLanguages")}</dt>
+                        <dd>{study.languages.map((code) => languageNames.of(code) ?? code).join(", ")}</dd>
+                      </dl>
+                      <span className="mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-foreground/60 transition-colors group-hover:text-foreground">
+                        {t("workLink")}
+                        <ArrowUpRight aria-hidden="true" className="h-4 w-4 rtl:-scale-x-100" />
+                      </span>
+                    </div>
+                  </Link>
+                </StaggerItem>
+              );
+            })}
           </StaggerContainer>
-        </div>
-      </PerspectiveSection>
 
-      {/* Skills Marquee */}
-      <section className="overflow-hidden bg-black py-24 text-white dark:bg-zinc-950 dark:text-zinc-100">
-        <div className="flex whitespace-nowrap">
-          <motion.div
-            animate={{ x: ["0%", "-50%"] }}
-            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-            className="flex gap-16 pr-16 font-display text-6xl font-bold uppercase tracking-tight md:text-9xl"
-          >
-            {[...skills, ...skills].map((skill, i) => (
-              <span key={i} className="flex items-center gap-16">
-                {skill} <span className="text-primary">•</span>
-              </span>
-            ))}
-          </motion.div>
+          {quote && (
+            <ScrollReveal animation="fadeUp" className="mt-14 max-w-3xl md:mt-20">
+              <figure>
+                <blockquote className="font-display text-2xl leading-snug text-foreground md:text-3xl" lang="en" dir="ltr">
+                  &ldquo;{quote.content}&rdquo;
+                </blockquote>
+                <figcaption className="mt-5 text-sm text-muted-foreground">
+                  <span className="font-medium text-foreground">{quote.name}</span>, {quote.role}, {quote.company}
+                </figcaption>
+              </figure>
+            </ScrollReveal>
+          )}
         </div>
       </section>
 
-      {/* Philosophy */}
-      <section className="py-32 md:py-48">
-        <div className="container mx-auto px-4">
-          <div className="grid gap-16 lg:grid-cols-2">
-            <ScrollReveal animation="fadeUp">
-              <h2 className="mb-8 font-mono text-sm uppercase text-muted-foreground">{t('philosophyHeading')}</h2>
-              <p className="text-2xl leading-relaxed md:text-4xl">
-                {t('philosophyContent')}
-              </p>
+      {/* How I work */}
+      <section className="border-t border-border/40 py-20 md:py-28">
+        <div className="container grid gap-10 px-5 md:grid-cols-12 md:gap-14 md:px-8">
+          {/* Istanbul, where the work (and most of the clinics) are based */}
+          <ScrollReveal animation="fade" className="md:col-span-5">
+            <StockPhoto
+              slot="istanbul-galata"
+              // 3:2 photo in a 4:5 frame renders ~1.9x the frame width.
+              sizes="(min-width: 768px) 70vw, 100vw"
+              className="aspect-[3/2] md:aspect-[4/5]"
+              imageClassName="object-[30%_50%]"
+            />
+          </ScrollReveal>
+          <div className="md:col-span-7 md:self-center">
+            <ScrollReveal animation="fadeUp" className="mb-10 md:mb-12">
+              <h2 className="font-display text-heading text-foreground">{t("approachHeading")}</h2>
             </ScrollReveal>
-
-            <ClipReveal mode="circle">
-              <div className="relative aspect-square w-full overflow-hidden rounded-2xl grayscale transition-all duration-500 hover:grayscale-0">
-                <Image
-                  src="/img/hero-image.jpg"
-                  alt={t('portraitAlt')}
-                  fill
-                  className="object-cover"
-                />
-              </div>
-            </ClipReveal>
+            <StaggerContainer className="grid gap-8 md:gap-10" staggerDelay={0.1}>
+              {APPROACH.map((key) => (
+                <StaggerItem key={key} animation="fadeUp" className="border-t border-border/60 pt-5">
+                  <h3 className="font-display text-card-title text-foreground">{t(`${key}Title`)}</h3>
+                  <p className="mt-3 max-w-prose text-muted-foreground">{t(`${key}Body`)}</p>
+                </StaggerItem>
+              ))}
+            </StaggerContainer>
           </div>
         </div>
       </section>
+
+      {/* CTA */}
+      <ClosingCard
+        heading={t("ctaHeading")}
+        text={t("ctaText")}
+        actions={
+          <>
+            <GlassPill
+              href="/contact"
+              tone="dark"
+              arrow
+              onClick={() => trackCTAClick("contact", "about_cta")}
+            >
+              {t("ctaButton")}
+            </GlassPill>
+            <BookCallLink location="about_cta" />
+          </>
+        }
+      />
     </div>
   );
 }

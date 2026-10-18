@@ -28,7 +28,8 @@ export default function ChatWidget() {
   };
 
   return (
-    <>
+    // Hidden while <html data-hide-chat> is set (the /audit check, see AuditExperience).
+    <div className="[html[data-hide-chat]_&]:hidden">
       {/* Chat Window */}
       <ChatWindow
         isOpen={isOpen}
@@ -55,6 +56,6 @@ export default function ChatWidget() {
           </>
         )}
       </button>
-    </>
+    </div>
   );
 }

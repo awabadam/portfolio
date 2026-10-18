@@ -3,39 +3,43 @@ import { Metadata } from "next";
 import { getAllBlogPosts, getAllBlogCategories } from "@/data/blog";
 import BlogList from "@/components/blog/BlogList";
 import BlogHero from "@/components/blog/BlogHero";
+import AuditCta from "@/components/audit/AuditCta";
 import { getTranslations, getLocale } from 'next-intl/server';
+import { ogLocale, pageAlternates, localeUrl } from "@/lib/seo";
 
 // Revalidate every 60 seconds to show fresh blog content
 export const revalidate = 60;
 
+// OG image: ./opengraph-image.tsx
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('metadata.blog');
   const locale = await getLocale();
-  const ogLocale = locale === 'ar' ? 'ar_SA' : locale === 'tr' ? 'tr_TR' : 'en_US';
 
   return {
     title: t('title'),
     description: t('description'),
     keywords: [
-      "web design blog",
-      "UI/UX design tips",
-      "SEO strategies",
-      "digital marketing insights",
-      "web development blog",
-      "design trends",
-      "freelance design tips",
-      "Istanbul web designer blog",
+      "clinic website blog",
+      "medical tourism website",
+      "Istanbul clinic website",
+      "multilingual clinic website",
+      "clinic lead tracking",
+      "Google Ads offline conversions",
+      "WhatsApp lead tracking",
     ],
     openGraph: {
       title: t('title'),
       description: t('description'),
-      url: "https://www.awab.design/blog",
-      locale: ogLocale,
+      url: localeUrl("/blog", locale),
+      locale: ogLocale(locale),
+      type: "website",
     },
-    alternates: {
-      canonical: "/blog",
-      languages: { en: '/blog', ar: '/ar/blog', tr: '/tr/blog', fr: '/fr/blog' },
+    twitter: {
+      card: "summary_large_image",
+      title: t('title'),
+      description: t('description'),
     },
+    alternates: pageAlternates("/blog", locale),
   };
 }
 
@@ -48,8 +52,10 @@ const BlogPage = async () => {
 
   return (
     <main className="flex min-h-screen w-full flex-col bg-background pt-32">
-      <BlogHero postCount={allPosts.length} />
+      <BlogHero />
       <BlogList posts={allPosts} categories={categories} />
+      {/* Dark closing band: the free readiness check is the lead magnet */}
+      <AuditCta location="blog_list" className="mt-20 md:mt-28" />
     </main>
   );
 };

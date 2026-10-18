@@ -1,8 +1,3 @@
 {
-  "crons": [
-    {
-      "path": "/api/cron/blog-draft",
-      "schedule": "0 6 * * *"
-    }
-  ]
+  "crons": [{ "path": "/api/cron/template-pack", "schedule": "0 7 * * *" }]
 }

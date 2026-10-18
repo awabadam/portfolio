@@ -7,7 +7,7 @@ import {
   findMatchingFAQ,
 } from "./knowledgeBase";
 // 💰 Pricing source of truth: edit prices in src/lib/pricing.ts
-import { projectTiers, getPrice, formatPrice } from "@/lib/pricing";
+import { getTier, getCarePlan, formatPrice } from "@/lib/pricing";
 
 export interface ChatMessage {
   role: "user" | "assistant" | "system";
@@ -144,10 +144,8 @@ export function processMessage(
     lowerMessage.includes("cost") ||
     lowerMessage.includes("how much")
   ) {
-    const [landing, business, custom] = projectTiers.map((t) =>
-      formatPrice(getPrice(t.id, t.basePrice, locale), locale)
-    );
-    response = `Here's our pricing structure:\n\n• Landing Page: Starting at ${landing}\n• Business Website: Starting at ${business}\n• Custom Website: Starting at ${custom}\n\nSee /pricing for full package details, or reach out at /contact for a personalized quote based on your specific needs.`;
+    const price = (item: { price: number }) => formatPrice(item.price);
+    response = `Here's how pricing works:\n\n• Clinic Website: from ${price(getTier("business"))}\n• Clinic Growth System: from ${price(getTier("custom"))}\n• Site Care: ${price(getCarePlan("careStandard"))}/month\n• Growth Retainer: ${price(getCarePlan("carePro"))}/month\n\nSee /pricing for what each one includes, or reach out at /contact for a quote for your clinic.`;
     return { response, context: newContext, action: "show_pricing" };
   }
 
@@ -157,7 +155,7 @@ export function processMessage(
     lowerMessage.includes("projects") ||
     lowerMessage.includes("examples")
   ) {
-    response = `Absolutely! You can view my portfolio at ${businessInfo.portfolio}. I've worked on various projects including web design, graphic design, and UI/UX projects. Would you like me to help you with anything specific?`;
+    response = `Absolutely! You can view my portfolio at ${businessInfo.portfolio}. Recent work is mostly clinic websites, including SaphireDent (dental), Jouvence and EsteExpert (aesthetics). Would you like me to help you with anything specific?`;
     return { response, context: newContext, action: "show_portfolio" };
   }
 
@@ -187,7 +185,7 @@ export function processMessage(
     lowerMessage.includes("years") ||
     lowerMessage.includes("how long")
   ) {
-    response = `I have ${businessInfo.experience} of experience and have completed ${businessInfo.projectCount}. I specialize in modern, conversion-focused websites that help businesses stand out online.`;
+    response = `I build websites for Istanbul clinics that treat patients from abroad: SaphireDent (dental), Jouvence (aesthetics) and EsteExpert (medical aesthetics). Each one is multilingual and tracks where inquiries come from. See /projects for the case studies.`;
     return { response, context: newContext };
   }
 

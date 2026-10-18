@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/routing";
 import { Button } from "@/components/ui/button";
 import { trackCTAClick } from "@/lib/analytics/gtm";
+import BookCallLink from "@/components/cta/BookCallLink";
 
 export default function BlogCTA() {
   const t = useTranslations("blog");
@@ -23,14 +24,7 @@ export default function BlogCTA() {
             {t("ctaGetQuote")}
           </Link>
         </Button>
-        <Button asChild variant="outline" size="lg" className="rounded-full px-8">
-          <Link
-            href="/contact"
-            onClick={() => trackCTAClick("contact", "blog_post")}
-          >
-            {t("ctaContactMe")}
-          </Link>
-        </Button>
+        <BookCallLink location="blog_post" className="h-11 rounded-full px-8" />
       </div>
     </div>
   );

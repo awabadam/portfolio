@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from '@/i18n/routing';
 import { ArrowLeft } from "lucide-react";
 import { getTranslations, getLocale } from 'next-intl/server';
+import { ogLocale, pageAlternates, localeUrl } from "@/lib/seo";
 
 // Revalidate every 60 seconds to show fresh blog content
 export const revalidate = 60;
@@ -33,38 +34,32 @@ export async function generateMetadata({
   const categories = await getAllBlogCategories();
   const category = categories.find((cat) => cat.slug === slug);
   const locale = await getLocale();
-  const ogLocale = locale === 'ar' ? 'ar_SA' : locale === 'tr' ? 'tr_TR' : 'en_US';
 
   if (!category) {
     return {
       title: "Category Not Found",
+      robots: { index: false, follow: false },
     };
   }
 
+  const title = `${category.name}: Clinic Website Notes`;
+  const description =
+    category.description ||
+    `${category.name} articles on clinic websites, patient leads and medical tourism SEO, from a web designer in Istanbul.`;
+  const path = `/blog/category/${category.slug}`;
+
   return {
-    title: `${category.name} Articles | Web Design Blog | Awab Elkhalil`,
-    description:
-      category.description ||
-      `Browse ${category.name} articles and insights from a professional web designer in Istanbul.`,
-    keywords: [
-      category.name.toLowerCase(),
-      "web design",
-      "blog",
-      "Istanbul",
-      "design tips",
-    ],
+    title,
+    description,
+    keywords: [category.name.toLowerCase(), "clinic website", "medical tourism", "Istanbul"],
     openGraph: {
-      title: `${category.name} Articles | Web Design Blog | Awab Elkhalil`,
-      description:
-        category.description ||
-        `Browse ${category.name} articles and insights from a professional web designer in Istanbul.`,
-      url: `https://www.awab.design/blog/category/${category.slug}`,
-      locale: ogLocale,
+      title,
+      description,
+      url: localeUrl(path, locale),
+      locale: ogLocale(locale),
+      type: "website",
     },
-    alternates: {
-      canonical: `/blog/category/${category.slug}`,
-      languages: { en: `/blog/category/${category.slug}`, ar: `/ar/blog/category/${category.slug}`, tr: `/tr/blog/category/${category.slug}`, fr: `/fr/blog/category/${category.slug}` },
-    },
+    alternates: pageAlternates(path, locale),
   };
 }
 

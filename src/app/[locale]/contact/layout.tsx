@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import { getTranslations, getLocale } from "next-intl/server";
 import Breadcrumbs from "@/components/seo/Breadcrumbs";
+import { ogLocale, pageAlternates, localeUrl } from "@/lib/seo";
 
+// OG image: ./opengraph-image.tsx
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("metadata.contact");
   const locale = await getLocale();
-  const ogLocale = locale === "ar" ? "ar_SA" : locale === "tr" ? "tr_TR" : locale === "fr" ? "fr_FR" : "en_US";
 
   return {
     title: t("title"),
@@ -13,8 +14,8 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       title: t("title"),
       description: t("description"),
-      url: "https://www.awab.design/contact",
-      locale: ogLocale,
+      url: localeUrl("/contact", locale),
+      locale: ogLocale(locale),
       type: "website",
     },
     twitter: {
@@ -22,15 +23,7 @@ export async function generateMetadata(): Promise<Metadata> {
       title: t("title"),
       description: t("description"),
     },
-    alternates: {
-      canonical: "/contact",
-      languages: {
-        en: "/contact",
-        ar: "/ar/contact",
-        tr: "/tr/contact",
-        fr: "/fr/contact",
-      },
-    },
+    alternates: pageAlternates("/contact", locale),
   };
 }
 
