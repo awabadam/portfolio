@@ -1,5 +1,6 @@
 import type { ReactElement } from "react";
 import { render } from "@react-email/render";
+import { dirStore } from "./ui";
 import type { Locale } from "@/i18n/config";
 
 export interface RenderedEmail {
@@ -14,6 +15,12 @@ export interface RenderedEmail {
  * are left out of the text; headings keep their case.
  */
 export async function renderEmail(subject: string, element: ReactElement): Promise<RenderedEmail> {
+  // Lead emails carry a locale prop; Arabic renders right to left.
+  const dir = (element.props as { locale?: string }).locale === "ar" ? "rtl" : "ltr";
+  return dirStore.run(dir, () => renderBoth(subject, element));
+}
+
+async function renderBoth(subject: string, element: ReactElement): Promise<RenderedEmail> {
   const [html, text] = await Promise.all([
     render(element),
     render(element, {

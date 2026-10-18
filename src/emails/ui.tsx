@@ -20,7 +20,8 @@
  * #555 for body text). RTL (ar): <html dir="rtl"> plus right alignment via
  * the direction context; kickers drop letter-spacing so Arabic stays joined.
  */
-import { createContext, useContext, type CSSProperties, type ReactNode } from "react";
+import { AsyncLocalStorage } from "node:async_hooks";
+import type { CSSProperties, ReactNode } from "react";
 import { Body, Button, Head, Html, Img, Link } from "@react-email/components";
 import { SITE_URL } from "@/lib/seo";
 
@@ -61,8 +62,12 @@ export function emailAsset(file: string): string {
 }
 
 export type Dir = "ltr" | "rtl";
-const DirContext = createContext<Dir>("ltr");
-export const useDir = () => useContext(DirContext);
+/**
+ * Text direction for the email being rendered. Set by renderEmail around the
+ * render; React context isn't available in route handlers (react-server).
+ */
+export const dirStore = new AsyncLocalStorage<Dir>();
+export const useDir = (): Dir => dirStore.getStore() ?? "ltr";
 export const useAlign = (): "left" | "right" => (useDir() === "rtl" ? "right" : "left");
 /** Forward arrow that points the reading direction. */
 export const useArrow = () => (useDir() === "rtl" ? "←" : "→");
@@ -147,8 +152,7 @@ function Wordmark() {
 
 function Shell({ lang, dir, preheader, title, bg, children }: { lang: string; dir: Dir; preheader: string; title: string; bg: string; children: ReactNode }) {
   return (
-    <DirContext.Provider value={dir}>
-      <Html lang={lang} dir={dir}>
+    <Html lang={lang} dir={dir}>
         <Head>
           <meta name="color-scheme" content="light" />
           <meta name="supported-color-schemes" content="light" />
@@ -168,8 +172,7 @@ function Shell({ lang, dir, preheader, title, bg, children }: { lang: string; di
           </div>
           {children}
         </Body>
-      </Html>
-    </DirContext.Provider>
+    </Html>
   );
 }
 
