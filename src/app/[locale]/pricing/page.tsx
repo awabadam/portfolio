@@ -17,7 +17,7 @@ import StockPhoto from "@/components/ui/stock-photo";
 // lib/pricing + the `packages` namespace).
 import PackageCards from "@/components/pricing/PackageCards";
 import CarePlanCards from "@/components/pricing/CarePlanCards";
-import { getCarePlan, formatPrice } from "@/lib/pricing";
+import { getCarePlan, formatPrice, includedCareMonths } from "@/lib/pricing";
 import ClosingCard from "@/components/cta/ClosingCard";
 import BookCallLink from "@/components/cta/BookCallLink";
 
@@ -95,7 +95,7 @@ export default function PricingPage() {
         <div className="container mx-auto px-5 md:px-8">
           <ScrollReveal animation="fadeUp" className="mb-10 md:mb-12">
             <h2 className="max-w-3xl font-display text-heading text-balance">{t("plansHeading")}</h2>
-            <p className="mt-4 max-w-xl text-lg text-muted-foreground">{t("plansSubtitle")}</p>
+            <p className="mt-4 max-w-xl text-lg text-muted-foreground">{t("plansSubtitle", { months: includedCareMonths })}</p>
           </ScrollReveal>
           <CarePlanCards />
         </div>

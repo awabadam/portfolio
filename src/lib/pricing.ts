@@ -33,9 +33,10 @@
 // patients. Two packages, priced 2026-10-17: the price covers lead tracking and
 // CRM/ads handoff, not just the site itself. `price` is USD.
 // `featuresKey` points at a string array in the `packages` namespace.
+// `contactValue` is the matching <option> on the contact form (/contact?plan=...).
 export const projectTiers = [
-  { id: "business", nameKey: "clinicWebsite" as const, descKey: "clinicWebsiteDesc" as const, featuresKey: "clinicWebsiteFeatures" as const, timeframeKey: "clinicWebsiteTimeframe" as const, price: 2500 },
-  { id: "custom", nameKey: "growthSystem" as const, descKey: "growthSystemDesc" as const, featuresKey: "growthSystemFeatures" as const, timeframeKey: "growthSystemTimeframe" as const, price: 5000, popular: true },
+  { id: "business", nameKey: "clinicWebsite" as const, descKey: "clinicWebsiteDesc" as const, featuresKey: "clinicWebsiteFeatures" as const, timeframeKey: "clinicWebsiteTimeframe" as const, contactValue: "clinic-website", price: 2500 },
+  { id: "custom", nameKey: "growthSystem" as const, descKey: "growthSystemDesc" as const, featuresKey: "growthSystemFeatures" as const, timeframeKey: "growthSystemTimeframe" as const, contactValue: "growth-system", price: 5000, popular: true },
 ];
 
 // Add-ons are not sold separately — they exist only as features bundled into
@@ -52,13 +53,20 @@ export const addOns = [
 // Monthly plans. Site Care keeps any site running; Growth Retainer adds the
 // lead reporting and ads-tracking upkeep that the Growth System is built for.
 // Names/features live in the `packages` translation namespace. `price` is USD/month.
-// Positioning note (2026-10-17): Site Care sits at the upper end of local
-// hosting + updates plans; Growth Retainer is priced as a reporting/ads-tracking
-// retainer, not a maintenance plan. Review against Istanbul agency rates yearly.
+// `fromPrice` shows "From $X/month" (scope varies by clinic); otherwise a fixed price.
+// `contactValue` is the matching <option> on the contact form (/contact?plan=...).
+// Positioning note (2026-10-19): priced at the top of the freelancer range, not
+// agency retainers (those include ads management, which isn't offered here).
+// Site Care sits at the top of freelancer care plans ($50-150); Growth Retainer
+// is a reporting/ads-tracking retainer, priced from $450 and quoted up per clinic.
 export const carePlans = [
-  { id: "careStandard", nameKey: "siteCare" as const, descKey: "siteCareDesc" as const, featuresKey: "siteCareFeatures" as const, forTier: "business", price: 79 },
-  { id: "carePro", nameKey: "growthRetainer" as const, descKey: "growthRetainerDesc" as const, featuresKey: "growthRetainerFeatures" as const, forTier: "custom", price: 450, popular: true },
+  { id: "careStandard", nameKey: "siteCare" as const, descKey: "siteCareDesc" as const, featuresKey: "siteCareFeatures" as const, forTier: "business", contactValue: "site-care", price: 149 },
+  { id: "carePro", nameKey: "growthRetainer" as const, descKey: "growthRetainerDesc" as const, featuresKey: "growthRetainerFeatures" as const, forTier: "custom", contactValue: "growth-retainer", price: 450, fromPrice: true, popular: true },
 ];
+
+// Months of the matching care plan (carePlans[].forTier) bundled into each
+// package after launch. Shown on the package cards as an included item.
+export const includedCareMonths = 3;
 
 // Add-ons bundled FREE into each package. Consumers render these as
 // "<name> — free, valued at <price>".
@@ -82,6 +90,16 @@ export function getCarePlan(id: string) {
 }
 
 // Resolve the add-on objects bundled into a given tier, in addOns order.
+// The care plan bundled with a package (matched by forTier), if any.
+export function getIncludedCarePlan(tierId: string) {
+  return carePlans.find((p) => p.forTier === tierId);
+}
+
+// "$149" or "from $450" in plain English (chat prompts, JSON-LD descriptions).
+export function formatPlanPrice(plan: (typeof carePlans)[number]): string {
+  return `${plan.fromPrice ? "from " : ""}${formatPrice(plan.price)}`;
+}
+
 export function getIncludedAddOns(tierId: string) {
   const ids = includedAddOns[tierId] ?? [];
   return addOns.filter((a) => ids.includes(a.id));

@@ -7,7 +7,7 @@ import {
   findMatchingFAQ,
 } from "./knowledgeBase";
 // 💰 Pricing source of truth: edit prices in src/lib/pricing.ts
-import { getTier, getCarePlan, formatPrice } from "@/lib/pricing";
+import { getTier, getCarePlan, formatPrice, formatPlanPrice } from "@/lib/pricing";
 
 export interface ChatMessage {
   role: "user" | "assistant" | "system";
@@ -145,7 +145,7 @@ export function processMessage(
     lowerMessage.includes("how much")
   ) {
     const price = (item: { price: number }) => formatPrice(item.price);
-    response = `Here's how pricing works:\n\n• Clinic Website: from ${price(getTier("business"))}\n• Clinic Growth System: from ${price(getTier("custom"))}\n• Site Care: ${price(getCarePlan("careStandard"))}/month\n• Growth Retainer: ${price(getCarePlan("carePro"))}/month\n\nSee /pricing for what each one includes, or reach out at /contact for a quote for your clinic.`;
+    response = `Here's how pricing works:\n\n• Clinic Website: from ${price(getTier("business"))}\n• Clinic Growth System: from ${price(getTier("custom"))}\n• Site Care: ${price(getCarePlan("careStandard"))}/month\n• Growth Retainer: ${formatPlanPrice(getCarePlan("carePro"))}/month\n\nSee /pricing for what each one includes, or reach out at /contact for a quote for your clinic.`;
     return { response, context: newContext, action: "show_pricing" };
   }
 

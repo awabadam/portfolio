@@ -362,7 +362,7 @@
     "ctaPrimary": "Teklif al",
     "ctaSecondary": "Bana ulaşın",
     "plansHeading": "Aylık planlar",
-    "plansSubtitle": "Yayından sonra barındırma ve bakım. İsteğe bağlıdır; her durumda her şey size aittir."
+    "plansSubtitle": "Yayından sonra barındırma ve bakım. İlk {months} ay paketinize dahildir; sonrası isteğe bağlıdır ve her durumda her şey size aittir."
   },
   "packages": {
     "popular": "Önerilen",
@@ -371,6 +371,8 @@
     "valuedAt": "değeri {value}",
     "cta": "Kliniğinizi konuşalım",
     "perMonth": "/ay",
+    "planCta": "Bu planı sorun",
+    "careIncluded": "{months} ay {plan}",
     "clinicWebsite": "Klinik Web Sitesi",
     "clinicWebsiteDesc": "Tedavi sayfalarınızı ziyaret edenleri WhatsApp görüşmesine dönüştüren çok dilli bir site.",
     "clinicWebsiteTimeframe": "3-4 haftada yayında",
@@ -455,7 +457,8 @@
     "eyebrow": "İletişim",
     "projectClinicWebsite": "Klinik Web Sitesi",
     "projectGrowthSystem": "Klinik Büyüme Sistemi",
-    "projectRetainer": "Aylık plan (Site Care veya Growth)",
+    "projectSiteCare": "Site Care (aylık)",
+    "projectGrowthRetainer": "Growth Retainer (aylık)",
     "bookEyebrow": "Konuşmayı mı tercih edersiniz?",
     "bookHeading": "15 dakikalık bir görüşme ayarlayın",
     "bookText": "Size uyan saati seçin. Mevcut sitenize birlikte bakalım, ilk neyi düzelteceğimi açıkça söyleyeyim. Satış sunumu yok, hiçbir yükümlülük yok.",

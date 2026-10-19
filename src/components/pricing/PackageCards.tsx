@@ -5,11 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Check, ArrowRight, Globe, TrendingUp } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { StaggerContainer, StaggerItem } from "@/components/effects";
+import { trackEvent } from "@/lib/analytics";
 // 💰 Pricing source of truth: edit prices in src/lib/pricing.ts
 // Package names, descriptions and feature lists come from the `packages`
 // namespace. /pricing and /services both render this component so the two
 // pages can never show different packages or prices.
-import { projectTiers, formatPrice, getIncludedAddOns } from "@/lib/pricing";
+import { projectTiers, formatPrice, getIncludedAddOns, getIncludedCarePlan, includedCareMonths } from "@/lib/pricing";
 
 // Icons keyed by pricing.ts tier id
 const tierIcons: Record<string, React.ReactNode> = {
@@ -31,6 +32,7 @@ export default function PackageCards({ headingLevel = "h3" }: PackageCardsProps)
       {projectTiers.map((tier) => {
         const features = t.raw(tier.featuresKey) as string[];
         const bundled = getIncludedAddOns(tier.id);
+        const care = getIncludedCarePlan(tier.id);
         return (
           <StaggerItem key={tier.id} animation="fadeUp">
             <div
@@ -62,7 +64,7 @@ export default function PackageCards({ headingLevel = "h3" }: PackageCardsProps)
                   </li>
                 ))}
               </ul>
-              {bundled.length > 0 && (
+              {(bundled.length > 0 || care) && (
                 <div className="mt-6 border-t border-border pt-6">
                   <p className="mb-3 font-mono text-xs uppercase tracking-widest text-primary">
                     {t("includedTitle")}
@@ -82,6 +84,22 @@ export default function PackageCards({ headingLevel = "h3" }: PackageCardsProps)
                         </span>
                       </li>
                     ))}
+                    {care && (
+                      <li className="flex items-start gap-2 text-sm">
+                        <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                        <span>
+                          <span className="font-medium">
+                            {t("careIncluded", { months: includedCareMonths, plan: t(care.nameKey) })}
+                          </span>
+                          <span className="text-muted-foreground">
+                            {" · "}
+                            {t("valuedAt", {
+                              value: formatPrice(care.price * includedCareMonths),
+                            })}
+                          </span>
+                        </span>
+                      </li>
+                    )}
                   </ul>
                 </div>
               )}
@@ -91,7 +109,10 @@ export default function PackageCards({ headingLevel = "h3" }: PackageCardsProps)
                 size="lg"
                 variant={tier.popular ? "default" : "outline"}
               >
-                <Link href="/contact">
+                <Link
+                  href={`/contact?plan=${tier.contactValue}`}
+                  onClick={() => trackEvent("package_click", { plan: tier.contactValue, price: tier.price })}
+                >
                   {t("cta")}
                   <ArrowRight className="ml-2 rtl:ml-0 rtl:mr-2 rtl:rotate-180 h-4 w-4" />
                 </Link>

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   ArrowUpRight, CalendarDays, Copy, Mail, MapPin, Phone, MessageSquare,
@@ -24,6 +24,10 @@ import {
   trackCTAClick,
 } from "@/lib/analytics/gtm";
 
+// Values of the projectType <select>; /contact?plan=<value> pre-selects one
+// (the pricing cards link here with their plan).
+const PROJECT_TYPES = ["clinic-website", "growth-system", "site-care", "growth-retainer", "other"] as const;
+
 const email = "awabe.adam@gmail.com";
 const phone = "+90 554 175 9945";
 
@@ -44,6 +48,13 @@ export default function ContactPage() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const plan = new URLSearchParams(window.location.search).get("plan");
+    if (plan && (PROJECT_TYPES as readonly string[]).includes(plan)) {
+      setFormState((prev) => ({ ...prev, projectType: plan }));
+    }
+  }, []);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(email);
@@ -233,7 +244,8 @@ export default function ContactPage() {
                         >
                           <option value="clinic-website">{t("projectClinicWebsite")}</option>
                           <option value="growth-system">{t("projectGrowthSystem")}</option>
-                          <option value="retainer">{t("projectRetainer")}</option>
+                          <option value="site-care">{t("projectSiteCare")}</option>
+                          <option value="growth-retainer">{t("projectGrowthRetainer")}</option>
                           <option value="other">{t("projectOther")}</option>
                         </select>
                       </div>

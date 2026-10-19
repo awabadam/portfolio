@@ -2,7 +2,7 @@ import { ChatMessage, ChatContext } from "./chatBot";
 import { services, projects, businessInfo, faqs } from "./knowledgeBase";
 // 💰 Pricing source of truth: edit prices in src/lib/pricing.ts
 // The chat assistant's pricing answers are generated from this data.
-import { projectTiers, carePlans, formatPrice, getIncludedAddOns } from "@/lib/pricing";
+import { projectTiers, carePlans, formatPrice, formatPlanPrice, getIncludedAddOns, includedCareMonths } from "@/lib/pricing";
 
 export interface OpenRouterResponse {
   id: string;
@@ -44,7 +44,7 @@ function buildSystemPrompt(context: ChatContext, locale?: string): string {
     `${tierNames[t.id] ?? t.id}: from ${formatPrice(t.price)}`
   ).join(", ");
   const planPrices = carePlans.map((p) =>
-    `${planNames[p.id] ?? p.id}: ${formatPrice(p.price)}/mo`
+    `${planNames[p.id] ?? p.id}: ${formatPlanPrice(p)}/mo`
   ).join(", ");
 
   const addOnLabels: Record<string, string> = {
@@ -80,7 +80,7 @@ Email: ${businessInfo.email} | WhatsApp: ${businessInfo.phone}
 
 PRICING (USD, same prices in every language and country):
 Packages: ${tierPrices}
-Monthly plans: ${planPrices}
+Monthly plans: ${planPrices}. The first ${includedCareMonths} months of the matching plan come free with each package (Site Care with Clinic Website, Growth Retainer with Growth System).
 Bundled free (no paid add-ons): ${bundles}
 Pricing details: /pricing
 

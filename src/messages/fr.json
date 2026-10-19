@@ -362,7 +362,7 @@
     "ctaPrimary": "Demander un devis",
     "ctaSecondary": "Me contacter",
     "plansHeading": "Formules mensuelles",
-    "plansSubtitle": "Hébergement et entretien après la mise en ligne. En option, et tout vous appartient dans tous les cas."
+    "plansSubtitle": "Hébergement et entretien après la mise en ligne. Les {months} premiers mois sont inclus dans votre forfait ; ensuite c'est en option, et tout vous appartient dans tous les cas."
   },
   "packages": {
     "popular": "Recommandé",
@@ -371,6 +371,8 @@
     "valuedAt": "d'une valeur de {value}",
     "cta": "Parlons de votre clinique",
     "perMonth": "/mois",
+    "planCta": "Demander ce forfait",
+    "careIncluded": "{months} mois de {plan}",
     "clinicWebsite": "Site Clinique",
     "clinicWebsiteDesc": "Un site multilingue qui transforme les visiteurs de vos pages de soins en conversations WhatsApp.",
     "clinicWebsiteTimeframe": "En ligne en 3 à 4 semaines",
@@ -455,7 +457,8 @@
     "eyebrow": "Contact",
     "projectClinicWebsite": "Site de clinique",
     "projectGrowthSystem": "Système de croissance clinique",
-    "projectRetainer": "Forfait mensuel (Site Care ou Growth)",
+    "projectSiteCare": "Site Care (mensuel)",
+    "projectGrowthRetainer": "Growth Retainer (mensuel)",
     "bookEyebrow": "Vous préférez en parler ?",
     "bookHeading": "Réservez un appel de 15 minutes",
     "bookText": "Choisissez le créneau qui vous convient. Nous regardons ensemble votre site actuel et je vous dis franchement ce que je corrigerais en premier. Pas de présentation commerciale, aucun engagement.",

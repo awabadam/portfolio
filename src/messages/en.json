@@ -362,7 +362,7 @@
     "ctaPrimary": "Get a quote",
     "ctaSecondary": "Contact me",
     "plansHeading": "Monthly plans",
-    "plansSubtitle": "Hosting and upkeep after launch. Optional, and you own everything either way."
+    "plansSubtitle": "Hosting and upkeep after launch. The first {months} months come with your package; after that it's optional, and you own everything either way."
   },
   "packages": {
     "popular": "Recommended",
@@ -371,6 +371,8 @@
     "valuedAt": "valued at {value}",
     "cta": "Talk about your clinic",
     "perMonth": "/month",
+    "planCta": "Ask about this plan",
+    "careIncluded": "{months} months of {plan}",
     "clinicWebsite": "Clinic Website",
     "clinicWebsiteDesc": "A multilingual site that turns visitors on your treatment pages into WhatsApp conversations.",
     "clinicWebsiteTimeframe": "Live in 3-4 weeks",
@@ -455,7 +457,8 @@
     "eyebrow": "Contact",
     "projectClinicWebsite": "Clinic Website",
     "projectGrowthSystem": "Clinic Growth System",
-    "projectRetainer": "Retainer (Site Care or Growth)",
+    "projectSiteCare": "Site Care (monthly)",
+    "projectGrowthRetainer": "Growth Retainer (monthly)",
     "bookEyebrow": "Prefer to talk?",
     "bookHeading": "Book a 15-minute call",
     "bookText": "Pick a time that suits you. We look at your current site together, and I tell you honestly what I would fix first. No pitch deck, no obligation.",

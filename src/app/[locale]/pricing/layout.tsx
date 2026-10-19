@@ -77,7 +77,7 @@ export default async function PricingLayout({ children }: { children: React.Reac
     },
     priceSpecification: {
       "@type": "UnitPriceSpecification",
-      price: String(plan.price),
+      ...(plan.fromPrice ? { minPrice: String(plan.price) } : { price: String(plan.price) }),
       priceCurrency: "USD",
       unitText: "month",
     },

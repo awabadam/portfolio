@@ -1,5 +1,5 @@
 // 💰 Pricing source of truth: edit prices in src/lib/pricing.ts
-import { getTier, getCarePlan, formatPrice } from "@/lib/pricing";
+import { getTier, getCarePlan, formatPrice, formatPlanPrice } from "@/lib/pricing";
 
 export interface Service {
   name: string;
@@ -48,7 +48,7 @@ export const services: Service[] = [
     name: "Growth Retainer",
     description:
       "Site Care plus a monthly lead report (inquiries by country and source), upkeep of Google Ads conversion tracking, landing pages for new treatments or campaigns, and priority changes.",
-    pricing: `${formatPrice(getCarePlan("carePro").price)}/month`,
+    pricing: `${formatPlanPrice(getCarePlan("carePro"))}/month`,
     link: "/services/website-maintenance",
   },
 ];

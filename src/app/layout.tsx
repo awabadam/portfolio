@@ -195,7 +195,7 @@ const OFFER_CATALOG = {
         priceCurrency: "USD",
         priceSpecification: {
           "@type": "UnitPriceSpecification",
-          price: String(plan.price),
+          ...(plan.fromPrice ? { minPrice: String(plan.price) } : { price: String(plan.price) }),
           priceCurrency: "USD",
           unitText: "month",
         },
