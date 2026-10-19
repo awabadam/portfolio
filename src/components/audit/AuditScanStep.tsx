@@ -13,8 +13,6 @@ import type { ScanResult, ScanSuccess } from "@/lib/auditScan";
 
 export interface ScanOutcome {
   website: string;
-  /** Optional email for the full report, trimmed; "" when left empty. */
-  email: string;
   result: ScanResult;
   elapsedMs: number;
 }
@@ -27,8 +25,6 @@ export function isEmailLike(v: string): boolean {
 interface AuditScanStepProps {
   /** Last website the user entered (restored from the draft). */
   website: string;
-  /** Last email the user entered (restored from the draft). */
-  email: string;
   /** The last successful scan, or null. Lets the user go back to its review instead of scanning again. */
   scan: ScanSuccess | null;
   /** True when the last scan failed and the user has not retried yet. */
@@ -37,8 +33,8 @@ interface AuditScanStepProps {
   onOutcome: (outcome: ScanOutcome) => void;
   /** Back to the review of the last scan. */
   onContinue: () => void;
-  /** Skip the scan; carries the website and email typed so far (both may be ""). */
-  onSkip: (typed: { website: string; email: string }) => void;
+  /** Skip the scan; carries the website typed so far (may be ""). */
+  onSkip: (typed: { website: string }) => void;
   onBack: () => void;
 }
 
@@ -54,7 +50,6 @@ export function hostOf(website: string): string {
 
 export default function AuditScanStep({
   website,
-  email,
   scan,
   scanFailed,
   elapsedMs,
@@ -68,13 +63,10 @@ export default function AuditScanStep({
   const reduceMotion = useReducedMotion();
 
   const [value, setValue] = useState(website);
-  const [emailValue, setEmailValue] = useState(email);
   const [fieldError, setFieldError] = useState<string | null>(null);
-  const [emailError, setEmailError] = useState<string | null>(null);
   const [running, setRunning] = useState<string | null>(null); // host being checked
   const [stepIndex, setStepIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
-  const emailRef = useRef<HTMLInputElement>(null);
   const steps = t.raw("progressSteps") as string[];
 
   // Cycle the progress words while the scan runs.
@@ -84,28 +76,12 @@ export default function AuditScanStep({
     return () => window.clearInterval(id);
   }, [running, steps.length]);
 
-  /** The optional email: "" when empty, null (with the error shown) when filled but malformed. */
-  const checkedEmail = (): string | null => {
-    const trimmed = emailValue.trim();
-    if (trimmed && !isEmailLike(trimmed)) {
-      setEmailError(tAudit("errors.email"));
-      return null;
-    }
-    setEmailError(null);
-    return trimmed;
-  };
-
   const submit = async (e: FormEvent) => {
     e.preventDefault();
     const normalized = normalizeWebsite(value);
-    const mail = checkedEmail();
     setFieldError(normalized ? null : tAudit("errors.website"));
     if (!normalized) {
       inputRef.current?.focus();
-      return;
-    }
-    if (mail === null) {
-      emailRef.current?.focus();
       return;
     }
     const host = hostOf(normalized);
@@ -134,19 +110,12 @@ export default function AuditScanStep({
       result = { ok: false, error: (err as Error)?.name === "TimeoutError" ? "timeout" : "unreachable" };
     }
     const elapsed = Math.round(performance.now() - started);
-    trackEvent("audit_scan", { ok: result.ok, error: result.ok ? undefined : result.error, ms: elapsed, email: mail !== "" });
+    trackEvent("audit_scan", { ok: result.ok, error: result.ok ? undefined : result.error, ms: elapsed });
     setRunning(null);
-    onOutcome({ website: normalized, email: mail, result, elapsedMs: elapsed });
+    onOutcome({ website: normalized, result, elapsedMs: elapsed });
   };
 
-  const skip = () => {
-    const mail = checkedEmail();
-    if (mail === null) {
-      emailRef.current?.focus();
-      return;
-    }
-    onSkip({ website: normalizeWebsite(value) ?? "", email: mail });
-  };
+  const skip = () => onSkip({ website: normalizeWebsite(value) ?? "" });
 
   const lastHost = scan ? hostOf(scan.finalUrl) : null;
 
@@ -214,43 +183,6 @@ export default function AuditScanStep({
               {fieldError}
             </p>
           )}
-
-          {/* Optional: lets the owner follow up if the visitor stops partway. Only for the report. */}
-          <label htmlFor="audit-scan-email" className="mb-2 mt-5 block text-sm font-medium">
-            {t("emailLabel")}
-            <span className="font-normal text-muted-foreground"> ({tAudit("form.optional")})</span>
-          </label>
-          <Input
-            ref={emailRef}
-            id="audit-scan-email"
-            name="email"
-            type="email"
-            inputMode="email"
-            autoComplete="email"
-            autoCapitalize="none"
-            spellCheck={false}
-            dir="ltr"
-            value={emailValue}
-            onChange={(e) => {
-              setEmailValue(e.target.value);
-              if (emailError) setEmailError(null);
-            }}
-            placeholder={tAudit("form.emailPlaceholder")}
-            aria-invalid={Boolean(emailError)}
-            aria-describedby={emailError ? "audit-scan-email-error audit-scan-email-note" : "audit-scan-email-note"}
-            className={cn(
-              "h-12 w-full rounded-[8px] border-border bg-background text-start text-base",
-              emailError && "border-red-500",
-            )}
-          />
-          {emailError && (
-            <p id="audit-scan-email-error" className="mt-2 text-sm text-red-600" role="alert">
-              {emailError}
-            </p>
-          )}
-          <p id="audit-scan-email-note" className="mt-2 text-xs text-muted-foreground">
-            {t("emailNote")}
-          </p>
 
           <GlassPill tone="dark" arrow type="submit" className="mt-6 h-12 px-6 text-base">
             {t("submit")}

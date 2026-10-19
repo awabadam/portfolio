@@ -7,7 +7,7 @@ import { ArrowDown, ArrowUpRight, Check, FileText } from "lucide-react";
 import { GlassPill } from "@/components/ui/glass-pill";
 import { cn } from "@/lib/utils";
 import { trackEvent } from "@/lib/analytics";
-import { formatPrice, projectTiers } from "@/lib/pricing";
+import { formatPrice, formatPriceRange, patientValueRanges, projectTiers } from "@/lib/pricing";
 import {
   ANSWER_VALUES,
   AUDIT_VERSION,
@@ -71,14 +71,14 @@ interface Draft {
   scanFailed: boolean;
   scanMs: number;
   profile: Partial<ClinicProfile>;
-  /** Optional email from the website step, prefilled in the result form. */
+  /** Optional email from the scan review, prefilled in the result form. */
   email: string;
   /** The partial lead saved for that email (POST /api/audit/start), or null. */
   lead: PartialLead | null;
 }
 
 /**
- * A partial lead: saved on the website step when an email was given, updated
+ * A partial lead: saved on the scan review when an email was given, updated
  * as the visitor advances (/api/audit/progress) and completed by the result
  * form. Reused only for the same email and website.
  */
@@ -374,6 +374,19 @@ export default function AuditExperience({ chapters = [], excerpts = null }: Audi
   /** Fixed for the whole sequence: it only changes with a new scan, which happens before it starts. */
   const steps = buildSteps(scan?.suggestedAnswers ?? null);
   const step = steps[Math.min(index, steps.length - 1)];
+  /*
+   * Head start for the progress bar: the website step and every check the scan
+   * answered count as done, so the first question never shows an empty bar.
+   */
+  const scannedCount = scan ? Object.keys(scan.suggestedAnswers).length : 0;
+  const headStart = 1 + scannedCount;
+  const progressTotal = headStart + steps.length;
+  const budgetAnchor =
+    step.kind === "profile" && step.id === "budgetFit"
+      ? t(`profile.budgetFit.anchor.${profile.treatments ?? "several"}`, {
+          range: formatPriceRange(patientValueRanges[profile.treatments ?? "several"]),
+        })
+      : undefined;
 
   /*
    * Partial lead progress: only with a token (the visitor left an email). The
@@ -445,7 +458,7 @@ export default function AuditExperience({ chapters = [], excerpts = null }: Audi
   }, [sendProgress]);
 
   /**
-   * Saves a partial lead for the email given on the website step (no email: none).
+   * Saves a partial lead for the email given on the scan review (no email: none).
    * The same email and website keep their lead; a change starts a new one.
    */
   const ensureLead = async (mail: string, site: string, checks: ScanChecks | null) => {
@@ -508,11 +521,9 @@ export default function AuditExperience({ chapters = [], excerpts = null }: Audi
     trackEvent("audit_start", { resumed: resume });
   };
 
-  const onScanOutcome = ({ website: site, email: mail, result, elapsedMs }: ScanOutcome) => {
+  const onScanOutcome = ({ website: site, result, elapsedMs }: ScanOutcome) => {
     setWebsite(site);
-    setEmail(mail);
     setScanMs(elapsedMs);
-    void ensureLead(mail, site, result.ok ? result.checks : null);
     if (result.ok) {
       setScan(result);
       setScanFailed(false);
@@ -526,10 +537,8 @@ export default function AuditExperience({ chapters = [], excerpts = null }: Audi
     }
   };
 
-  const skipScan = ({ website: site, email: mail }: { website: string; email: string }) => {
+  const skipScan = ({ website: site }: { website: string }) => {
     if (site) setWebsite(site);
-    setEmail(mail);
-    void ensureLead(mail, site || website, null);
     setScan(null);
     trackEvent("audit_scan_skip");
     startQuestions();
@@ -539,11 +548,14 @@ export default function AuditExperience({ chapters = [], excerpts = null }: Audi
     setAnswers({ ...answers, [id]: value });
   };
 
-  const finishReview = () => {
+  /** The email is asked here, after the scan has shown them something, not on the website step. */
+  const finishReview = (mail: string) => {
+    setEmail(mail);
+    if (scan) void ensureLead(mail, website, scan.checks);
     const changed = scan
       ? QUESTION_IDS.filter((id) => scan.suggestedAnswers[id] !== undefined && answers[id] !== scan.suggestedAnswers[id])
       : [];
-    trackEvent("audit_review_complete", { changed: changed.length });
+    trackEvent("audit_review_complete", { changed: changed.length, email: mail !== "" });
     startQuestions();
   };
 
@@ -896,7 +908,6 @@ export default function AuditExperience({ chapters = [], excerpts = null }: Audi
           >
             <AuditScanStep
               website={website}
-              email={email}
               scan={scan}
               scanFailed={scanFailed}
               elapsedMs={scanMs}
@@ -922,6 +933,7 @@ export default function AuditExperience({ chapters = [], excerpts = null }: Audi
               answers={answers}
               host={hostOf(scan.finalUrl)}
               seconds={Math.max(1, Math.round(scanMs / 1000))}
+              email={email}
               onChange={correct}
               onContinue={finishReview}
               onRescan={rescan}
@@ -941,8 +953,10 @@ export default function AuditExperience({ chapters = [], excerpts = null }: Audi
           >
             <AuditQuestion
               stepKey={`${step.kind}-${step.id}`}
-              current={index + 1}
-              total={steps.length}
+              current={headStart + index + 1}
+              total={progressTotal}
+              progressNote={scannedCount > 0 ? t("progressScanned", { n: scannedCount }) : undefined}
+              lead={budgetAnchor}
               question={
                 step.kind === "site" ? t(`questions.${step.id}.q`) : t(`profile.${step.id}.q`, { price: ENTRY_PRICE })
               }
@@ -1003,7 +1017,7 @@ export default function AuditExperience({ chapters = [], excerpts = null }: Audi
 
       {/* Announces progress to screen readers as the question changes. */}
       <span className="sr-only" aria-live="polite">
-        {stage === "questions" ? t("progress", { current: index + 1, total: steps.length }) : ""}
+        {stage === "questions" ? t("progress", { current: headStart + index + 1, total: progressTotal }) : ""}
       </span>
     </div>
   );

@@ -10,6 +10,7 @@ import type { ScanChecks } from "@/lib/auditScan";
 import type { ChapterPreview } from "@/lib/playbook";
 import { PLAYBOOK_META } from "@/lib/playbookMeta";
 import AuditLeadForm from "./AuditLeadForm";
+import { hostOf } from "./AuditScanStep";
 
 interface AuditResultProps {
   answers: Record<QuestionId, Answer>;
@@ -128,7 +129,7 @@ export default function AuditResult({
                 transition={{ duration: 0.5 }}
                 className="mb-5 font-mono text-label text-white/60"
               >
-                {t("resultEyebrow")}
+                {website ? t("resultEyebrowSite", { host: hostOf(website) }) : t("resultEyebrow")}
               </motion.p>
               <motion.h1
                 initial={{ opacity: 0, y: reduceMotion ? 0 : 16 }}

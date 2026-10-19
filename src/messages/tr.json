@@ -712,7 +712,8 @@
       "Sırasıyla 3 düzeltmeniz, her biri onu kapatan rehber bölümüyle eşleşmiş",
       "Gerçek sitenizin yazılı analizi, bizzat benim tarafımdan, 48 saat içinde"
     ],
-    "progress": "Soru {current} / {total}",
+    "progress": "Adım {current} / {total}",
+    "progressScanned": "{n} tanesini tarama yanıtladı",
     "whyLabel": "Bu eksik size neye mal oluyor",
     "yes": "Evet",
     "partly": "Kısmen",
@@ -784,6 +785,7 @@
       }
     },
     "resultEyebrow": "Puanınız",
+    "resultEyebrowSite": "{host} için raporunuz",
     "resultOutOf": "/ 100",
     "bands": {
       "losing": {
@@ -817,7 +819,7 @@
       "phone": "WhatsApp veya telefon",
       "phonePlaceholder": "+90 ...",
       "optional": "isteğe bağlı",
-      "submit": "Rehberi ve analizi gönderin",
+      "submit": "Raporumu ve rehberi kaydet",
       "submitting": "Gönderiliyor",
       "privacy": "Bilgileriniz yalnızca rehberi ve analizi göndermek için kullanılır. Bülten yok.",
       "addPhone": "Daha hızlı yanıt için WhatsApp ekleyin",
@@ -1214,6 +1216,12 @@
           "yes": "Evet, uyar",
           "discuss": "Belki, konuşalım",
           "notNow": "Şu an değil"
+        },
+        "anchor": {
+          "dental": "Yurt dışından gelen bir diş hastası Türkiye'deki bir klinikte genellikle {range} harcar.",
+          "hair": "Yurt dışından gelen bir saç ekimi hastası Türkiye'deki bir klinikte genellikle {range} harcar.",
+          "aesthetic": "Yurt dışından gelen bir estetik cerrahi hastası Türkiye'deki bir klinikte genellikle {range} harcar.",
+          "several": "Yurt dışından gelen bir hasta Türkiye'deki bir klinikte genellikle {range} harcar."
         }
       }
     },

@@ -712,7 +712,8 @@
       "Vos 3 corrections dans l'ordre, chacune reliée au chapitre du playbook qui la traite",
       "Un audit écrit de votre vrai site, fait par moi, sous 48 heures"
     ],
-    "progress": "Question {current} sur {total}",
+    "progress": "Étape {current} sur {total}",
+    "progressScanned": "{n} déjà répondues par l'analyse",
     "whyLabel": "Ce que ce manque vous coûte",
     "yes": "Oui",
     "partly": "En partie",
@@ -784,6 +785,7 @@
       }
     },
     "resultEyebrow": "Votre score",
+    "resultEyebrowSite": "Votre rapport pour {host}",
     "resultOutOf": "sur 100",
     "bands": {
       "losing": {
@@ -817,7 +819,7 @@
       "phone": "WhatsApp ou téléphone",
       "phonePlaceholder": "+90 ...",
       "optional": "facultatif",
-      "submit": "Envoyez-moi le playbook et l'audit",
+      "submit": "Enregistrer mon rapport et le playbook",
       "submitting": "Envoi",
       "privacy": "Vos coordonnées servent uniquement à envoyer le playbook et l'audit. Pas de newsletter.",
       "addPhone": "Ajouter WhatsApp pour une réponse plus rapide",
@@ -1214,6 +1216,12 @@
           "yes": "Oui, ça me va",
           "discuss": "Peut-être, parlons-en",
           "notNow": "Pas pour l'instant"
+        },
+        "anchor": {
+          "dental": "Un patient dentaire venu de l'étranger dépense en général {range} dans une clinique en Turquie.",
+          "hair": "Un patient en greffe de cheveux venu de l'étranger dépense en général {range} dans une clinique en Turquie.",
+          "aesthetic": "Un patient en chirurgie esthétique venu de l'étranger dépense en général {range} dans une clinique en Turquie.",
+          "several": "Un patient venu de l'étranger dépense en général {range} dans une clinique en Turquie."
         }
       }
     },

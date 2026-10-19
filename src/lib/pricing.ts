@@ -105,6 +105,27 @@ export function getIncludedAddOns(tierId: string) {
   return addOns.filter((a) => ids.includes(a.id));
 }
 
+/**
+ * What one international patient typically spends at a clinic in Turkey, per
+ * treatment (keys match TREATMENT_IDS in audit.ts). Kept cautious, near the low
+ * end of public package prices, because it is shown as a fact. Used only to put
+ * the website price next to the value of a patient in the check's budget question.
+ */
+export const patientValueRanges: Record<string, readonly [number, number]> = {
+  dental: [2000, 6000],
+  hair: [2000, 4000],
+  aesthetic: [3000, 7000],
+  several: [2000, 6000],
+};
+
+/**
+ * "$2,000–$6,000" as one left-to-right isolate (U+2066…U+2069) with word joiners
+ * around the dash, so Arabic text neither reorders nor wraps the range.
+ */
+export function formatPriceRange([min, max]: readonly [number, number]): string {
+  return `\u2066${formatPrice(min)}\u2060–\u2060${formatPrice(max)}\u2069`;
+}
+
 // Always USD with en-US grouping ("$2,500") in every locale. Explicit locale:
 // a bare toLocaleString() formats with the server's locale during SSR and the
 // browser's locale on the client (hydration mismatch).

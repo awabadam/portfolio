@@ -16,9 +16,17 @@ export interface QuestionOption {
 interface AuditQuestionProps {
   /** Changes per question: drives the swap animation and the focus move. */
   stepKey: string;
-  /** 1-based position and total, shown as "Question {current} of {total}". */
+  /**
+   * 1-based position and total, shown as "Step {current} of {total}". Both include
+   * the steps already done before the questions (the website, the scan's answers),
+   * so the bar never starts at zero.
+   */
   current: number;
   total: number;
+  /** Short line next to the counter, e.g. how many checks the scan already answered. */
+  progressNote?: string;
+  /** Context read before the question, e.g. the anchor before a price. */
+  lead?: string;
   question: string;
   /** Short line or block under the question. */
   note?: ReactNode;
@@ -42,6 +50,8 @@ export default function AuditQuestion({
   stepKey,
   current,
   total,
+  progressNote,
+  lead,
   question,
   note,
   options,
@@ -90,7 +100,10 @@ export default function AuditQuestion({
     <div className="mx-auto max-w-2xl pt-4 md:pt-8">
       {/* Progress */}
       <div className="mb-10 flex items-center justify-between gap-4">
-        <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">{progressLabel}</p>
+        <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
+          {progressLabel}
+          {progressNote && <span className="normal-case tracking-normal"> · {progressNote}</span>}
+        </p>
         <p className="hidden font-mono text-xs text-muted-foreground md:block">
           {t("keyboardHint", { n: options.length })}
         </p>
@@ -120,6 +133,7 @@ export default function AuditQuestion({
           exit={{ opacity: 0, y: reduceMotion ? 0 : -12, transition: { duration: 0.18 } }}
           transition={{ duration: 0.4, ease }}
         >
+          {lead && <p className="mb-4 max-w-xl text-base leading-relaxed text-muted-foreground md:text-lg">{lead}</p>}
           <h2 ref={headingRef} tabIndex={-1} className="font-display text-heading text-balance outline-none">
             {question}
           </h2>

@@ -4,10 +4,12 @@ import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { AlertCircle, ArrowLeft, Check, ChevronDown, X } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { GlassPill } from "@/components/ui/glass-pill";
 import { cn } from "@/lib/utils";
 import { ANSWER_VALUES, QUESTION_IDS, type Answer, type Answers, type QuestionId } from "@/lib/audit";
 import { questionEvidence, type ScanSuccess } from "@/lib/auditScan";
+import { isEmailLike } from "./AuditScanStep";
 
 interface AuditReviewProps {
   scan: ScanSuccess;
@@ -16,8 +18,11 @@ interface AuditReviewProps {
   host: string;
   /** Seconds the scan took, shown in the note. */
   seconds: number;
+  /** Last email the user entered (restored from the draft). */
+  email: string;
   onChange: (id: QuestionId, value: Answer) => void;
-  onContinue: () => void;
+  /** Continue to the questions with the optional email, trimmed ("" when left empty). */
+  onContinue: (email: string) => void;
   onRescan: () => void;
   onBack: () => void;
 }
@@ -52,6 +57,7 @@ export default function AuditReview({
   answers,
   host,
   seconds,
+  email,
   onChange,
   onContinue,
   onRescan,
@@ -62,6 +68,9 @@ export default function AuditReview({
   const reduceMotion = useReducedMotion();
   const headingRef = useRef<HTMLHeadingElement>(null);
   const [open, setOpen] = useState<QuestionId | null>(null);
+  const [emailValue, setEmailValue] = useState(email);
+  const [emailError, setEmailError] = useState<string | null>(null);
+  const emailRef = useRef<HTMLInputElement>(null);
 
   const evidence = questionEvidence(scan.checks);
   const ids = QUESTION_IDS.filter((id) => scan.suggestedAnswers[id] !== undefined);
@@ -69,6 +78,16 @@ export default function AuditReview({
   useEffect(() => {
     headingRef.current?.focus({ preventScroll: true });
   }, []);
+
+  const next = () => {
+    const trimmed = emailValue.trim();
+    if (trimmed && !isEmailLike(trimmed)) {
+      setEmailError(t("errors.email"));
+      emailRef.current?.focus();
+      return;
+    }
+    onContinue(trimmed);
+  };
 
   const pick = (id: QuestionId, value: Answer) => {
     onChange(id, value);
@@ -185,8 +204,56 @@ export default function AuditReview({
         {scan.checks.speed.pagespeed ? "" : ` ${tScan("speedNote")}`}
       </p>
 
-      <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3">
-        <GlassPill tone="dark" arrow onClick={onContinue} className="h-12 px-6 text-base">
+      {/*
+        Optional, and asked only after the scan has shown them something (give before asking).
+        Lets the owner follow up if the visitor stops partway. Only for the report.
+      */}
+      <div className="mt-10">
+        <label htmlFor="audit-review-email" className="mb-2 block text-sm font-medium">
+          {tScan("emailLabel")}
+          <span className="font-normal text-muted-foreground"> ({t("form.optional")})</span>
+        </label>
+        <Input
+          ref={emailRef}
+          id="audit-review-email"
+          name="email"
+          type="email"
+          inputMode="email"
+          autoComplete="email"
+          autoCapitalize="none"
+          spellCheck={false}
+          dir="ltr"
+          value={emailValue}
+          onChange={(e) => {
+            setEmailValue(e.target.value);
+            if (emailError) setEmailError(null);
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              next();
+            }
+          }}
+          placeholder={t("form.emailPlaceholder")}
+          aria-invalid={Boolean(emailError)}
+          aria-describedby={emailError ? "audit-review-email-error audit-review-email-note" : "audit-review-email-note"}
+          className={cn(
+            "h-12 w-full rounded-[8px] border-border bg-background text-start text-base",
+            emailError && "border-red-500",
+          )}
+        />
+        {emailError && (
+          <p id="audit-review-email-error" className="mt-2 text-sm text-red-600" role="alert">
+            {emailError}
+          </p>
+        )}
+        <p id="audit-review-email-note" className="mt-2 text-xs text-muted-foreground">
+          {tScan("emailNote")}
+        </p>
+      </div>
+
+      <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3">
+        <GlassPill tone="dark" arrow onClick={next} className="h-12 px-6 text-base">
           {tScan("continue")}
         </GlassPill>
         <button

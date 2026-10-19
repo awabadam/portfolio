@@ -712,7 +712,8 @@
       "Your 3 fixes in order, each matched to the playbook chapter that closes it",
       "A personal written audit of your actual site, done by me, within 48 hours"
     ],
-    "progress": "Question {current} of {total}",
+    "progress": "Step {current} of {total}",
+    "progressScanned": "{n} answered by the scan",
     "whyLabel": "What the gap costs you",
     "yes": "Yes",
     "partly": "Partly",
@@ -784,6 +785,7 @@
       }
     },
     "resultEyebrow": "Your score",
+    "resultEyebrowSite": "Your report for {host}",
     "resultOutOf": "out of 100",
     "bands": {
       "losing": {
@@ -817,7 +819,7 @@
       "phone": "WhatsApp or phone",
       "phonePlaceholder": "+90 ...",
       "optional": "optional",
-      "submit": "Send my playbook and audit",
+      "submit": "Save my report and playbook",
       "submitting": "Sending",
       "privacy": "Your details are used only to send the playbook and the audit. No newsletter.",
       "addPhone": "Add WhatsApp for faster reply",
@@ -1214,6 +1216,12 @@
           "yes": "Yes, that fits",
           "discuss": "Maybe, let's talk",
           "notNow": "Not right now"
+        },
+        "anchor": {
+          "dental": "One dental patient from abroad typically spends {range} at a clinic in Turkey.",
+          "hair": "One hair transplant patient from abroad typically spends {range} at a clinic in Turkey.",
+          "aesthetic": "One aesthetic surgery patient from abroad typically spends {range} at a clinic in Turkey.",
+          "several": "One patient from abroad typically spends {range} at a clinic in Turkey."
         }
       }
     },
