@@ -48,13 +48,6 @@ export default function ChatWidget() {
         ) : (
           <MessageCircle className="h-7 w-7 transition-transform group-hover:scale-110" />
         )}
-        {/* Pulse animation for attention */}
-        {!isOpen && (
-          <>
-            <span className="absolute inset-0 animate-ping rounded-full bg-primary/40"></span>
-            <span className="absolute -inset-1 animate-pulse rounded-full bg-primary/20"></span>
-          </>
-        )}
       </button>
     </div>
   );
