@@ -3,6 +3,7 @@ import { setRequestLocale } from "next-intl/server";
 import type { Locale } from "@/i18n/config";
 import { getPlaybook } from "@/lib/playbook";
 import { verifyPlaybookKey } from "@/lib/playbookKey";
+import { getAuditAnswersForEmail } from "@/lib/playbookAudit";
 import PlaybookReader from "@/components/playbook/PlaybookReader";
 import PlaybookGate from "@/components/playbook/PlaybookGate";
 
@@ -40,6 +41,9 @@ export default async function PlaybookPage({ params, searchParams }: { params: P
 
   if (!email) return <PlaybookGate rejectedKey={key} />;
 
-  const playbook = await getPlaybook(locale as Locale);
-  return <PlaybookReader playbook={playbook} />;
+  const [playbook, auditAnswers] = await Promise.all([
+    getPlaybook(locale as Locale),
+    getAuditAnswersForEmail(email),
+  ]);
+  return <PlaybookReader playbook={playbook} auditAnswers={auditAnswers} />;
 }

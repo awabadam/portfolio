@@ -18,3 +18,11 @@ export const PLAYBOOK_CHECKLIST_STORAGE = "clinic-playbook-checklist-v1";
 export function playbookHref(key: string | null | undefined): string {
   return key ? `/audit/playbook?k=${encodeURIComponent(key)}` : "/audit/playbook";
 }
+
+/** Locales with a designed playbook PDF in public/downloads/playbook. Others fall back to English. */
+export const PLAYBOOK_PDF_LOCALES = ["en"] as const;
+
+export function playbookPdf(locale: string): { href: string; locale: string } {
+  const file = (PLAYBOOK_PDF_LOCALES as readonly string[]).includes(locale) ? locale : "en";
+  return { href: `/downloads/playbook/playbook-${file}.pdf`, locale: file };
+}
