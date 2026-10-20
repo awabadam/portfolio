@@ -1,33 +1,24 @@
-import nodemailer, { type Transporter } from "nodemailer";
-
 /**
- * Shared SMTP transport for the API routes (contact form, clinic audit).
- * Env: EMAIL_HOST, EMAIL_PORT (default 587), EMAIL_USER, EMAIL_PASS,
- * RECIPIENT_EMAIL (where notifications go).
+ * Shared email sender for the API routes (contact form, clinic audit,
+ * playbook, newsletter, crons), via the Resend HTTP API.
+ * Env: RESEND_API_KEY (a send-only key is enough), RECIPIENT_EMAIL (where
+ * notifications go).
+ *
+ * Two senders on awab.design, both Google Workspace aliases of admin@ (so
+ * replies land in one inbox): hello@ for conversations (contact form,
+ * newsletter, admin alerts) and audit@ for the clinic audit, playbook and
+ * template-pack emails.
  */
 
-export function isEmailConfigured(): boolean {
-  return Boolean(
-    process.env.EMAIL_HOST &&
-      process.env.EMAIL_USER &&
-      process.env.EMAIL_PASS &&
-      process.env.RECIPIENT_EMAIL,
-  );
-}
+const RESEND_ENDPOINT = "https://api.resend.com/emails";
+export const SENDERS = {
+  hello: "hello@awab.design",
+  audit: "audit@awab.design",
+} as const;
+const DEFAULT_FROM_NAME = "Awab Elkhalil";
 
-export function createEmailTransport(): Transporter {
-  return nodemailer.createTransport({
-    host: process.env.EMAIL_HOST,
-    port: Number(process.env.EMAIL_PORT || 587),
-    secure: false, // STARTTLS on 587
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
-    connectionTimeout: 10000,
-    greetingTimeout: 10000,
-    socketTimeout: 10000,
-  });
+export function isEmailConfigured(): boolean {
+  return Boolean(process.env.RESEND_API_KEY && process.env.RECIPIENT_EMAIL);
 }
 
 export interface SendEmailOptions {
@@ -36,33 +27,49 @@ export interface SendEmailOptions {
   text: string;
   html?: string;
   replyTo?: string;
+  /** Which awab.design address sends it (defaults to hello@). */
+  from?: keyof typeof SENDERS;
+  /** Display name on the From line (defaults to "Awab Elkhalil"). */
+  fromName?: string;
   /** Small text attachments (e.g. the lead tracker CSV sent with the audit email). */
   attachments?: { filename: string; content: string; contentType?: string }[];
 }
 
 /**
- * Sends one email. Never throws: returns { sent: false, error } when the
- * transport is not configured or SMTP fails, so callers can save the lead
- * and still answer 200.
+ * Sends one email. Never throws: returns { sent: false, error } when Resend
+ * is not configured or the send fails, so callers can save the lead and
+ * still answer 200.
  */
-export async function sendEmail(
-  options: SendEmailOptions,
-  transporter: Transporter = createEmailTransport(),
-): Promise<{ sent: boolean; error?: string }> {
-  if (!isEmailConfigured()) {
+export async function sendEmail(options: SendEmailOptions): Promise<{ sent: boolean; error?: string }> {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
     console.warn("[email] not configured; skipping:", options.subject);
     return { sent: false, error: "email_not_configured" };
   }
+  const address = SENDERS[options.from ?? "hello"];
   try {
-    await transporter.sendMail({
-      from: { name: "Awab Elkhalil", address: process.env.EMAIL_USER ?? "" },
-      to: options.to,
-      replyTo: options.replyTo,
-      subject: options.subject,
-      text: options.text,
-      html: options.html,
-      attachments: options.attachments,
+    const res = await fetch(RESEND_ENDPOINT, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        from: `${options.fromName ?? DEFAULT_FROM_NAME} <${address}>`,
+        to: [options.to],
+        reply_to: options.replyTo,
+        subject: options.subject,
+        text: options.text,
+        html: options.html,
+        attachments: options.attachments?.map((a) => ({
+          filename: a.filename,
+          content: Buffer.from(a.content, "utf8").toString("base64"),
+          content_type: a.contentType,
+        })),
+      }),
+      signal: AbortSignal.timeout(10000),
     });
+    if (!res.ok) {
+      const body = await res.text();
+      throw new Error(`Resend ${res.status}: ${body.slice(0, 300)}`);
+    }
     return { sent: true };
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);

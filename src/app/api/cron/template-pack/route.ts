@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { sql } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "@/db";
-import { createEmailTransport, isEmailConfigured, sendEmail, NOTIFICATION_RECIPIENT } from "@/lib/email";
+import { isEmailConfigured, sendEmail, NOTIFICATION_RECIPIENT, SENDERS } from "@/lib/email";
 import { locales, defaultLocale, type Locale } from "@/i18n/config";
 import { SITE_URL } from "@/lib/seo";
 import { buildTemplatePackEmail } from "@/emails/TemplatePack";
@@ -118,7 +118,6 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  const transporter = createEmailTransport();
   let sent = 0;
   let failed = 0;
   let skipped = 0;
@@ -147,10 +146,7 @@ export async function GET(request: NextRequest) {
       continue;
     }
 
-    const result = await sendEmail(
-      { to: parsed.data, replyTo: NOTIFICATION_RECIPIENT(), subject: email.subject, text: email.text, html: email.html },
-      transporter,
-    );
+    const result = await sendEmail({ from: "audit", to: parsed.data, replyTo: SENDERS.audit, subject: email.subject, text: email.text, html: email.html });
     if (!result.sent) {
       failed++;
       console.error("[template-pack] send failed, will retry next run:", row.id, result.error);

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import nodemailer from "nodemailer";
+import { isEmailConfigured, sendEmail, NOTIFICATION_RECIPIENT } from "@/lib/email";
 import { db } from "@/db";
 import { leads } from "@/db/schema";
 
@@ -32,12 +32,7 @@ export async function POST(request: Request) {
     }
 
     // Check if email configuration is set
-    if (
-      !process.env.EMAIL_HOST ||
-      !process.env.EMAIL_USER ||
-      !process.env.EMAIL_PASS ||
-      !process.env.RECIPIENT_EMAIL
-    ) {
+    if (!isEmailConfigured()) {
       console.error("Email configuration is missing");
       return NextResponse.json(
         {
@@ -48,25 +43,11 @@ export async function POST(request: Request) {
       );
     }
 
-    // Create transporter
-    const transporter = nodemailer.createTransport({
-      host: process.env.EMAIL_HOST,
-      port: Number(process.env.EMAIL_PORT || 587),
-      secure: false,
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-      connectionTimeout: 10000,
-      greetingTimeout: 10000,
-      socketTimeout: 10000,
-    });
-
     // Send admin notification
     const adminEmail = {
-      from: process.env.EMAIL_USER,
-      to: process.env.RECIPIENT_EMAIL,
+      to: NOTIFICATION_RECIPIENT(),
       subject: "New Newsletter Subscription",
+      text: `New newsletter subscription: ${email}`,
       html: `
         <h2>New Newsletter Subscription</h2>
         <p><strong>Email:</strong> ${email}</p>
@@ -76,9 +57,9 @@ export async function POST(request: Request) {
 
     // Send user confirmation email
     const userEmail = {
-      from: process.env.EMAIL_USER,
       to: email,
       subject: "Welcome to Our Newsletter!",
+      text: "Thank you for subscribing! You'll now receive the latest web design trends, SEO tips, and industry insights.\n\nBest regards,\nAwab Elkhalil",
       html: `
         <!DOCTYPE html>
         <html>
@@ -107,10 +88,9 @@ export async function POST(request: Request) {
 
     try {
       // Send both emails
-      await Promise.all([
-        transporter.sendMail(adminEmail),
-        transporter.sendMail(userEmail),
-      ]);
+      const results = await Promise.all([sendEmail(adminEmail), sendEmail(userEmail)]);
+      const failed = results.find((r) => !r.sent);
+      if (failed) throw new Error(failed.error);
 
       return NextResponse.json({ success: true });
     } catch (error) {

@@ -3,7 +3,7 @@ import { z } from "zod";
 import { db } from "@/db";
 import { leads } from "@/db/schema";
 import { checkRateLimit, getIdentifier, getRateLimitHeaders } from "@/lib/rateLimit";
-import { createEmailTransport, isEmailConfigured, sendEmail, NOTIFICATION_RECIPIENT } from "@/lib/email";
+import { isEmailConfigured, sendEmail, NOTIFICATION_RECIPIENT, SENDERS } from "@/lib/email";
 import { normalizeWebsite } from "@/lib/audit";
 import { locales, defaultLocale, type Locale } from "@/i18n/config";
 import { getPlaybook, leadTrackerCsv } from "@/lib/playbook";
@@ -105,17 +105,13 @@ export async function POST(request: Request) {
   let notified = false;
   let confirmed = false;
   if (isEmailConfigured()) {
-    const transporter = createEmailTransport();
     const playbook = await getPlaybook(locale);
     const csv = leadTrackerCsv(playbook);
 
     // Rendering is best effort like sending: a template error never fails the request.
     try {
       const admin = await buildAdminPlaybookAlert({ email: data.email, website, locale, leadId });
-      const adminResult = await sendEmail(
-        { to: NOTIFICATION_RECIPIENT(), replyTo: data.email, subject: admin.subject, text: admin.text, html: admin.html },
-        transporter,
-      );
+      const adminResult = await sendEmail({ from: "audit", to: NOTIFICATION_RECIPIENT(), replyTo: data.email, subject: admin.subject, text: admin.text, html: admin.html });
       notified = adminResult.sent;
     } catch (error) {
       console.error("[playbook] failed to render the admin alert:", error);
@@ -123,17 +119,15 @@ export async function POST(request: Request) {
 
     try {
       const access = await buildPlaybookAccessEmail({ locale, playbookUrl, playbook, csvAttached: Boolean(csv) });
-      const userResult = await sendEmail(
-        {
-          to: data.email,
-          replyTo: NOTIFICATION_RECIPIENT(),
-          subject: access.subject,
-          text: access.text,
-          html: access.html,
-          attachments: csv ? [{ filename: csv.filename, content: csv.content, contentType: "text/csv; charset=utf-8" }] : undefined,
-        },
-        transporter,
-      );
+      const userResult = await sendEmail({
+        from: "audit",
+        to: data.email,
+        replyTo: SENDERS.audit,
+        subject: access.subject,
+        text: access.text,
+        html: access.html,
+        attachments: csv ? [{ filename: csv.filename, content: csv.content, contentType: "text/csv; charset=utf-8" }] : undefined,
+      });
       confirmed = userResult.sent;
     } catch (error) {
       console.error("[playbook] failed to render the playbook email:", error);

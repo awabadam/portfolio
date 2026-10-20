@@ -3,6 +3,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { pickTopic } from "@/lib/blog/topics";
 import { generateAndSaveAllLocales } from "@/lib/blog/generator";
+import { isEmailConfigured, sendEmail, NOTIFICATION_RECIPIENT } from "@/lib/email";
 
 export async function GET(request: NextRequest) {
   // Verify cron secret (Vercel sends this automatically)
@@ -38,28 +39,16 @@ export async function GET(request: NextRequest) {
 }
 
 async function sendNotification(title: string, slug: string) {
-  const host = process.env.EMAIL_HOST;
-  const user = process.env.EMAIL_USER;
-  const pass = process.env.EMAIL_PASS;
-  const recipient = process.env.RECIPIENT_EMAIL;
-
-  if (!host || !user || !pass || !recipient) {
+  if (!isEmailConfigured()) {
     console.warn("Email not configured, skipping notification");
     return;
   }
 
-  const nodemailer = (await import("nodemailer")).default;
-  const transporter = nodemailer.createTransport({
-    host,
-    port: Number(process.env.EMAIL_PORT) || 587,
-    secure: false,
-    auth: { user, pass },
-  });
-
-  await transporter.sendMail({
-    from: `"Awab Design Blog" <${user}>`,
-    to: recipient,
+  await sendEmail({
+    to: NOTIFICATION_RECIPIENT(),
+    fromName: "Awab Design Blog",
     subject: `New Blog Draft: ${title}`,
+    text: `New blog draft ready for review: ${title}\n\nReview and publish: https://www.awab.design/admin/blog`,
     html: `
       <h2>New Blog Draft Ready for Review</h2>
       <p><strong>${title}</strong></p>

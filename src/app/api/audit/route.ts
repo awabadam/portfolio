@@ -4,7 +4,7 @@ import { z } from "zod";
 import { db } from "@/db";
 import { leads } from "@/db/schema";
 import { checkRateLimit, getIdentifier, getRateLimitHeaders } from "@/lib/rateLimit";
-import { createEmailTransport, isEmailConfigured, sendEmail, NOTIFICATION_RECIPIENT } from "@/lib/email";
+import { isEmailConfigured, sendEmail, NOTIFICATION_RECIPIENT, SENDERS } from "@/lib/email";
 import {
   ANSWER_VALUES,
   AUDIT_VERSION,
@@ -254,7 +254,6 @@ export async function POST(request: Request) {
   let notified = false;
   let confirmed = false;
   if (isEmailConfigured()) {
-    const transporter = createEmailTransport();
     const playbook = await getPlaybook(locale);
     const csv = leadTrackerCsv(playbook);
 
@@ -281,10 +280,7 @@ export async function POST(request: Request) {
         leadId,
         auditVersion: AUDIT_VERSION,
       });
-      const adminResult = await sendEmail(
-        { to: NOTIFICATION_RECIPIENT(), replyTo: data.email, subject: admin.subject, text: admin.text, html: admin.html },
-        transporter,
-      );
+      const adminResult = await sendEmail({ from: "audit", to: NOTIFICATION_RECIPIENT(), replyTo: data.email, subject: admin.subject, text: admin.text, html: admin.html });
       notified = adminResult.sent;
     } catch (error) {
       console.error("[audit] failed to render the admin alert:", error);
@@ -304,17 +300,15 @@ export async function POST(request: Request) {
         hot,
         csvAttached: Boolean(csv),
       });
-      const userResult = await sendEmail(
-        {
-          to: data.email,
-          replyTo: NOTIFICATION_RECIPIENT(),
-          subject: report.subject,
-          text: report.text,
-          html: report.html,
-          attachments: csv ? [{ filename: csv.filename, content: csv.content, contentType: "text/csv; charset=utf-8" }] : undefined,
-        },
-        transporter,
-      );
+      const userResult = await sendEmail({
+        from: "audit",
+        to: data.email,
+        replyTo: SENDERS.audit,
+        subject: report.subject,
+        text: report.text,
+        html: report.html,
+        attachments: csv ? [{ filename: csv.filename, content: csv.content, contentType: "text/csv; charset=utf-8" }] : undefined,
+      });
       confirmed = userResult.sent;
     } catch (error) {
       console.error("[audit] failed to render the audit report email:", error);

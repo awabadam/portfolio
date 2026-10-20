@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createEmailTransport } from '@/lib/email';
+import { isEmailConfigured, sendEmail, NOTIFICATION_RECIPIENT, SENDERS } from '@/lib/email';
 import { db } from "@/db";
 import { leads } from "@/db/schema";
 import { locales, defaultLocale, type Locale } from "@/i18n/config";
@@ -62,18 +62,8 @@ export async function POST(request: Request) {
       // Continue even if lead saving fails
     }
     
-    // Debug: Log environment variables (only in development)
-    if (process.env.NODE_ENV === 'development') {
-      console.log('Environment variables check:');
-      console.log('EMAIL_HOST:', process.env.EMAIL_HOST ? 'Set' : 'Missing');
-      console.log('EMAIL_USER:', process.env.EMAIL_USER ? 'Set' : 'Missing');
-      console.log('EMAIL_PASS:', process.env.EMAIL_PASS ? 'Set' : 'Missing');
-      console.log('RECIPIENT_EMAIL:', process.env.RECIPIENT_EMAIL ? 'Set' : 'Missing');
-      console.log('NODE_ENV:', process.env.NODE_ENV);
-    }
-    
     // Check if email configuration is set
-    if (!process.env.EMAIL_HOST || !process.env.EMAIL_USER || !process.env.EMAIL_PASS || !process.env.RECIPIENT_EMAIL) {
+    if (!isEmailConfigured()) {
       console.error('Email configuration is missing. Please check your .env file.');
       
       // Store the form data for later processing
@@ -94,25 +84,10 @@ export async function POST(request: Request) {
         { 
           error: 'Email service is being configured. Your message has been saved and we will contact you soon.',
           details: process.env.NODE_ENV === 'development' ? 
-            'Missing email configuration. Please set up EMAIL_HOST, EMAIL_USER, EMAIL_PASS, and RECIPIENT_EMAIL in your .env.local file.' : undefined
+            'Missing email configuration. Please set RESEND_API_KEY and RECIPIENT_EMAIL in your .env.local file.' : undefined
         },
         { status: 500 }
       );
-    }
-    
-    // Create transporter (shared SMTP config lives in src/lib/email.ts)
-    const transporter = createEmailTransport();
-    
-    // Verify SMTP connection (optional - can skip if causing issues)
-    if (process.env.NODE_ENV === 'development') {
-      try {
-        await transporter.verify();
-        console.log('SMTP connection verified successfully');
-      } catch (verifyError) {
-        console.error('SMTP connection verification failed:', verifyError);
-        console.log('Continuing without verification...');
-        // Don't throw error, just log it and continue
-      }
     }
     
     // Determine form type: the header and hero forms only collect an email
@@ -133,8 +108,7 @@ export async function POST(request: Request) {
       leadId,
     });
     const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to: process.env.RECIPIENT_EMAIL,
+      to: NOTIFICATION_RECIPIENT(),
       replyTo: formData.email || undefined,
       subject: admin.subject,
       text: admin.text,
@@ -145,8 +119,10 @@ export async function POST(request: Request) {
       console.log('Attempting to send admin notification email...');
       
       // Send admin notification email
-      const adminResult = await transporter.sendMail(mailOptions);
-      console.log('Admin notification email sent successfully:', adminResult);
+      // sendEmail never throws; turn a failed send into the error path below
+      const adminResult = await sendEmail(mailOptions);
+      if (!adminResult.sent) throw new Error(adminResult.error);
+      console.log('Admin notification email sent successfully');
       
       // Send user confirmation email (for regular contact forms, not header forms)
       if (!isHeaderForm && formData.email) {
@@ -156,15 +132,15 @@ export async function POST(request: Request) {
             name: isOneField ? null : formData.name,
             message: isOneField ? null : formData.message,
           });
-          const userResult = await transporter.sendMail({
-            from: process.env.EMAIL_USER,
+          const userResult = await sendEmail({
             to: formData.email,
-            replyTo: process.env.RECIPIENT_EMAIL,
+            replyTo: SENDERS.hello,
             subject: confirmation.subject,
             text: confirmation.text,
             html: confirmation.html,
           });
-          console.log('User confirmation email sent successfully:', userResult);
+          if (!userResult.sent) throw new Error(userResult.error);
+          console.log('User confirmation email sent successfully');
         } catch (userEmailError) {
           console.error('Failed to send user confirmation email:', userEmailError);
           // Don't fail the entire request if user email fails
@@ -174,14 +150,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: true });
     } catch (error) {
       console.error('Error sending email:', error);
-      console.error('Error details:', {
-        name: error instanceof Error ? error.name : 'Unknown',
-        message: error instanceof Error ? error.message : String(error),
-        code: (error as any)?.code,
-        command: (error as any)?.command,
-        responseCode: (error as any)?.responseCode,
-        response: (error as any)?.response
-      });
       
       // Store the form data in a log file or database as a fallback
       const formDataLog = {
