@@ -28,7 +28,7 @@ import {
 // (the pricing cards link here with their plan).
 const PROJECT_TYPES = ["clinic-website", "growth-system", "site-care", "growth-retainer", "other"] as const;
 
-const email = "awabe.adam@gmail.com";
+const email = "hello@awab.design";
 const phone = "+90 554 175 9945";
 
 export default function ContactPage() {

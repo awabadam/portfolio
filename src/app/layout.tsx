@@ -216,7 +216,7 @@ const PERSON_JSON_LD = {
   description:
     "Web designer and developer in Istanbul who builds multilingual websites for dental, aesthetic and hair transplant clinics, with lead tracking to the clinic's CRM.",
   url: SITE_URL,
-  email: "awabe.adam@gmail.com",
+  email: "hello@awab.design",
   telephone: "+905541759945",
   image: `${SITE_URL}/img/awab-portrait.webp`,
   sameAs: SAME_AS,
@@ -281,7 +281,7 @@ const BUSINESS_JSON_LD = {
     "Clinic website design studio in Istanbul. Multilingual websites for dental, aesthetic and hair transplant clinics, with lead tracking, hosting and care plans. Fixed USD pricing.",
   url: SITE_URL,
   telephone: "+905541759945",
-  email: "awabe.adam@gmail.com",
+  email: "hello@awab.design",
   image: `${SITE_URL}/img/hero-image.jpg`,
   address: {
     "@type": "PostalAddress",

@@ -95,7 +95,7 @@ export const businessInfo = {
   owner: "Awab Elkhalil",
   location: "Istanbul, Turkey",
   responseTime: "24 hours",
-  email: "awabe.adam@gmail.com",
+  email: "hello@awab.design",
   phone: "+90 554 175 9945",
   whatsapp: "+90 554 175 9945",
   languages: "English, Arabic, Turkish, French",
@@ -133,7 +133,7 @@ export const faqs: FAQ[] = [
   {
     question: "How can I contact you?",
     answer:
-      "Email me at awabe.adam@gmail.com, call/WhatsApp +90 554 175 9945, or use the contact form at /contact. I respond within 24 hours.",
+      "Email me at hello@awab.design, call/WhatsApp +90 554 175 9945, or use the contact form at /contact. I respond within 24 hours.",
     keywords: ["contact", "get in touch", "reach", "email", "phone", "whatsapp", "call"],
   },
   {

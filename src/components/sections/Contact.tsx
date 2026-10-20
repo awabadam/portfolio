@@ -125,14 +125,14 @@ const Contact = () => {
                 <div>
                   <h4 className="font-medium">Email</h4>
                   <Link
-                    href="mailto:awabe.adam@gmail.com"
+                    href="mailto:hello@awab.design"
                     className="text-sm text-muted-foreground hover:text-primary"
                     onClick={() => {
                       trackContactAction("email_click", "email");
                       trackContactClick("email", "contact_card");
                     }}
                   >
-                    awabe.adam@gmail.com
+                    hello@awab.design
                   </Link>
                 </div>
               </CardContent>
