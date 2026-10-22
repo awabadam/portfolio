@@ -127,6 +127,10 @@ export const metadata: Metadata = {
   },
 };
 
+// Google Business Profile ("Awab Design - Web Designer & Developer"). Linking it
+// here tells Google the site and the Maps listing are the same business.
+const GBP_URL = "https://share.google/Osnpe5PuKxyl1e17M";
+
 // Site-wide structured data. Prices come from pricing.ts; no ratings or
 // reviews are claimed here because none are collected on the site.
 const SAME_AS = [
@@ -299,13 +303,14 @@ const BUSINESS_JSON_LD = {
     opens: "09:00",
     closes: "18:00",
   },
+  hasMap: GBP_URL,
   priceRange: PRICE_RANGE,
   currenciesAccepted: "USD",
   areaServed: AREA_SERVED,
   availableLanguage: ["en", "ar", "tr", "fr"],
   hasOfferCatalog: OFFER_CATALOG,
   founder: { "@id": `${SITE_URL}/#person` },
-  sameAs: SAME_AS,
+  sameAs: [GBP_URL, ...SAME_AS],
 };
 
 export default function RootLayout({
