@@ -597,7 +597,9 @@
     "heroTitle": "Seçili çalışmalar",
     "heroIntro": "Yurt dışından randevu alan hastalar için tasarlanmış klinik siteleri ve arkasındaki talep takibi.",
     "ctaKicker": "Birlikte çalışalım",
-    "ctaText": "Tedavilerinizi ve hastalarınızın hangi ülkelerden geldiğini anlatın. 24 saat içinde sabit fiyatlı teklifle dönerim."
+    "ctaText": "Tedavilerinizi ve hastalarınızın hangi ülkelerden geldiğini anlatın. 24 saat içinde sabit fiyatlı teklifle dönerim.",
+    "imageAlt": "{title}, Awab Design tarafından",
+    "galleryAlt": "{title}: {caption}, Awab Design tarafından yapılan web sitesi"
   },
   "chat": {
     "ariaOpen": "Sohbeti aç",

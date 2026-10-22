@@ -597,7 +597,9 @@
     "heroTitle": "Selected work",
     "heroIntro": "Clinic websites and the lead tracking behind them, built for patients who book from abroad.",
     "ctaKicker": "Work with me",
-    "ctaText": "Tell me about your treatments and where your patients come from. I reply within 24 hours with a fixed quote."
+    "ctaText": "Tell me about your treatments and where your patients come from. I reply within 24 hours with a fixed quote.",
+    "imageAlt": "{title}, by Awab Design",
+    "galleryAlt": "{title}: {caption}, website by Awab Design"
   },
   "chat": {
     "ariaOpen": "Open chat",

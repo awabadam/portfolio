@@ -597,7 +597,9 @@
     "heroTitle": "Projets choisis",
     "heroIntro": "Des sites de cliniques et le suivi des demandes qui va avec, conçus pour des patients qui réservent depuis l'étranger.",
     "ctaKicker": "Travailler avec moi",
-    "ctaText": "Parlez-moi de vos soins et de l'origine de vos patients. Je réponds sous 24 heures avec un devis fixe."
+    "ctaText": "Parlez-moi de vos soins et de l'origine de vos patients. Je réponds sous 24 heures avec un devis fixe.",
+    "imageAlt": "{title}, par Awab Design",
+    "galleryAlt": "{title} : {caption}, site réalisé par Awab Design"
   },
   "chat": {
     "ariaOpen": "Ouvrir le chat",

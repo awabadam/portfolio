@@ -228,7 +228,7 @@ export default function ProjectDetail({
                   <div className="relative aspect-[16/10] overflow-hidden rounded-[10px] border border-border/60 bg-muted">
                     <Image
                       src={image.src}
-                      alt={`${project.title}: ${t(`gallery.${image.captionKey}`)}`}
+                      alt={t("galleryAlt", { title: project.title, caption: t(`gallery.${image.captionKey}`) })}
                       fill
                       sizes={i === 0 ? "(min-width: 1312px) 1248px, 100vw" : "(min-width: 768px) 50vw, 100vw"}
                       quality={85}
@@ -284,7 +284,7 @@ export default function ProjectDetail({
               /* eslint-disable-next-line @next/next/no-img-element */
               <img
                 src={`/api/screenshot?url=${encodeURIComponent(project.live_url)}`}
-                alt={project.title}
+                alt={t("imageAlt", { title: project.title })}
                 className="absolute inset-0 z-[1] h-full w-full object-cover object-top"
                 onError={() => setScreenshotError(true)}
               />

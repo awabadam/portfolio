@@ -37,6 +37,8 @@ export default function WorkCard({
   className,
 }: WorkCardProps) {
   const t = useTranslations("home");
+  const tp = useTranslations("projects");
+  const imageAlt = tp("imageAlt", { title: project.title });
   const reduceMotion = useReducedMotion();
   const [useFallback, setUseFallback] = useState(false);
   const [screenshotError, setScreenshotError] = useState(false);
@@ -96,7 +98,7 @@ export default function WorkCard({
         {!useFallback ? (
           <Image
             src={thumbnailSrc}
-            alt={project.title}
+            alt={imageAlt}
             fill
             sizes="(min-width: 768px) 50vw, 100vw"
             quality={85}
@@ -109,7 +111,7 @@ export default function WorkCard({
           /* eslint-disable-next-line @next/next/no-img-element */
           <img
             src={screenshotSrc}
-            alt={project.title}
+            alt={imageAlt}
             width={1600}
             height={1100}
             loading="lazy"

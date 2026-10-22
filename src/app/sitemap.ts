@@ -2,6 +2,7 @@ import { MetadataRoute } from 'next'
 import { getAllProjects } from '@/data/projects'
 import { getAllBlogPosts } from '@/data/blog'
 import { locales, defaultLocale } from '@/i18n/config'
+import { getCaseStudy } from '@/data/case-studies'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://www.awab.design'
@@ -11,12 +12,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     return `${baseUrl}/${locale}${path}`
   }
 
-  function withAlternates(path: string, opts: { changeFrequency: 'weekly' | 'monthly' | 'daily'; priority: number; lastModified?: Date }) {
+  function withAlternates(path: string, opts: { changeFrequency: 'weekly' | 'monthly' | 'daily'; priority: number; lastModified?: Date; images?: string[] }) {
     return locales.map((locale) => ({
       url: localeUrl(path, locale),
       lastModified: opts.lastModified ?? new Date('2026-10-17'),
       changeFrequency: opts.changeFrequency,
       priority: opts.priority,
+      ...(opts.images?.length ? { images: opts.images } : {}),
       alternates: {
         languages: {
           ...Object.fromEntries(locales.map((l) => [l, localeUrl(path, l)])),
@@ -47,7 +49,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ])
 
     const projectPages = projects.flatMap((project) =>
-      withAlternates(`/projects/${project.id}`, { changeFrequency: 'monthly', priority: 0.7 })
+      withAlternates(`/projects/${project.id}`, {
+        changeFrequency: 'monthly',
+        priority: 0.7,
+        // Image sitemap: the card thumbnail plus the case-study gallery, so
+        // Google Images ties these screenshots to awab.design.
+        images: [
+          `${baseUrl}/img/projects/${project.id}-thumbnail.webp`,
+          ...(getCaseStudy(project.id)?.gallery ?? []).map((g) => `${baseUrl}${g.src}`),
+        ],
+      })
     )
 
     const blogPages = blogPosts.flatMap((post) =>
