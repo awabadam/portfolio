@@ -6,11 +6,12 @@ import Image from "next/image";
 import { Project } from "@/types";
 import { Link } from "@/i18n/routing";
 import { useLocale, useTranslations } from "next-intl";
-import { ArrowUpRight, ArrowLeft, Globe, ArrowRight, CheckCircle } from "lucide-react";
+import { ArrowUpRight, ArrowLeft, Globe, ArrowRight, CheckCircle, Check, Ban } from "lucide-react";
 import { GlassPill } from "@/components/ui/glass-pill";
 import { getCaseStudy } from "@/data/case-studies";
 import AuditCta from "@/components/audit/AuditCta";
 import RelatedLinks from "@/components/seo/RelatedLinks";
+import { BrowserFrame, PhoneFrame } from "@/components/projects/DeviceFrames";
 
 const IFRAME_WIDTH = 1440;
 const IFRAME_HEIGHT = 900;
@@ -22,6 +23,14 @@ const reveal = (delay = 0) => ({
   viewport: { once: true },
   transition: { duration: 0.8, delay, ease: EASE },
 });
+
+// Full-bleed tinted band that device mockups sit on.
+const STAGE = "bg-muted/70 px-4 py-10 sm:px-8 md:py-20";
+
+// Photo mockups carry their own scene, so they run edge to edge (capped at
+// their 2000px source width) with no frame or band.
+const LAPTOP_PHOTO = { width: 2000, height: 1333 };
+const PHOTO = "mx-auto block h-auto w-full max-w-[2000px]";
 
 const SECTION_LABEL = "mb-6 font-mono text-xs uppercase tracking-wide text-muted-foreground";
 
@@ -39,6 +48,8 @@ export default function ProjectDetail({
   const caseStudy = getCaseStudy(project.id);
   const languageNames = new Intl.DisplayNames([locale], { type: "language" });
   const hostname = project.live_url ? new URL(project.live_url).hostname.replace("www.", "") : null;
+  // The phone photo mockup already shows mobile[0].
+  const phoneOffset = caseStudy?.mockups ? 1 : 0;
   const heroRef = useRef<HTMLDivElement>(null);
   const previewRef = useRef<HTMLDivElement>(null);
   const [screenshotError, setScreenshotError] = useState(false);
@@ -215,35 +226,63 @@ export default function ProjectDetail({
 
       {/* Gallery: clean shots of the live site (home large, then treatment + RTL) */}
       {caseStudy?.gallery && caseStudy.gallery.length > 0 ? (
-        <section className="px-4 py-16 md:py-24">
-          <div className="container mx-auto">
-            <h2 className={SECTION_LABEL}>{t("galleryHeading")}</h2>
-            <div className="grid gap-5 md:grid-cols-2 md:gap-6">
-              {caseStudy.gallery.map((image, i) => (
+        <section className="py-16 md:py-24">
+          <div className="px-4">
+            <div className="container mx-auto">
+              <h2 className={SECTION_LABEL}>{t("galleryHeading")}</h2>
+            </div>
+          </div>
+          {/* Home as a full-bleed photo mockup when we have one */}
+          {caseStudy.mockups && (
+            <motion.figure {...reveal()} className="mb-12 md:mb-16">
+              <Image
+                src={caseStudy.mockups.laptop}
+                alt={t("galleryAlt", { title: project.title, caption: t(`gallery.${caseStudy.gallery[0].captionKey}`) })}
+                {...LAPTOP_PHOTO}
+                sizes="(min-width: 2000px) 2000px, 100vw"
+                quality={85}
+                priority
+                className={PHOTO}
+              />
+              <figcaption className="px-4">
+                <div className="container mx-auto mt-4 flex items-center gap-3 font-mono text-xs uppercase tracking-wide text-muted-foreground">
+                  <span>01</span>
+                  <span>{t(`gallery.${caseStudy.gallery[0].captionKey}`)}</span>
+                </div>
+              </figcaption>
+            </motion.figure>
+          )}
+
+          {/* Browser mockups on a full-bleed band: home large (unless shown above), the pair side by side */}
+          <div className={STAGE}>
+            <div className="mx-auto grid max-w-6xl gap-8 md:grid-cols-2 md:gap-10">
+              {caseStudy.gallery.map((image, i) => (caseStudy.mockups && i === 0) ? null : (
                 <motion.figure
                   key={image.src}
                   {...reveal(i === 0 ? 0 : 0.08 * i)}
                   className={i === 0 ? "md:col-span-2" : undefined}
                 >
-                  <div className="relative aspect-[16/10] overflow-hidden rounded-[10px] border border-border/60 bg-muted">
+                  <BrowserFrame url={hostname}>
                     <Image
                       src={image.src}
                       alt={t("galleryAlt", { title: project.title, caption: t(`gallery.${image.captionKey}`) })}
                       fill
-                      sizes={i === 0 ? "(min-width: 1312px) 1248px, 100vw" : "(min-width: 768px) 50vw, 100vw"}
+                      sizes={i === 0 ? "(min-width: 1200px) 1152px, 100vw" : "(min-width: 768px) 50vw, 100vw"}
                       quality={85}
                       priority={i === 0}
                       className="object-cover object-top"
                     />
-                  </div>
-                  <figcaption className="mt-3 flex items-center gap-3 font-mono text-xs uppercase tracking-wide text-muted-foreground">
+                  </BrowserFrame>
+                  <figcaption className="mt-4 flex items-center gap-3 font-mono text-xs uppercase tracking-wide text-muted-foreground">
                     <span>{String(i + 1).padStart(2, "0")}</span>
                     <span>{t(`gallery.${image.captionKey}`)}</span>
                   </figcaption>
                 </motion.figure>
               ))}
             </div>
+          </div>
 
+          <div className="px-4">
             {project.live_url && (
               <motion.div {...reveal(0.2)} className="mt-10 flex justify-center">
                 <a
@@ -340,56 +379,252 @@ export default function ProjectDetail({
 
       {caseStudy ? (
         <>
-          {/* Metrics — only ever filled with client-confirmed numbers */}
-          {caseStudy.metrics && caseStudy.metrics.length > 0 && (
-            <section className="px-4 py-16 md:py-24">
-              <div className="container mx-auto">
-                <h2 className={SECTION_LABEL}>{t("resultsHeading")}</h2>
-                <dl className="grid gap-10 sm:grid-cols-2 md:grid-cols-3">
-                  {caseStudy.metrics.map((metric, i) => (
-                    <motion.div key={metric.label} {...reveal(i * 0.08)} className="flex flex-col-reverse">
-                      <dt className="mt-2 text-muted-foreground">{metric.label}</dt>
-                      <dd className="font-display text-hero leading-none">{metric.value}</dd>
-                    </motion.div>
-                  ))}
-                </dl>
+          {/* Mobile: phone mockups on a full-bleed band, swipeable on small screens */}
+          {caseStudy.mobile && caseStudy.mobile.length > 0 && (
+            <section className="border-t border-border pt-16 md:pt-24">
+              <div className="px-4">
+                <div className="container mx-auto">
+                  <h2 className={SECTION_LABEL}>{t("mobileHeading")}</h2>
+                </div>
+              </div>
+              {/* With a photo mockup: photo bleeds off one edge, the other screens sit beside it */}
+              <div className={caseStudy.mockups ? "grid md:grid-cols-2" : undefined}>
+                {caseStudy.mockups && (
+                  <motion.div {...reveal()} className="relative aspect-[4/5]">
+                    <Image
+                      src={caseStudy.mockups.phone}
+                      alt={t("mobileAlt", { title: project.title, index: 1 })}
+                      fill
+                      sizes="(min-width: 768px) 50vw, 100vw"
+                      quality={85}
+                      className="object-cover"
+                    />
+                  </motion.div>
+                )}
+                <div className={caseStudy.mockups ? `${STAGE} flex items-center` : STAGE}>
+                  <div
+                    role="region"
+                    aria-label={t("mobileHeading")}
+                    tabIndex={0}
+                    className={`-mx-4 overflow-x-auto px-4 py-4 [scrollbar-width:none] sm:-mx-8 sm:px-8 md:mx-auto md:overflow-visible md:px-0 ${
+                      caseStudy.mockups ? "w-full md:max-w-lg" : "md:max-w-4xl"
+                    }`}
+                  >
+                    <ul
+                      className={`flex snap-x snap-mandatory gap-6 md:grid md:gap-10 ${
+                        caseStudy.mockups ? "md:grid-cols-2" : "md:grid-cols-3"
+                      }`}
+                    >
+                      {caseStudy.mobile.slice(phoneOffset, 3).map((src, i) => (
+                        <motion.li
+                          key={src}
+                          {...reveal(i * 0.08)}
+                          className="w-[64%] shrink-0 snap-center sm:w-[40%] md:w-auto"
+                        >
+                          <PhoneFrame>
+                            <Image
+                              src={src}
+                              alt={t("mobileAlt", { title: project.title, index: i + 1 + phoneOffset })}
+                              fill
+                              sizes="(min-width: 768px) 280px, 64vw"
+                              quality={85}
+                              className="object-cover object-top"
+                            />
+                          </PhoneFrame>
+                        </motion.li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
               </div>
             </section>
           )}
 
-          {/* Challenge */}
+          {/* Results: client-confirmed metrics and/or self-measured Lighthouse scores */}
+          {((caseStudy.metrics && caseStudy.metrics.length > 0) || caseStudy.scores) && (
+            <section className="border-t border-border px-4 py-16 md:py-24">
+              <div className="container mx-auto">
+                <h2 className={SECTION_LABEL}>{t("resultsHeading")}</h2>
+                {caseStudy.metrics && caseStudy.metrics.length > 0 && (
+                  <dl className="grid gap-10 sm:grid-cols-2 md:grid-cols-3">
+                    {caseStudy.metrics.map((metric, i) => (
+                      <motion.div key={metric.label} {...reveal(i * 0.08)} className="flex flex-col-reverse">
+                        <dt className="mt-2 text-muted-foreground">{metric.label}</dt>
+                        <dd className="font-display text-hero leading-none">{metric.value}</dd>
+                      </motion.div>
+                    ))}
+                  </dl>
+                )}
+
+                {caseStudy.scores && (
+                  <div className={caseStudy.metrics && caseStudy.metrics.length > 0 ? "mt-16" : undefined}>
+                    <h3 className="sr-only">{t("scoresHeading")}</h3>
+                    <dl className="grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-4">
+                      {(["performance", "accessibility", "bestPractices", "seo"] as const).map((key, i) => {
+                        const score = caseStudy.scores![key];
+                        return (
+                          <motion.div key={key} {...reveal(i * 0.08)} className="flex flex-col-reverse">
+                            <dt className="mt-3 text-muted-foreground">{t(`scores.${key}`)}</dt>
+                            <dd>
+                              <span className="font-display text-hero leading-none">{score}</span>
+                              <span aria-hidden="true" className="mt-4 block h-px w-full bg-border">
+                                <span
+                                  className="block h-px bg-foreground"
+                                  style={{ width: `${Math.min(100, Math.max(0, score))}%` }}
+                                />
+                              </span>
+                            </dd>
+                          </motion.div>
+                        );
+                      })}
+                    </dl>
+                    <p className="mt-8 font-mono text-xs uppercase tracking-wide text-muted-foreground">
+                      {t("scoresCaption", {
+                        date: new Intl.DateTimeFormat(locale, {
+                          month: "long",
+                          year: "numeric",
+                          timeZone: "UTC",
+                        }).format(new Date(caseStudy.scores.measured)),
+                      })}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </section>
+          )}
+
+          {/* Challenge, with the constraints that made it hard */}
           <section className="border-t border-border px-4 py-16 md:py-24">
             <div className="container mx-auto grid gap-6 md:grid-cols-12">
               <h2 className={`${SECTION_LABEL} md:col-span-4`}>{t("challenge")}</h2>
-              <motion.p {...reveal()} lang="en" dir="auto" className="text-xl leading-relaxed md:col-span-8 md:text-2xl">
-                {caseStudy.challenge}
-              </motion.p>
+              <div className="md:col-span-8">
+                <motion.p {...reveal()} lang="en" dir="auto" className="text-xl leading-relaxed md:text-2xl">
+                  {caseStudy.challenge}
+                </motion.p>
+
+                {caseStudy.constraints && caseStudy.constraints.length > 0 && (
+                  <motion.div {...reveal(0.1)} className="mt-12">
+                    <h3 className={SECTION_LABEL}>{t("constraintsHeading")}</h3>
+                    <ul className="divide-y divide-border border-y border-border">
+                      {caseStudy.constraints.map((constraint, i) => (
+                        <li key={constraint} className="grid grid-cols-[3rem_1fr] gap-2 py-4">
+                          <span className="font-mono text-sm text-muted-foreground">
+                            {String(i + 1).padStart(2, "0")}
+                          </span>
+                          <p lang="en" dir="auto" className="text-lg leading-relaxed text-muted-foreground">
+                            {constraint}
+                          </p>
+                        </li>
+                      ))}
+                    </ul>
+                  </motion.div>
+                )}
+              </div>
             </div>
           </section>
 
-          {/* Key decisions */}
-          <section className="border-t border-border px-4 py-16 md:py-24">
-            <div className="container mx-auto grid gap-6 md:grid-cols-12">
-              <h2 className={`${SECTION_LABEL} md:col-span-4`}>{t("decisionsHeading")}</h2>
-              <ol className="divide-y divide-border md:col-span-8">
-                {caseStudy.decisions.map((decision, i) => (
-                  <motion.li
-                    key={decision.title}
-                    {...reveal(i * 0.05)}
-                    className="grid gap-2 py-6 first:pt-0 sm:grid-cols-[3rem_1fr]"
-                  >
-                    <span className="font-mono text-sm text-muted-foreground">
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
-                    <div lang="en" dir="auto">
-                      <h3 className="font-display text-card-title">{decision.title}</h3>
-                      <p className="mt-2 text-lg leading-relaxed text-muted-foreground">{decision.body}</p>
-                    </div>
-                  </motion.li>
-                ))}
-              </ol>
+          {/* Key decisions: text in the container, screenshots full bleed */}
+          <section className="border-t border-border py-16 md:py-24">
+            <div className="px-4">
+              <div className="container mx-auto">
+                <h2 className={SECTION_LABEL}>{t("decisionsHeading")}</h2>
+              </div>
             </div>
+            <ol>
+              {caseStudy.decisions.map((decision, i) => (
+                <motion.li
+                  key={decision.title}
+                  {...reveal(0.05)}
+                  className={decision.image ? "py-10 first:pt-0 md:py-16" : "py-8 first:pt-0 md:py-10"}
+                >
+                  <div className="px-4">
+                    <div className="container mx-auto grid gap-2 md:grid-cols-12 md:gap-6">
+                      <span className="font-mono text-sm text-muted-foreground md:col-span-4">
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
+                      <div lang="en" dir="auto" className="max-w-3xl md:col-span-8">
+                        <h3 className="font-display text-card-title">{decision.title}</h3>
+                        <p className="mt-2 text-lg leading-relaxed text-muted-foreground">{decision.body}</p>
+                      </div>
+                    </div>
+                  </div>
+                  {decision.image && (
+                    <Image
+                      src={decision.image}
+                      alt={t("decisionAlt", { title: project.title, decision: decision.title })}
+                      {...LAPTOP_PHOTO}
+                      sizes="(min-width: 2000px) 2000px, 100vw"
+                      quality={85}
+                      className={`mt-8 md:mt-12 ${PHOTO}`}
+                    />
+                  )}
+                </motion.li>
+              ))}
+            </ol>
           </section>
+
+          {/* What we advised against */}
+          {caseStudy.advisedAgainst && (
+            <section className="border-t border-border px-4 py-16 md:py-24">
+              <div className="container mx-auto grid gap-6 md:grid-cols-12">
+                <h2 className={`${SECTION_LABEL} md:col-span-4`}>{t("advisedAgainstHeading")}</h2>
+                <motion.div
+                  {...reveal()}
+                  className="flex gap-5 rounded-[10px] border border-border bg-muted/40 p-6 md:col-span-8 md:p-8"
+                >
+                  <Ban aria-hidden="true" className="mt-1 h-6 w-6 shrink-0 text-muted-foreground" />
+                  <div lang="en" dir="auto">
+                    <h3 className="font-display text-card-title">{caseStudy.advisedAgainst.title}</h3>
+                    <p className="mt-2 text-lg leading-relaxed text-muted-foreground">
+                      {caseStudy.advisedAgainst.body}
+                    </p>
+                  </div>
+                </motion.div>
+              </div>
+            </section>
+          )}
+
+          {/* What was delivered: checklist, then the timeline if we have one */}
+          {((caseStudy.deliverables && caseStudy.deliverables.length > 0) ||
+            (caseStudy.timeline && caseStudy.timeline.length > 0)) && (
+            <section className="border-t border-border px-4 py-16 md:py-24">
+              <div className="container mx-auto grid gap-6 md:grid-cols-12">
+                <h2 className={`${SECTION_LABEL} md:col-span-4`}>{t("deliveredHeading")}</h2>
+                <div className="md:col-span-8">
+                  {caseStudy.deliverables && caseStudy.deliverables.length > 0 && (
+                    <motion.ul {...reveal()} className="grid gap-x-8 gap-y-4 sm:grid-cols-2">
+                      {caseStudy.deliverables.map((item) => (
+                        <li key={item} className="flex items-start gap-3 text-lg leading-relaxed">
+                          <Check aria-hidden="true" className="mt-1.5 h-4 w-4 shrink-0 text-foreground" />
+                          <span lang="en" dir="auto">{item}</span>
+                        </li>
+                      ))}
+                    </motion.ul>
+                  )}
+
+                  {caseStudy.timeline && caseStudy.timeline.length > 0 && (
+                    <motion.div
+                      {...reveal(0.1)}
+                      className={caseStudy.deliverables && caseStudy.deliverables.length > 0 ? "mt-14" : undefined}
+                    >
+                      <h3 className={SECTION_LABEL}>{t("timelineHeading")}</h3>
+                      <ol className="grid gap-px overflow-hidden rounded-[10px] border border-border bg-border sm:auto-cols-fr sm:grid-flow-col">
+                        {caseStudy.timeline.map((step, i) => (
+                          <li key={step.phase} className="flex flex-col gap-2 bg-background p-5">
+                            <span className="font-mono text-xs text-muted-foreground">
+                              {String(i + 1).padStart(2, "0")}
+                            </span>
+                            <span lang="en" dir="auto" className="font-medium">{step.phase}</span>
+                            <span lang="en" dir="auto" className="text-sm text-muted-foreground">{step.duration}</span>
+                          </li>
+                        ))}
+                      </ol>
+                    </motion.div>
+                  )}
+                </div>
+              </div>
+            </section>
+          )}
 
           {/* Client quote */}
           {caseStudy.quote && (

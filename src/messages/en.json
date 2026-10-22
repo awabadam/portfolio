@@ -258,7 +258,6 @@
     "heroCtaAudit": "Get your free clinic audit",
     "heroCtaPackages": "See packages",
     "heroNote": "Designed, built and supported by one person. You talk to the builder, not an account manager.",
-    "deliverablesHeading": "What you get",
     "deliverablesSubtitle": "Every item below is part of a package on the pricing page. Nothing is sold as an add-on.",
     "deliverablesIn": "In {package}",
     "processSubtitle": "From first call to a live site in 3-4 weeks for a Clinic Website, 6-8 weeks for a Clinic Growth System.",
@@ -599,7 +598,22 @@
     "ctaKicker": "Work with me",
     "ctaText": "Tell me about your treatments and where your patients come from. I reply within 24 hours with a fixed quote.",
     "imageAlt": "{title}, by Awab Design",
-    "galleryAlt": "{title}: {caption}, website by Awab Design"
+    "galleryAlt": "{title}: {caption}, website by Awab Design",
+    "mobileHeading": "On the phone",
+    "mobileAlt": "{title} on a phone, screen {index}, website by Awab Design",
+    "decisionAlt": "{title}: {decision}, website by Awab Design",
+    "scoresHeading": "Lighthouse scores",
+    "scoresCaption": "Lighthouse, mobile · measured {date}",
+    "scores": {
+      "performance": "Performance",
+      "accessibility": "Accessibility",
+      "bestPractices": "Best practices",
+      "seo": "SEO"
+    },
+    "constraintsHeading": "What made it hard",
+    "advisedAgainstHeading": "What we advised against",
+    "deliveredHeading": "What was delivered",
+    "timelineHeading": "Timeline"
   },
   "chat": {
     "ariaOpen": "Open chat",

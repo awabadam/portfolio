@@ -258,7 +258,6 @@
     "heroCtaAudit": "Ücretsiz klinik analizinizi alın",
     "heroCtaPackages": "Paketleri görün",
     "heroNote": "Tasarım, geliştirme ve destek tek kişiden. Bir müşteri temsilcisiyle değil, siteyi yapan kişiyle konuşursunuz.",
-    "deliverablesHeading": "Neler alırsınız",
     "deliverablesSubtitle": "Aşağıdaki her madde fiyat sayfasındaki bir paketin parçasıdır. Hiçbiri ek ücretle satılmaz.",
     "deliverablesIn": "{package} içinde",
     "processSubtitle": "İlk görüşmeden yayına: Klinik Web Sitesi için 3-4 hafta, Klinik Büyüme Sistemi için 6-8 hafta.",
@@ -599,7 +598,22 @@
     "ctaKicker": "Birlikte çalışalım",
     "ctaText": "Tedavilerinizi ve hastalarınızın hangi ülkelerden geldiğini anlatın. 24 saat içinde sabit fiyatlı teklifle dönerim.",
     "imageAlt": "{title}, Awab Design tarafından",
-    "galleryAlt": "{title}: {caption}, Awab Design tarafından yapılan web sitesi"
+    "galleryAlt": "{title}: {caption}, Awab Design tarafından yapılan web sitesi",
+    "mobileHeading": "Telefonda",
+    "mobileAlt": "{title} telefonda, ekran {index}, Awab Design tarafından yapılan web sitesi",
+    "decisionAlt": "{title}: {decision}, Awab Design tarafından yapılan web sitesi",
+    "scoresHeading": "Lighthouse puanları",
+    "scoresCaption": "Lighthouse, mobil · ölçüm: {date}",
+    "scores": {
+      "performance": "Performans",
+      "accessibility": "Erişilebilirlik",
+      "bestPractices": "En iyi uygulamalar",
+      "seo": "SEO"
+    },
+    "constraintsHeading": "İşi zorlaştıranlar",
+    "advisedAgainstHeading": "Önermediğimiz şey",
+    "deliveredHeading": "Teslim edilenler",
+    "timelineHeading": "Zaman çizelgesi"
   },
   "chat": {
     "ariaOpen": "Sohbeti aç",

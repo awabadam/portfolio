@@ -258,7 +258,6 @@
     "heroCtaAudit": "احصل على تقييم مجاني لعيادتك",
     "heroCtaPackages": "اطّلع على الباقات",
     "heroNote": "تصميم وبناء ودعم من شخص واحد. تتحدث مع من يبني الموقع، لا مع مدير حسابات.",
-    "deliverablesHeading": "ماذا تحصل عليه",
     "deliverablesSubtitle": "كل بند أدناه جزء من إحدى الباقات في صفحة الأسعار. لا شيء يُباع كإضافة منفصلة.",
     "deliverablesIn": "ضمن {package}",
     "processSubtitle": "من أول اتصال إلى موقع مباشر خلال 3-4 أسابيع لموقع العيادة، و6-8 أسابيع لنظام نمو العيادة.",
@@ -599,7 +598,22 @@
     "ctaKicker": "اعمل معي",
     "ctaText": "أخبرني عن علاجاتك ومن أين يأتي مرضاك. أرد خلال 24 ساعة بعرض سعر ثابت.",
     "imageAlt": "{title}، من تصميم Awab Design",
-    "galleryAlt": "{title}: {caption}، موقع من تصميم Awab Design"
+    "galleryAlt": "{title}: {caption}، موقع من تصميم Awab Design",
+    "mobileHeading": "على الهاتف",
+    "mobileAlt": "{title} على الهاتف، الشاشة {index}، موقع من تصميم Awab Design",
+    "decisionAlt": "{title}: {decision}، موقع من تصميم Awab Design",
+    "scoresHeading": "نتائج Lighthouse",
+    "scoresCaption": "Lighthouse، الهاتف · قيست في {date}",
+    "scores": {
+      "performance": "الأداء",
+      "accessibility": "سهولة الوصول",
+      "bestPractices": "أفضل الممارسات",
+      "seo": "تحسين محركات البحث"
+    },
+    "constraintsHeading": "ما جعل المشروع صعبًا",
+    "advisedAgainstHeading": "ما نصحنا بتجنّبه",
+    "deliveredHeading": "ما تم تسليمه",
+    "timelineHeading": "الجدول الزمني"
   },
   "chat": {
     "ariaOpen": "فتح المحادثة",

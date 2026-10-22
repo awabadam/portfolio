@@ -258,7 +258,6 @@
     "heroCtaAudit": "Obtenez votre audit clinique gratuit",
     "heroCtaPackages": "Voir les forfaits",
     "heroNote": "Conçu, développé et suivi par une seule personne. Vous parlez à celui qui construit le site, pas à un chargé de compte.",
-    "deliverablesHeading": "Ce que vous obtenez",
     "deliverablesSubtitle": "Chaque élément ci-dessous fait partie d'un forfait de la page tarifs. Rien n'est vendu en option.",
     "deliverablesIn": "Inclus dans {package}",
     "processSubtitle": "Du premier appel à la mise en ligne : 3-4 semaines pour un Site Clinique, 6-8 semaines pour un Système de Croissance Clinique.",
@@ -599,7 +598,22 @@
     "ctaKicker": "Travailler avec moi",
     "ctaText": "Parlez-moi de vos soins et de l'origine de vos patients. Je réponds sous 24 heures avec un devis fixe.",
     "imageAlt": "{title}, par Awab Design",
-    "galleryAlt": "{title} : {caption}, site réalisé par Awab Design"
+    "galleryAlt": "{title} : {caption}, site réalisé par Awab Design",
+    "mobileHeading": "Sur mobile",
+    "mobileAlt": "{title} sur mobile, écran {index}, site réalisé par Awab Design",
+    "decisionAlt": "{title} : {decision}, site réalisé par Awab Design",
+    "scoresHeading": "Scores Lighthouse",
+    "scoresCaption": "Lighthouse, mobile · mesuré en {date}",
+    "scores": {
+      "performance": "Performance",
+      "accessibility": "Accessibilité",
+      "bestPractices": "Bonnes pratiques",
+      "seo": "SEO"
+    },
+    "constraintsHeading": "Ce qui rendait le projet difficile",
+    "advisedAgainstHeading": "Ce que nous avons déconseillé",
+    "deliveredHeading": "Ce qui a été livré",
+    "timelineHeading": "Calendrier"
   },
   "chat": {
     "ariaOpen": "Ouvrir le chat",
