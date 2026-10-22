@@ -23,7 +23,7 @@ export type ServiceKey =
   | "ongoing";
 
 // Caption keys live under `projects.gallery.*` in src/messages.
-export type GalleryCaptionKey = "home" | "treatment" | "rtl" | "services" | "work";
+export type GalleryCaptionKey = "home" | "treatment" | "rtl" | "services" | "results" | "work";
 
 export interface GalleryImage {
   // Clean 1440x900 viewport shots in public/img/projects/<id>/ (no cookie banners).
@@ -88,30 +88,38 @@ export const CASE_STUDIES: Record<string, CaseStudy> = {
   },
   jouvence: {
     headline:
-      "A premium aesthetics clinic site in English, French and Arabic, where any visitor is one tap away from WhatsApp.",
+      "A luxury hair and dental clinic site in English, French and Arabic, where every button opens WhatsApp.",
     market: "aesthetics",
     languages: ["en", "fr", "ar"],
-    services: ["design", "development", "multilingual", "seo"],
-    year: "2025",
-    gallery: galleryFor("jouvence", "services"),
+    services: ["design", "development", "multilingual", "seo", "ongoing"],
+    year: "2025 – 2026",
+    gallery: [
+      { src: "/img/projects/jouvence/home.webp", captionKey: "home" },
+      { src: "/img/projects/jouvence/results.webp", captionKey: "results" },
+      { src: "/img/projects/jouvence/rtl.webp", captionKey: "rtl" },
+    ],
     challenge:
-      "Jouvence competes for international patients in Istanbul's crowded aesthetics market. The clinic needed a site that felt as premium as its in-person experience, loaded fast on a phone, and read naturally in each patient's language rather than like a machine translation.",
+      "Jouvence brings patients from abroad to Istanbul for hair transplants and dental work, and sells the whole trip as a VIP experience: private transfers, partner hotels and a translator at every step. For the 2026 redesign the clinic wanted a site that felt as premium as that trip, proved its work with real before-and-after photos, and still opened fast on a phone in English, French or Arabic.",
     decisions: [
       {
-        title: "Language first, not translated after",
-        body: "Typography, spacing and imagery are tuned per language, with a proper right-to-left Arabic layout that doesn't shift or break.",
+        title: "Real results, shown properly",
+        body: "New Hollywood smile, implant and hair transplant before-and-afters sit in a masonry gallery that keeps each photo's proportions, with a full-screen lightbox for a closer look.",
       },
       {
-        title: "WhatsApp on every treatment page",
-        body: "Each treatment has a one-tap WhatsApp button that pre-fills the treatment name, so the clinic's team picks up a warm, specific lead.",
+        title: "Every button opens WhatsApp",
+        body: "International patients already plan their trip on WhatsApp, so every consultation button and the floating chat prompt open a conversation with the clinic's team. There is no form to fill in.",
       },
       {
-        title: "Fast where patients actually are",
-        body: "Mobile-first, server-rendered pages, so the site opens quickly on a phone and Google can index every treatment in every language.",
+        title: "Premium, but still fast",
+        body: "A gold palette, smooth scrolling and scroll-driven motion, kept off the critical path: the first screen loads with plain CSS, images are WebP, and the intro animation steps aside as soon as the hero image is ready.",
       },
       {
-        title: "Built for a regulated business",
-        body: "KVKK-compliant consent, analytics and contact forms, which matters for a medical business operating in Turkey.",
+        title: "Arabic that feels native",
+        body: "A full right-to-left layout with its own Arabic typeface, loaded only on Arabic pages so English and French visitors don't download it.",
+      },
+      {
+        title: "Found in every language",
+        body: "Each language has its own URL, hreflang tags and medical-business structured data listing the treatments, so Google shows each patient the right version.",
       },
     ],
   },

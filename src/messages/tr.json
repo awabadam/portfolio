@@ -95,7 +95,7 @@
     "workLink": "Vaka çalışmasını oku",
     "clientHeadlines": {
       "saphiredent": "Her talebi yakalayıp kliniğin CRM'ine ve Google Ads'e aktaran dokuz dilli bir diş kliniği sitesi.",
-      "jouvence": "İngilizce, Fransızca ve Arapça premium bir estetik klinik sitesi; her ziyaretçi WhatsApp'a tek dokunuş uzaklıkta.",
+      "jouvence": "İngilizce, Fransızca ve Arapça lüks bir saç ve diş kliniği sitesi; her buton WhatsApp'ı açıyor.",
       "esteexpert": "JCI akreditasyonlu bir klinik için güveni öne çıkaran, randevu butonunun ekrandan hiç kaybolmadığı bir site.",
       "omar-marketing": "Ölçülebilir büyüme satan bir performans pazarlama ajansı için kendinden emin, üç dilli bir site."
     },
@@ -581,6 +581,7 @@
       "treatment": "Tedavi sayfası",
       "rtl": "Arapça sürüm, sağdan sola",
       "services": "Hizmetler bölümü",
+      "results": "Öncesi ve sonrası galerisi",
       "work": "Vaka çalışması sayfası"
     },
     "heroEyebrow": "Çalışmalar",

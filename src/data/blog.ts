@@ -146,15 +146,15 @@ Both of these clinics are real case studies of clinic websites I built. They're 
 
 ### [Jouvence](/projects/jouvence) — Premium Luxury Market
 
-Jouvence is a high-end aesthetics clinic targeting international patients from the Middle East and Europe. The site is built with Next.js, fully multilingual (English, Turkish, Arabic), and uses WhatsApp as the primary contact channel.
+Jouvence is a luxury hair transplant and dental clinic bringing international patients from the Middle East and Europe, with private transfers, partner hotels and a translator included. The site is built with Next.js, fully multilingual (English, French, Arabic), and uses WhatsApp as the only contact channel.
 
 **What makes it work:**
 
-- Sub-1-second mobile load time (compared to 4-6 seconds for competitor clinics)
+- Real before-and-after photos for smiles, implants and hair transplants, in a gallery with a full-screen lightbox
 - Proper Arabic RTL support — not a retrofitted English site with a translate widget
-- WhatsApp button on every treatment page with the treatment name pre-filled
-- Doctor credentials prominently displayed on the homepage
-- KVKK-compliant consent and analytics
+- Every consultation button opens WhatsApp, so there is no form between the patient and the clinic
+- Premium motion and imagery kept off the critical path, so the first screen still loads fast on a phone
+- Separate URLs, hreflang and structured data for each language
 
 ### [EsteExpert](/projects/esteexpert) — Trust-First Medical Aesthetics
 

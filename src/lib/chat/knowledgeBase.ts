@@ -56,9 +56,9 @@ export const services: Service[] = [
 export const projects: ProjectInfo[] = [
   {
     name: "Jouvence",
-    category: "Healthcare / Aesthetics",
-    description: "Luxury aesthetics clinic website with multilingual support (EN, TR, AR).",
-    results: ["Multilingual site serving 3 markets", "Luxury brand positioning", "Mobile-first patient experience"],
+    category: "Healthcare / Hair & Dental",
+    description: "Luxury hair transplant and dental clinic website in English, French and Arabic, redesigned in 2026.",
+    results: ["Multilingual site serving 3 markets", "Before-and-after results gallery", "Every consultation button opens WhatsApp"],
     link: "/projects/jouvence",
   },
   {

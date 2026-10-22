@@ -95,7 +95,7 @@
     "workLink": "Read the case study",
     "clientHeadlines": {
       "saphiredent": "A nine-language dental site that captures every inquiry and feeds it to the clinic's CRM and Google Ads.",
-      "jouvence": "A premium aesthetics clinic site in English, French and Arabic, where any visitor is one tap away from WhatsApp.",
+      "jouvence": "A luxury hair and dental clinic site in English, French and Arabic, where every button opens WhatsApp.",
       "esteexpert": "A trust-first site for a JCI-accredited clinic, where the consultation button never leaves the screen.",
       "omar-marketing": "A confident trilingual site for a performance marketing agency that sells measurable growth."
     },
@@ -581,6 +581,7 @@
       "treatment": "Treatment page",
       "rtl": "Arabic version, right-to-left",
       "services": "Services section",
+      "results": "Before-and-after gallery",
       "work": "Case study page"
     },
     "heroEyebrow": "Work",

@@ -95,7 +95,7 @@
     "workLink": "Lire l'étude de cas",
     "clientHeadlines": {
       "saphiredent": "Un site dentaire en neuf langues qui capte chaque demande et la transmet au CRM de la clinique et à Google Ads.",
-      "jouvence": "Un site haut de gamme pour une clinique esthétique, en anglais, français et arabe, où chaque visiteur est à un clic de WhatsApp.",
+      "jouvence": "Un site haut de gamme pour une clinique capillaire et dentaire, en anglais, français et arabe, où chaque bouton ouvre WhatsApp.",
       "esteexpert": "Un site axé sur la confiance pour une clinique accréditée JCI, où le bouton de consultation reste toujours à l'écran.",
       "omar-marketing": "Un site trilingue affirmé pour une agence de marketing à la performance qui vend une croissance mesurable."
     },
@@ -581,6 +581,7 @@
       "treatment": "Page de traitement",
       "rtl": "Version arabe, de droite à gauche",
       "services": "Section services",
+      "results": "Galerie avant-après",
       "work": "Page d'étude de cas"
     },
     "heroEyebrow": "Réalisations",
