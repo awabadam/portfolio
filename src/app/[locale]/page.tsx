@@ -1,12 +1,21 @@
 import type { Metadata } from "next";
-import { getTranslations, getLocale } from "next-intl/server";
+import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
+import { routing } from "@/i18n/routing";
 import { ogLocale, pageAlternates, localeUrl } from "@/lib/seo";
 import HomePageContent from "./HomePageContent";
 
 // OG/Twitter image comes from ./opengraph-image.tsx (file-based metadata wins).
-export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations("metadata.home");
-  const locale = await getLocale();
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  // Unknown "locales" (e.g. /llms.txt, which skips the intl proxy) must 404
+  // here: reading the locale from headers on this static page throws a 500.
+  const { locale } = await params;
+  if (!routing.locales.includes(locale as any)) notFound();
+  const t = await getTranslations({ locale, namespace: "metadata.home" });
 
   return {
     title: { absolute: t("title") },

@@ -351,10 +351,11 @@ export default function RootLayout({
             style={{ display: "none", visibility: "hidden" }}
           />
         </noscript>
-        {/* Google Tag Manager */}
+        {/* Google Tag Manager. lazyOnload: GTM + gtag are ~450 KiB of JS that
+            otherwise compete with the hero image for bandwidth on mobile. */}
         <Script
           id="gtm-script"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
           dangerouslySetInnerHTML={{
             __html: `
               (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -369,9 +370,9 @@ export default function RootLayout({
         {/* Google Analytics 4 */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-EL4WEH4X3X"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
         />
-        <Script id="ga-script" strategy="afterInteractive">
+        <Script id="ga-script" strategy="lazyOnload">
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}

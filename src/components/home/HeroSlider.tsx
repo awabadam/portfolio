@@ -147,7 +147,9 @@ export default function HeroSlider() {
               alt=""
               fill
               sizes="100vw"
-              quality={85}
+              // 75, not 85: it sits under a 45% black scrim, and it is the
+              // mobile LCP image, so bytes matter more than fine detail here.
+              quality={75}
               priority={index === 0}
               className="object-cover"
             />

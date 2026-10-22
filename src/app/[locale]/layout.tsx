@@ -5,7 +5,6 @@ import { routing } from '@/i18n/routing';
 import { isRtl } from '@/i18n/config';
 import { ThemeProvider } from "@/components/theme-provider";
 import { ConditionalLayout, ConditionalFooter } from "@/components/layout/ConditionalLayout";
-import GoogleAnalytics from "@/components/GoogleAnalytics";
 import PageTracking from "@/components/PageTracking";
 import { WhatsAppProvider } from "@/components/chat/WhatsAppContext";
 import SmoothScroll from "@/components/effects/SmoothScroll";
@@ -43,7 +42,6 @@ export default async function LocaleLayout({
           disableTransitionOnChange
         >
           <WhatsAppProvider>
-            <GoogleAnalytics />
             <PageTracking />
             <SmoothScroll />
             <ConditionalLayout />

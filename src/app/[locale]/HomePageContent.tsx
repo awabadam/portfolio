@@ -97,7 +97,7 @@ export default function HomePageContent() {
       <section id="work" className="bg-background py-20 md:py-28">
         <div className="container px-5 md:px-8">
           <ScrollReveal animation="fadeUp" className="mb-8 md:mb-10">
-            <p className="font-mono text-label text-muted-foreground">{t("featuredKicker")}</p>
+            <h2 className="font-mono text-label text-muted-foreground">{t("featuredKicker")}</h2>
           </ScrollReveal>
 
           <div className="grid gap-5 md:grid-cols-2">

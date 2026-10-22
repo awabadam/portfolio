@@ -7,27 +7,7 @@ declare global {
 // GA4 Configuration
 export const GA4_TRACKING_ID = 'G-EL4WEH4X3X';
 
-// Initialize GA4
-export const initGA4 = () => {
-  if (typeof window !== 'undefined') {
-    // Load GA4 script
-    const script = document.createElement('script');
-    script.async = true;
-    script.src = `https://www.googletagmanager.com/gtag/js?id=${GA4_TRACKING_ID}`;
-    document.head.appendChild(script);
-
-    // Initialize gtag
-    window.gtag = window.gtag || function() {
-      (window.gtag as any).q = (window.gtag as any).q || [];
-      (window.gtag as any).q.push(arguments);
-    };
-    window.gtag('js', new Date());
-    window.gtag('config', GA4_TRACKING_ID, {
-      page_title: document.title,
-      page_location: window.location.href,
-    });
-  }
-};
+// gtag.js is loaded once, in app/layout.tsx, which also defines window.gtag.
 
 // Track page views
 export const trackPageView = (url: string, title?: string) => {
