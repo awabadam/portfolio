@@ -21,9 +21,14 @@ const tierIcons: Record<string, React.ReactNode> = {
 interface PackageCardsProps {
   // h2 on /pricing (cards are the page's main sections), h3 on /services
   headingLevel?: "h2" | "h3";
+  /**
+   * Tier id to highlight as the visitor's fit (badge "Recommended for you"),
+   * null to highlight none. Left out, the tier marked `popular` is highlighted.
+   */
+  recommended?: string | null;
 }
 
-export default function PackageCards({ headingLevel = "h3" }: PackageCardsProps) {
+export default function PackageCards({ headingLevel = "h3", recommended }: PackageCardsProps) {
   const t = useTranslations("packages");
   const Heading = headingLevel;
 
@@ -33,25 +38,26 @@ export default function PackageCards({ headingLevel = "h3" }: PackageCardsProps)
         const features = t.raw(tier.featuresKey) as string[];
         const bundled = getIncludedAddOns(tier.id);
         const care = getIncludedCarePlan(tier.id);
+        const highlighted = recommended === undefined ? Boolean(tier.popular) : recommended === tier.id;
         return (
           <StaggerItem key={tier.id} animation="fadeUp">
             <div
               className={`relative flex h-full flex-col rounded-2xl border-2 p-8 transition-all duration-300 hover:shadow-lg ${
-                tier.popular
+                highlighted
                   ? "border-primary bg-primary/5 shadow-lg"
                   : "border-border bg-card hover:border-primary/30"
               }`}
             >
-              {tier.popular && (
+              {highlighted && (
                 <span className="absolute -top-3 right-6 rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground rtl:left-6 rtl:right-auto">
-                  {t("popular")}
+                  {recommended === undefined ? t("popular") : t("fitBadge")}
                 </span>
               )}
               <div className="mb-4 text-primary">{tierIcons[tier.id]}</div>
               <Heading className="font-display text-2xl font-bold">{t(tier.nameKey)}</Heading>
               <p className="mt-1 text-sm text-muted-foreground">{t(tier.descKey)}</p>
               <div className="mt-6 border-t border-border pt-6">
-                <span className={`font-display text-4xl font-bold ${tier.popular ? "text-primary" : ""}`}>
+                <span className={`font-display text-4xl font-bold ${highlighted ? "text-primary" : ""}`}>
                   {t("fromPrice", { price: formatPrice(tier.price) })}
                 </span>
                 <p className="mt-1 text-xs text-muted-foreground">{t(tier.timeframeKey)}</p>
@@ -107,7 +113,7 @@ export default function PackageCards({ headingLevel = "h3" }: PackageCardsProps)
                 asChild
                 className="mt-8 rounded-full"
                 size="lg"
-                variant={tier.popular ? "default" : "outline"}
+                variant={highlighted ? "default" : "outline"}
               >
                 <Link
                   href={`/contact?plan=${tier.contactValue}`}

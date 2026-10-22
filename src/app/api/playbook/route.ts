@@ -6,7 +6,7 @@ import { checkRateLimit, getIdentifier, getRateLimitHeaders } from "@/lib/rateLi
 import { isEmailConfigured, sendEmail, NOTIFICATION_RECIPIENT, SENDERS } from "@/lib/email";
 import { normalizeWebsite } from "@/lib/audit";
 import { locales, defaultLocale, type Locale } from "@/i18n/config";
-import { getPlaybook, leadTrackerCsv } from "@/lib/playbook";
+import { getPlaybook } from "@/lib/playbook";
 import { createPlaybookKey } from "@/lib/playbookKey";
 import { playbookHref } from "@/lib/playbookMeta";
 import { localeUrl } from "@/lib/seo";
@@ -17,7 +17,7 @@ import { buildPlaybookAccessEmail } from "@/emails/PlaybookAccess";
  * POST /api/playbook: the direct path to the playbook, without the check.
  * Body: { email, website?, locale?, company_website (honeypot) }.
  * Saves a lead (source 'playbook'), emails the submitter the personal
- * playbook link, the first lines of the summary and the lead tracker CSV,
+ * playbook link and the first lines of the summary,
  * sends Awab a short note, and returns { ok, playbookKey } so the page can
  * open /audit/playbook right away. Email failures never fail the request.
  */
@@ -106,7 +106,6 @@ export async function POST(request: Request) {
   let confirmed = false;
   if (isEmailConfigured()) {
     const playbook = await getPlaybook(locale);
-    const csv = leadTrackerCsv(playbook);
 
     // Rendering is best effort like sending: a template error never fails the request.
     try {
@@ -118,7 +117,7 @@ export async function POST(request: Request) {
     }
 
     try {
-      const access = await buildPlaybookAccessEmail({ locale, playbookUrl, playbook, csvAttached: Boolean(csv) });
+      const access = await buildPlaybookAccessEmail({ locale, playbookUrl, playbook });
       const userResult = await sendEmail({
         from: "audit",
         to: data.email,
@@ -126,7 +125,6 @@ export async function POST(request: Request) {
         subject: access.subject,
         text: access.text,
         html: access.html,
-        attachments: csv ? [{ filename: csv.filename, content: csv.content, contentType: "text/csv; charset=utf-8" }] : undefined,
       });
       confirmed = userResult.sent;
     } catch (error) {

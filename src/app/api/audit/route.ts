@@ -25,7 +25,7 @@ import {
 } from "@/lib/audit";
 import { locales, defaultLocale, type Locale } from "@/i18n/config";
 import { SCAN_VERSION, scanChecksSchema, scanFactsForEmail, type ScanChecks } from "@/lib/auditScan";
-import { getPlaybook, leadTrackerCsv } from "@/lib/playbook";
+import { getPlaybook } from "@/lib/playbook";
 import { createPlaybookKey } from "@/lib/playbookKey";
 import { verifyAuditLeadToken } from "@/lib/auditLeadToken";
 import { playbookHref } from "@/lib/playbookMeta";
@@ -37,8 +37,7 @@ import { buildAuditReportEmail } from "@/emails/AuditReport";
  * POST /api/audit — "International Patient Readiness Score" lead capture.
  * Saves a lead (source 'clinic_audit'), notifies Awab, and sends the
  * submitter the delivery email: score, 3 fixes with the first steps from the
- * matching playbook chapters, the personal playbook link and the lead tracker
- * CSV attached. The response carries `playbookKey` (see src/lib/playbookKey.ts)
+ * matching playbook chapters and the personal playbook link. The response carries `playbookKey` (see src/lib/playbookKey.ts)
  * so the success state can open /audit/playbook right away, and `book`: true
  * when the lead is hot and the success state should offer the booking calendar
  * (the tier itself never leaves the server).
@@ -255,7 +254,6 @@ export async function POST(request: Request) {
   let confirmed = false;
   if (isEmailConfigured()) {
     const playbook = await getPlaybook(locale);
-    const csv = leadTrackerCsv(playbook);
 
     // Rendering is best effort like sending: a template error never fails the request.
     try {
@@ -298,7 +296,6 @@ export async function POST(request: Request) {
         playbookUrl,
         playbook,
         hot,
-        csvAttached: Boolean(csv),
       });
       const userResult = await sendEmail({
         from: "audit",
@@ -307,7 +304,6 @@ export async function POST(request: Request) {
         subject: report.subject,
         text: report.text,
         html: report.html,
-        attachments: csv ? [{ filename: csv.filename, content: csv.content, contentType: "text/csv; charset=utf-8" }] : undefined,
       });
       confirmed = userResult.sent;
     } catch (error) {

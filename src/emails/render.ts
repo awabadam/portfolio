@@ -147,7 +147,6 @@ export interface EmailMessages {
         text: string;
         stepsIntro: string;
         chapterLine: string;
-        csvNote: string;
         summaryIntro: string;
         checkLine: string;
         packLine: string;

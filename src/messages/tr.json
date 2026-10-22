@@ -320,6 +320,14 @@
     "heroEyebrow": "Fiyatlar",
     "heroHeading": "Klinik web sitesi fiyatları",
     "heroSubtitle": "Sabit fiyatlı iki paket ve iki aylık plan, hepsi ABD doları cinsinden. Kliniğiniz ya da hastalarınız nerede olursa olsun fiyat aynıdır.",
+    "valueAnchor": "Yurt dışından gelen bir hasta Türkiye'deki bir klinikte genellikle {range} harcar. Klinik Web Sitesi {price} fiyatından başlar.",
+    "fitQuestion": "Başka ülkelerde reklam veriyor musunuz?",
+    "fitAnswer": {
+      "yes": "Evet",
+      "no": "Henüz değil"
+    },
+    "termsLine": "%50 başlangıçta, %50 yayında ödenir. Revizyonlardan sonra tasarım yönünden memnun değilseniz, geliştirme başlamadan önce %50'si iade edilir.",
+    "auditLink": "Hangisinin uygun olduğundan emin değil misiniz? Sitenizi 2 dakikada ücretsiz kontrol edin",
     "comparisonHeading": "İki pakette de dahil",
     "comparisonSubtitle": "İş başlamadan önce üzerinde anlaşılan sabit fiyat",
     "includedHeading": "Her zaman dahil",
@@ -359,13 +367,14 @@
     "testimonialViewWork": "Projeleri gör",
     "ctaHeading": "Hangi paketin uygun olduğundan emin değil misiniz?",
     "ctaSubtitle": "Kliniğinizi, tedavilerinizi ve hastalarınızın nereden geldiğini anlatın. 24 saat içinde sabit bir teklifle dönerim.",
-    "ctaPrimary": "Teklif al",
+    "ctaPrimary": "Sabit fiyat teklifimi al",
     "ctaSecondary": "Bana ulaşın",
     "plansHeading": "Aylık planlar",
     "plansSubtitle": "Yayından sonra barındırma ve bakım. İlk {months} ay paketinize dahildir; sonrası isteğe bağlıdır ve her durumda her şey size aittir."
   },
   "packages": {
     "popular": "Önerilen",
+    "fitBadge": "Kliniğinize uygun",
     "fromPrice": "Başlangıç {price}",
     "includedTitle": "Ek ücret olmadan dahil",
     "valuedAt": "değeri {value}",
@@ -829,7 +838,7 @@
     },
     "orWhatsapp": "Ya da WhatsApp'tan yazın",
     "successHeading": "Alındı. Analiziniz yolda.",
-    "successText": "Rehber bağlantısı {email} adresindeki gelen kutunuzda, başvuru takip tablosu ekli; aşağıdaki düğme rehberi hemen açar. {website} adresini bizzat inceleyip yazılı analizi 48 saat içinde göndereceğim.",
+    "successText": "Rehber bağlantısı {email} adresindeki gelen kutunuzda; aşağıdaki düğme rehberi hemen açar. {website} adresini bizzat inceleyip yazılı analizi 48 saat içinde göndereceğim.",
     "successLink": "Yaptığım klinik sitelerine bakın",
     "errors": {
       "generic": "Bir şeyler ters gitti. Tekrar deneyin ya da WhatsApp'tan yazın.",
@@ -1053,7 +1062,6 @@
         "text": "30 Günde Uluslararası Hasta Getiren Web Sitesi Rehberi sizin: 10 bölüm, 17 kopyala-yapıştır şablon ve başvuru takip tablosu. Bağlantı kişiseldir, saklayın:",
         "stepsIntro": "Bölümün ilk iki adımı:",
         "chapterLine": "Bölüm {n}: {title} ({minutes} dk okuma)",
-        "csvNote": "Ek: lead-tracker.csv, 9. bölümdeki tablo. Excel veya Google Sheets'te açıp bugünkü başvuruları kaydedin.",
         "subject": "Rehberiniz: 30 Günde Uluslararası Hasta Getiren Web Sitesi Rehberi",
         "summaryIntro": "Başka hiçbir şey okumazsanız, bunlarla başlayın:",
         "checkLine": "Hangi bölümle başlayacağınızdan emin değil misiniz? Ücretsiz 2 dakikalık kontrol size puanınızı ve sırasıyla 3 düzeltmenizi verir: {url}",
@@ -1102,7 +1110,7 @@
       "submit": "Rehberi gönderin",
       "privacy": "E-postanız yalnızca rehberi göndermek için kullanılır. Bülten yok.",
       "successHeading": "Rehberiniz hazır",
-      "successText": "Şimdi açılıyor. Bağlantı ayrıca {email} adresinize, başvuru takip tablosu ekiyle gönderildi. Şablon paketiniz 2 gün içinde e-postayla gelecek."
+      "successText": "Şimdi açılıyor. Bağlantı ayrıca {email} adresinize gönderildi. Şablon paketiniz 2 gün içinde e-postayla gelecek."
     },
     "peek": {
       "eyebrow": "İçine bir bakın",

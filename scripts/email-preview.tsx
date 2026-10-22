@@ -17,7 +17,7 @@ import path from "node:path";
 import { pathToFileURL } from "node:url";
 import type { Locale } from "@/i18n/config";
 import { computeResult, computeTier, type Answers, type Qualification } from "@/lib/audit";
-import { getPlaybook, leadTrackerCsv } from "@/lib/playbook";
+import { getPlaybook } from "@/lib/playbook";
 import { buildAdminAuditAlert } from "@/emails/AdminAuditAlert";
 import { buildAuditReportEmail } from "@/emails/AuditReport";
 import { buildAdminPlaybookAlert } from "@/emails/AdminPlaybookAlert";
@@ -185,7 +185,6 @@ async function main() {
         playbookUrl: PLAYBOOK_URL(locale),
         playbook,
         hot,
-        csvAttached: Boolean(leadTrackerCsv(playbook)),
       }),
     );
   }
@@ -194,7 +193,7 @@ async function main() {
   add("admin-playbook", await buildAdminPlaybookAlert({ email: "marketing@smileline.com", website: "https://smileline.com/", locale: "en", leadId: "9f8e7d6c-5b4a-4321-8765-0fedcba98765" }));
   for (const locale of ["en", "ar"] as const) {
     const playbook = await getPlaybook(locale);
-    add(`lead-playbook-${locale}`, await buildPlaybookAccessEmail({ locale, playbookUrl: PLAYBOOK_URL(locale), playbook, csvAttached: true }));
+    add(`lead-playbook-${locale}`, await buildPlaybookAccessEmail({ locale, playbookUrl: PLAYBOOK_URL(locale), playbook }));
   }
 
   // Template Pack.

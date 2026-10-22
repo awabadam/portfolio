@@ -34,19 +34,6 @@ export function countTemplates(playbook: Playbook): number {
   return playbook.chapters.reduce((n, c) => n + c.templates.length, 0);
 }
 
-/** The lead tracker CSV body (header + sample rows) from the tracking chapter, or null if missing. */
-export function leadTrackerCsv(playbook: Playbook): { filename: string; content: string } | null {
-  for (const chapter of playbook.chapters) {
-    const tpl = chapter.templates.find((t) => t.kind === "csv");
-    if (tpl) {
-      // CRLF line endings and a BOM so Excel opens UTF-8 names correctly.
-      const content = "\ufeff" + tpl.body.replace(/\r?\n/g, "\r\n") + "\r\n";
-      return { filename: "lead-tracker.csv", content };
-    }
-  }
-  return null;
-}
-
 /** Chapter preview for the result page and the email: promise, minutes, template count. */
 export interface ChapterPreview {
   id: QuestionId;

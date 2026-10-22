@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import { Link } from "@/i18n/routing";
 import { Button } from "@/components/ui/button";
@@ -17,7 +18,16 @@ import StockPhoto from "@/components/ui/stock-photo";
 // lib/pricing + the `packages` namespace).
 import PackageCards from "@/components/pricing/PackageCards";
 import CarePlanCards from "@/components/pricing/CarePlanCards";
-import { getCarePlan, formatPrice, includedCareMonths } from "@/lib/pricing";
+import {
+  getCarePlan,
+  getTier,
+  formatPrice,
+  formatPriceRange,
+  includedCareMonths,
+  patientValueRanges,
+} from "@/lib/pricing";
+import { trackEvent } from "@/lib/analytics";
+import { cn } from "@/lib/utils";
 import ClosingCard from "@/components/cta/ClosingCard";
 import BookCallLink from "@/components/cta/BookCallLink";
 
@@ -43,11 +53,26 @@ const notIncludedItems = [
 
 const faqKeys = ["faq1", "faq2", "faq3", "faq4", "faq5", "faq6", "faq7"];
 
+// Value of one patient across all treatments, lowest to highest (the same
+// cautious ranges as the check's budget question), shown before any price.
+const patientRange = [
+  Math.min(...Object.values(patientValueRanges).map(([min]) => min)),
+  Math.max(...Object.values(patientValueRanges).map(([, max]) => max)),
+] as const;
+
+// "Do you run ads abroad?" picks the package to highlight (faq4: the Clinic
+// Website is enough unless ads run abroad). Unanswered, neither is highlighted.
+const fitAnswers = [
+  { id: "yes", tier: "custom" },
+  { id: "no", tier: "business" },
+] as const;
+
 export default function PricingPage() {
   const t = useTranslations("pricing");
   // One real client quote, shown full width. Add more to data/testimonials.ts
   // and this becomes a list.
   const quote = testimonials[0];
+  const [fit, setFit] = useState<(typeof fitAnswers)[number] | null>(null);
   // Copy that quotes the entry monthly price ("Site Care from {carePrice}/mo")
   const siteCare = getCarePlan("careStandard");
   const priceValues = {
@@ -87,7 +112,56 @@ export default function PricingPage() {
 
       {/* Packages — sourced from lib/pricing.ts */}
       <section className="container mx-auto px-5 py-16 md:px-8">
-        <PackageCards headingLevel="h2" />
+        {/* Anchor: what one patient is worth comes before the first price */}
+        <p className="mb-8 max-w-2xl text-lg leading-relaxed text-muted-foreground">
+          {t("valueAnchor", {
+            range: formatPriceRange(patientRange),
+            price: formatPrice(getTier("business").price),
+          })}
+        </p>
+
+        <div className="mb-10 flex flex-wrap items-center gap-x-4 gap-y-3">
+          <p id="pricing-fit-question" className="text-base font-medium">
+            {t("fitQuestion")}
+          </p>
+          <div role="group" aria-labelledby="pricing-fit-question" className="flex gap-2">
+            {fitAnswers.map((answer) => {
+              const selected = fit?.id === answer.id;
+              return (
+                <button
+                  key={answer.id}
+                  type="button"
+                  aria-pressed={selected}
+                  onClick={() => {
+                    setFit(selected ? null : answer);
+                    if (!selected) trackEvent("pricing_fit_answer", { ads_abroad: answer.id });
+                  }}
+                  className={cn(
+                    "h-10 rounded-full border px-4 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                    selected
+                      ? "border-foreground bg-foreground text-background"
+                      : "border-border bg-card hover:border-foreground/60",
+                  )}
+                >
+                  {t(`fitAnswer.${answer.id}`)}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <PackageCards headingLevel="h2" recommended={fit?.tier ?? null} />
+
+        {/* Real terms from faq3/faq6, next to the prices instead of only in the FAQ */}
+        <p className="mt-8 max-w-2xl text-sm leading-relaxed text-muted-foreground">{t("termsLine")}</p>
+        <Link
+          href="/audit"
+          onClick={() => trackEvent("pricing_audit_click")}
+          className="mt-4 inline-flex min-h-11 items-center gap-1.5 text-base font-medium underline-offset-4 hover:underline"
+        >
+          {t("auditLink")}
+          <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden="true" />
+        </Link>
       </section>
 
       {/* Monthly plans — sourced from lib/pricing.ts */}

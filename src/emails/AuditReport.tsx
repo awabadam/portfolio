@@ -2,8 +2,7 @@
  * Lead-facing audit report, sent by POST /api/audit right after the check:
  * score card with the 10 checks, the 3 fixes with the first playbook steps
  * and a deep link to each chapter, the personal playbook link, what happens
- * next and the personal signature. The lead tracker CSV rides along as an
- * attachment (added by the route).
+ * next and the personal signature.
  */
 import { QUESTION_IDS, type Answer, type Answers, type BandId, type QuestionId } from "@/lib/audit";
 import type { Locale } from "@/i18n/config";
@@ -50,7 +49,6 @@ export interface AuditReportInput {
   playbook: Playbook;
   /** Hot leads also get the booking link. */
   hot: boolean;
-  csvAttached: boolean;
 }
 
 const CELL: Record<Answer, { bg: string; glyph: string }> = {
@@ -85,7 +83,6 @@ interface ViewProps {
   playbookUrl: string;
   whatsappUrl: string;
   bookUrl: string | null;
-  csvAttached: boolean;
   subject: string;
 }
 
@@ -273,11 +270,6 @@ export function AuditReportEmail(p: ViewProps) {
             </>
           ) : null}
         </P>
-        {p.csvAttached ? (
-          <P small muted style={{ margin: "18px 0 0 0" }}>
-            {p.m.playbook.email.csvNote}
-          </P>
-        ) : null}
       </Section>
 
       {/* What happens next */}
@@ -374,7 +366,6 @@ export async function buildAuditReportEmail(input: AuditReportInput): Promise<Re
       playbookUrl={input.playbookUrl}
       whatsappUrl={whatsappUrl}
       bookUrl={input.hot ? CAL_BOOKING_URL : null}
-      csvAttached={input.csvAttached}
       subject={subject}
     />,
   );

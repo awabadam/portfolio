@@ -1,7 +1,7 @@
 /**
  * Lead-facing playbook access email (POST /api/playbook, the direct path
  * without the check): personal link, the first summary lines, the check as
- * the next step and what happens next. The CSV is attached by the route.
+ * the next step and what happens next.
  */
 import type { Locale } from "@/i18n/config";
 import type { Playbook } from "@/data/playbook/types";
@@ -26,7 +26,6 @@ export interface PlaybookAccessInput {
   locale: Locale;
   playbookUrl: string;
   playbook: Playbook;
-  csvAttached: boolean;
 }
 
 export function PlaybookAccessEmail({
@@ -34,14 +33,12 @@ export function PlaybookAccessEmail({
   locale,
   playbook,
   playbookUrl,
-  csvAttached,
   checkUrl,
 }: {
   m: EmailMessages["audit"];
   locale: Locale;
   playbook: Playbook;
   playbookUrl: string;
-  csvAttached: boolean;
   checkUrl: string;
 }) {
   const e = m.email;
@@ -53,11 +50,6 @@ export function PlaybookAccessEmail({
         <H1>{playbook.title}</H1>
         <P>{pe.text}</P>
         <Pill href={playbookUrl}>{m.playbook.open}</Pill>
-        {csvAttached ? (
-          <P small muted style={{ margin: "14px 0 0 0" }}>
-            {pe.csvNote}
-          </P>
-        ) : null}
       </Section>
 
       <Section label={pe.summaryIntro}>
@@ -91,7 +83,6 @@ export async function buildPlaybookAccessEmail(input: PlaybookAccessInput): Prom
       locale={input.locale}
       playbook={input.playbook}
       playbookUrl={input.playbookUrl}
-      csvAttached={input.csvAttached}
       checkUrl={localeUrl("/audit", input.locale)}
     />,
   );

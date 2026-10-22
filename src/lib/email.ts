@@ -15,7 +15,7 @@ export const SENDERS = {
   hello: "hello@awab.design",
   audit: "audit@awab.design",
 } as const;
-const DEFAULT_FROM_NAME = "Awab Elkhalil";
+const DEFAULT_FROM_NAME = "Awab Design";
 
 export function isEmailConfigured(): boolean {
   return Boolean(process.env.RESEND_API_KEY && process.env.RECIPIENT_EMAIL);
@@ -29,9 +29,9 @@ export interface SendEmailOptions {
   replyTo?: string;
   /** Which awab.design address sends it (defaults to hello@). */
   from?: keyof typeof SENDERS;
-  /** Display name on the From line (defaults to "Awab Elkhalil"). */
+  /** Display name on the From line (defaults to "Awab Design"). */
   fromName?: string;
-  /** Small text attachments (e.g. the lead tracker CSV sent with the audit email). */
+  /** Small text attachments. */
   attachments?: { filename: string; content: string; contentType?: string }[];
 }
 

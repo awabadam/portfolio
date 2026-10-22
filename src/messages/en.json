@@ -320,6 +320,14 @@
     "heroEyebrow": "Pricing",
     "heroHeading": "Clinic website pricing",
     "heroSubtitle": "Two fixed-price packages and two monthly plans, all in US dollars. The price is the same wherever your clinic or your patients are.",
+    "valueAnchor": "One patient from abroad typically spends {range} at a clinic in Turkey. A Clinic Website starts at {price}.",
+    "fitQuestion": "Do you run ads in other countries?",
+    "fitAnswer": {
+      "yes": "Yes",
+      "no": "Not yet"
+    },
+    "termsLine": "Pay 50% to start and 50% at launch. If you're not happy with the design direction after the revisions, you get 50% back before development starts.",
+    "auditLink": "Not sure which fits? Check your site free in 2 minutes",
     "comparisonHeading": "Included in both packages",
     "comparisonSubtitle": "A fixed price, agreed before work starts",
     "includedHeading": "Always included",
@@ -359,13 +367,14 @@
     "testimonialViewWork": "View projects",
     "ctaHeading": "Not sure which package fits?",
     "ctaSubtitle": "Tell me about your clinic, your treatments and where your patients come from. I'll reply with a fixed quote within 24 hours.",
-    "ctaPrimary": "Get a quote",
+    "ctaPrimary": "Get my fixed quote",
     "ctaSecondary": "Contact me",
     "plansHeading": "Monthly plans",
     "plansSubtitle": "Hosting and upkeep after launch. The first {months} months come with your package; after that it's optional, and you own everything either way."
   },
   "packages": {
     "popular": "Recommended",
+    "fitBadge": "Fits your clinic",
     "fromPrice": "From {price}",
     "includedTitle": "Included at no extra cost",
     "valuedAt": "valued at {value}",
@@ -829,7 +838,7 @@
     },
     "orWhatsapp": "Or message me on WhatsApp",
     "successHeading": "Received. Your audit is on its way.",
-    "successText": "The playbook link is in your inbox at {email}, with the lead tracker attached, and the button below opens it now. I will go through {website} myself and send the written audit within 48 hours.",
+    "successText": "The playbook link is in your inbox at {email}, and the button below opens it now. I will go through {website} myself and send the written audit within 48 hours.",
     "successLink": "See clinic sites I have built",
     "errors": {
       "generic": "Something went wrong. Try again, or message me on WhatsApp.",
@@ -1053,7 +1062,6 @@
         "text": "The 30-Day International Patient Website Playbook is yours: 10 chapters, 17 copy-paste templates and a lead tracker. The link is personal, keep it:",
         "stepsIntro": "First two steps from the chapter:",
         "chapterLine": "Chapter {n}: {title} ({minutes} min read)",
-        "csvNote": "Attached: lead-tracker.csv, the sheet from chapter 9. Open it in Excel or Google Sheets and log today's inquiries.",
         "subject": "Your playbook: The 30-Day International Patient Website Playbook",
         "summaryIntro": "If you read nothing else, start with these:",
         "checkLine": "Not sure which chapter to start with? The free 2-minute check gives you your score and your 3 fixes in order: {url}",
@@ -1102,7 +1110,7 @@
       "submit": "Send me the playbook",
       "privacy": "Your email is used only to send the playbook. No newsletter.",
       "successHeading": "Your playbook is ready",
-      "successText": "Opening it now. The link is also in your inbox at {email}, with the lead tracker attached. Your Template Pack arrives by email in 2 days."
+      "successText": "Opening it now. The link is also in your inbox at {email}. Your Template Pack arrives by email in 2 days."
     },
     "peek": {
       "eyebrow": "Peek inside",

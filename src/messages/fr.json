@@ -320,6 +320,14 @@
     "heroEyebrow": "Tarifs",
     "heroHeading": "Tarifs des sites pour cliniques",
     "heroSubtitle": "Deux forfaits à prix fixe et deux formules mensuelles, tous en dollars américains. Le prix est le même, où que soient votre clinique et vos patients.",
+    "valueAnchor": "Un patient venu de l'étranger dépense en général {range} dans une clinique en Turquie. Un Site Clinique commence à {price}.",
+    "fitQuestion": "Faites-vous de la publicité dans d'autres pays ?",
+    "fitAnswer": {
+      "yes": "Oui",
+      "no": "Pas encore"
+    },
+    "termsLine": "50 % au démarrage, 50 % à la mise en ligne. Si la direction du design ne vous convient pas après les révisions, 50 % vous sont remboursés avant le début du développement.",
+    "auditLink": "Vous hésitez ? Vérifiez votre site gratuitement en 2 minutes",
     "comparisonHeading": "Inclus dans les deux forfaits",
     "comparisonSubtitle": "Un prix fixe, convenu avant le début du travail",
     "includedHeading": "Toujours inclus",
@@ -359,13 +367,14 @@
     "testimonialViewWork": "Voir les projets",
     "ctaHeading": "Vous hésitez entre les deux forfaits ?",
     "ctaSubtitle": "Parlez-moi de votre clinique, de vos soins et de l'origine de vos patients. Je vous réponds avec un devis à prix fixe sous 24 heures.",
-    "ctaPrimary": "Demander un devis",
+    "ctaPrimary": "Recevoir mon devis fixe",
     "ctaSecondary": "Me contacter",
     "plansHeading": "Formules mensuelles",
     "plansSubtitle": "Hébergement et entretien après la mise en ligne. Les {months} premiers mois sont inclus dans votre forfait ; ensuite c'est en option, et tout vous appartient dans tous les cas."
   },
   "packages": {
     "popular": "Recommandé",
+    "fitBadge": "Adapté à votre clinique",
     "fromPrice": "Dès {price}",
     "includedTitle": "Inclus sans surcoût",
     "valuedAt": "d'une valeur de {value}",
@@ -829,7 +838,7 @@
     },
     "orWhatsapp": "Ou écrivez-moi sur WhatsApp",
     "successHeading": "Bien reçu. Votre audit est en route.",
-    "successText": "Le lien du playbook est dans votre boîte mail à {email}, avec le suivi des demandes en pièce jointe, et le bouton ci-dessous l'ouvre tout de suite. Je passe {website} en revue moi-même et j'envoie l'audit écrit sous 48 heures.",
+    "successText": "Le lien du playbook est dans votre boîte mail à {email}, et le bouton ci-dessous l'ouvre tout de suite. Je passe {website} en revue moi-même et j'envoie l'audit écrit sous 48 heures.",
     "successLink": "Voir des sites de cliniques que j'ai réalisés",
     "errors": {
       "generic": "Une erreur s'est produite. Réessayez, ou écrivez-moi sur WhatsApp.",
@@ -1053,7 +1062,6 @@
         "text": "Le Playbook 30 jours du site qui attire les patients internationaux est à vous : 10 chapitres, 17 modèles à copier-coller et un suivi des demandes. Le lien est personnel, gardez-le :",
         "stepsIntro": "Les deux premières étapes du chapitre :",
         "chapterLine": "Chapitre {n} : {title} ({minutes} min de lecture)",
-        "csvNote": "Pièce jointe : lead-tracker.csv, la feuille du chapitre 9. Ouvrez-la dans Excel ou Google Sheets et notez les demandes du jour.",
         "subject": "Votre playbook : le Playbook 30 jours du site qui attire les patients internationaux",
         "summaryIntro": "Si vous ne lisez rien d'autre, commencez par ceci :",
         "checkLine": "Vous ne savez pas par quel chapitre commencer ? Le test gratuit de 2 minutes vous donne votre score et vos 3 corrections dans l'ordre : {url}",
@@ -1102,7 +1110,7 @@
       "submit": "Envoyez-moi le playbook",
       "privacy": "Votre e-mail sert uniquement à envoyer le playbook. Pas de newsletter.",
       "successHeading": "Votre playbook est prêt",
-      "successText": "Il s'ouvre maintenant. Le lien est aussi dans votre boîte {email}, avec le suivi des demandes en pièce jointe. Votre pack de modèles arrive par email dans 2 jours."
+      "successText": "Il s'ouvre maintenant. Le lien est aussi dans votre boîte {email}. Votre pack de modèles arrive par email dans 2 jours."
     },
     "peek": {
       "eyebrow": "Aperçu de l'intérieur",
