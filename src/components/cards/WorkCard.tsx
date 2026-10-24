@@ -1,12 +1,13 @@
 "use client";
 
-import { useRef, useState, type PointerEvent } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/routing";
 import { Project } from "@/types";
 import { cn } from "@/lib/utils";
+import { getCaseStudy } from "@/data/case-studies";
 import { GlassPill } from "@/components/ui/glass-pill";
 import { trackProjectClick } from "@/lib/analytics/gtm";
 
@@ -23,11 +24,8 @@ const ASPECT_CLASS: Record<NonNullable<WorkCardProps["aspect"]>, string> = {
   tall: "aspect-[4/5]",
 };
 
-// Projects with a rendered showreel in public/video/projects (see showreel/).
-const SHOWREELS = new Set(["jouvence", "saphiredent", "esteexpert", "omar-marketing", "gymtrack", "quran-app"]);
-
 const IMAGE_CLASS =
-  "absolute inset-0 z-[1] h-full w-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.03]";
+  "absolute inset-0 z-[1] h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]";
 
 export default function WorkCard({
   project,
@@ -42,25 +40,11 @@ export default function WorkCard({
   const reduceMotion = useReducedMotion();
   const [useFallback, setUseFallback] = useState(false);
   const [screenshotError, setScreenshotError] = useState(false);
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const [videoOn, setVideoOn] = useState(false);
-  const hasVideo = SHOWREELS.has(project.id) && !reduceMotion;
 
-  // Play the showreel on hover (fine pointers only); rewind on leave.
-  const startVideo = (e: PointerEvent) => {
-    if (!hasVideo || e.pointerType !== "mouse") return;
-    setVideoOn(true);
-    videoRef.current?.play().catch(() => setVideoOn(false));
-  };
-  const stopVideo = () => {
-    const video = videoRef.current;
-    setVideoOn(false);
-    if (!video) return;
-    video.pause();
-    video.currentTime = 0;
-  };
-
-  const thumbnailSrc = `/img/projects/${project.id}-thumbnail.webp`;
+  // Case studies use their laptop photo mockup (the same shot that opens the
+  // case study page); other projects use a plain screenshot thumbnail.
+  const mockup = getCaseStudy(project.id)?.mockups?.laptop;
+  const thumbnailSrc = mockup ?? `/img/projects/${project.id}-thumbnail.webp`;
   const screenshotSrc = project.live_url
     ? `/api/screenshot?url=${encodeURIComponent(project.live_url)}`
     : null;
@@ -80,8 +64,6 @@ export default function WorkCard({
       <Link
         href={`/projects/${project.id}`}
         onClick={handleClick}
-        onPointerEnter={startVideo}
-        onPointerLeave={stopVideo}
         className={cn(
           "group relative isolate block w-full overflow-hidden rounded-[10px] bg-neutral-900 text-white",
           ASPECT_CLASS[aspect]
@@ -94,7 +76,7 @@ export default function WorkCard({
           </span>
         </div>
 
-        {/* Layer 1: Local thumbnail (optimized, 2x-ready) -> screenshot API fallback */}
+        {/* Layer 1: Mockup or local thumbnail (optimized, 2x-ready) -> screenshot API fallback */}
         {!useFallback ? (
           <Image
             src={thumbnailSrc}
@@ -103,7 +85,8 @@ export default function WorkCard({
             sizes="(min-width: 768px) 50vw, 100vw"
             quality={85}
             priority={priority}
-            className={IMAGE_CLASS}
+            // Screenshots keep the top of the page (the hero) in frame; mockups are centred.
+            className={cn(IMAGE_CLASS, !mockup && "object-top")}
             onError={() => setUseFallback(true)}
           />
         ) : null}
@@ -116,27 +99,9 @@ export default function WorkCard({
             height={1100}
             loading="lazy"
             decoding="async"
-            className={IMAGE_CLASS}
+            className={cn(IMAGE_CLASS, "object-top")}
             onError={() => setScreenshotError(true)}
           />
-        ) : null}
-
-        {hasVideo ? (
-          <video
-            ref={videoRef}
-            aria-hidden="true"
-            className={cn(
-              "absolute inset-0 z-[1] h-full w-full object-cover transition-opacity duration-500",
-              videoOn ? "opacity-100" : "opacity-0"
-            )}
-            muted
-            loop
-            playsInline
-            preload="none"
-          >
-            <source src={`/video/projects/${project.id}.webm`} type="video/webm" />
-            <source src={`/video/projects/${project.id}.mp4`} type="video/mp4" />
-          </video>
         ) : null}
 
         {/* Layer 2: Scrim */}

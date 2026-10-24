@@ -1,7 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from "react";
-import Image from "next/image";
+import { useCallback, useEffect, useState, type KeyboardEvent } from "react";
+import { getImageProps } from "next/image";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useLocale, useTranslations } from "next-intl";
 import { ArrowUpRight } from "lucide-react";
@@ -16,20 +16,71 @@ interface Slide {
   id: string;
   title: string;
   categoryKey: SlideCategoryKey;
-  image: string;
+  // Photo mockups from public/img/projects/<id>/. `landscape` is a 2000x1333
+  // laptop scene, `portrait` the 2000x2500 phone scene. The laptop scenes are
+  // decision shots, so they don't repeat the laptop-home shots on the work cards.
+  landscape: string;
+  portrait: string;
 }
 
 const SLIDES: Slide[] = [
-  { id: "jouvence", title: "Jouvence", categoryKey: "jouvence", image: "/img/projects/jouvence-thumbnail.webp" },
-  { id: "saphiredent", title: "SaphireDent", categoryKey: "saphiredent", image: "/img/projects/saphiredent-thumbnail.webp" },
-  { id: "esteexpert", title: "EsteExpert Clinic", categoryKey: "esteexpert", image: "/img/projects/esteexpert-thumbnail.webp" },
+  {
+    id: "jouvence",
+    title: "Jouvence",
+    categoryKey: "jouvence",
+    landscape: "/img/projects/jouvence/laptop-decision-3.webp",
+    portrait: "/img/projects/jouvence/phone-1.webp",
+  },
+  {
+    id: "saphiredent",
+    title: "SaphireDent",
+    categoryKey: "saphiredent",
+    landscape: "/img/projects/saphiredent/laptop-decision-4.webp",
+    portrait: "/img/projects/saphiredent/phone-1.webp",
+  },
+  {
+    id: "esteexpert",
+    title: "EsteExpert Clinic",
+    categoryKey: "esteexpert",
+    landscape: "/img/projects/esteexpert/laptop-decision-1.webp",
+    portrait: "/img/projects/esteexpert/phone-1.webp",
+  },
 ];
 
-// Image slides advance on a timer; showreel slides advance when the video ends.
 const AUTO_ADVANCE_MS = 6000;
 const CROSSFADE_S = 0.9;
-// Showreels are 16:10, so they're only used where a landscape crop makes sense.
-const VIDEO_QUERY = "(min-width: 768px)";
+// The laptop scene where the hero is wider than tall, the phone scene otherwise
+// (phones and portrait tablets), so object-cover never crops much of either.
+const LANDSCAPE_QUERY = "(orientation: landscape)";
+
+function SlideImage({ slide, first }: { slide: Slide; first: boolean }) {
+  // 75, not 85: it sits under a 45% black scrim, and it is the LCP image, so
+  // bytes matter more than fine detail here.
+  const common = { alt: "", fill: true, sizes: "100vw", quality: 75 } as const;
+  const {
+    props: { srcSet: landscape },
+  } = getImageProps({ ...common, src: slide.landscape });
+  // A <picture> only fetches the matching source, so eager loading the first
+  // slide doesn't download both scenes.
+  const {
+    props: { srcSet: portrait, ...rest },
+  } = getImageProps({
+    ...common,
+    // A 4:5 scene covering a tall box renders wider than the viewport.
+    sizes: "125vw",
+    src: slide.portrait,
+    loading: first ? "eager" : "lazy",
+    fetchPriority: first ? "high" : "auto",
+  });
+
+  return (
+    <picture>
+      <source media={LANDSCAPE_QUERY} srcSet={landscape} />
+      {/* eslint-disable-next-line @next/next/no-img-element -- art direction needs a raw <img> */}
+      <img {...rest} srcSet={portrait} className="object-cover" />
+    </picture>
+  );
+}
 
 export default function HeroSlider() {
   const t = useTranslations("home");
@@ -42,14 +93,8 @@ export default function HeroSlider() {
   // Bumped on manual navigation so the auto-advance timer restarts.
   const [timerKey, setTimerKey] = useState(0);
 
-  const [wide, setWide] = useState(false);
-  const [videoFailed, setVideoFailed] = useState(false);
-  const videoRef = useRef<HTMLVideoElement | null>(null);
-  const progressRef = useRef<HTMLSpanElement | null>(null);
-
   const count = SLIDES.length;
   const paused = reducedMotion || hidden;
-  const videoMode = wide && !reducedMotion && !videoFailed;
 
   const goTo = useCallback(
     (next: number) => {
@@ -67,46 +112,14 @@ export default function HeroSlider() {
     return () => document.removeEventListener("visibilitychange", onVisibility);
   }, []);
 
+  // Auto-advance.
   useEffect(() => {
-    const mq = window.matchMedia(VIDEO_QUERY);
-    const onChange = () => setWide(mq.matches);
-    onChange();
-    mq.addEventListener("change", onChange);
-    return () => mq.removeEventListener("change", onChange);
-  }, []);
-
-  // Keep the showreel in step with tab visibility.
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!videoMode || !video) return;
-    if (hidden) video.pause();
-    else video.play().catch(() => {});
-  }, [hidden, index, videoMode]);
-
-  // In video mode the progress bar tracks playback instead of a timer.
-  useEffect(() => {
-    if (!videoMode) return;
-    let raf = 0;
-    const tick = () => {
-      const video = videoRef.current;
-      const bar = progressRef.current;
-      if (video && bar && video.duration) {
-        bar.style.transform = `scaleX(${video.currentTime / video.duration})`;
-      }
-      raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [videoMode, index]);
-
-  // Auto-advance (image mode only).
-  useEffect(() => {
-    if (paused || videoMode) return;
+    if (paused) return;
     const id = window.setTimeout(() => {
       setIndex((i) => (i + 1) % count);
     }, AUTO_ADVANCE_MS);
     return () => window.clearTimeout(id);
-  }, [index, timerKey, paused, videoMode, count]);
+  }, [index, timerKey, paused, count]);
 
   // Arrow keys follow the visual order: in RTL the "next" slide is to the left.
   const forwardKey = rtl ? "ArrowLeft" : "ArrowRight";
@@ -131,69 +144,37 @@ export default function HeroSlider() {
       aria-label={t("heroKicker")}
       className="relative isolate flex min-h-[100svh] flex-col overflow-hidden bg-black text-white outline-none"
     >
-      {/* Media: project showreels, darkened so the message reads on top. */}
+      {/* Media: project photo mockups, full bleed. The copy sits low, under the device screens. */}
       <div className="absolute inset-0 -z-10" aria-hidden="true">
         <AnimatePresence initial={false}>
+          {/* Portrait: the phone scene fills the top of the hero and fades out behind
+              the copy, so the phone screen sits above the headline, not under it. */}
           <motion.div
             key={slide.id}
-            className="absolute inset-0"
+            className="absolute inset-x-0 top-0 h-[72%] [mask-image:linear-gradient(to_bottom,#000_65%,transparent)] landscape:h-full landscape:[mask-image:none]"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: reducedMotion ? 0 : CROSSFADE_S, ease: "linear" }}
           >
-            <Image
-              src={slide.image}
-              alt=""
-              fill
-              sizes="100vw"
-              // 75, not 85: it sits under a 45% black scrim, and it is the
-              // mobile LCP image, so bytes matter more than fine detail here.
-              quality={75}
-              priority={index === 0}
-              className="object-cover"
-            />
-            {videoMode && (
-              <video
-                ref={(el) => {
-                  videoRef.current = el;
-                  return () => {
-                    if (videoRef.current === el) videoRef.current = null;
-                  };
-                }}
-                className="absolute inset-0 h-full w-full object-cover"
-                poster={`/video/projects/${slide.id}-poster.webp`}
-                autoPlay
-                muted
-                playsInline
-                preload="auto"
-                onEnded={() => goTo(index + 1)}
-                onError={() => setVideoFailed(true)}
-              >
-                <source src={`/video/projects/${slide.id}.webm`} type="video/webm" />
-                <source
-                  src={`/video/projects/${slide.id}.mp4`}
-                  type="video/mp4"
-                  onError={() => setVideoFailed(true)}
-                />
-              </video>
-            )}
+            <SlideImage slide={slide} first={index === 0} />
           </motion.div>
         </AnimatePresence>
-        {/* Scrim: flat darkening plus a heavier band behind the copy and the bottom bar. */}
-        <div className="pointer-events-none absolute inset-0 bg-black/45" />
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/40 via-black/10 to-black/75" />
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-black/55 via-black/15 to-transparent rtl:bg-gradient-to-l" />
+        {/* Scrim: light overall so the scene keeps its colour, dark only behind the nav
+            (top band) and behind the copy and the bottom bar (bottom band, start side). */}
+        <div className="pointer-events-none absolute inset-0 bg-black/15" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/50 to-transparent to-25%" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/90 via-black/45 via-35% to-transparent to-70%" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-black/45 via-transparent via-60% to-transparent rtl:bg-gradient-to-l" />
       </div>
 
       {/* Message */}
-      <div className="container flex flex-1 flex-col justify-center px-5 pb-10 pt-32 md:px-8 md:pb-16 md:pt-40">
+      <div className="container flex flex-1 flex-col justify-end px-5 pb-8 pt-32 md:px-8 md:pb-10 md:pt-40">
         <div className="max-w-4xl">
           <p className="font-mono text-label text-white/70">{t("heroKicker")}</p>
           <h1 className="mt-5 max-w-[16ch] font-display text-hero text-white [text-wrap:balance]">
             {t("heroHeadline")}
           </h1>
-          <p className="mt-6 max-w-xl text-base leading-relaxed text-white/85 md:text-lg">{t("heroSubline")}</p>
           <div className="mt-8 flex flex-col items-start gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
             <GlassPill
               href="/audit"
@@ -257,14 +238,7 @@ export default function HeroSlider() {
                 className="group flex h-6 w-8 items-center focus-visible:outline-none md:w-10"
               >
                 <span className="relative block h-0.5 w-full overflow-hidden bg-white/20 group-focus-visible:ring-2 group-focus-visible:ring-white/60">
-                  {active && videoMode && (
-                    <span
-                      key={`${i}-video`}
-                      ref={progressRef}
-                      className="absolute inset-0 origin-left scale-x-0 bg-white rtl:origin-right"
-                    />
-                  )}
-                  {active && !videoMode && (
+                  {active && (
                     <motion.span
                       key={`${i}-${timerKey}`}
                       className="absolute inset-0 origin-left bg-white rtl:origin-right"
