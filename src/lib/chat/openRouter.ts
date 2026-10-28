@@ -2,7 +2,7 @@ import { ChatMessage, ChatContext } from "./chatBot";
 import { services, projects, businessInfo, faqs } from "./knowledgeBase";
 // 💰 Pricing source of truth: edit prices in src/lib/pricing.ts
 // The chat assistant's pricing answers are generated from this data.
-import { projectTiers, carePlans, formatPrice, formatPlanPrice, getIncludedAddOns, includedCareMonths } from "@/lib/pricing";
+import { projectTiers, carePlans, brandKit, formatPrice, formatPlanPrice, getIncludedAddOns, getBrandKitBundlePrice, includedCareMonths } from "@/lib/pricing";
 
 export interface OpenRouterResponse {
   id: string;
@@ -46,6 +46,8 @@ function buildSystemPrompt(context: ChatContext, locale?: string): string {
   const planPrices = carePlans.map((p) =>
     `${planNames[p.id] ?? p.id}: ${formatPlanPrice(p)}/mo`
   ).join(", ");
+  const brandKitName = "Clinic Brand Kit";
+  const bundleName = `${tierNames[brandKit.bundle.withTier]} + ${brandKitName}`;
 
   const addOnLabels: Record<string, string> = {
     seo: "SEO setup with medical schema",
@@ -75,17 +77,18 @@ function buildSystemPrompt(context: ChatContext, locale?: string): string {
 
   return `You are Awab Design's assistant. Brief, friendly, helpful. 2-3 sentences max. Plain text only.
 ${langInstruction ? `\n${langInstruction}` : ""}
-About: Builds patient-acquisition websites for Istanbul clinics that treat international patients (dental, aesthetic, hair, medical tourism). Based in Istanbul. Speaks English, Arabic, Turkish, French.
+About: Builds patient-acquisition websites for Istanbul clinics that treat international patients (dental, aesthetic, hair, medical tourism), and designs their brand: logo, social media templates and the WhatsApp kit patients see before they book. Based in Istanbul. Speaks English, Arabic, Turkish, French.
 Email: ${businessInfo.email} | WhatsApp: ${businessInfo.phone}
 
 PRICING (USD, same prices in every language and country):
 Packages: ${tierPrices}
 Monthly plans: ${planPrices}. The first ${includedCareMonths} months of the matching plan come free with each package (Site Care with Clinic Website, Growth Retainer with Growth System).
-Bundled free (no paid add-ons): ${bundles}
+Bundled free in each package (website add-ons are not sold separately): ${bundles}
+${brandKitName}: from ${formatPrice(brandKit.price)}, ready in 2-3 weeks. ${bundleName}: ${formatPrice(getBrandKitBundlePrice())} for both, ${formatPrice(brandKit.bundle.discount)} less than buying them separately.
 Pricing details: /pricing
 
-SERVICES: Two packages for clinics. Clinic Website: site in up to 3 languages, a page per treatment, WhatsApp button on every treatment page, tracking for WhatsApp clicks, forms and calls. Clinic Growth System: everything in Clinic Website plus 6+ languages including Arabic (RTL), admin panel for the clinic team, AI patient assistant, every inquiry saved with the patient's country, CRM handoff, and Google Ads offline-conversion export so the clinic sees which ads bring patients. Site Care covers hosting, domain, SSL, security and small changes; Growth Retainer adds a monthly lead report, ads-tracking upkeep and new treatment/campaign pages. No app development, brand identity, or non-clinic websites.
-Details: /services
+SERVICES: Two packages for clinics. Clinic Website: site in up to 3 languages, a page per treatment, WhatsApp button on every treatment page, tracking for WhatsApp clicks, forms and calls. Clinic Growth System: everything in Clinic Website plus 6+ languages including Arabic (RTL), admin panel for the clinic team, AI patient assistant, every inquiry saved with the patient's country, CRM handoff, and Google Ads offline-conversion export so the clinic sees which ads bring patients. Site Care covers hosting, domain, SSL, security and small changes; Growth Retainer adds a monthly lead report, ads-tracking upkeep and new treatment/campaign pages. ${brandKitName} (design service for the same clinics): a new logo or a refresh of the current one, colours, fonts and a short brand guide, before-and-after post and story templates for every treatment, a WhatsApp kit for each coordinator (profile picture, contact card, stories), a quote and price-list template for WhatsApp, Instagram and Facebook profile and cover images, all files in AI, SVG, PNG and PDF with two rounds of changes. The clinic's team fills in the templates: Awab doesn't run social media accounts or supply or edit patient photos. No app development or non-clinic websites.
+Details: /services. Clinic branding: /services/clinic-branding
 
 PORTFOLIO: ${projectList}
 All projects: /projects
@@ -93,8 +96,10 @@ All projects: /projects
 BEHAVIOR:
 - When asked about pricing, give the USD prices above (never convert or quote other currencies) and link to /pricing.
 - When asked about portfolio or examples, recommend relevant projects from the list above based on their industry.
-- For clinic inquiries, lead with SaphireDent (lead tracking and Google Ads offline conversions), then Jouvence or EsteExpert.
+- For clinic website inquiries, lead with SaphireDent (lead tracking and Google Ads offline conversions), then Jouvence or EsteExpert.
 - For marketing/agency inquiries, recommend Omar Marketing.
+- For logo, branding, Instagram or social media templates, before-and-after posts or WhatsApp profile questions, recommend the ${brandKitName} (/services/clinic-branding) and point to the Bespoke Clinics (/projects/bespoke-clinic) and Yasmina Beauty (/projects/yasmina-beauty) case studies. If the clinic also needs a website, mention the ${bundleName} bundle. Quote links: /contact?plan=${brandKit.contactValue} or /contact?plan=${brandKit.bundle.contactValue}.
+- Websites are the main offer: on website questions, lead with the two packages, not the ${brandKitName}.
 - To collect leads: ask name → email → phone (optional). Confirm 24hr response.
 - Always suggest /contact for a personalized quote.${contextInfo ? `\nVisitor info:${contextInfo}` : ""}`;
 }

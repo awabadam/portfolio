@@ -135,7 +135,7 @@
     "capHosting": "Hosting and care",
     "capHostingDesc": "Hosting, domain, SSL and updates in one monthly plan",
     "pricingHeading": "Packages and prices",
-    "pricingSubtitle": "Two fixed-price packages, priced in US dollars",
+    "pricingSubtitle": "Two fixed-price website packages and the Clinic Brand Kit, priced in US dollars",
     "faqHeading": "Frequently asked questions",
     "faq1Q": "How long does a clinic website take?",
     "faq1A": "A Clinic Website takes 3-4 weeks. A Clinic Growth System takes 6-8 weeks, depending on the number of treatments and languages.",
@@ -239,6 +239,41 @@
       "ctaHeading": "Not sure which plan fits?",
       "ctaDescription": "Tell me about your site and I'll suggest the right plan, or set one up with your new site."
     },
+    "clinicBranding": {
+      "eyebrow": "Clinic branding",
+      "heading": "A clinic brand patients trust before they call",
+      "lead": "Patients abroad choose a clinic from its Instagram and one WhatsApp chat. I design the logo, the before-and-after templates and the coordinator kit, so every place they meet you looks like the same trusted clinic.",
+      "pricing": "From {price}",
+      "ctaPrimary": "Talk about your clinic",
+      "ctaSecondary": "See all prices",
+      "proofHeading": "Recent brand work",
+      "proofLink": "See the brand work",
+      "proof": {
+        "bespokeClinic": "Logo, monogram, signage and a sales kit for an Istanbul clinic",
+        "yasminaBeauty": "Three logo directions, a red identity and before-and-after templates for a beauty clinic"
+      },
+      "step1Title": "Direction",
+      "step1Desc": "Moodboards first, so we agree on the feel before any logo work.",
+      "step2Title": "Logo",
+      "step2Desc": "Two or three routes, each shown on signage, posts and WhatsApp. Or a refresh if you want to keep yours.",
+      "step3Title": "Templates and kit",
+      "step3Desc": "Before-and-after posts and stories, coordinator profiles, the quote template.",
+      "step4Title": "Handover",
+      "step4Desc": "Every file, a short brand guide, and templates your team can fill in without a designer.",
+      "faqHeading": "Questions about clinic branding",
+      "faq1Q": "We already have a logo. Do we need a new one?",
+      "faq1A": "No. I can refresh it, or keep it as it is and build the templates and WhatsApp kit around it.",
+      "faq2Q": "Do you run our social media?",
+      "faq2A": "No. You get templates your team fills in with new cases. Most clinics post a new before-and-after in minutes.",
+      "faq3Q": "Can I get the brand and the website together?",
+      "faq3A": "Yes. With the Clinic Growth System the two cost {bundlePrice}, {saving} less than separately, and the website is designed with the new brand from day one.",
+      "faq4Q": "What about patient photos?",
+      "faq4A": "The templates are built for photos you have written consent to share. I don't supply or edit patient photos.",
+      "faq5Q": "How long does it take?",
+      "faq5A": "2 to 3 weeks, depending on how fast we agree on the direction.",
+      "ctaHeading": "Want patients to recognise you before they arrive?",
+      "ctaDescription": "Send me your Instagram and your current logo. I'll tell you what I would change first and reply with a fixed quote within 24 hours."
+    },
     "capTreatments": "Treatment pages",
     "capTreatmentsDesc": "A clear page for each treatment patients search for",
     "capWhatsapp": "WhatsApp on every page",
@@ -258,7 +293,7 @@
     "heroCtaAudit": "Get your free clinic audit",
     "heroCtaPackages": "See packages",
     "heroNote": "Designed, built and supported by one person. You talk to the builder, not an account manager.",
-    "deliverablesSubtitle": "Every item below is part of a package on the pricing page. Nothing is sold as an add-on.",
+    "deliverablesSubtitle": "Every item below is part of a website package on the pricing page. None of it is sold as an add-on.",
     "deliverablesIn": "In {package}",
     "processSubtitle": "From first call to a live site in 3-4 weeks for a Clinic Website, 6-8 weeks for a Clinic Growth System.",
     "compare": {
@@ -297,7 +332,7 @@
         {
           "label": "Pricing",
           "agency": "Quote on request, often bundled with a monthly ad budget.",
-          "me": "Two fixed prices and two monthly plans, published on this site."
+          "me": "Fixed prices for every package and monthly plan, published on this site."
         }
       ],
       "note": "I do not run ads. I build the site and the tracking so that whoever runs your campaigns, in-house or an agency, can see which ones bring patients."
@@ -318,7 +353,7 @@
   "pricing": {
     "heroEyebrow": "Pricing",
     "heroHeading": "Clinic website pricing",
-    "heroSubtitle": "Two fixed-price packages and two monthly plans, all in US dollars. The price is the same wherever your clinic or your patients are.",
+    "heroSubtitle": "Two fixed-price website packages, two monthly plans and the Clinic Brand Kit, all in US dollars. The price is the same wherever your clinic or your patients are.",
     "valueAnchor": "One patient from abroad typically spends {range} at a clinic in Turkey. A Clinic Website starts at {price}.",
     "fitQuestion": "Do you run ads in other countries?",
     "fitAnswer": {
@@ -344,7 +379,6 @@
     "notIncluded3": "Writing treatment content from scratch",
     "notIncluded4": "Translation into new languages (you provide it, or I recommend translators)",
     "notIncluded5": "Photography and video",
-    "notIncluded6": "Logo and brand identity",
     "faqHeading": "Pricing questions",
     "faqSubtitle": "What clinic owners ask before they decide",
     "faq1Q": "Why are prices in US dollars?",
@@ -404,6 +438,23 @@
       "Inquiries passed on to your CRM",
       "Google Ads offline-conversion export, so you see which ads bring booked patients"
     ],
+    "clinicBrandKit": "Clinic Brand Kit",
+    "clinicBrandKitEyebrow": "Brand design",
+    "clinicBrandKitDesc": "Everything a patient sees before they book: your logo, your Instagram, and the WhatsApp chat with your coordinator.",
+    "clinicBrandKitTimeframe": "Ready in 2-3 weeks",
+    "clinicBrandKitFeatures": [
+      "A new logo, or a refresh of the one you have",
+      "Colours, fonts and a short brand guide",
+      "Before-and-after post and story templates for every treatment",
+      "WhatsApp kit for each coordinator: profile picture, contact card and stories",
+      "Quote and price-list template for WhatsApp",
+      "Instagram and Facebook profile and cover images",
+      "All files in AI, SVG, PNG and PDF, and two rounds of changes"
+    ],
+    "clinicBrandKitLink": "See the process and past brand work",
+    "brandKitBundleHeading": "Add the Clinic Brand Kit to the Growth System",
+    "brandKitBundleText": "Logo, social templates and the WhatsApp kit, designed alongside your website so everything matches. {bundlePrice} for both, {saving} less than buying them separately.",
+    "brandKitBundleCta": "Ask about the bundle",
     "seoSetup": "SEO setup with medical schema",
     "blogSystem": "Blog",
     "contentManagement": "Admin panel (CMS)",
@@ -467,6 +518,8 @@
     "projectGrowthSystem": "Clinic Growth System",
     "projectSiteCare": "Site Care (monthly)",
     "projectGrowthRetainer": "Growth Retainer (monthly)",
+    "projectClinicBrandKit": "Clinic Brand Kit",
+    "projectBrandBundle": "Growth System + Brand Kit",
     "bookEyebrow": "Prefer to talk?",
     "bookHeading": "Book a 15-minute call",
     "bookText": "Pick a time that suits you. We look at your current site together, and I tell you honestly what I would fix first. No pitch deck, no obligation.",
@@ -613,7 +666,23 @@
     "constraintsHeading": "What made it hard",
     "advisedAgainstHeading": "What we advised against",
     "deliveredHeading": "What was delivered",
-    "timelineHeading": "Timeline"
+    "timelineHeading": "Timeline",
+    "brandWork": "Brand work",
+    "brandWorkIntro": "Logos, social templates and patient-facing kits for clinics.",
+    "viewOnBehance": "View on Behance",
+    "brandCaseStudyTitle": "{title}: Clinic Branding Case Study",
+    "brandBoardsHeading": "The brand",
+    "brandScope": {
+      "stylescapes": "Stylescapes",
+      "logo": "Logo",
+      "stationery": "Stationery",
+      "socialTemplates": "Social media templates",
+      "salesKit": "Sales team kit"
+    },
+    "brandServiceKicker": "Clinic branding",
+    "brandServiceHeading": "Want a brand like this for your clinic?",
+    "brandServiceText": "I design the logo, the before-and-after templates and the WhatsApp kit for your coordinators, so every place patients meet you looks like the same clinic.",
+    "brandServiceButton": "See clinic branding"
   },
   "chat": {
     "ariaOpen": "Open chat",
@@ -637,7 +706,7 @@
     "dialogTitle": "Chat with us",
     "errorTooFast": "You're sending messages too quickly. Please wait a moment before trying again.",
     "errorGeneral": "I'm sorry, I encountered an error. Please try again or contact us directly.",
-    "greeting": "Hello! I'm here to help you learn about Awab's web design services. How can I assist you today?",
+    "greeting": "Hello, I'm here to help you learn about Awab's clinic websites and branding. How can I assist you today?",
     "newConversation": "Thank you for chatting! I've started a new conversation. How can I help you today?",
     "whatsapp": "WhatsApp",
     "getQuote": "Get Quote",
@@ -703,6 +772,10 @@
     "websiteMaintenance": {
       "title": "Clinic Website Hosting & Care Plans | Awab Design",
       "description": "Site Care from {carePrice}/month covers hosting, domain, SSL and updates. The Growth Retainer adds a monthly lead report by country and Google Ads tracking upkeep."
+    },
+    "clinicBranding": {
+      "title": "Clinic Branding and Logo Design | Awab Design",
+      "description": "Clinic Brand Kit from {price}: logo, colours, before-and-after Instagram templates and a WhatsApp kit for your patient coordinators. Ready in 2-3 weeks."
     },
     "blog": {
       "title": "Notes on Clinic Websites and Patient Leads",
@@ -836,7 +909,7 @@
     "ctaHeading": "Get a written audit of your actual site",
     "ctaText": "Send me your website and I will go through it myself: the treatment pages, the languages, the WhatsApp path, speed on a phone and what your tracking actually captures. You get a written audit by email with the fixes in order and what each one is worth to you. Written by me, not generated.",
     "ctaReason": "I do a limited number of these each week, because I do them personally. Send yours now and you will have it within 48 hours.",
-    "ctaDiy": "Prefer to fix it yourself? Your 3 fixes above are enough to start. If you want it done, the Clinic Website package starts at $2,500.",
+    "ctaDiy": "Prefer to fix it yourself? Your 3 fixes above are enough to start. If you want it done, the Clinic Website package starts at {price}.",
     "form": {
       "website": "Website address",
       "websitePlaceholder": "www.yourclinic.com",
@@ -850,6 +923,7 @@
       "privacy": "Your details are used only to send the playbook and the audit. No newsletter.",
       "addPhone": "Add WhatsApp for faster reply",
       "websiteKnown": "Audit for {website}",
+      "emailKnown": "Sent to {email}",
       "change": "Change"
     },
     "orWhatsapp": "Or message me on WhatsApp",
@@ -869,7 +943,7 @@
       "scoreLine": "Your website {website} scored {score}/100: {band}.",
       "fixesIntro": "The 3 fixes that will bring more inquiries, in the order to do them:",
       "promise": "I will go through your site myself and send you a written audit within 48 hours, with what each fix is worth to you and what to do first.",
-      "diy": "Prefer to fix it yourself? The 3 fixes above are enough to start. If you want it done, the Clinic Website package starts at $2,500.",
+      "diy": "Prefer to fix it yourself? The 3 fixes above are enough to start. If you want it done, the Clinic Website package starts at {price}.",
       "whatsapp": "Questions in the meantime? WhatsApp: {number}",
       "signoff": "Best regards,",
       "preheader": "Your free playbook is inside. Personal audit within 48 hours.",
@@ -934,13 +1008,18 @@
       "button": "Get the free playbook",
       "checkLink": "Or start with the free 2-minute check"
     },
+    "emailStep": {
+      "eyebrow": "Your email",
+      "heading": "Where should I send your report?",
+      "text": "Your score shows on screen at the end. The full report and the playbook go to this address, so you can come back to them later.",
+      "label": "Email",
+      "submit": "Continue"
+    },
     "scan": {
       "eyebrow": "Your website",
       "heading": "First, where does a patient land?",
       "text": "Enter your website. The check reads your home page the way a patient's phone does and answers what it can on its own, so you have fewer questions. About 10 seconds.",
       "label": "Website address",
-      "emailLabel": "Where should I send your full report?",
-      "emailNote": "Only for your report. No newsletter.",
       "placeholder": "www.yourclinic.com",
       "submit": "Check my site",
       "skip": "Skip, I will answer manually",
@@ -1292,7 +1371,7 @@
       },
       "pricing": {
         "title": "Pricing",
-        "desc": "Two fixed packages and two monthly plans, in USD"
+        "desc": "Website packages, monthly plans and the Brand Kit, in USD"
       },
       "audit": {
         "title": "Free website check",
@@ -1309,6 +1388,10 @@
       "maintenance": {
         "title": "Hosting and care plans",
         "desc": "What keeps the site running after launch"
+      },
+      "clinicBranding": {
+        "title": "Clinic branding",
+        "desc": "Logo, social templates and the WhatsApp kit"
       },
       "contact": {
         "title": "Contact",

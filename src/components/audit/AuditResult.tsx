@@ -9,6 +9,7 @@ import { QUESTION_IDS, computeResult, type Answer, type ClinicProfile, type Ques
 import type { ScanChecks } from "@/lib/auditScan";
 import type { ChapterPreview } from "@/lib/playbook";
 import { PLAYBOOK_META } from "@/lib/playbookMeta";
+import { formatPrice, getTier } from "@/lib/pricing";
 import AuditLeadForm from "./AuditLeadForm";
 import { hostOf } from "./AuditScanStep";
 
@@ -22,9 +23,9 @@ interface AuditResultProps {
   profile?: Partial<ClinicProfile>;
   /** Playbook chapter previews for this locale (all 10), to show the 3 matching the fixes. */
   chapters?: ChapterPreview[];
-  /** Email from the website step, prefilled in the form. */
+  /** Email from the first step, shown in the form. */
   email?: string;
-  /** Token of the partial lead saved on the website step; the form completes that lead. */
+  /** Token of the partial lead saved on the email step; the form completes that lead. */
   partialToken?: string | null;
   /** The form was sent: the partial lead is now complete. */
   onSubmitted?: () => void;
@@ -253,7 +254,7 @@ export default function AuditResult({
               <p className="mt-6 text-base leading-relaxed text-muted-foreground md:text-lg">{t("ctaText")}</p>
               {/* Reason to act now: true by construction (limited by Awab's time), no counters. */}
               <p className="mt-5 border-s-2 border-foreground/30 ps-4 text-base leading-relaxed">{t("ctaReason")}</p>
-              <p className="mt-5 text-sm leading-relaxed text-muted-foreground">{t("ctaDiy")}</p>
+              <p className="mt-5 text-sm leading-relaxed text-muted-foreground">{t("ctaDiy", { price: formatPrice(getTier("business").price) })}</p>
             </ScrollReveal>
             <ScrollReveal animation="fadeUp" delay={0.1} threshold={0.1} className="lg:col-span-7">
               <p className="mb-4 flex items-start gap-3 text-base font-medium leading-relaxed">

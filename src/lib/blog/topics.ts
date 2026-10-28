@@ -24,7 +24,7 @@ const topicTemplates: TopicTemplate[] = [
   { titleTemplate: "The Complete Guide to Website Maintenance in {year}", keywords: ["website maintenance", "website updates", "security"], category: "Web Design" },
   { titleTemplate: "How to Write Website Content That Converts", keywords: ["website content", "copywriting", "conversions"], category: "Digital Marketing" },
   { titleTemplate: "Why Your Website Needs a Blog: SEO Benefits Explained", keywords: ["business blog", "seo benefits", "content marketing"], category: "SEO" },
-  { titleTemplate: "Brand Identity Design: More Than Just a Logo", keywords: ["brand identity", "branding", "logo design"], category: "Graphic Design" },
+  { titleTemplate: "What International Patients Judge on a Clinic's Instagram and WhatsApp Before They Message", keywords: ["clinic branding", "clinic instagram", "whatsapp for clinics"], category: "Graphic Design" },
   { titleTemplate: "Multi-Language Websites: A Guide for Global Businesses", keywords: ["multilingual website", "internationalization", "i18n"], category: "Web Design" },
   { titleTemplate: "Domain Name Tips: How to Choose the Perfect Domain", keywords: ["domain name", "domain registration", "website domain"], category: "Web Design" },
   { titleTemplate: "Web Hosting Explained: What You Need to Know", keywords: ["web hosting", "hosting types", "website hosting"], category: "Tools & Resources" },

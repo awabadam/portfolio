@@ -96,7 +96,7 @@ export function handleWebSocketConnection(ws: WebSocket, req: IncomingMessage) {
       conversationId,
       message: {
         role: 'assistant',
-        content: "Hello! I'm here to help you learn about Awab's web design services. How can I assist you today?",
+        content: "Hello, I'm here to help you learn about Awab's clinic websites and branding. How can I assist you today?",
       },
     },
   }));

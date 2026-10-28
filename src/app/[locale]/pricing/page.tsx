@@ -13,11 +13,12 @@ import FAQSchema from "@/components/seo/FAQSchema";
 import RelatedLinks from "@/components/seo/RelatedLinks";
 import StockPhoto from "@/components/ui/stock-photo";
 // 💰 Pricing source of truth: edit prices in src/lib/pricing.ts
-// Package + plan cards are shared with /services and
+// Package, Brand Kit and plan cards are shared with /services and
 // /services/website-maintenance (names, features and prices come from
 // lib/pricing + the `packages` namespace).
 import PackageCards from "@/components/pricing/PackageCards";
 import CarePlanCards from "@/components/pricing/CarePlanCards";
+import BrandKitCard from "@/components/pricing/BrandKitCard";
 import {
   getCarePlan,
   getTier,
@@ -48,7 +49,6 @@ const notIncludedItems = [
   "notIncluded3",
   "notIncluded4",
   "notIncluded5",
-  "notIncluded6",
 ];
 
 const faqKeys = ["faq1", "faq2", "faq3", "faq4", "faq5", "faq6", "faq7"];
@@ -151,6 +151,7 @@ export default function PricingPage() {
         </div>
 
         <PackageCards headingLevel="h2" recommended={fit?.tier ?? null} />
+        <BrandKitCard headingLevel="h2" className="mt-6" />
 
         {/* Real terms from faq3/faq6, next to the prices instead of only in the FAQ */}
         <p className="mt-8 max-w-2xl text-sm leading-relaxed text-muted-foreground">{t("termsLine")}</p>

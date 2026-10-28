@@ -26,14 +26,16 @@ interface AuditLeadFormProps {
   scan?: ScanChecks | null;
   /** Lead question answers (role, treatments, markets, volume, channel, timeline, budgetFit). */
   profile?: Partial<ClinicProfile>;
-  /** Email given on the website step; the field starts filled and stays editable. */
+  /** Email from the first step; shown as a line, editable on demand. */
   initialEmail?: string;
-  /** Token of the partial lead from the website step, so the server completes that row. */
+  /** Token of the partial lead from the email step, so the server completes that row. */
   partialToken?: string | null;
   onSubmitted?: () => void;
 }
 
 type FieldErrors = Partial<Record<"website" | "email", string>>;
+
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function AuditLeadForm({
   answers,
@@ -55,7 +57,9 @@ export default function AuditLeadForm({
   const websiteKnown = Boolean(initial && normalizeWebsite(initial));
   const [website, setWebsite] = useState(initial);
   const [editWebsite, setEditWebsite] = useState(false);
+  const emailKnown = EMAIL_PATTERN.test(initialEmail.trim());
   const [email, setEmail] = useState(initialEmail);
+  const [editEmail, setEditEmail] = useState(false);
   const [phone, setPhone] = useState("");
   const [showPhone, setShowPhone] = useState(false);
   const [honeypot, setHoneypot] = useState("");
@@ -87,7 +91,7 @@ export default function AuditLeadForm({
     const errors: FieldErrors = {};
     const normalized = normalizeWebsite(website);
     if (!normalized) errors.website = t("errors.website");
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) errors.email = t("errors.email");
+    if (!EMAIL_PATTERN.test(email.trim())) errors.email = t("errors.email");
     setFieldErrors(errors);
     if (Object.keys(errors).length) return;
 
@@ -249,21 +253,36 @@ export default function AuditLeadForm({
   return (
     <form onSubmit={handleSubmit} noValidate className="relative rounded-[10px] border border-border bg-card p-5 md:p-8">
       <div className="grid gap-5">
-        <Field label={t("form.email")} htmlFor="audit-email" error={fieldErrors.email}>
-          <Input
-            id="audit-email"
-            name="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder={t("form.emailPlaceholder")}
-            autoComplete="email"
-            dir="ltr"
-            required
-            aria-invalid={Boolean(fieldErrors.email)}
-            className={cn(inputClass, fieldErrors.email && "border-red-500")}
-          />
-        </Field>
+        {/* The first step already asked for the email: show it as a line, editable on demand. */}
+        {emailKnown && !editEmail && !fieldErrors.email ? (
+          <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
+            <span className="font-medium text-foreground">{t("form.emailKnown", { email: email.trim() })}</span>
+            <button
+              type="button"
+              onClick={() => setEditEmail(true)}
+              className="inline-flex min-h-11 items-center font-medium text-foreground underline underline-offset-4"
+            >
+              {t("form.change")}
+            </button>
+          </p>
+        ) : (
+          <Field label={t("form.email")} htmlFor="audit-email" error={fieldErrors.email}>
+            <Input
+              id="audit-email"
+              name="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder={t("form.emailPlaceholder")}
+              autoComplete="email"
+              dir="ltr"
+              required
+              autoFocus={editEmail}
+              aria-invalid={Boolean(fieldErrors.email)}
+              className={cn(inputClass, fieldErrors.email && "border-red-500")}
+            />
+          </Field>
+        )}
 
         {/* The scan step already asked for the site: show it as a line, editable on demand. */}
         {websiteKnown && !editWebsite && !fieldErrors.website ? (

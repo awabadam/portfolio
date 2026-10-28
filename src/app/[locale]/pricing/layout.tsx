@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { getTranslations, getLocale } from "next-intl/server";
 import Breadcrumbs from "@/components/seo/Breadcrumbs";
 // 💰 Pricing source of truth: edit prices in src/lib/pricing.ts
-// The OfferCatalog JSON-LD below is generated from projectTiers + carePlans.
-import { projectTiers, carePlans, getTier, formatPrice } from "@/lib/pricing";
+// The OfferCatalog JSON-LD below is generated from projectTiers + carePlans + brandKit.
+import { projectTiers, carePlans, brandKit, getTier, formatPrice } from "@/lib/pricing";
 import { ogLocale, pageAlternates, localeUrl } from "@/lib/seo";
 
 // OG image: ./opengraph-image.tsx
@@ -83,6 +83,22 @@ export default async function PricingLayout({ children }: { children: React.Reac
     },
   }));
 
+  const brandKitOffer = {
+    "@type": "Offer",
+    itemOffered: {
+      "@type": "Service",
+      name: tEn(brandKit.nameKey),
+      description: tEn(brandKit.descKey),
+      serviceType: "Clinic branding",
+    },
+    priceSpecification: {
+      "@type": "UnitPriceSpecification",
+      price: String(brandKit.price),
+      priceCurrency: "USD",
+      unitText: "project",
+    },
+  };
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Service",
@@ -100,8 +116,8 @@ export default async function PricingLayout({ children }: { children: React.Reac
     areaServed: "Worldwide",
     hasOfferCatalog: {
       "@type": "OfferCatalog",
-      name: "Clinic Website Packages",
-      itemListElement: [...tierOffers, ...planOffers],
+      name: "Clinic Website Packages, Monthly Plans and Brand Kit",
+      itemListElement: [...tierOffers, ...planOffers, brandKitOffer],
     },
   };
 

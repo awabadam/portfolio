@@ -14,6 +14,7 @@ export type RelatedKey =
   | "caseStudies"
   | "webdesign"
   | "maintenance"
+  | "clinicBranding"
   | "contact"
   | "blog";
 
@@ -24,6 +25,7 @@ const HREFS: Record<RelatedKey, string> = {
   caseStudies: "/projects",
   webdesign: "/services/webdesign-istanbul",
   maintenance: "/services/website-maintenance",
+  clinicBranding: "/services/clinic-branding",
   contact: "/contact",
   blog: "/blog",
 };

@@ -20,6 +20,7 @@ import { GlassPill } from "@/components/ui/glass-pill";
 // 💰 Pricing source of truth: edit prices in src/lib/pricing.ts
 // Same component as /pricing, so both pages show identical packages.
 import PackageCards from "@/components/pricing/PackageCards";
+import BrandKitCard from "@/components/pricing/BrandKitCard";
 import { getTier, getCarePlan, formatPrice } from "@/lib/pricing";
 import FAQSchema from "@/components/seo/FAQSchema";
 import StockPhoto from "@/components/ui/stock-photo";
@@ -300,6 +301,7 @@ export default async function ServicesPage() {
             </ScrollReveal>
 
             <PackageCards />
+            <BrandKitCard className="mt-6" />
 
             <div className="mt-8 md:mt-10">
               <Link href="/pricing" className={GREY_LINK}>
@@ -380,7 +382,7 @@ export default async function ServicesPage() {
 
         {/* Internal links: pricing, audit, proof */}
         <div className="container mx-auto px-5 pb-20 md:px-8">
-          <RelatedLinks items={["pricing", "audit", "caseStudies"]} />
+          <RelatedLinks items={["pricing", "clinicBranding", "caseStudies"]} />
         </div>
 
         {/* Final CTA: the free audit */}

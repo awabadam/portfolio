@@ -135,7 +135,7 @@
     "capHosting": "Barındırma ve bakım",
     "capHostingDesc": "Barındırma, alan adı, SSL ve güncellemeler tek aylık planda",
     "pricingHeading": "Paketler ve fiyatlar",
-    "pricingSubtitle": "ABD doları cinsinden sabit fiyatlı iki paket",
+    "pricingSubtitle": "ABD doları cinsinden sabit fiyatlı iki web sitesi paketi ve Klinik Marka Kiti",
     "faqHeading": "Sık sorulan sorular",
     "faq1Q": "Bir klinik sitesi ne kadar sürede hazır olur?",
     "faq1A": "Klinik Web Sitesi 3-4 hafta, Klinik Büyüme Sistemi ise tedavi ve dil sayısına göre 6-8 hafta sürer.",
@@ -239,6 +239,41 @@
       "ctaHeading": "Hangi planın uygun olduğundan emin değil misiniz?",
       "ctaDescription": "Sitenizi anlatın, size uygun planı önereyim ya da yeni sitenizle birlikte kuralım."
     },
+    "clinicBranding": {
+      "eyebrow": "Klinik marka tasarımı",
+      "heading": "Hastaların aramadan önce güvendiği bir klinik markası",
+      "lead": "Yurt dışındaki hastalar kliniği Instagram hesabından ve tek bir WhatsApp yazışmasından seçer. Logoyu, öncesi-sonrası şablonlarını ve koordinatör kitini ben tasarlarım; hasta sizi nerede görürse görsün aynı güvenilir kliniği görür.",
+      "pricing": "Başlangıç {price}",
+      "ctaPrimary": "Kliniğinizi konuşalım",
+      "ctaSecondary": "Tüm fiyatları görün",
+      "proofHeading": "Son marka çalışmaları",
+      "proofLink": "Marka çalışmasını görün",
+      "proof": {
+        "bespokeClinic": "İstanbul'daki bir klinik için logo, monogram, tabela ve satış kiti",
+        "yasminaBeauty": "Bir güzellik kliniği için üç logo yönü, kırmızı bir kimlik ve öncesi-sonrası şablonları"
+      },
+      "step1Title": "Yön",
+      "step1Desc": "Önce moodboard'lar; logo çalışmasına başlamadan genel havayı birlikte belirleriz.",
+      "step2Title": "Logo",
+      "step2Desc": "İki ya da üç seçenek, her biri tabela, gönderi ve WhatsApp üzerinde gösterilir. Logonuzu korumak isterseniz yenileme de olur.",
+      "step3Title": "Şablonlar ve kit",
+      "step3Desc": "Öncesi-sonrası gönderi ve hikâyeleri, koordinatör profilleri, teklif şablonu.",
+      "step4Title": "Teslim",
+      "step4Desc": "Tüm dosyalar, kısa bir marka rehberi ve ekibinizin tasarımcı olmadan doldurabileceği şablonlar.",
+      "faqHeading": "Klinik marka tasarımı hakkında sorular",
+      "faq1Q": "Zaten bir logomuz var. Yenisine ihtiyacımız var mı?",
+      "faq1A": "Hayır. Logonuzu yenileyebilirim ya da olduğu gibi bırakıp şablonları ve WhatsApp kitini onun etrafında kurabilirim.",
+      "faq2Q": "Sosyal medyamızı siz mi yönetiyorsunuz?",
+      "faq2A": "Hayır. Ekibinizin yeni vakalarla doldurduğu şablonlar alırsınız. Çoğu klinik yeni bir öncesi-sonrası gönderisini birkaç dakikada paylaşır.",
+      "faq3Q": "Marka ve web sitesini birlikte alabilir miyim?",
+      "faq3A": "Evet. Klinik Büyüme Sistemi ile ikisi birlikte {bundlePrice}, ayrı ayrı almaktan {saving} daha az. Web sitesi de ilk günden yeni markayla tasarlanır.",
+      "faq4Q": "Hasta fotoğrafları ne olacak?",
+      "faq4A": "Şablonlar, paylaşım için yazılı onay aldığınız fotoğraflara göre hazırlanır. Hasta fotoğrafı sağlamıyor ve düzenlemiyorum.",
+      "faq5Q": "Ne kadar sürer?",
+      "faq5A": "Yönde ne kadar hızlı anlaştığımıza bağlı olarak 2 ila 3 hafta.",
+      "ctaHeading": "Hastaların sizi gelmeden önce tanımasını ister misiniz?",
+      "ctaDescription": "Instagram hesabınızı ve mevcut logonuzu gönderin. Önce neyi değiştireceğimi söyleyeyim ve 24 saat içinde sabit bir teklifle döneyim."
+    },
     "capTreatments": "Tedavi sayfaları",
     "capTreatmentsDesc": "Hastaların aradığı her tedavi için anlaşılır bir sayfa",
     "capWhatsapp": "Her sayfada WhatsApp",
@@ -258,7 +293,7 @@
     "heroCtaAudit": "Ücretsiz klinik analizinizi alın",
     "heroCtaPackages": "Paketleri görün",
     "heroNote": "Tasarım, geliştirme ve destek tek kişiden. Bir müşteri temsilcisiyle değil, siteyi yapan kişiyle konuşursunuz.",
-    "deliverablesSubtitle": "Aşağıdaki her madde fiyat sayfasındaki bir paketin parçasıdır. Hiçbiri ek ücretle satılmaz.",
+    "deliverablesSubtitle": "Aşağıdaki her madde fiyat sayfasındaki bir web sitesi paketinin parçasıdır. Hiçbiri ek ücretle satılmaz.",
     "deliverablesIn": "{package} içinde",
     "processSubtitle": "İlk görüşmeden yayına: Klinik Web Sitesi için 3-4 hafta, Klinik Büyüme Sistemi için 6-8 hafta.",
     "compare": {
@@ -297,7 +332,7 @@
         {
           "label": "Fiyat",
           "agency": "Talep üzerine teklif; çoğu zaman aylık reklam bütçesiyle birlikte.",
-          "me": "Bu sitede yayınlanmış iki sabit fiyat ve iki aylık plan."
+          "me": "Her paket ve aylık plan için bu sitede yayınlanmış sabit fiyatlar."
         }
       ],
       "note": "Reklam yönetmiyorum. Siteyi ve takibi kurarım; böylece kampanyalarınızı kim yönetirse yönetsin, kendi ekibiniz ya da bir ajans, hangisinin hasta getirdiğini görür."
@@ -318,7 +353,7 @@
   "pricing": {
     "heroEyebrow": "Fiyatlar",
     "heroHeading": "Klinik web sitesi fiyatları",
-    "heroSubtitle": "Sabit fiyatlı iki paket ve iki aylık plan, hepsi ABD doları cinsinden. Kliniğiniz ya da hastalarınız nerede olursa olsun fiyat aynıdır.",
+    "heroSubtitle": "Sabit fiyatlı iki web sitesi paketi, iki aylık plan ve Klinik Marka Kiti, hepsi ABD doları cinsinden. Kliniğiniz ya da hastalarınız nerede olursa olsun fiyat aynıdır.",
     "valueAnchor": "Yurt dışından gelen bir hasta Türkiye'deki bir klinikte genellikle {range} harcar. Klinik Web Sitesi {price} fiyatından başlar.",
     "fitQuestion": "Başka ülkelerde reklam veriyor musunuz?",
     "fitAnswer": {
@@ -344,7 +379,6 @@
     "notIncluded3": "Tedavi içeriklerinin sıfırdan yazılması",
     "notIncluded4": "Yeni dillere çeviri (siz sağlarsınız ya da çevirmen önerebilirim)",
     "notIncluded5": "Fotoğraf ve video çekimi",
-    "notIncluded6": "Logo ve marka kimliği",
     "faqHeading": "Fiyatlarla ilgili sorular",
     "faqSubtitle": "Klinik sahiplerinin karar vermeden önce sorduğu sorular",
     "faq1Q": "Fiyatlar neden ABD doları cinsinden?",
@@ -404,6 +438,23 @@
       "Talepler CRM'inize aktarılır",
       "Google Ads çevrimdışı dönüşüm aktarımı: hangi reklamın randevuya dönen hasta getirdiğini görürsünüz"
     ],
+    "clinicBrandKit": "Klinik Marka Kiti",
+    "clinicBrandKitEyebrow": "Marka tasarımı",
+    "clinicBrandKitDesc": "Hastanın randevu almadan önce gördüğü her şey: logonuz, Instagram hesabınız ve koordinatörünüzle WhatsApp yazışması.",
+    "clinicBrandKitTimeframe": "2-3 haftada hazır",
+    "clinicBrandKitFeatures": [
+      "Yeni bir logo ya da mevcut logonuzun yenilenmesi",
+      "Renkler, yazı tipleri ve kısa bir marka rehberi",
+      "Her tedavi için öncesi-sonrası gönderi ve hikâye şablonları",
+      "Her koordinatör için WhatsApp kiti: profil fotoğrafı, kişi kartı ve hikâyeler",
+      "WhatsApp için teklif ve fiyat listesi şablonu",
+      "Instagram ve Facebook profil ve kapak görselleri",
+      "Tüm dosyalar AI, SVG, PNG ve PDF formatında, iki tur revizyon dahil"
+    ],
+    "clinicBrandKitLink": "Süreci ve önceki marka çalışmalarını görün",
+    "brandKitBundleHeading": "Klinik Marka Kiti'ni Büyüme Sistemi'ne ekleyin",
+    "brandKitBundleText": "Logo, sosyal medya şablonları ve WhatsApp kiti, her şey uyumlu olsun diye web sitenizle birlikte tasarlanır. İkisi birlikte {bundlePrice}, ayrı ayrı almaktan {saving} daha az.",
+    "brandKitBundleCta": "Paketi sorun",
     "seoSetup": "Tıbbi schema ile SEO kurulumu",
     "blogSystem": "Blog",
     "contentManagement": "Yönetim paneli (CMS)",
@@ -467,6 +518,8 @@
     "projectGrowthSystem": "Klinik Büyüme Sistemi",
     "projectSiteCare": "Site Care (aylık)",
     "projectGrowthRetainer": "Growth Retainer (aylık)",
+    "projectClinicBrandKit": "Klinik Marka Kiti",
+    "projectBrandBundle": "Büyüme Sistemi + Marka Kiti",
     "bookEyebrow": "Konuşmayı mı tercih edersiniz?",
     "bookHeading": "15 dakikalık bir görüşme ayarlayın",
     "bookText": "Size uyan saati seçin. Mevcut sitenize birlikte bakalım, ilk neyi düzelteceğimi açıkça söyleyeyim. Satış sunumu yok, hiçbir yükümlülük yok.",
@@ -613,7 +666,23 @@
     "constraintsHeading": "İşi zorlaştıranlar",
     "advisedAgainstHeading": "Önermediğimiz şey",
     "deliveredHeading": "Teslim edilenler",
-    "timelineHeading": "Zaman çizelgesi"
+    "timelineHeading": "Zaman çizelgesi",
+    "brandWork": "Marka çalışmaları",
+    "brandWorkIntro": "Klinikler için logolar, sosyal medya şablonları ve hastaların gördüğü kitler.",
+    "viewOnBehance": "Behance'te görüntüle",
+    "brandCaseStudyTitle": "{title}: Klinik Marka Kimliği Vaka Çalışması",
+    "brandBoardsHeading": "Marka",
+    "brandScope": {
+      "stylescapes": "Stil panoları",
+      "logo": "Logo",
+      "stationery": "Kurumsal kırtasiye",
+      "socialTemplates": "Sosyal medya şablonları",
+      "salesKit": "Satış ekibi kiti"
+    },
+    "brandServiceKicker": "Klinik markalaşma",
+    "brandServiceHeading": "Kliniğiniz için böyle bir marka ister misiniz?",
+    "brandServiceText": "Logoyu, öncesi ve sonrası şablonlarını ve koordinatörleriniz için WhatsApp kitini tasarlıyorum. Hastalar sizi nerede görürse görsün aynı kliniği tanır.",
+    "brandServiceButton": "Klinik markalaşmayı inceleyin"
   },
   "chat": {
     "ariaOpen": "Sohbeti aç",
@@ -637,7 +706,7 @@
     "dialogTitle": "Bizimle sohbet edin",
     "errorTooFast": "Çok hızlı mesaj gönderiyorsunuz. Lütfen tekrar denemeden önce bir süre bekleyin.",
     "errorGeneral": "Üzgünüm, bir hata oluştu. Lütfen tekrar deneyin veya doğrudan bizimle iletişime geçin.",
-    "greeting": "Merhaba! Awab'ın web tasarım hizmetleri hakkında bilgi edinmenize yardımcı olmak için buradayım. Size bugün nasıl yardımcı olabilirim?",
+    "greeting": "Merhaba, Awab'ın klinikler için web sitesi ve marka tasarımı hizmetleri hakkında bilgi edinmenize yardımcı olmak için buradayım. Size bugün nasıl yardımcı olabilirim?",
     "newConversation": "Sohbet ettiğiniz için teşekkürler! Yeni bir sohbet başlattım. Size bugün nasıl yardımcı olabilirim?",
     "whatsapp": "WhatsApp",
     "getQuote": "Teklif Al",
@@ -703,6 +772,10 @@
     "websiteMaintenance": {
       "title": "Klinik Sitesi Barındırma ve Bakım Planları | Awab Design",
       "description": "Aylık {carePrice} Site Bakımı barındırma, alan adı, SSL ve güncellemeleri kapsar. Büyüme Paketi ülkeye göre aylık talep raporu ve Google Ads takip bakımı ekler."
+    },
+    "clinicBranding": {
+      "title": "Klinik Marka ve Logo Tasarımı | Awab Design",
+      "description": "Klinik Marka Kiti, başlangıç fiyatı {price}: logo, renkler, Instagram için öncesi-sonrası şablonları ve hasta koordinatörleri için WhatsApp kiti. 2-3 haftada hazır."
     },
     "blog": {
       "title": "Klinik Web Sitesi ve Hasta Talebi Notları",
@@ -836,7 +909,7 @@
     "ctaHeading": "Gerçek sitenizin yazılı analizini alın",
     "ctaText": "Sitenizi gönderin, bizzat inceleyeyim: tedavi sayfaları, diller, WhatsApp yolu, telefondaki hız ve takibinizin gerçekte neyi yakaladığı. E-postayla, düzeltmelerin sırasını ve her birinin size ne kazandıracağını içeren yazılı bir analiz alırsınız. Benim tarafımdan yazılır, otomatik üretilmez.",
     "ctaReason": "Bunları bizzat yaptığım için her hafta sınırlı sayıda yapıyorum. Sizinkini şimdi gönderin, 48 saat içinde elinizde olur.",
-    "ctaDiy": "Kendiniz düzeltmeyi mi tercih edersiniz? Yukarıdaki 3 düzeltme başlamak için yeterli. Yapılmasını isterseniz Klinik Web Sitesi paketi 2.500 $'dan başlar.",
+    "ctaDiy": "Kendiniz düzeltmeyi mi tercih edersiniz? Yukarıdaki 3 düzeltme başlamak için yeterli. Yapılmasını isterseniz Klinik Web Sitesi paketinin başlangıç fiyatı {price}.",
     "form": {
       "website": "Web sitesi adresi",
       "websitePlaceholder": "www.kliniginiz.com",
@@ -850,6 +923,7 @@
       "privacy": "Bilgileriniz yalnızca rehberi ve analizi göndermek için kullanılır. Bülten yok.",
       "addPhone": "Daha hızlı yanıt için WhatsApp ekleyin",
       "websiteKnown": "{website} için analiz",
+      "emailKnown": "Gönderilecek adres: {email}",
       "change": "Değiştir"
     },
     "orWhatsapp": "Ya da WhatsApp'tan yazın",
@@ -869,7 +943,7 @@
       "scoreLine": "Web siteniz {website} {score}/100 aldı: {band}.",
       "fixesIntro": "Daha fazla başvuru getirecek 3 düzeltme, yapılacak sırayla:",
       "promise": "Sitenizi bizzat inceleyip 48 saat içinde, her düzeltmenin size ne kazandıracağını ve neyle başlayacağınızı içeren yazılı bir analiz göndereceğim.",
-      "diy": "Kendiniz düzeltmeyi mi tercih edersiniz? Yukarıdaki 3 düzeltme başlamak için yeterli. Yapılmasını isterseniz Klinik Web Sitesi paketi 2.500 $'dan başlar.",
+      "diy": "Kendiniz düzeltmeyi mi tercih edersiniz? Yukarıdaki 3 düzeltme başlamak için yeterli. Yapılmasını isterseniz Klinik Web Sitesi paketinin başlangıç fiyatı {price}.",
       "whatsapp": "Bu arada sorunuz olursa WhatsApp: {number}",
       "signoff": "Saygılarımla,",
       "preheader": "Ücretsiz rehberiniz içeride. 48 saat içinde kişisel analiz.",
@@ -934,13 +1008,18 @@
       "button": "Ücretsiz rehberi alın",
       "checkLink": "Ya da ücretsiz 2 dakikalık kontrolle başlayın"
     },
+    "emailStep": {
+      "eyebrow": "E-postanız",
+      "heading": "Raporunuzu nereye göndereyim?",
+      "text": "Puanınız en sonda ekranda görünür. Tam rapor ve rehber bu adrese gelir, böylece daha sonra tekrar açabilirsiniz.",
+      "label": "E-posta",
+      "submit": "Devam"
+    },
     "scan": {
       "eyebrow": "Web siteniz",
       "heading": "Önce, hasta nereye iniyor?",
       "text": "Site adresinizi girin. Test, ana sayfanızı bir hastanın telefonu gibi okur ve cevaplayabildiklerini kendisi cevaplar; size daha az soru kalır. Yaklaşık 10 saniye.",
       "label": "Site adresi",
-      "emailLabel": "Tam raporunuzu nereye göndereyim?",
-      "emailNote": "Yalnızca raporunuz için. Bülten yok.",
       "placeholder": "www.kliniginiz.com",
       "submit": "Sitemi kontrol et",
       "skip": "Atla, kendim cevaplayacağım",
@@ -1292,7 +1371,7 @@
       },
       "pricing": {
         "title": "Fiyatlar",
-        "desc": "İki sabit paket ve iki aylık plan, USD"
+        "desc": "Web sitesi paketleri, aylık planlar ve Marka Kiti, USD"
       },
       "audit": {
         "title": "Ücretsiz site kontrolü",
@@ -1309,6 +1388,10 @@
       "maintenance": {
         "title": "Barındırma ve bakım planları",
         "desc": "Lansmandan sonra siteyi ayakta tutan şeyler"
+      },
+      "clinicBranding": {
+        "title": "Klinik marka tasarımı",
+        "desc": "Logo, sosyal medya şablonları ve WhatsApp kiti"
       },
       "contact": {
         "title": "İletişim",

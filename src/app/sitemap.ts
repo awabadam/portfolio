@@ -3,6 +3,7 @@ import { getAllProjects } from '@/data/projects'
 import { getAllBlogPosts } from '@/data/blog'
 import { locales, defaultLocale } from '@/i18n/config'
 import { getCaseStudy } from '@/data/case-studies'
+import { BRAND_WORK, getBrandStudy } from '@/data/brand-studies'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://www.awab.design'
@@ -37,7 +38,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...withAlternates('/contact', { changeFrequency: 'monthly', priority: 0.7 }),
     ...withAlternates('/audit', { changeFrequency: 'monthly', priority: 0.9 }),
     ...withAlternates('/blog', { changeFrequency: 'weekly', priority: 0.8 }),
-    ...['webdesign-istanbul', 'website-maintenance'].flatMap(
+    ...['webdesign-istanbul', 'website-maintenance', 'clinic-branding'].flatMap(
       slug => withAlternates(`/services/${slug}`, { changeFrequency: 'monthly', priority: 0.8 })
     ),
   ]
@@ -48,15 +49,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       getAllBlogPosts()
     ])
 
-    const projectPages = projects.flatMap((project) =>
-      withAlternates(`/projects/${project.id}`, {
+    // Brand work may have no database rows, so add its ids from code.
+    const projectIds = [...new Set([...projects.map((p) => p.id), ...BRAND_WORK])]
+
+    const projectPages = projectIds.flatMap((id) =>
+      withAlternates(`/projects/${id}`, {
         changeFrequency: 'monthly',
         priority: 0.7,
-        // Image sitemap: the card thumbnail plus the case-study gallery, so
-        // Google Images ties these screenshots to awab.design.
+        // Image sitemap: the card thumbnail plus the case-study gallery (or
+        // brand boards), so Google Images ties these images to awab.design.
         images: [
-          `${baseUrl}/img/projects/${project.id}-thumbnail.webp`,
-          ...(getCaseStudy(project.id)?.gallery ?? []).map((g) => `${baseUrl}${g.src}`),
+          `${baseUrl}/img/projects/${id}-thumbnail.webp`,
+          ...(getCaseStudy(id)?.gallery ?? []).map((g) => `${baseUrl}${g.src}`),
+          ...(getBrandStudy(id)?.boards ?? []).map((b) => `${baseUrl}${b.src}`),
         ],
       })
     )

@@ -135,7 +135,7 @@
     "capHosting": "Hébergement et entretien",
     "capHostingDesc": "Hébergement, domaine, SSL et mises à jour dans une formule mensuelle",
     "pricingHeading": "Forfaits et tarifs",
-    "pricingSubtitle": "Deux forfaits à prix fixe, en dollars américains",
+    "pricingSubtitle": "Deux forfaits site à prix fixe et le Kit de Marque Clinique, en dollars américains",
     "faqHeading": "Questions fréquentes",
     "faq1Q": "Combien de temps faut-il pour un site de clinique ?",
     "faq1A": "Un Site Clinique prend 3 à 4 semaines. Un Système de Croissance Clinique prend 6 à 8 semaines, selon le nombre de soins et de langues.",
@@ -239,6 +239,41 @@
       "ctaHeading": "Vous hésitez sur la formule ?",
       "ctaDescription": "Parlez-moi de votre site et je vous conseille la bonne formule, ou nous la mettons en place avec votre nouveau site."
     },
+    "clinicBranding": {
+      "eyebrow": "Identité de clinique",
+      "heading": "Une marque de clinique qui inspire confiance avant le premier appel",
+      "lead": "Les patients à l'étranger choisissent une clinique sur son Instagram et une seule conversation WhatsApp. Je conçois le logo, les modèles avant-après et le kit des coordinateurs, pour que partout où ils vous croisent, ils voient la même clinique de confiance.",
+      "pricing": "Dès {price}",
+      "ctaPrimary": "Parlons de votre clinique",
+      "ctaSecondary": "Voir tous les tarifs",
+      "proofHeading": "Travaux de marque récents",
+      "proofLink": "Voir le projet",
+      "proof": {
+        "bespokeClinic": "Logo, monogramme, signalétique et kit commercial pour une clinique d'Istanbul",
+        "yasminaBeauty": "Trois pistes de logo, une identité rouge et des modèles avant-après pour une clinique esthétique"
+      },
+      "step1Title": "Direction",
+      "step1Desc": "D'abord des moodboards, pour s'accorder sur l'ambiance avant tout travail sur le logo.",
+      "step2Title": "Logo",
+      "step2Desc": "Deux ou trois pistes, chacune présentée sur une enseigne, des publications et WhatsApp. Ou une mise à jour si vous voulez garder le vôtre.",
+      "step3Title": "Modèles et kit",
+      "step3Desc": "Publications et stories avant-après, profils des coordinateurs, modèle de devis.",
+      "step4Title": "Livraison",
+      "step4Desc": "Tous les fichiers, une charte graphique courte et des modèles que votre équipe remplit sans graphiste.",
+      "faqHeading": "Questions sur l'identité de clinique",
+      "faq1Q": "Nous avons déjà un logo. Faut-il en créer un nouveau ?",
+      "faq1A": "Non. Je peux le moderniser, ou le garder tel quel et construire les modèles et le kit WhatsApp autour.",
+      "faq2Q": "Gérez-vous nos réseaux sociaux ?",
+      "faq2A": "Non. Vous recevez des modèles que votre équipe remplit avec les nouveaux cas. La plupart des cliniques publient un nouvel avant-après en quelques minutes.",
+      "faq3Q": "Puis-je avoir la marque et le site ensemble ?",
+      "faq3A": "Oui. Avec le Système de Croissance Clinique, les deux coûtent {bundlePrice}, soit {saving} de moins que séparément, et le site est conçu avec la nouvelle marque dès le premier jour.",
+      "faq4Q": "Et les photos des patients ?",
+      "faq4A": "Les modèles sont prévus pour des photos que vous avez l'accord écrit de partager. Je ne fournis ni ne retouche de photos de patients.",
+      "faq5Q": "Combien de temps cela prend-il ?",
+      "faq5A": "2 à 3 semaines, selon la rapidité avec laquelle nous nous accordons sur la direction.",
+      "ctaHeading": "Vous voulez que les patients vous reconnaissent avant d'arriver ?",
+      "ctaDescription": "Envoyez-moi votre Instagram et votre logo actuel. Je vous dis ce que je changerais en premier et je réponds avec un devis fixe sous 24 heures."
+    },
     "capTreatments": "Pages de soins",
     "capTreatmentsDesc": "Une page claire pour chaque soin recherché par les patients",
     "capWhatsapp": "WhatsApp sur chaque page",
@@ -258,7 +293,7 @@
     "heroCtaAudit": "Obtenez votre audit clinique gratuit",
     "heroCtaPackages": "Voir les forfaits",
     "heroNote": "Conçu, développé et suivi par une seule personne. Vous parlez à celui qui construit le site, pas à un chargé de compte.",
-    "deliverablesSubtitle": "Chaque élément ci-dessous fait partie d'un forfait de la page tarifs. Rien n'est vendu en option.",
+    "deliverablesSubtitle": "Chaque élément ci-dessous fait partie d'un forfait site de la page tarifs. Rien n'est vendu en option.",
     "deliverablesIn": "Inclus dans {package}",
     "processSubtitle": "Du premier appel à la mise en ligne : 3-4 semaines pour un Site Clinique, 6-8 semaines pour un Système de Croissance Clinique.",
     "compare": {
@@ -297,7 +332,7 @@
         {
           "label": "Tarifs",
           "agency": "Devis sur demande, souvent lié à un budget publicitaire mensuel.",
-          "me": "Deux prix fixes et deux formules mensuelles, publiés sur ce site."
+          "me": "Des prix fixes pour chaque forfait et chaque formule mensuelle, publiés sur ce site."
         }
       ],
       "note": "Je ne gère pas de publicités. Je construis le site et le suivi pour que la personne qui gère vos campagnes, en interne ou en agence, voie lesquelles amènent des patients."
@@ -318,7 +353,7 @@
   "pricing": {
     "heroEyebrow": "Tarifs",
     "heroHeading": "Tarifs des sites pour cliniques",
-    "heroSubtitle": "Deux forfaits à prix fixe et deux formules mensuelles, tous en dollars américains. Le prix est le même, où que soient votre clinique et vos patients.",
+    "heroSubtitle": "Deux forfaits site à prix fixe, deux formules mensuelles et le Kit de Marque Clinique, tous en dollars américains. Le prix est le même, où que soient votre clinique et vos patients.",
     "valueAnchor": "Un patient venu de l'étranger dépense en général {range} dans une clinique en Turquie. Un Site Clinique commence à {price}.",
     "fitQuestion": "Faites-vous de la publicité dans d'autres pays ?",
     "fitAnswer": {
@@ -344,7 +379,6 @@
     "notIncluded3": "Rédaction des contenus de soins à partir de zéro",
     "notIncluded4": "Traduction vers de nouvelles langues (vous la fournissez, ou je vous recommande des traducteurs)",
     "notIncluded5": "Photos et vidéos",
-    "notIncluded6": "Logo et identité visuelle",
     "faqHeading": "Questions sur les tarifs",
     "faqSubtitle": "Ce que demandent les dirigeants de clinique avant de se décider",
     "faq1Q": "Pourquoi les prix sont-ils en dollars américains ?",
@@ -404,6 +438,23 @@
       "Demandes transmises à votre CRM",
       "Export des conversions hors ligne vers Google Ads, pour voir quelles annonces amènent des patients qui réservent"
     ],
+    "clinicBrandKit": "Kit de Marque Clinique",
+    "clinicBrandKitEyebrow": "Design de marque",
+    "clinicBrandKitDesc": "Tout ce qu'un patient voit avant de réserver : votre logo, votre Instagram et la conversation WhatsApp avec votre coordinateur.",
+    "clinicBrandKitTimeframe": "Prêt en 2 à 3 semaines",
+    "clinicBrandKitFeatures": [
+      "Un nouveau logo, ou une mise à jour de celui que vous avez",
+      "Couleurs, typographies et une charte graphique courte",
+      "Modèles de publications et de stories avant-après pour chaque soin",
+      "Kit WhatsApp pour chaque coordinateur : photo de profil, carte de contact et stories",
+      "Modèle de devis et de liste de prix pour WhatsApp",
+      "Images de profil et de couverture pour Instagram et Facebook",
+      "Tous les fichiers en AI, SVG, PNG et PDF, et deux séries de modifications"
+    ],
+    "clinicBrandKitLink": "Voir la méthode et les marques réalisées",
+    "brandKitBundleHeading": "Ajoutez le Kit de Marque Clinique au Système de Croissance",
+    "brandKitBundleText": "Logo, modèles pour les réseaux sociaux et kit WhatsApp, conçus en même temps que votre site pour que tout soit cohérent. {bundlePrice} pour les deux, soit {saving} de moins que séparément.",
+    "brandKitBundleCta": "Demander l'offre groupée",
     "seoSetup": "SEO avec données structurées médicales",
     "blogSystem": "Blog",
     "contentManagement": "Espace d'administration (CMS)",
@@ -467,6 +518,8 @@
     "projectGrowthSystem": "Système de croissance clinique",
     "projectSiteCare": "Site Care (mensuel)",
     "projectGrowthRetainer": "Growth Retainer (mensuel)",
+    "projectClinicBrandKit": "Kit de marque clinique",
+    "projectBrandBundle": "Système de croissance + Kit de marque",
     "bookEyebrow": "Vous préférez en parler ?",
     "bookHeading": "Réservez un appel de 15 minutes",
     "bookText": "Choisissez le créneau qui vous convient. Nous regardons ensemble votre site actuel et je vous dis franchement ce que je corrigerais en premier. Pas de présentation commerciale, aucun engagement.",
@@ -613,7 +666,23 @@
     "constraintsHeading": "Ce qui rendait le projet difficile",
     "advisedAgainstHeading": "Ce que nous avons déconseillé",
     "deliveredHeading": "Ce qui a été livré",
-    "timelineHeading": "Calendrier"
+    "timelineHeading": "Calendrier",
+    "brandWork": "Identités visuelles",
+    "brandWorkIntro": "Logos, modèles pour les réseaux sociaux et supports vus par les patients, pour des cliniques.",
+    "viewOnBehance": "Voir sur Behance",
+    "brandCaseStudyTitle": "{title} : étude de cas en identité visuelle de clinique",
+    "brandBoardsHeading": "L'identité",
+    "brandScope": {
+      "stylescapes": "Planches d'ambiance",
+      "logo": "Logo",
+      "stationery": "Papeterie",
+      "socialTemplates": "Modèles pour les réseaux sociaux",
+      "salesKit": "Kit pour l'équipe commerciale"
+    },
+    "brandServiceKicker": "Identité de clinique",
+    "brandServiceHeading": "Vous voulez une identité comme celle-ci pour votre clinique ?",
+    "brandServiceText": "Je conçois le logo, les modèles avant-après et le kit WhatsApp de vos coordinateurs, pour que les patients reconnaissent la même clinique partout où ils vous croisent.",
+    "brandServiceButton": "Découvrir l'identité de clinique"
   },
   "chat": {
     "ariaOpen": "Ouvrir le chat",
@@ -637,7 +706,7 @@
     "dialogTitle": "Discutez avec nous",
     "errorTooFast": "Vous envoyez des messages trop rapidement. Veuillez patienter un instant.",
     "errorGeneral": "Désolé, une erreur s'est produite. Veuillez réessayer ou nous contacter directement.",
-    "greeting": "Bonjour ! Je suis là pour vous renseigner sur les services de web design d'Awab. Comment puis-je vous aider ?",
+    "greeting": "Bonjour, je suis là pour vous renseigner sur les sites web et l'identité visuelle qu'Awab conçoit pour les cliniques. Comment puis-je vous aider ?",
     "newConversation": "Merci pour cette conversation ! J'ai démarré un nouveau chat. Comment puis-je vous aider ?",
     "whatsapp": "WhatsApp",
     "getQuote": "Devis",
@@ -703,6 +772,10 @@
     "websiteMaintenance": {
       "title": "Hébergement et entretien de site clinique | Awab Design",
       "description": "L'Entretien du site dès {carePrice}/mois couvre hébergement, domaine, SSL et mises à jour. Le Suivi Croissance ajoute un rapport mensuel et le suivi Google Ads."
+    },
+    "clinicBranding": {
+      "title": "Identité visuelle et logo pour cliniques | Awab Design",
+      "description": "Kit de Marque Clinique dès {price} : logo, couleurs, modèles avant-après pour Instagram et kit WhatsApp pour vos coordinateurs patients. Prêt en 2 à 3 semaines."
     },
     "blog": {
       "title": "Notes : sites de cliniques et patients",
@@ -836,7 +909,7 @@
     "ctaHeading": "Recevez un audit écrit de votre site réel",
     "ctaText": "Envoyez-moi votre site et je le passe en revue moi-même : les pages de traitement, les langues, le parcours WhatsApp, la vitesse sur téléphone et ce que votre suivi capture vraiment. Vous recevez par e-mail un audit écrit avec les corrections dans l'ordre et ce que chacune vaut pour vous. Rédigé par moi, pas généré.",
     "ctaReason": "J'en fais un nombre limité chaque semaine, parce que je les fais personnellement. Envoyez le vôtre maintenant et vous l'aurez sous 48 heures.",
-    "ctaDiy": "Vous préférez corriger vous-même ? Vos 3 corrections ci-dessus suffisent pour commencer. Si vous voulez que ce soit fait pour vous, le pack Site de clinique démarre à 2 500 $.",
+    "ctaDiy": "Vous préférez corriger vous-même ? Vos 3 corrections ci-dessus suffisent pour commencer. Si vous voulez que ce soit fait pour vous, le pack Site de clinique démarre à {price}.",
     "form": {
       "website": "Adresse du site",
       "websitePlaceholder": "www.votreclinique.com",
@@ -850,6 +923,7 @@
       "privacy": "Vos coordonnées servent uniquement à envoyer le playbook et l'audit. Pas de newsletter.",
       "addPhone": "Ajouter WhatsApp pour une réponse plus rapide",
       "websiteKnown": "Audit de {website}",
+      "emailKnown": "Envoi à {email}",
       "change": "Modifier"
     },
     "orWhatsapp": "Ou écrivez-moi sur WhatsApp",
@@ -869,7 +943,7 @@
       "scoreLine": "Votre site {website} a obtenu {score}/100 : {band}.",
       "fixesIntro": "Les 3 corrections qui apporteront plus de demandes, dans l'ordre où les faire :",
       "promise": "Je passe votre site en revue moi-même et vous envoie un audit écrit sous 48 heures, avec ce que chaque correction vaut pour vous et par quoi commencer.",
-      "diy": "Vous préférez corriger vous-même ? Les 3 corrections ci-dessus suffisent pour commencer. Si vous voulez que ce soit fait pour vous, le pack Site de clinique démarre à 2 500 $.",
+      "diy": "Vous préférez corriger vous-même ? Les 3 corrections ci-dessus suffisent pour commencer. Si vous voulez que ce soit fait pour vous, le pack Site de clinique démarre à {price}.",
       "whatsapp": "Des questions entre-temps ? WhatsApp : {number}",
       "signoff": "Cordialement,",
       "preheader": "Votre playbook gratuit est à l'intérieur. Audit personnel sous 48 heures.",
@@ -934,13 +1008,18 @@
       "button": "Recevoir le playbook gratuit",
       "checkLink": "Ou commencez par le test gratuit de 2 minutes"
     },
+    "emailStep": {
+      "eyebrow": "Votre e-mail",
+      "heading": "Où dois-je envoyer votre rapport ?",
+      "text": "Votre score s'affiche à l'écran à la fin. Le rapport complet et le playbook arrivent à cette adresse, pour y revenir plus tard.",
+      "label": "E-mail",
+      "submit": "Continuer"
+    },
     "scan": {
       "eyebrow": "Votre site",
       "heading": "D'abord, où arrive le patient ?",
       "text": "Entrez l'adresse de votre site. Le test lit votre page d'accueil comme le téléphone d'un patient et répond seul à ce qu'il peut : il vous reste moins de questions. Environ 10 secondes.",
       "label": "Adresse du site",
-      "emailLabel": "Où dois-je envoyer votre rapport complet ?",
-      "emailNote": "Uniquement pour votre rapport. Pas de newsletter.",
       "placeholder": "www.votreclinique.com",
       "submit": "Vérifier mon site",
       "skip": "Passer, je réponds moi-même",
@@ -1292,7 +1371,7 @@
       },
       "pricing": {
         "title": "Tarifs",
-        "desc": "Deux forfaits fixes et deux formules mensuelles, en USD"
+        "desc": "Forfaits site, formules mensuelles et Kit de Marque, en USD"
       },
       "audit": {
         "title": "Test gratuit du site",
@@ -1309,6 +1388,10 @@
       "maintenance": {
         "title": "Hébergement et entretien",
         "desc": "Ce qui fait tourner le site après la mise en ligne"
+      },
+      "clinicBranding": {
+        "title": "Identité de clinique",
+        "desc": "Logo, modèles pour les réseaux sociaux et kit WhatsApp"
       },
       "contact": {
         "title": "Contact",

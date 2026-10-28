@@ -19,27 +19,32 @@ import {
   computeResult,
   computeTier,
   isComplete,
+  normalizeWebsite,
   qualificationOf,
   type QuestionId,
 } from "@/lib/audit";
+import { SCAN_VERSION, scanChecksSchema, type ScanChecks } from "@/lib/auditScan";
 import { verifyAuditLeadToken } from "@/lib/auditLeadToken";
 
 /**
  * POST /api/audit/progress — how far a visitor with a partial lead got.
  * { token, stage, total, currentStep?, answered, answers, role?, treatments?, markets?,
- *   volume?, channel?, timeline?, budgetFit? } → { ok: true }.
+ *   volume?, channel?, timeline?, budgetFit?, website?, scan? } → { ok: true }.
  *
  * Sent (debounced, and with navigator.sendBeacon on pagehide) by /audit while
  * the visitor advances. Only touches a row whose token verifies, that is still
  * partial and from the audit; merges metadata.progress, the answers so far,
  * the qualification given so far and a provisional tier into the existing
- * metadata (jsonb ||), so every other key stays. 401 for a bad token, 404 once
- * the row is complete or gone (the client then stops sending).
+ * metadata (jsonb ||), so every other key stays. The lead is saved on the
+ * email step, before the website, so the website and the scan arrive here
+ * (only when sent: older clients leave them as they are). 401 for a bad token,
+ * 404 once the row is complete or gone (the client then stops sending).
  */
 
 export const runtime = "nodejs";
 
 const RATE_LIMIT = { limit: 120, windowMs: 60 * 60 * 1000, prefix: "audit-progress" };
+const MAX_SCAN_JSON = 8000;
 
 /** Longest sequence: 5 opening + 10 site + 2 closing questions (no scan). */
 const MAX_STEPS = OPENING_STEPS.length + QUESTION_IDS.length + CLOSING_STEPS.length;
@@ -77,7 +82,23 @@ const bodySchema = z.object({
   channel: z.array(z.enum(CHANNEL_IDS)).max(CHANNEL_IDS.length).optional().default([]),
   timeline: z.enum(TIMELINE_IDS).optional(),
   budgetFit: z.enum(BUDGET_FIT_IDS).optional(),
+  /** "" until the visitor enters one. */
+  website: z.string().trim().max(300).optional(),
+  /** The scan checks, or null without a scan. */
+  scan: z.unknown().optional(),
 });
+
+/** Same limits as /api/audit/start: anything too large or malformed is dropped. */
+function readScan(v: unknown): ScanChecks | null {
+  if (!v || typeof v !== "object") return null;
+  try {
+    if (JSON.stringify(v).length > MAX_SCAN_JSON) return null;
+    const parsed = scanChecksSchema.safeParse(v);
+    return parsed.success ? parsed.data : null;
+  } catch {
+    return null;
+  }
+}
 
 export async function POST(request: Request) {
   const rate = checkRateLimit(getIdentifier(request), RATE_LIMIT);
@@ -137,6 +158,8 @@ export async function POST(request: Request) {
   const total = data.total;
   const answered = Math.min(data.answered, total);
   const result = isComplete(answers) ? computeResult(answers) : null;
+  const website = data.website === undefined ? undefined : data.website ? normalizeWebsite(data.website) : null;
+  const scan = data.scan === undefined ? undefined : readScan(data.scan);
 
   const patch = {
     progress: {
@@ -154,12 +177,17 @@ export async function POST(request: Request) {
     tier,
     tierProvisional: !qualification,
     ...(result ? { score: result.score, band: result.band, fixes: result.fixes } : {}),
+    ...(website !== undefined ? { website } : {}),
+    ...(scan !== undefined ? { scan: scan ? { version: SCAN_VERSION, ...scan } : null } : {}),
   };
 
   try {
     const rows = await db
       .update(leads)
-      .set({ metadata: sql`coalesce(${leads.metadata}, '{}'::jsonb) || ${JSON.stringify(patch)}::jsonb` })
+      .set({
+        ...(website ? { message: `Partial audit (not finished): ${website}` } : {}),
+        metadata: sql`coalesce(${leads.metadata}, '{}'::jsonb) || ${JSON.stringify(patch)}::jsonb`,
+      })
       .where(
         and(
           eq(leads.id, id),

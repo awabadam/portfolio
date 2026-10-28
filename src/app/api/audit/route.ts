@@ -49,7 +49,7 @@ import { buildAuditReportEmail } from "@/emails/AuditReport";
  * turns Awab's notification into the hot-lead alert (subject "Hot: {clinic} · ...",
  * see src/emails/AdminAuditAlert.tsx).
  * `partialToken` (from POST /api/audit/start) turns the partial lead saved on
- * the website step into this complete one (same row, created_at kept,
+ * the email step into this complete one (same row, created_at kept,
  * metadata.partial = false); a missing, forged or already completed token
  * falls back to inserting a new row.
  */
@@ -193,7 +193,7 @@ export async function POST(request: Request) {
   let leadId: string | null = null;
   const partialId = verifyAuditLeadToken(data.partialToken);
   if (partialId) {
-    // Complete the partial lead from the website step. Its status (the owner may have
+    // Complete the partial lead from the email step. Its status (the owner may have
     // changed it) and created_at stay; metadata keeps progress for the record.
     try {
       const complete = { ...metadata, partial: false, tierProvisional: !qualification, completedAt: new Date().toISOString() };

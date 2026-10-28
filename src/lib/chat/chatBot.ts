@@ -7,7 +7,7 @@ import {
   findMatchingFAQ,
 } from "./knowledgeBase";
 // 💰 Pricing source of truth: edit prices in src/lib/pricing.ts
-import { getTier, getCarePlan, formatPrice, formatPlanPrice } from "@/lib/pricing";
+import { getTier, getCarePlan, brandKit, getBrandKitBundlePrice, formatPrice, formatPlanPrice } from "@/lib/pricing";
 
 export interface ChatMessage {
   role: "user" | "assistant" | "system";
@@ -54,7 +54,8 @@ export function isFarewell(message: string): boolean {
     "cya",
   ];
   const lowerMessage = message.toLowerCase();
-  return farewells.some((f) => lowerMessage.includes(f));
+  // Whole words only: "see you" must not match "can I see your work?".
+  return farewells.some((f) => new RegExp(`\\b${f}\\b`).test(lowerMessage));
 }
 
 export function processMessage(
@@ -135,7 +136,7 @@ export function processMessage(
     const serviceList = services
       .map((s, i) => `${i + 1}. ${s.name}: ${s.description}${s.pricing ? ` (${s.pricing})` : ""}`)
       .join("\n\n");
-    response = `I offer ${services.length} main services:\n\n${serviceList}\n\nWould you like to know more about any specific service or get a detailed quote?`;
+    response = `Here's what I offer clinics:\n\n${serviceList}\n\nWould you like to know more about any specific service or get a detailed quote?`;
     return { response, context: newContext };
   }
 
@@ -145,7 +146,7 @@ export function processMessage(
     lowerMessage.includes("how much")
   ) {
     const price = (item: { price: number }) => formatPrice(item.price);
-    response = `Here's how pricing works:\n\n• Clinic Website: from ${price(getTier("business"))}\n• Clinic Growth System: from ${price(getTier("custom"))}\n• Site Care: ${price(getCarePlan("careStandard"))}/month\n• Growth Retainer: ${formatPlanPrice(getCarePlan("carePro"))}/month\n\nSee /pricing for what each one includes, or reach out at /contact for a quote for your clinic.`;
+    response = `Here's how pricing works:\n\n• Clinic Website: from ${price(getTier("business"))}\n• Clinic Growth System: from ${price(getTier("custom"))}\n• Site Care: ${price(getCarePlan("careStandard"))}/month\n• Growth Retainer: ${formatPlanPrice(getCarePlan("carePro"))}/month\n• Clinic Brand Kit (logo, social templates, WhatsApp kit): from ${price(brandKit)}, or ${formatPrice(getBrandKitBundlePrice())} together with the Clinic Growth System\n\nSee /pricing for what each one includes, or reach out at /contact for a quote for your clinic.`;
     return { response, context: newContext, action: "show_pricing" };
   }
 
@@ -155,7 +156,7 @@ export function processMessage(
     lowerMessage.includes("projects") ||
     lowerMessage.includes("examples")
   ) {
-    response = `Absolutely! You can view my portfolio at ${businessInfo.portfolio}. Recent work is mostly clinic websites, including SaphireDent (dental), Jouvence and EsteExpert (aesthetics). Would you like me to help you with anything specific?`;
+    response = `Absolutely! You can view my portfolio at ${businessInfo.portfolio}. Recent work is mostly clinic websites, including SaphireDent (dental), Jouvence and EsteExpert (aesthetics), plus clinic branding for Bespoke Clinics and Yasmina Beauty. Would you like me to help you with anything specific?`;
     return { response, context: newContext, action: "show_portfolio" };
   }
 
@@ -185,7 +186,7 @@ export function processMessage(
     lowerMessage.includes("years") ||
     lowerMessage.includes("how long")
   ) {
-    response = `I build websites for Istanbul clinics that treat patients from abroad: SaphireDent (dental), Jouvence (aesthetics) and EsteExpert (medical aesthetics). Each one is multilingual and tracks where inquiries come from. See /projects for the case studies.`;
+    response = `I build websites for Istanbul clinics that treat patients from abroad: SaphireDent (dental), Jouvence (aesthetics) and EsteExpert (medical aesthetics). Each one is multilingual and tracks where inquiries come from. I also design clinic brands: logo, social templates and a WhatsApp kit, as for Bespoke Clinics and Yasmina Beauty. See /projects for the case studies.`;
     return { response, context: newContext };
   }
 

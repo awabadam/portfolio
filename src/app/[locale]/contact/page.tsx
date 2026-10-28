@@ -26,7 +26,17 @@ import {
 
 // Values of the projectType <select>; /contact?plan=<value> pre-selects one
 // (the pricing cards link here with their plan).
-const PROJECT_TYPES = ["clinic-website", "growth-system", "site-care", "growth-retainer", "other"] as const;
+// The Brand Kit values match brandKit.contactValue / brandKit.bundle.contactValue
+// in lib/pricing.ts.
+const PROJECT_TYPES = [
+  "clinic-website",
+  "growth-system",
+  "clinic-brand-kit",
+  "growth-brand-bundle",
+  "site-care",
+  "growth-retainer",
+  "other",
+] as const;
 
 const email = "hello@awab.design";
 const phone = "+90 554 175 9945";
@@ -244,6 +254,8 @@ export default function ContactPage() {
                         >
                           <option value="clinic-website">{t("projectClinicWebsite")}</option>
                           <option value="growth-system">{t("projectGrowthSystem")}</option>
+                          <option value="clinic-brand-kit">{t("projectClinicBrandKit")}</option>
+                          <option value="growth-brand-bundle">{t("projectBrandBundle")}</option>
                           <option value="site-care">{t("projectSiteCare")}</option>
                           <option value="growth-retainer">{t("projectGrowthRetainer")}</option>
                           <option value="other">{t("projectOther")}</option>

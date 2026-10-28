@@ -6,7 +6,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import CookieConsent from "@/components/ui/CookieConsent";
 // 💰 Pricing source of truth: edit prices in src/lib/pricing.ts
-import { getTier, formatPrice, projectTiers, carePlans } from "@/lib/pricing";
+import { getTier, formatPrice, projectTiers, carePlans, brandKit, getBrandKitBundlePrice } from "@/lib/pricing";
 import { SITE_URL } from "@/lib/seo";
 
 const fontSans = FontSans({
@@ -158,10 +158,12 @@ const PLAN_NAMES: Record<string, string> = {
   careStandard: "Site Care",
   carePro: "Growth Retainer",
 };
+const BRAND_KIT_NAME = "Clinic Brand Kit";
+const BRAND_KIT_URL = `${SITE_URL}/services/clinic-branding`;
 
 const OFFER_CATALOG = {
   "@type": "OfferCatalog",
-  name: "Clinic website services, Istanbul",
+  name: "Clinic websites and branding, Istanbul",
   itemListElement: [
     {
       "@type": "OfferCatalog",
@@ -205,6 +207,49 @@ const OFFER_CATALOG = {
         },
       })),
     },
+    {
+      "@type": "OfferCatalog",
+      name: "Clinic branding",
+      itemListElement: [
+        {
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            name: BRAND_KIT_NAME,
+            url: BRAND_KIT_URL,
+            serviceType: "Clinic branding",
+            description:
+              "Logo, colours and a short brand guide, before-and-after post and story templates, and a WhatsApp kit for each patient coordinator.",
+          },
+          price: String(brandKit.price),
+          priceCurrency: "USD",
+          priceSpecification: {
+            "@type": "UnitPriceSpecification",
+            price: String(brandKit.price),
+            priceCurrency: "USD",
+            unitText: "project",
+          },
+        },
+        {
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            name: `${PACKAGE_NAMES[brandKit.bundle.withTier]} + ${BRAND_KIT_NAME}`,
+            url: BRAND_KIT_URL,
+            serviceType: "Clinic website design and branding",
+            description: `The ${PACKAGE_NAMES[brandKit.bundle.withTier]} website and the ${BRAND_KIT_NAME}, designed together. ${formatPrice(brandKit.bundle.discount)} less than buying them separately.`,
+          },
+          price: String(getBrandKitBundlePrice()),
+          priceCurrency: "USD",
+          priceSpecification: {
+            "@type": "UnitPriceSpecification",
+            price: String(getBrandKitBundlePrice()),
+            priceCurrency: "USD",
+            unitText: "project",
+          },
+        },
+      ],
+    },
   ],
 };
 
@@ -218,7 +263,7 @@ const PERSON_JSON_LD = {
   alternateName: "Awab Design",
   jobTitle: "Web Designer & Developer",
   description:
-    "Web designer and developer in Istanbul who builds multilingual websites for dental, aesthetic and hair transplant clinics, with lead tracking to the clinic's CRM.",
+    "Web designer and developer in Istanbul who builds multilingual websites for dental, aesthetic and hair transplant clinics, with lead tracking to the clinic's CRM. Also designs clinic brands: logos, social media templates and WhatsApp kits.",
   url: SITE_URL,
   email: "hello@awab.design",
   telephone: "+905541759945",
@@ -240,6 +285,9 @@ const PERSON_JSON_LD = {
     "Hair Transplant Clinic Websites",
     "Multilingual Website Development",
     "Arabic Website Design",
+    "Brand Identity Design",
+    "Logo Design",
+    "Social Media Templates for Clinics",
     "SEO",
     "Conversion Rate Optimization",
     "Next.js",
@@ -282,7 +330,7 @@ const BUSINESS_JSON_LD = {
   "@id": `${SITE_URL}/#business`,
   name: "Awab Design",
   description:
-    "Clinic website design studio in Istanbul. Multilingual websites for dental, aesthetic and hair transplant clinics, with lead tracking, hosting and care plans. Fixed USD pricing.",
+    "Clinic website design studio in Istanbul. Multilingual websites for dental, aesthetic and hair transplant clinics, with lead tracking, hosting and care plans, plus clinic branding: logos, social media templates and WhatsApp kits. Fixed USD pricing.",
   url: SITE_URL,
   telephone: "+905541759945",
   email: "hello@awab.design",

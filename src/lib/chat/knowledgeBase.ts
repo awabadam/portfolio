@@ -1,5 +1,5 @@
 // 💰 Pricing source of truth: edit prices in src/lib/pricing.ts
-import { getTier, getCarePlan, formatPrice, formatPlanPrice } from "@/lib/pricing";
+import { getTier, getCarePlan, brandKit, getBrandKitBundlePrice, formatPrice, formatPlanPrice } from "@/lib/pricing";
 
 export interface Service {
   name: string;
@@ -51,6 +51,13 @@ export const services: Service[] = [
     pricing: `${formatPlanPrice(getCarePlan("carePro"))}/month`,
     link: "/services/website-maintenance",
   },
+  {
+    name: "Clinic Brand Kit",
+    description:
+      `Everything a patient sees before they book: a new logo or a refresh of yours, colours, fonts and a short brand guide, before-and-after post and story templates for every treatment, a WhatsApp kit for each coordinator, and Instagram and Facebook profile images. Ready in 2-3 weeks. With the Clinic Growth System both cost ${formatPrice(getBrandKitBundlePrice())}, ${formatPrice(brandKit.bundle.discount)} less than separately.`,
+    pricing: `From ${formatPrice(brandKit.price)}`,
+    link: "/services/clinic-branding",
+  },
 ];
 
 export const projects: ProjectInfo[] = [
@@ -88,6 +95,20 @@ export const projects: ProjectInfo[] = [
     description: "Personal portfolio showcasing creative work and web design projects.",
     link: "/projects/awab-design",
   },
+  {
+    name: "Bespoke Clinics",
+    category: "Branding / Dental & Aesthetics",
+    description: "Brand for an Istanbul clinic that treats international patients (2022): monogram, stationery, social media templates and a WhatsApp kit for each sales consultant.",
+    results: ["The same brand on the sign, the feed and every WhatsApp chat with a patient"],
+    link: "/projects/bespoke-clinic",
+  },
+  {
+    name: "Yasmina Beauty",
+    category: "Branding / Aesthetics",
+    description: "Logo and before-and-after social media system (2023) for a clinic offering smile makeovers, hair transplants and bariatric surgery.",
+    results: ["Each new patient result becomes a post without a designer"],
+    link: "/projects/yasmina-beauty",
+  },
 ];
 
 export const businessInfo = {
@@ -105,11 +126,19 @@ export const businessInfo = {
   pricing: "/pricing",
 };
 
+// Matched in order, so the branding FAQ comes first: "do you offer logos" or
+// "whatsapp profile" should not fall through to the services or contact answers.
 export const faqs: FAQ[] = [
+  {
+    question: "Do you design logos and branding?",
+    answer:
+      `Yes. The Clinic Brand Kit covers what a patient sees before they book: a new logo or a refresh, colours and fonts, before-and-after post and story templates, and a WhatsApp kit for each coordinator. It costs ${formatPrice(brandKit.price)} and takes 2-3 weeks, or ${formatPrice(getBrandKitBundlePrice())} together with the Clinic Growth System. I don't run your social media: your team fills in the templates. See /services/clinic-branding, and the Bespoke Clinics (/projects/bespoke-clinic) and Yasmina Beauty (/projects/yasmina-beauty) case studies.`,
+    keywords: ["logo", "brand", "branding", "identity", "instagram", "social media", "templates", "before and after", "before-and-after", "whatsapp profile"],
+  },
   {
     question: "What services do you offer?",
     answer:
-      "I build websites for Istanbul clinics that treat international patients — dental, aesthetic, hair and medical tourism. Two packages: Clinic Website and Clinic Growth System, plus monthly Site Care or a Growth Retainer. See /services or /pricing.",
+      "I build websites for Istanbul clinics that treat international patients: dental, aesthetic, hair and medical tourism. Two website packages, Clinic Website and Clinic Growth System, plus monthly Site Care or a Growth Retainer. I also design the clinic's brand with the Clinic Brand Kit: logo, social templates and a WhatsApp kit. See /services, /services/clinic-branding or /pricing.",
     keywords: ["services", "what do you do", "offer", "provide", "help"],
   },
   {
@@ -127,7 +156,7 @@ export const faqs: FAQ[] = [
   {
     question: "What's your experience?",
     answer:
-      "I work mostly with clinics that treat international patients: SaphireDent (dental), Jouvence (aesthetics) and EsteExpert (medical aesthetics). See /projects.",
+      "I work mostly with clinics that treat international patients: SaphireDent (dental), Jouvence (aesthetics) and EsteExpert (medical aesthetics) for websites, and Bespoke Clinics and Yasmina Beauty for branding. See /projects.",
     keywords: ["experience", "years", "projects", "portfolio", "background", "work"],
   },
   {
@@ -139,7 +168,7 @@ export const faqs: FAQ[] = [
   {
     question: "Can I see your portfolio?",
     answer:
-      "Yes! Visit /projects to see my work. Featured projects include Jouvence (aesthetics clinic), EsteExpert (medical aesthetics), Omar Marketing (agency), and SaphireDent (dental clinic, nine languages).",
+      "Yes! Visit /projects to see my work. Featured projects include Jouvence (aesthetics clinic), EsteExpert (medical aesthetics), Omar Marketing (agency), and SaphireDent (dental clinic, nine languages). For brand work, see Bespoke Clinics and Yasmina Beauty.",
     keywords: ["portfolio", "work", "projects", "examples", "showcase", "case study"],
   },
   {
@@ -187,7 +216,7 @@ export const faqs: FAQ[] = [
 ];
 
 export const greetings = [
-  "Hello! I'm here to help you with web design services. What are you looking for?",
+  "Hello! I'm here to help you with clinic websites and branding. What are you looking for?",
   "Hi there! Need a website, quote, or want to see our work? I can help!",
   "Hey! I can tell you about pricing, show portfolio examples, or help you get a quote. What would you like?",
 ];

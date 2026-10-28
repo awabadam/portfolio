@@ -8,6 +8,7 @@ import { QUESTION_IDS, type Answer, type Answers, type BandId, type QuestionId }
 import type { Locale } from "@/i18n/config";
 import type { Playbook } from "@/data/playbook/types";
 import { CAL_BOOKING_URL } from "@/lib/contactLinks";
+import { formatPrice, getTier } from "@/lib/pricing";
 import {
   A,
   CanvasHeading,
@@ -292,7 +293,7 @@ export function AuditReportEmail(p: ViewProps) {
         <Signature signoff={e.signoff} role={e.signatureRole} />
         <Spacer h={22} />
         <P small muted style={{ margin: 0 }}>
-          {e.diy}
+          {fill(e.diy, { price: formatPrice(getTier("business").price) })}
         </P>
       </Section>
     </Layout>

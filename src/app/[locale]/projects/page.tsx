@@ -1,12 +1,13 @@
 import React from "react";
 import { Metadata } from "next";
-import { getAllProjects } from "@/data/projects";
+import { getAllProjects, pickWithFallback } from "@/data/projects";
 import ProjectList from "@/components/projects/ProjectList";
 import ProjectsHero from "@/components/projects/ProjectsHero";
 import { getTranslations, getLocale } from 'next-intl/server';
 import ScrollReveal from "@/components/effects/ScrollReveal";
 import { GlassPill } from "@/components/ui/glass-pill";
 import { CLIENT_WORK, isClientWork, pickInOrder } from "@/data/case-studies";
+import { BRAND_WORK, isBrandWork } from "@/data/brand-studies";
 import { ogLocale, pageAlternates, localeUrl } from "@/lib/seo";
 import ClosingCard from "@/components/cta/ClosingCard";
 import BookCallLink from "@/components/cta/BookCallLink";
@@ -27,6 +28,7 @@ export async function generateMetadata(): Promise<Metadata> {
       "medical tourism website examples",
       "clinic website case study istanbul",
       "multilingual clinic website",
+      "clinic branding case study",
       "klinik web sitesi örnekleri",
     ],
     openGraph: {
@@ -49,12 +51,17 @@ const ProjectsPage = async () => {
   const allProjects = await getAllProjects();
   const t = await getTranslations('projects');
   const clientWork = pickInOrder(allProjects, CLIENT_WORK);
-  const lab = allProjects.filter((p) => !isClientWork(p.id));
+  // Brand work comes from code, so it shows even without database rows.
+  const brandWork = pickWithFallback(allProjects, BRAND_WORK);
+  const lab = allProjects.filter((p) => !isClientWork(p.id) && !isBrandWork(p.id));
 
   return (
     <main className="flex min-h-screen w-full flex-col bg-background">
       <ProjectsHero />
       <ProjectList projects={clientWork} heading={t('clientWork')} intro={t('clientWorkIntro')} />
+      {brandWork.length > 0 && (
+        <ProjectList projects={brandWork} heading={t('brandWork')} intro={t('brandWorkIntro')} className="mt-20 md:mt-28" />
+      )}
       {lab.length > 0 && (
         <ProjectList projects={lab} heading={t('lab')} intro={t('labIntro')} className="mt-20 md:mt-28" />
       )}

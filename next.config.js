@@ -36,7 +36,7 @@ const nextConfig = {
   async redirects() {
     const retired = [
       ["app-development", "/services"],
-      ["brand-identity", "/services"],
+      ["brand-identity", "/services/clinic-branding"],
       ["ai-chatbot-integration", "/pricing"],
       ["clinic-websites", "/services"],
     ];

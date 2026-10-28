@@ -11,7 +11,8 @@ import { createAuditLeadToken } from "@/lib/auditLeadToken";
 /**
  * POST /api/audit/start — { email, website?, locale?, scan? } → { token }.
  *
- * Called when a visitor leaves an email on the /audit website step. Saves a
+ * Called from the /audit email step, the first step of the check, so the
+ * website and the scan usually come later through /api/audit/progress. Saves a
  * partial lead (source 'clinic_audit', metadata.partial = true) so the owner
  * sees how far people got even when they never reach the result. The token
  * (src/lib/auditLeadToken.ts) lets /api/audit/progress and the final
@@ -26,7 +27,7 @@ const MAX_SCAN_JSON = 8000;
 
 const bodySchema = z.object({
   email: z.string().trim().toLowerCase().email("email_invalid").max(200),
-  // Optional: the visitor may skip the scan and still leave an email.
+  // Usually empty: the email step comes before the website (a resumed draft may have one).
   website: z.string().trim().max(300).optional().default(""),
   locale: z.string().max(5).optional(),
   // Honeypot, same as /api/audit.

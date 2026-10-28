@@ -47,16 +47,17 @@ import { PLAYBOOK_META } from "@/lib/playbookMeta";
 import AuditQuestion from "./AuditQuestion";
 import AuditResult from "./AuditResult";
 import AuditReview from "./AuditReview";
-import AuditScanStep, { hostOf, isEmailLike, type ScanOutcome } from "./AuditScanStep";
+import AuditEmailStep, { isEmailLike } from "./AuditEmailStep";
+import AuditScanStep, { hostOf, type ScanOutcome } from "./AuditScanStep";
 import { AuditFaq, ClosingCta, MakerBlock, PeekInside, SampleResult } from "./AuditLandingSections";
 import PlaybookForm from "./PlaybookForm";
 
 /**
- * intro → website (scan) → review (scan answers, skipped without a scan) →
- * questions (lead questions around the site questions the scan did not
- * answer, see buildSteps) → result.
+ * intro → email (required) → website (scan) → review (scan answers, skipped
+ * without a scan) → questions (lead questions around the site questions the
+ * scan did not answer, see buildSteps) → result.
  */
-type Stage = "intro" | "website" | "review" | "questions" | "result";
+type Stage = "intro" | "email" | "website" | "review" | "questions" | "result";
 
 const STORAGE_KEY = `clinic-audit-v${AUDIT_VERSION}`;
 
@@ -64,35 +65,34 @@ interface Draft {
   answers: Answers;
   /** Position in the question sequence (buildSteps). */
   index: number;
-  /** Last stage worked on, used to resume. */
+  /** Last stage worked on, used to resume. Never "email": resuming asks for it again only when missing. */
   stage: Stage;
   website: string;
   scan: ScanSuccess | null;
   scanFailed: boolean;
   scanMs: number;
   profile: Partial<ClinicProfile>;
-  /** Optional email from the scan review, prefilled in the result form. */
+  /** Email from the first step, required to start; shown in the result form. */
   email: string;
   /** The partial lead saved for that email (POST /api/audit/start), or null. */
   lead: PartialLead | null;
 }
 
 /**
- * A partial lead: saved on the scan review when an email was given, updated
- * as the visitor advances (/api/audit/progress) and completed by the result
- * form. Reused only for the same email and website.
+ * A partial lead: saved on the email step, updated as the visitor advances
+ * (/api/audit/progress, which also carries the website and the scan) and
+ * completed by the result form. Reused only for the same email.
  */
 interface PartialLead {
   token: string;
   email: string;
-  website: string;
 }
 
 function readLead(v: unknown): PartialLead | null {
   if (!v || typeof v !== "object") return null;
   const l = v as Record<string, unknown>;
-  return typeof l.token === "string" && l.token.length <= 120 && typeof l.email === "string" && typeof l.website === "string"
-    ? { token: l.token, email: l.email, website: l.website }
+  return typeof l.token === "string" && l.token.length <= 120 && typeof l.email === "string"
+    ? { token: l.token, email: l.email }
     : null;
 }
 
@@ -304,7 +304,7 @@ export default function AuditExperience({ chapters = [], excerpts = null }: Audi
       setResumeStage(draft.stage);
       // Never auto-jump into the questions: show the intro with a resume button.
       // /audit#playbook (from AuditCta) always lands on the intro.
-      setStage(draft.stage === "result" && !isPlaybookHash() ? "result" : "intro");
+      setStage(draft.stage === "result" && isEmailLike(draft.email) && !isPlaybookHash() ? "result" : "intro");
     }
     setHydrated(true);
   }, []);
@@ -314,7 +314,7 @@ export default function AuditExperience({ chapters = [], excerpts = null }: Audi
     writeDraft({ answers, index, stage: resumeStage, website, scan, scanFailed, scanMs, profile, email, lead });
   }, [answers, index, resumeStage, website, scan, scanFailed, scanMs, profile, email, lead, hydrated]);
 
-  // The floating chat bubble covers answers on phones: hide it from the website step to the result
+  // The floating chat bubble covers answers on phones: hide it from the email step to the result
   // (see ChatWidget). The attribute goes when the visitor returns to the intro or leaves the page.
   useEffect(() => {
     if (stage === "intro") return;
@@ -323,10 +323,14 @@ export default function AuditExperience({ chapters = [], excerpts = null }: Audi
     return () => root.removeAttribute("data-hide-chat");
   }, [stage]);
 
-  /** Moves to a stage and remembers it for resuming (the intro keeps the last working stage). */
+  /**
+   * Moves to a stage and remembers it for resuming. The intro and the email
+   * step keep the last working stage, so a resume continues from there once
+   * the email is in.
+   */
   const go = useCallback((next: Stage) => {
     setStage(next);
-    if (next !== "intro") setResumeStage(next);
+    if (next !== "intro" && next !== "email") setResumeStage(next);
   }, []);
 
   const focusEmail = useCallback(() => {
@@ -375,11 +379,12 @@ export default function AuditExperience({ chapters = [], excerpts = null }: Audi
   const steps = buildSteps(scan?.suggestedAnswers ?? null);
   const step = steps[Math.min(index, steps.length - 1)];
   /*
-   * Head start for the progress bar: the website step and every check the scan
-   * answered count as done, so the first question never shows an empty bar.
+   * Head start for the progress bar: the email and website steps and every
+   * check the scan answered count as done, so the first question never shows
+   * an empty bar.
    */
   const scannedCount = scan ? Object.keys(scan.suggestedAnswers).length : 0;
-  const headStart = 1 + scannedCount;
+  const headStart = 2 + scannedCount;
   const progressTotal = headStart + steps.length;
   const budgetAnchor =
     step.kind === "profile" && step.id === "budgetFit"
@@ -389,9 +394,10 @@ export default function AuditExperience({ chapters = [], excerpts = null }: Audi
       : undefined;
 
   /*
-   * Partial lead progress: only with a token (the visitor left an email). The
-   * latest payload is sent after a pause, and at once when the page hides, so
-   * the owner sees where someone stopped. Never blocks the check.
+   * Partial lead progress: only with a token (saved on the email step). The
+   * latest payload, with the website and the scan once there are any, is sent
+   * after a pause, and at once when the page hides, so the owner sees where
+   * someone stopped. Never blocks the check.
    */
   const leadRef = useRef(lead);
   useEffect(() => {
@@ -410,8 +416,10 @@ export default function AuditExperience({ chapters = [], excerpts = null }: Audi
       answered: sequence.filter((s) => isStepAnswered(s, answers, profile)).length,
       answers,
       ...profile,
+      website,
+      scan: scan?.checks ?? null,
     });
-  }, [lead, resumeStage, index, answers, profile, scan]);
+  }, [lead, resumeStage, index, answers, profile, scan, website]);
 
   const pendingProgress = useRef<string | null>(null);
   const sentProgress = useRef<string | null>(null);
@@ -458,17 +466,14 @@ export default function AuditExperience({ chapters = [], excerpts = null }: Audi
   }, [sendProgress]);
 
   /**
-   * Saves a partial lead for the email given on the scan review (no email: none).
-   * The same email and website keep their lead; a change starts a new one.
+   * Saves a partial lead for the email from the email step, with the website
+   * and scan so far (a resumed draft may have both). The same email keeps its
+   * lead; a different one starts a new one.
    */
   const ensureLead = async (mail: string, site: string, checks: ScanChecks | null) => {
     const normalized = mail.trim().toLowerCase();
-    if (!normalized || !isEmailLike(normalized)) {
-      setLead(null);
-      return;
-    }
-    const current = leadRef.current;
-    if (current && current.email === normalized && current.website === site) return;
+    if (!isEmailLike(normalized)) return;
+    if (leadRef.current?.email === normalized) return;
     setLead(null);
     try {
       const res = await fetch("/api/audit/start", {
@@ -478,7 +483,7 @@ export default function AuditExperience({ chapters = [], excerpts = null }: Audi
       });
       const data = (await res.json().catch(() => null)) as { token?: unknown } | null;
       if (res.ok && typeof data?.token === "string" && data.token) {
-        setLead({ token: data.token, email: normalized, website: site });
+        setLead({ token: data.token, email: normalized });
       }
     } catch {
       // No partial lead: the check works the same, the result form still saves the lead.
@@ -499,15 +504,9 @@ export default function AuditExperience({ chapters = [], excerpts = null }: Audi
     goTo("questions");
   };
 
-  const start = (resume: boolean) => {
-    if (!resume) {
-      setAnswers({});
-      setIndex(0);
-      setScan(null);
-      setScanFailed(false);
-      setProfile({});
-      goTo("website");
-    } else if (resumeStage === "result" && isComplete(answers) && isProfileComplete(profile)) {
+  /** Where the check goes once the email is in: the last working stage, or the website step. */
+  const proceed = () => {
+    if (resumeStage === "result" && isComplete(answers) && isProfileComplete(profile)) {
       goTo("result");
     } else if (resumeStage === "review" && scan) {
       goTo("review");
@@ -518,7 +517,32 @@ export default function AuditExperience({ chapters = [], excerpts = null }: Audi
     } else {
       goTo("website");
     }
+  };
+
+  /** Every start asks for the email first; a resume skips the step when the draft already has one. */
+  const start = (resume: boolean) => {
+    if (!resume) {
+      setAnswers({});
+      setIndex(0);
+      setScan(null);
+      setScanFailed(false);
+      setProfile({});
+      setResumeStage("website");
+      goTo("email");
+    } else if (isEmailLike(email)) {
+      proceed();
+    } else {
+      goTo("email");
+    }
     trackEvent("audit_start", { resumed: resume });
+  };
+
+  /** The email is required before the check starts, so the partial lead exists from the first step. */
+  const submitEmail = (mail: string) => {
+    setEmail(mail);
+    void ensureLead(mail, website, scan?.checks ?? null);
+    trackEvent("audit_email");
+    proceed();
   };
 
   const onScanOutcome = ({ website: site, result, elapsedMs }: ScanOutcome) => {
@@ -548,14 +572,11 @@ export default function AuditExperience({ chapters = [], excerpts = null }: Audi
     setAnswers({ ...answers, [id]: value });
   };
 
-  /** The email is asked here, after the scan has shown them something, not on the website step. */
-  const finishReview = (mail: string) => {
-    setEmail(mail);
-    if (scan) void ensureLead(mail, website, scan.checks);
+  const finishReview = () => {
     const changed = scan
       ? QUESTION_IDS.filter((id) => scan.suggestedAnswers[id] !== undefined && answers[id] !== scan.suggestedAnswers[id])
       : [];
-    trackEvent("audit_review_complete", { changed: changed.length, email: mail !== "" });
+    trackEvent("audit_review_complete", { changed: changed.length });
     startQuestions();
   };
 
@@ -897,6 +918,19 @@ export default function AuditExperience({ chapters = [], excerpts = null }: Audi
           </motion.section>
         )}
 
+        {stage === "email" && (
+          <motion.section
+            key="email"
+            initial={{ opacity: 0, y: reduceMotion ? 0 : 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, transition: { duration: 0.2 } }}
+            transition={{ duration: 0.4, ease }}
+            className="container mx-auto px-5 pb-24 md:px-8 md:pb-32"
+          >
+            <AuditEmailStep email={email} onContinue={submitEmail} onBack={() => go("intro")} />
+          </motion.section>
+        )}
+
         {stage === "website" && (
           <motion.section
             key="website"
@@ -914,7 +948,7 @@ export default function AuditExperience({ chapters = [], excerpts = null }: Audi
               onOutcome={onScanOutcome}
               onContinue={() => goTo("review")}
               onSkip={skipScan}
-              onBack={() => go("intro")}
+              onBack={() => goTo("email")}
             />
           </motion.section>
         )}
@@ -933,7 +967,6 @@ export default function AuditExperience({ chapters = [], excerpts = null }: Audi
               answers={answers}
               host={hostOf(scan.finalUrl)}
               seconds={Math.max(1, Math.round(scanMs / 1000))}
-              email={email}
               onChange={correct}
               onContinue={finishReview}
               onRescan={rescan}

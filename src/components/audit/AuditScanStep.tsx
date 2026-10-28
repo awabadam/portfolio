@@ -17,11 +17,6 @@ export interface ScanOutcome {
   elapsedMs: number;
 }
 
-/** Same loose check as the result form; the server validates again. */
-export function isEmailLike(v: string): boolean {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
-}
-
 interface AuditScanStepProps {
   /** Last website the user entered (restored from the draft). */
   website: string;

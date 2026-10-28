@@ -104,7 +104,33 @@ const fallbackProjects: Project[] = [
     featured: true,
     technologies: ["Next.js", "React", "Tailwind CSS"],
   },
+  // Brand work (see src/data/brand-studies.ts). These have no database rows,
+  // so pages pick them with `pickWithFallback`.
+  {
+    id: "bespoke-clinic",
+    title: "Bespoke Clinics",
+    category: "Brand Identity",
+    description:
+      "A brand identity for a dental and aesthetics clinic in Istanbul: monogram, stationery, social media templates and a sales team kit.",
+    role: "Brand Identity Design",
+    technologies: ["Adobe Illustrator", "Adobe Photoshop", "Adobe InDesign"],
+  },
+  {
+    id: "yasmina-beauty",
+    title: "Yasmina Beauty",
+    category: "Brand Identity",
+    description:
+      "A rebrand chosen from three logo directions, with a social media kit and before-and-after templates for a dental, hair and aesthetics clinic.",
+    role: "Logo & Social Media Design",
+    technologies: ["Adobe Illustrator", "Adobe InDesign"],
+  },
 ];
+
+// Picks `ids` in order from `rows`, using the static entry above for any id
+// without a database row (a row, once added, wins).
+export function pickWithFallback(rows: Project[], ids: readonly string[]): Project[] {
+  return ids.flatMap((id) => rows.find((p) => p.id === id) ?? fallbackProjects.find((p) => p.id === id) ?? []);
+}
 
 export async function getAllProjects(): Promise<Project[]> {
   try {
